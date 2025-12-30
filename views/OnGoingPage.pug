@@ -1,0 +1,291 @@
+doctype html
+head
+  meta(charset='UTF-8')
+  meta(name='viewport' content='width=device-width, initial-scale=1.0')
+  title Ongoing Project Details
+  //- link(rel='stylesheet' href='.public/css/OnGoingPage.css')
+  //- link(rel='stylesheet' href='../home.css')
+  link(rel='stylesheet' href=utils.assetPath("/bundle/OnGoingPage.css"))
+
+include layout/header.pug 
+
+.sunset-ridge-wrapper
+  .hero-section
+    .hero-content
+      .title-container
+        h1.hero-title Sunset Ridge Residence
+      .info-section
+        .info-item
+          span
+            svg(width='15' height='15' viewbox='0 0 15 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+              path(d='M3.33104 13.995V1.99801C3.33104 1.64447 3.47148 1.30542 3.72147 1.05544C3.97145 0.805449 4.31051 0.665009 4.66404 0.665009H9.99604C10.3496 0.665009 10.6886 0.805449 10.9386 1.05544C11.1886 1.30542 11.329 1.64447 11.329 1.99801V13.995M3.33104 13.995H11.329M3.33104 13.995L1.99804 13.995C1.64451 13.995 1.30545 13.8546 1.05547 13.6046C0.80548 13.3546 0.665039 13.0155 0.665039 12.662V8.66301C0.665039 8.30947 0.80548 7.97042 1.05547 7.72044C1.30545 7.47045 1.64451 7.33001 1.99804 7.33001H3.33104M11.329 13.995L12.662 13.995C13.0156 13.995 13.3546 13.8546 13.6046 13.6046C13.8546 13.3546 13.995 13.0155 13.995 12.662V6.66351C13.995 6.30997 13.8546 5.97092 13.6046 5.72094C13.3546 5.47095 13.0156 5.33051 12.662 5.33051H11.329M5.99704 3.33101H8.66304M5.99704 5.99701H8.66304M5.99704 8.66301H8.66304M5.99704 11.329H8.66304' stroke='white' stroke-width='1.33' stroke-linecap='round' stroke-linejoin='round')
+          span 24 Premium Apartments
+        .info-item
+          span
+            svg(width='14' height='15' viewbox='0 0 14 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+              path(d='M4.00033 0.666656V3.33332M9.33366 0.666656V3.33332M0.666992 5.99999H12.667M2.00033 1.99999H11.3337C12.07 1.99999 12.667 2.59694 12.667 3.33332V12.6667C12.667 13.403 12.07 14 11.3337 14H2.00033C1.26395 14 0.666992 13.403 0.666992 12.6667V3.33332C0.666992 2.59694 1.26395 1.99999 2.00033 1.99999Z' stroke='white' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+          span 24 Premium Apartments
+        .info-item
+          span
+            svg(width='12' height='15' viewbox='0 0 12 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+              path(d='M11.3337 5.99999C11.3337 9.32866 7.64099 12.7953 6.40099 13.866C6.28548 13.9529 6.14486 13.9998 6.00033 13.9998C5.85579 13.9998 5.71518 13.9529 5.59966 13.866C4.35966 12.7953 0.666992 9.32866 0.666992 5.99999C0.666992 4.5855 1.2289 3.22895 2.22909 2.22875C3.22928 1.22856 4.58584 0.666656 6.00033 0.666656C7.41481 0.666656 8.77137 1.22856 9.77156 2.22875C10.7718 3.22895 11.3337 4.5855 11.3337 5.99999Z' stroke='white' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+              path(d='M6.00033 7.99999C7.10489 7.99999 8.00033 7.10456 8.00033 5.99999C8.00033 4.89542 7.10489 3.99999 6.00033 3.99999C4.89576 3.99999 4.00033 4.89542 4.00033 5.99999C4.00033 7.10456 4.89576 7.99999 6.00033 7.99999Z' stroke='white' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+          span 24 Premium Apartments
+      button.cta-button
+        span.cta-text GET FREE QUOTE
+        span.cta-icon
+          svg(width='6' height='11' viewbox='0 0 6 11' fill='none' xmlns='http://www.w3.org/2000/svg')
+            path(d='M0.666992 0.666656L5.33366 5.33332L0.666992 9.99999' stroke='white' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+.project-details-section
+  .project-details-container
+    .project-features-header
+      h1.project-features-header__title Project Features
+      p.project-features-header__description
+        | Discover the exceptional amenities and features that make Sunset Ridge Residence stand out amenities
+        | and features that make Sunset Ridge Residence
+    .features-grid
+      .feature-card
+        span.feature-card__icon
+          svg(width='19' height='30' viewbox='0 0 19 30' fill='none' xmlns='http://www.w3.org/2000/svg')
+            path(d='M13.969 15.8533L15.989 27.2213C16.0116 27.3552 15.9928 27.4928 15.9352 27.6157C15.8775 27.7386 15.7837 27.8409 15.6662 27.9091C15.5488 27.9772 15.4134 28.0079 15.2781 27.997C15.1428 27.986 15.014 27.9341 14.909 27.848L10.1357 24.2653C9.90523 24.0932 9.62531 24.0002 9.33767 24.0002C9.05003 24.0002 8.7701 24.0932 8.53967 24.2653L3.75833 27.8467C3.65343 27.9326 3.52482 27.9845 3.38966 27.9954C3.25451 28.0063 3.11923 27.9758 3.00189 27.9078C2.88454 27.8399 2.7907 27.7378 2.73289 27.6151C2.67508 27.4925 2.65605 27.3551 2.67833 27.2213L4.697 15.8533M17.333 9.33333C17.333 13.7516 13.7513 17.3333 9.33301 17.3333C4.91473 17.3333 1.33301 13.7516 1.33301 9.33333C1.33301 4.91505 4.91473 1.33333 9.33301 1.33333C13.7513 1.33333 17.333 4.91505 17.333 9.33333Z' stroke='#C1834E' stroke-width='2.66667' stroke-linecap='round' stroke-linejoin='round')
+        span.feature-card__heading Premium Quality
+        span.feature-card__description
+          | High-quality materials and superior craftsmanship ensuring lasting value
+      .feature-card
+        span.feature-card__icon
+          svg(width='30' height='27' viewbox='0 0 30 27' fill='none' xmlns='http://www.w3.org/2000/svg')
+            path(d='M19.9997 25.3333V22.6667C19.9997 21.2522 19.4378 19.8956 18.4376 18.8954C17.4374 17.8952 16.0808 17.3333 14.6663 17.3333H6.66634C5.25185 17.3333 3.8953 17.8952 2.89511 18.8954C1.89491 19.8956 1.33301 21.2522 1.33301 22.6667V25.3333M19.9997 1.50406C21.1433 1.80056 22.1562 2.46842 22.8792 3.40281C23.6023 4.33721 23.9946 5.48525 23.9946 6.66673C23.9946 7.84821 23.6023 8.99625 22.8792 9.93065C22.1562 10.865 21.1433 11.5329 19.9997 11.8294M27.9997 25.3333V22.6667C27.9988 21.485 27.6055 20.337 26.8815 19.4031C26.1575 18.4691 25.1438 17.8021 23.9997 17.5067M15.9997 6.66666C15.9997 9.61218 13.6119 12 10.6663 12C7.72082 12 5.33301 9.61218 5.33301 6.66666C5.33301 3.72114 7.72082 1.33333 10.6663 1.33333C13.6119 1.33333 15.9997 3.72114 15.9997 6.66666Z' stroke='#C1834E' stroke-width='2.66667' stroke-linecap='round' stroke-linejoin='round')
+        span.feature-card__heading Community Living
+        span.feature-card__description
+          | High-quality materials and superior craftsmanship ensuring lasting value
+      .feature-card
+        span.feature-card__icon
+          svg(width='27' height='27' viewbox='0 0 27 27' fill='none' xmlns='http://www.w3.org/2000/svg')
+            path(d='M17.333 1.33334H25.333M25.333 1.33334V9.33334M25.333 1.33334L15.9997 10.6667M1.33301 25.3333L10.6663 16M1.33301 25.3333L9.33301 25.3333M1.33301 25.3333V17.3333' stroke='#C1834E' stroke-width='2.66667' stroke-linecap='round' stroke-linejoin='round')
+        span.feature-card__heading Spacious Design
+        span.feature-card__description
+          | High-quality materials and superior craftsmanship ensuring lasting value
+      .feature-card
+        span.feature-card__icon
+          svg(width='30' height='30' viewbox='0 0 30 30' fill='none' xmlns='http://www.w3.org/2000/svg')
+            path(d='M6.66634 28V4.00001C6.66634 3.29277 6.94729 2.61449 7.44739 2.11439C7.94749 1.61429 8.62576 1.33334 9.33301 1.33334H19.9997C20.7069 1.33334 21.3852 1.61429 21.8853 2.11439C22.3854 2.61449 22.6663 3.29277 22.6663 4.00001V28M6.66634 28H22.6663M6.66634 28L3.99967 28C3.29243 28 2.61415 27.7191 2.11406 27.219C1.61396 26.7189 1.33301 26.0406 1.33301 25.3333V17.3333C1.33301 16.6261 1.61396 15.9478 2.11406 15.4477C2.61415 14.9476 3.29243 14.6667 3.99967 14.6667H6.66634M22.6663 28L25.333 28C26.0403 28 26.7185 27.7191 27.2186 27.219C27.7187 26.7189 27.9997 26.0406 27.9997 25.3333V13.3333C27.9997 12.6261 27.7187 11.9478 27.2186 11.4477C26.7185 10.9476 26.0403 10.6667 25.333 10.6667H22.6663M11.9997 6.66668H17.333M11.9997 12H17.333M11.9997 17.3333H17.333M11.9997 22.6667H17.333' stroke='#C1834E' stroke-width='2.66667' stroke-linecap='round' stroke-linejoin='round')
+        span.feature-card__heading Modern Architecture
+        span.feature-card__description
+          | High-quality materials and superior craftsmanship ensuring lasting value
+  .project-planning-container
+    .project-details-header
+      h1.project-planning-title Project Features
+      p.project-planning-description
+        | Discover the exceptional amenities and features that make Sunset Ridge Residence stand out.
+    .amenities-list
+      .amenity-card
+        span.icon
+          svg(width='26' height='26' viewbox='0 0 26 26' fill='none' xmlns='http://www.w3.org/2000/svg')
+            path(d='M1 17C2.33333 17 3.66667 18.3333 5 18.3333C6.33333 18.3333 7.6667 17 9 17C10.3333 17 11.6667 18.3333 13 18.3333C14.3333 18.3333 15.6667 17 17 17C18.3333 17 19.6667 18.3333 21 18.3333C22.3333 18.3333 23.6667 17 25 17M1 23C2.33333 23 3.66667 24.3333 5 24.3333C6.33333 24.3333 7.6667 23 9 23C10.3333 23 11.6667 24.3333 13 24.3333C14.3333 24.3333 15.6667 23 17 23C18.3333 23 19.6667 24.3333 21 24.3333C22.3333 24.3333 23.6667 23 25 23M21 9L25 13M17 1C19.2091 1 21 2.79086 21 5C21 7.2091 19.2091 9 17 9C14.7909 9 13 7.2091 13 5C13 2.79086 14.7909 1 17 1Z' stroke='#C1834E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+        span Swimming Pool
+      .amenity-card
+        span.icon
+          svg(width='20' height='16' viewbox='0 0 20 16' fill='none' xmlns='http://www.w3.org/2000/svg')
+            path(d='M13 1V3M13 7V9M13 13V15M3 1H17C17.5304 1 18.0391 1.21071 18.4142 1.58579C18.7893 1.96086 19 2.46957 19 3V6C18.4696 6 17.9609 6.21071 17.5858 6.58579C17.2107 6.96086 17 7.46957 17 8C17 8.53043 17.2107 9.03914 17.5858 9.41421C17.9609 9.78929 18.4696 10 19 10V13C19 13.5304 18.7893 14.0391 18.4142 14.4142C18.0391 14.7893 17.5304 15 17 15H3C2.46957 15 1.96086 14.7893 1.58579 14.4142C1.21071 14.0391 1 13.5304 1 13V10C1.53043 10 2.03914 9.78929 2.41421 9.41421C2.78929 9.03914 3 8.53043 3 8C3 7.46957 2.78929 6.96086 2.41421 6.58579C2.03914 6.21071 1.53043 6 1 6V3C1 2.46957 1.21071 1.96086 1.58579 1.58579C1.96086 1.21071 2.46957 1 3 1Z' stroke='#C1834E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+        span Theater
+      .amenity-card
+        span.icon
+          svg(width='26' height='10' viewbox='0 0 26 10' fill='none' xmlns='http://www.w3.org/2000/svg')
+            path(d='M3 5H23M3 1V9M23 1V9M1 3V7M25 3V7M7 3V7M19 3V7' stroke='#C1834E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+        span Fitness Center
+      .amenity-card
+        span.icon
+          svg(width='26' height='22' viewbox='0 0 26 22' fill='none' xmlns='http://www.w3.org/2000/svg')
+            path(d='M11 6V5C10.4477 5 10 5.44772 10 6H11ZM15 11.835V12.835C15.1075 12.835 15.2143 12.8176 15.3162 12.7836L15 11.835ZM11 11.335L11.2425 10.3648C10.9438 10.2901 10.6273 10.3572 10.3846 10.5468C10.1419 10.7363 10 11.027 10 11.335H11ZM10 16C10 16.5523 10.4477 17 11 17C11.5523 17 12 16.5523 12 16H11H10ZM13 11.835L12.7575 12.8051C12.8368 12.8249 12.9182 12.835 13 12.835V11.835ZM3 1V2H23V1V0H3V1ZM23 1V2C23.5523 2 24 2.44771 24 3H25H26C26 1.34315 24.6569 0 23 0V1ZM25 3H24V19H25H26V3H25ZM25 19H24C24 19.5523 23.5523 20 23 20V21V22C24.6569 22 26 20.6569 26 19H25ZM23 21V20H3V21V22H23V21ZM3 21V20C2.44771 20 2 19.5523 2 19H1H0C0 20.6569 1.34315 22 3 22V21ZM1 19H2V3H1H0V19H1ZM1 3H2C2 2.44772 2.44772 2 3 2V1V0C1.34315 0 0 1.34315 0 3H1ZM11 6V7H13V6V5H11V6ZM13 6V7C13.3365 7 13.9124 7.15507 14.4051 7.4465C14.6428 7.58703 14.8119 7.73109 14.9113 7.85314C15.01 7.97423 15 8.02123 15 8H16H17C17 7.42647 16.7531 6.94732 16.4618 6.58985C16.1714 6.23335 15.7976 5.94644 15.4233 5.72505C14.6922 5.29263 13.7681 5 13 5V6ZM16 8H15C15 8.31806 15.036 8.7303 15.0567 9.05774C15.0795 9.42047 15.0909 9.75863 15.0659 10.062C15.0127 10.7067 14.8413 10.8338 14.6838 10.8863L15 11.835L15.3162 12.7836C16.6587 12.3361 16.9873 11.0981 17.0591 10.2264C17.0966 9.77162 17.0767 9.31383 17.0527 8.93206C17.0265 8.51502 17 8.23424 17 8H16ZM11 11.335H10V16H11H12V11.335H11ZM11 6H10V11.135H11H12V6H11ZM11 11.135H10V16H11H12V11.135H11ZM15 11.835V10.835H13V11.835V12.835H15V11.835ZM13 11.835L13.2425 10.8648L11.2425 10.3648L11 11.335L10.7575 12.3051L12.7575 12.8051L13 11.835Z' fill='#C1834E')
+        span Parking
+      .amenity-card
+        span.icon
+          svg(width='19' height='20' viewbox='0 0 19 20' fill='none' xmlns='http://www.w3.org/2000/svg')
+            path(d='M1 15L6 16L6.75 14.5M12 19V15L8 12L9 6M9 6L4 7V10M9 6L12 9L15 10M9 2C9 2.26522 9.10536 2.51957 9.29289 2.70711C9.48043 2.89464 9.73478 3 10 3C10.2652 3 10.5196 2.89464 10.7071 2.70711C10.8946 2.51957 11 2.26522 11 2C11 1.73478 10.8946 1.48043 10.7071 1.29289C10.5196 1.10536 10.2652 1 10 1C9.73478 1 9.48043 1.10536 9.29289 1.29289C9.10536 1.48043 9 1.73478 9 2ZM17.5 18C17.6326 18 17.7598 17.9473 17.8536 17.8536C17.9473 17.7598 18 17.6326 18 17.5C18 17.3674 17.9473 17.2402 17.8536 17.1464C17.7598 17.0527 17.6326 17 17.5 17C17.3674 17 17.2402 17.0527 17.1464 17.1464C17.0527 17.2402 17 17.3674 17 17.5C17 17.6326 17.0527 17.7598 17.1464 17.8536C17.2402 17.9473 17.3674 18 17.5 18Z' stroke='#C1834E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+        span Playground
+      .amenity-card
+        span.icon
+          svg(width='21' height='21' viewbox='0 0 21 21' fill='none' xmlns='http://www.w3.org/2000/svg')
+            path(d='M7 19V13C7 12.4696 7.21071 11.9609 7.58579 11.5858C7.96086 11.2107 8.46957 11 9 11H10.341M17.682 8.682L10 1L1 10H3V17C3 17.5304 3.21071 18.0391 3.58579 18.4142C3.96086 18.7893 4.46957 19 5 19H10M20 14C20 18 17.5 20 16.5 20C15.5 20 13 18 13 14C14 14 15.5 13.5 16.5 12.5C17.5 13.5 19 14 20 14Z' stroke='#C1834E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+        span 24/7 Security
+    .floor-layout
+      h1.floor-layout-title Floor Layout
+      .floor-image
+        img(src='../../assets/images/Rectangle 42.webp' alt='Floor layout image')
+  .location-section
+    .location-header
+      h1.location-title Project Features
+      p.location-description
+        | Discover the exceptional amenities and features that make Sunset Ridge Residence stand out.
+    .location-container
+      .location-image
+        img(src='../../assets/images/Rectangle.webp' alt='Sunset Ridge Residence Image')
+      .location-details
+        .detail-item
+          span.detail-icon
+            svg(width='18' height='22' viewbox='0 0 18 22' fill='none' xmlns='http://www.w3.org/2000/svg')
+              path(d='M17 9C17 13.993 11.461 19.193 9.601 20.799C9.42772 20.9293 9.2168 20.9998 9 20.9998C8.7832 20.9998 8.57228 20.9293 8.399 20.799C6.539 19.193 1 13.993 1 9C1 6.87827 1.84285 4.84344 3.34315 3.34315C4.84344 1.84285 6.87827 1 9 1C11.1217 1 13.1566 1.84285 14.6569 3.34315C16.1571 4.84344 17 6.87827 17 9Z' stroke='#C1834E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+              path(d='M9 12C10.6569 12 12 10.6569 12 9C12 7.34315 10.6569 6 9 6C7.34315 6 6 7.34315 6 9C6 10.6569 7.34315 12 9 12Z' stroke='#C1834E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+          .detail-description
+            span.description-title Address
+            span.description-info Avinashi Road, Coimbatore - 641018
+        .detail-item
+          span.detail-icon
+            svg(width='21' height='22' viewbox='0 0 21 22' fill='none' xmlns='http://www.w3.org/2000/svg')
+              path(d='M5 21V3C5 2.46957 5.21071 1.96086 5.58579 1.58579C5.96086 1.21071 6.46957 1 7 1H15C15.5304 1 16.0391 1.21071 16.4142 1.58579C16.7893 1.96086 17 2.46957 17 3V21M5 21H17M5 21H3C2.46957 21 1.96086 20.7893 1.58579 20.4142C1.21071 20.0391 1 19.5304 1 19V13C1 12.4696 1.21071 11.9609 1.58579 11.5858C1.96086 11.2107 2.46957 11 3 11H5M17 21H19C19.5304 21 20.0391 20.7893 20.4142 20.4142C20.7893 20.0391 21 19.5304 21 19V10C21 9.46957 20.7893 8.96086 20.4142 8.58579C20.0391 8.21071 19.5304 8 19 8H17M9 5H13M9 9H13M9 13H13M9 17H13' stroke='#C1834E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+          .detail-description
+            span.description-title Nearby Landmarks
+            ul.landmarks-list
+              li.landmark &bull; 2 km from City Center
+              li.landmark &bull; 5 min to Schools &amp; Hospitals
+              li.landmark &bull; 10 min to Shopping Malls
+              li.landmark &bull; Easy access to IT Parks
+        .detail-item
+          span.detail-icon
+            svg(width='18' height='13' viewbox='0 0 18 13' fill='none' xmlns='http://www.w3.org/2000/svg')
+              path(d='M17 1L6 12L1 7' stroke='#C1834E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+          .detail-description
+            span.description-title Connectivity
+            span.description-info
+              | Well-connected by major roads and public transport with easy
+              | access to highways
+  .project-gallery
+    .gallery-header
+      h1.gallery-title Project Gallery
+      p.gallery-description
+        | Explore the stunning interiors and features of Sunset Ridge Residence
+    .gallery-wrapper
+      .gallery-card(data-images='["../../assets/images/blog1.webp", "../../assets/images/blog2.webp", "../../assets/images/blog3.webp", "../../assets/images/card1.webp", "../../assets/images/card2.webp"]')
+        .gallery-image
+          img(src='../../assets/images/blog1.webp' alt='Living Room - 3BHK')
+        .gallery-description
+          span.description-title Living Room - 3BHK
+          span.description-text Spacious living area with modern amenities
+      .gallery-card(data-images='["../../assets/images/blog1.webp", "../../assets/images/blog2.webp", "../../assets/images/blog3.webp", "../../assets/images/card3.webp"]')
+        .gallery-image
+          img(src='../../assets/images/blog2.webp' alt='Bedroom - 3BHK')
+        .gallery-description
+          span.description-title Master Bedroom
+          span.description-text Elegant bedroom with premium finishes
+      .gallery-card(data-images='["../../assets/images/card4.webp", "../../assets/images/card5.webp", "../../assets/images/card6.webp"]')
+        .gallery-image
+          img(src='../../assets/images/card4.webp' alt='Kitchen')
+        .gallery-description
+          span.description-title Modern Kitchen
+          span.description-text Fully equipped modular kitchen
+      .gallery-card(data-images='["../../assets/images/card1.webp", "../../assets/images/card2.webp", "../../assets/images/card3.webp", "../../assets/images/card4.webp"]')
+        .gallery-image
+          img(src='../../assets/images/card1.webp' alt='Bathroom')
+        .gallery-description
+          span.description-title Luxury Bathroom
+          span.description-text Designer bathroom with premium fixtures
+      .gallery-card(data-images='["../../assets/images/card5.webp", "../../assets/images/card6.webp", "../../assets/images/blog1.webp"]')
+        .gallery-image
+          img(src='../../assets/images/card5.webp' alt='Balcony')
+        .gallery-description
+          span.description-title Private Balcony
+          span.description-text Spacious balcony with scenic views
+      .gallery-card(data-images='["../../assets/images/card6.webp", "../../assets/images/card5.webp","../../assets/images/card4.webp", "../../assets/images/card3.webp", "../../assets/images/card2.webp","../../assets/images/blog2.webp", "../../assets/images/blog3.webp","../../assets/images/blog2.webp", "../../assets/images/blog3.webp"]')
+        .gallery-image
+          img(src='../../assets/images/card6.webp' alt='Dining Area')
+        .gallery-description
+          span.description-title Dining Area
+          span.description-text Contemporary dining space
+  #modalOverlay.modal-overlay
+    .galleryViewWrapper
+      #closeModal.closeIcon
+        svg(width='24' height='24' viewbox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg')
+          path(d='M18 6L6 18M6 6L18 18' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+      .galleryCard
+        img#mainImage(src='' alt='Gallery Image')
+      #galleryThumbnails.gallerySwipper
+  .faq-section-header
+    .text
+      span.section-title Frequently Asked Questions
+    .faq-items-container
+      .faq-item-card
+        .faq-question-header
+          span.faq-question-text How long does a typical construction project take?
+          span.faq-toggle-icon
+            svg(width='10' height='6' viewbox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg')
+              path(d='M0.666504 0.666626L4.6665 4.66663L8.6665 0.666626' stroke='#717182' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+        .faq-answer-content
+          p.faq-answer-text
+            | The duration varies based on project complexity and scale. Residential projects
+            | typically take 8-14 months, while commercial developments may require 12-24 months. We
+            | provide detailed timelines during project planning.
+      .faq-item-card
+        .faq-question-header
+          span.faq-question-text What types of projects do you specialize in?
+          span.faq-toggle-icon
+            svg(width='10' height='6' viewbox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg')
+              path(d='M0.666504 0.666626L4.6665 4.66663L8.6665 0.666626' stroke='#717182' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+        .faq-answer-content
+          p.faq-answer-text
+            | We specialize in residential condominiums, luxury estates, commercial buildings, and
+            | mixed-use developments. Our portfolio includes projects ranging from boutique apartments
+            | to large-scale residential complexes.
+      .faq-item-card
+        .faq-question-header
+          span.faq-question-text Do you offer warranties on completed projects?
+          span.faq-toggle-icon
+            svg(width='10' height='6' viewbox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg')
+              path(d='M0.666504 0.666626L4.6665 4.66663L8.6665 0.666626' stroke='#717182' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+        .faq-answer-content
+          p.faq-answer-text
+            | Yes, all our projects come with comprehensive warranties covering structural integrity,
+            | workmanship, and materials. We offer 10-year structural warranties and 2-year warranties
+            | on finishes and fittings.
+section#contact-section.contact-container
+  .contact-section
+    .contact-card
+      h1.contact-card__heading
+        | Get in 
+        span touch
+      p.contact-card__description
+        | Ready to discuss your project? Contact us today to explore how
+        | we can bring
+        | your vision to life with precision and care.
+      .form-container
+        div
+          label(for='contact-name') Contact Name:
+          input#contact-name(type='text' name='contact-name')
+        div
+          label(for='address') Address:
+          input#address(type='text' name='address')
+        div
+          label(for='phone') Phone Number:
+          input#phone(type='tel' name='phone')
+        div
+          label(for='email') Email:
+          input#email(type='email' name='email')
+      button.contact-card__button Submit
+      .footer-info
+        .footerSection
+          div
+            span
+              svg(width='30' height='30' viewbox='0 0 30 30' fill='none' xmlns='http://www.w3.org/2000/svg')
+                path(d='M10.3293 11.8627C10.3293 12.069 10.4113 12.2668 10.5571 12.4126C10.7029 12.5585 10.9006 12.6405 11.1068 12.6405C11.313 12.6405 11.5107 12.5585 11.6565 12.4126C11.8023 12.2668 11.8842 12.069 11.8842 11.8627V10.3071C11.8842 10.1008 11.8023 9.90301 11.6565 9.75715C11.5107 9.61129 11.313 9.52935 11.1068 9.52935C10.9006 9.52935 10.7029 9.61129 10.5571 9.75715C10.4113 9.90301 10.3293 10.1008 10.3293 10.3071V11.8627ZM10.3293 11.8627C10.3293 13.9255 11.1484 15.9038 12.6064 17.3624C14.0644 18.821 16.0419 19.6404 18.1038 19.6404M18.1038 19.6404H19.6587C19.8649 19.6404 20.0626 19.5585 20.2084 19.4126C20.3542 19.2668 20.4361 19.069 20.4361 18.8627C20.4361 18.6564 20.3542 18.4586 20.2084 18.3127C20.0626 18.1668 19.8649 18.0849 19.6587 18.0849H18.1038C17.8976 18.0849 17.6999 18.1668 17.5541 18.3127C17.4083 18.4586 17.3264 18.6564 17.3264 18.8627C17.3264 19.069 17.4083 19.2668 17.5541 19.4126C17.6999 19.5585 17.8976 19.6404 18.1038 19.6404ZM1 28.9737L3.56557 23.0626C1.60277 20.2752 0.724267 16.8669 1.09492 13.4775C1.46557 10.088 3.0599 6.9504 5.5787 4.65344C8.09751 2.35648 11.3676 1.05808 14.7754 1.0019C18.1831 0.945724 21.4942 2.13563 24.0873 4.34832C26.6804 6.56101 28.3772 9.64437 28.8593 13.0198C29.3413 16.3951 28.5756 19.8305 26.7056 22.6812C24.8357 25.5318 21.9902 27.6018 18.7031 28.5026C15.4159 29.4034 11.9132 29.0731 8.8522 27.5737L1 28.9737Z' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+          .info
+            span.information WhatsApp
+            span.information 905604821
+        .footerSection
+          div
+            span
+              svg(width='28' height='28' viewbox='0 0 28 28' fill='none' xmlns='http://www.w3.org/2000/svg')
+                path(d='M15.4715 0V1.92844C17.3789 1.92844 19.1658 2.41055 20.8323 3.37476C22.4184 4.3189 23.6833 5.58443 24.6269 7.17137C25.5907 8.83867 26.0725 10.6265 26.0725 12.5348H28C28 10.2649 27.4278 8.15568 26.2834 6.20716C25.1791 4.3189 23.6833 2.82235 21.796 1.71751C19.8485 0.572505 17.7403 0 15.4715 0ZM5.50296 2.89266C4.96086 2.89266 4.48903 3.0634 4.08748 3.4049L0.98548 6.56874L1.07583 6.50847C0.573887 6.93032 0.242605 7.45261 0.0819839 8.07533C-0.0585599 8.69805 -0.0184045 9.30069 0.20245 9.88324C0.764625 11.4501 1.51754 13.0571 2.46119 14.7043C3.78632 16.9743 5.36241 19.0132 7.18948 20.8211C10.1208 23.774 13.7649 26.1042 18.1218 27.8117H18.1519C18.7341 28.0126 19.3164 28.0527 19.8987 27.9322C20.501 27.8117 21.033 27.5505 21.4948 27.1488L24.5366 24.1055C24.9382 23.7037 25.1389 23.2116 25.1389 22.629C25.1389 22.0264 24.9382 21.5242 24.5366 21.1224L20.5913 17.145C20.1898 16.7433 19.6878 16.5424 19.0855 16.5424C18.4832 16.5424 17.9812 16.7433 17.5797 17.145L15.6823 19.0734C14.1564 18.3503 12.8313 17.4564 11.707 16.3917C10.5826 15.307 9.68915 13.9912 9.02659 12.4444L10.954 10.516C11.3757 10.0741 11.5865 9.55179 11.5865 8.94915C11.5865 8.32643 11.3456 7.82423 10.8637 7.44256L10.954 7.53296L6.91843 3.4049C6.51688 3.0634 6.04506 2.89266 5.50296 2.89266ZM15.4715 3.85687V5.78531C16.6963 5.78531 17.8206 6.08663 18.8446 6.68927C19.8886 7.2919 20.7118 8.11551 21.3141 9.16008C21.9165 10.1846 22.2176 11.3095 22.2176 12.5348H24.1451C24.1451 10.968 23.7536 9.51161 22.9705 8.16572C22.1875 6.86001 21.1435 5.81544 19.8384 5.03202C18.4932 4.24859 17.0376 3.85687 15.4715 3.85687ZM5.50296 4.82109C5.56319 4.82109 5.63346 4.85122 5.71377 4.91149L9.65904 8.94915C9.67912 9.0295 9.65904 9.09981 9.5988 9.16008L6.73774 11.9925L6.94855 12.5951L7.34007 13.4388C7.66131 14.1218 8.03275 14.7847 8.45438 15.4275C9.03663 16.3314 9.67912 17.1048 10.3818 17.7476C11.3255 18.6717 12.4599 19.5154 13.785 20.2787C14.4476 20.6604 15.0097 20.9416 15.4715 21.1224L16.0739 21.3936L18.9952 18.4708C19.0353 18.4306 19.0654 18.4105 19.0855 18.4105C19.1056 18.4105 19.1357 18.4306 19.1759 18.4708L23.2416 22.5386C23.2817 22.5788 23.3018 22.6089 23.3018 22.629C23.3018 22.629 23.2817 22.6491 23.2416 22.6893L20.2299 25.6723C19.7882 26.054 19.3064 26.1544 18.7843 25.9736C14.6885 24.3867 11.2753 22.2172 8.54473 19.4652C6.8582 17.7778 5.38249 15.8594 4.1176 13.71C3.2141 12.1632 2.51138 10.6667 2.00944 9.22034V9.19021C1.92913 9.00942 1.91909 8.79849 1.97932 8.55744C2.03956 8.2963 2.14999 8.09542 2.31061 7.9548L5.29214 4.91149C5.35238 4.85122 5.42265 4.82109 5.50296 4.82109ZM15.4715 7.71375V9.64218C16.2746 9.64218 16.9573 9.92342 17.5194 10.4859C18.0816 11.0483 18.3627 11.7313 18.3627 12.5348H20.2902C20.2902 11.6711 20.0693 10.8675 19.6276 10.1243C19.206 9.38104 18.6237 8.79849 17.8808 8.37665C17.138 7.93471 16.3349 7.71375 15.4715 7.71375Z' fill='black')
+          .info
+            span.information Phone
+            span.information 905604821
+        .footerSection
+          div
+            span
+              svg(width='25' height='23' viewbox='0 0 25 23' fill='none' xmlns='http://www.w3.org/2000/svg')
+                path(d='M6.20455 0V1.97124L0 6.01065V22.75H24.8182V6.01065L18.6136 1.97124V0H6.20455ZM8.27273 2.06818H16.5455V10.0178L12.4091 12.6999L8.27273 10.0178V2.06818ZM9.30682 4.13636V6.20455H15.5114V4.13636H9.30682ZM6.20455 4.4272V8.66051L2.9407 6.56001L6.20455 4.4272ZM18.6136 4.4272L21.8775 6.56001L18.6136 8.66051V4.4272ZM9.30682 7.23864V9.30682H15.5114V7.23864H9.30682ZM2.06818 8.46662L12.4091 15.1559L22.75 8.46662V20.6818H2.06818V8.46662Z' fill='black')
+          .info
+            span.information E-MAIL
+            span.information info@company.com
+
+include layout/footer.pug 
+
+script(src=utils.assetPath("/bundle/OnGoingPage.js"))

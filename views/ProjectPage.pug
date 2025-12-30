@@ -1,0 +1,377 @@
+doctype html
+head
+  meta(charset='UTF-8')
+  meta(name='viewport' content='width=device-width, initial-scale=1.0')
+  title Project Page
+  //- link(rel='stylesheet' href='.public/css/ProjectPage.css')
+  //- link(rel='stylesheet' href='../home.css')
+  link(rel='stylesheet' href=utils.assetPath("/bundle/ProjectPage.css"))
+
+
+include layout/header.pug 
+
+div
+  .hero-container
+    .details-wrapper
+      span.details-wrapper__header OUR PROJECTS
+      p.details-wrapper__paragraph
+        | Explore our portfolio of exceptional construction projects, from
+        | completed
+        | masterpieces to exciting works in progress
+      span.details-wrapper__info
+        .heroContact
+          .heroIcon
+            .heroImage
+              svg(width='19' height='19' viewbox='0 0 19 19' fill='none' xmlns='http://www.w3.org/2000/svg')
+                path(d='M10.6934 12.9733C10.8655 13.0524 11.0594 13.0704 11.2431 13.0245C11.4269 12.9786 11.5895 12.8715 11.7042 12.7208L12 12.3333C12.1553 12.1263 12.3566 11.9583 12.588 11.8426C12.8194 11.7269 13.0746 11.6666 13.3334 11.6666H15.8334C16.2754 11.6666 16.6993 11.8422 17.0119 12.1548C17.3244 12.4674 17.5 12.8913 17.5 13.3333V15.8333C17.5 16.2753 17.3244 16.6993 17.0119 17.0118C16.6993 17.3244 16.2754 17.5 15.8334 17.5C11.8551 17.5 8.03982 15.9196 5.22677 13.1066C2.41373 10.2935 0.833374 6.47823 0.833374 2.49998C0.833374 2.05795 1.00897 1.63403 1.32153 1.32147C1.63409 1.00891 2.05801 0.833313 2.50004 0.833313H5.00004C5.44207 0.833313 5.86599 1.00891 6.17855 1.32147C6.49111 1.63403 6.66671 2.05795 6.66671 2.49998V4.99998C6.66671 5.25872 6.60647 5.51391 6.49075 5.74534C6.37504 5.97676 6.20703 6.17807 6.00004 6.33331L5.61004 6.62581C5.45705 6.74263 5.34922 6.9088 5.30487 7.0961C5.26051 7.28341 5.28236 7.48029 5.36671 7.65331C6.50561 9.96653 8.37873 11.8373 10.6934 12.9733Z' stroke='white' stroke-width='1.66667' stroke-linecap='round' stroke-linejoin='round')
+          .heroTitle
+            .heroCall
+              h1.callText Call us now
+            .heroNumber
+              h1.numberText +1 (555) 123-4567
+  #completed-title.project-body-wrapper
+    .tab-wrapper
+      .project-tabs
+        button.tab-btn.active-tab(data-project='Completed Project') Completed Project
+        button.tab-btn(data-project='Ongoing Project') Ongoing Project
+    div
+      .card-grid-wrapper
+        a(href='/OnGoingPage')
+          .project-card
+            .image-container
+              img(src='../../assets/images/card1.webp' alt='Blog1')
+            .card-info
+              span.card-info__header Pinnacle View Condominiums
+              span.card-info__location
+                span
+                  svg(width='12' height='15' viewbox='0 0 12 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+                    path(d='M11.3334 5.99999C11.3334 9.32866 7.64075 12.7953 6.40075 13.866C6.28523 13.9529 6.14461 13.9998 6.00008 13.9998C5.85555 13.9998 5.71493 13.9529 5.59941 13.866C4.35941 12.7953 0.666748 9.32866 0.666748 5.99999C0.666748 4.5855 1.22865 3.22895 2.22885 2.22875C3.22904 1.22856 4.58559 0.666656 6.00008 0.666656C7.41457 0.666656 8.77112 1.22856 9.77132 2.22875C10.7715 3.22895 11.3334 4.5855 11.3334 5.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                    path(d='M6.00008 7.99999C7.10465 7.99999 8.00008 7.10456 8.00008 5.99999C8.00008 4.89542 7.10465 3.99999 6.00008 3.99999C4.89551 3.99999 4.00008 4.89542 4.00008 5.99999C4.00008 7.10456 4.89551 7.99999 6.00008 7.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                |                                     West Side
+              span.card-info__timing
+                span
+                  svg(width='14' height='15' viewbox='0 0 14 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+                    path(d='M4.00008 0.666656V3.33332M9.33342 0.666656V3.33332M0.666748 5.99999H12.6667M2.00008 1.99999H11.3334C12.0698 1.99999 12.6667 2.59694 12.6667 3.33332V12.6667C12.6667 13.403 12.0698 14 11.3334 14H2.00008C1.2637 14 0.666748 13.403 0.666748 12.6667V3.33332C0.666748 2.59694 1.2637 1.99999 2.00008 1.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                | November 2024
+              .card-footer
+                span.card-footer__paragraph 24 Premium Apartments
+                button.card-footer__button View
+        a(href='/OnGoingPage')
+          .project-card
+            .image-container
+              img(src='../../assets/images/card2.webp' alt='Blog1')
+            .card-info
+              span.card-info__header Serenity Heights Estate
+              span.card-info__location
+                span
+                  svg(width='12' height='15' viewbox='0 0 12 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+                    path(d='M11.3334 5.99999C11.3334 9.32866 7.64075 12.7953 6.40075 13.866C6.28523 13.9529 6.14461 13.9998 6.00008 13.9998C5.85555 13.9998 5.71493 13.9529 5.59941 13.866C4.35941 12.7953 0.666748 9.32866 0.666748 5.99999C0.666748 4.5855 1.22865 3.22895 2.22885 2.22875C3.22904 1.22856 4.58559 0.666656 6.00008 0.666656C7.41457 0.666656 8.77112 1.22856 9.77132 2.22875C10.7715 3.22895 11.3334 4.5855 11.3334 5.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                    path(d='M6.00008 7.99999C7.10465 7.99999 8.00008 7.10456 8.00008 5.99999C8.00008 4.89542 7.10465 3.99999 6.00008 3.99999C4.89551 3.99999 4.00008 4.89542 4.00008 5.99999C4.00008 7.10456 4.89551 7.99999 6.00008 7.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                |                                     West Side
+              span.card-info__timing
+                span
+                  svg(width='14' height='15' viewbox='0 0 14 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+                    path(d='M4.00008 0.666656V3.33332M9.33342 0.666656V3.33332M0.666748 5.99999H12.6667M2.00008 1.99999H11.3334C12.0698 1.99999 12.6667 2.59694 12.6667 3.33332V12.6667C12.6667 13.403 12.0698 14 11.3334 14H2.00008C1.2637 14 0.666748 13.403 0.666748 12.6667V3.33332C0.666748 2.59694 1.2637 1.99999 2.00008 1.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                | Augest 2024
+              .card-footer
+                span.card-footer__paragraph 24 Premium Apartments
+                button.card-footer__button View
+        a(href='/OnGoingPage')
+          .project-card
+            .image-container
+              img(src='../../assets/images/card3.webp' alt='Blog1')
+            .card-info
+              span.card-info__header Grandview Manor Residences
+              span.card-info__location
+                span
+                  svg(width='12' height='15' viewbox='0 0 12 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+                    path(d='M11.3334 5.99999C11.3334 9.32866 7.64075 12.7953 6.40075 13.866C6.28523 13.9529 6.14461 13.9998 6.00008 13.9998C5.85555 13.9998 5.71493 13.9529 5.59941 13.866C4.35941 12.7953 0.666748 9.32866 0.666748 5.99999C0.666748 4.5855 1.22865 3.22895 2.22885 2.22875C3.22904 1.22856 4.58559 0.666656 6.00008 0.666656C7.41457 0.666656 8.77112 1.22856 9.77132 2.22875C10.7715 3.22895 11.3334 4.5855 11.3334 5.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                    path(d='M6.00008 7.99999C7.10465 7.99999 8.00008 7.10456 8.00008 5.99999C8.00008 4.89542 7.10465 3.99999 6.00008 3.99999C4.89551 3.99999 4.00008 4.89542 4.00008 5.99999C4.00008 7.10456 4.89551 7.99999 6.00008 7.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                |                                     South End
+              span.card-info__timing
+                span
+                  svg(width='14' height='15' viewbox='0 0 14 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+                    path(d='M4.00008 0.666656V3.33332M9.33342 0.666656V3.33332M0.666748 5.99999H12.6667M2.00008 1.99999H11.3334C12.0698 1.99999 12.6667 2.59694 12.6667 3.33332V12.6667C12.6667 13.403 12.0698 14 11.3334 14H2.00008C1.2637 14 0.666748 13.403 0.666748 12.6667V3.33332C0.666748 2.59694 1.2637 1.99999 2.00008 1.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                | September 2024
+              .card-footer
+                span.card-footer__paragraph 24 Premium Apartments
+                button.card-footer__button View
+        a(href='/OnGoingPage')
+          .project-card
+            .image-container
+              img(src='../../assets/images/card4.webp' alt='Blog1')
+            .card-info
+              span.card-info__header Pinnacle View Condominiums
+              span.card-info__location
+                span
+                  svg(width='12' height='15' viewbox='0 0 12 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+                    path(d='M11.3334 5.99999C11.3334 9.32866 7.64075 12.7953 6.40075 13.866C6.28523 13.9529 6.14461 13.9998 6.00008 13.9998C5.85555 13.9998 5.71493 13.9529 5.59941 13.866C4.35941 12.7953 0.666748 9.32866 0.666748 5.99999C0.666748 4.5855 1.22865 3.22895 2.22885 2.22875C3.22904 1.22856 4.58559 0.666656 6.00008 0.666656C7.41457 0.666656 8.77112 1.22856 9.77132 2.22875C10.7715 3.22895 11.3334 4.5855 11.3334 5.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                    path(d='M6.00008 7.99999C7.10465 7.99999 8.00008 7.10456 8.00008 5.99999C8.00008 4.89542 7.10465 3.99999 6.00008 3.99999C4.89551 3.99999 4.00008 4.89542 4.00008 5.99999C4.00008 7.10456 4.89551 7.99999 6.00008 7.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                |                                     East Side
+              span.card-info__timing
+                span
+                  svg(width='14' height='15' viewbox='0 0 14 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+                    path(d='M4.00008 0.666656V3.33332M9.33342 0.666656V3.33332M0.666748 5.99999H12.6667M2.00008 1.99999H11.3334C12.0698 1.99999 12.6667 2.59694 12.6667 3.33332V12.6667C12.6667 13.403 12.0698 14 11.3334 14H2.00008C1.2637 14 0.666748 13.403 0.666748 12.6667V3.33332C0.666748 2.59694 1.2637 1.99999 2.00008 1.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                | November 2024
+              .card-footer
+                span.card-footer__paragraph 24 Premium Apartments
+                button.card-footer__button View
+        a(href='/OnGoingPage')
+          .project-card
+            .image-container
+              img(src='../../assets/images/card1.webp' alt='Blog1')
+            .card-info
+              span.card-info__header Pinnacle View Condominiums
+              span.card-info__location
+                span
+                  svg(width='12' height='15' viewbox='0 0 12 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+                    path(d='M11.3334 5.99999C11.3334 9.32866 7.64075 12.7953 6.40075 13.866C6.28523 13.9529 6.14461 13.9998 6.00008 13.9998C5.85555 13.9998 5.71493 13.9529 5.59941 13.866C4.35941 12.7953 0.666748 9.32866 0.666748 5.99999C0.666748 4.5855 1.22865 3.22895 2.22885 2.22875C3.22904 1.22856 4.58559 0.666656 6.00008 0.666656C7.41457 0.666656 8.77112 1.22856 9.77132 2.22875C10.7715 3.22895 11.3334 4.5855 11.3334 5.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                    path(d='M6.00008 7.99999C7.10465 7.99999 8.00008 7.10456 8.00008 5.99999C8.00008 4.89542 7.10465 3.99999 6.00008 3.99999C4.89551 3.99999 4.00008 4.89542 4.00008 5.99999C4.00008 7.10456 4.89551 7.99999 6.00008 7.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                |                                     East Side
+              span.card-info__timing
+                span
+                  svg(width='14' height='15' viewbox='0 0 14 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+                    path(d='M4.00008 0.666656V3.33332M9.33342 0.666656V3.33332M0.666748 5.99999H12.6667M2.00008 1.99999H11.3334C12.0698 1.99999 12.6667 2.59694 12.6667 3.33332V12.6667C12.6667 13.403 12.0698 14 11.3334 14H2.00008C1.2637 14 0.666748 13.403 0.666748 12.6667V3.33332C0.666748 2.59694 1.2637 1.99999 2.00008 1.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                | November 2024
+              .card-footer
+                span.card-footer__paragraph 24 Premium Apartments
+                button.card-footer__button View
+        a(href='/OnGoingPage')
+          .project-card
+            .image-container
+              img(src='../../assets/images/card1.webp' alt='Blog1')
+            .card-info
+              span.card-info__header Pinnacle View Condominiums
+              span.card-info__location
+                span
+                  svg(width='12' height='15' viewbox='0 0 12 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+                    path(d='M11.3334 5.99999C11.3334 9.32866 7.64075 12.7953 6.40075 13.866C6.28523 13.9529 6.14461 13.9998 6.00008 13.9998C5.85555 13.9998 5.71493 13.9529 5.59941 13.866C4.35941 12.7953 0.666748 9.32866 0.666748 5.99999C0.666748 4.5855 1.22865 3.22895 2.22885 2.22875C3.22904 1.22856 4.58559 0.666656 6.00008 0.666656C7.41457 0.666656 8.77112 1.22856 9.77132 2.22875C10.7715 3.22895 11.3334 4.5855 11.3334 5.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                    path(d='M6.00008 7.99999C7.10465 7.99999 8.00008 7.10456 8.00008 5.99999C8.00008 4.89542 7.10465 3.99999 6.00008 3.99999C4.89551 3.99999 4.00008 4.89542 4.00008 5.99999C4.00008 7.10456 4.89551 7.99999 6.00008 7.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                | East Side
+              span.card-info__timing
+                span
+                  svg(width='14' height='15' viewbox='0 0 14 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+                    path(d='M4.00008 0.666656V3.33332M9.33342 0.666656V3.33332M0.666748 5.99999H12.6667M2.00008 1.99999H11.3334C12.0698 1.99999 12.6667 2.59694 12.6667 3.33332V12.6667C12.6667 13.403 12.0698 14 11.3334 14H2.00008C1.2637 14 0.666748 13.403 0.666748 12.6667V3.33332C0.666748 2.59694 1.2637 1.99999 2.00008 1.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                | November 2024
+              .card-footer
+                span.card-footer__paragraph 24 Premium Apartments
+                button.card-footer__button View
+      .view-more-button-container
+        button#viewMoreBtn.view-more-btn View More
+#ongoing-title.project-body-wrapper
+  div
+    .card-grid-wrapper
+      a(href='/OnGoingPage')
+        .project-card
+          .image-container
+            img(src='../../assets/images/card2.webp' alt='Blog1')
+          .card-info
+            span.card-info__header Pinnacle View Condominiums
+            span.card-info__location
+              span
+                svg(width='12' height='15' viewbox='0 0 12 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+                  path(d='M11.3334 5.99999C11.3334 9.32866 7.64075 12.7953 6.40075 13.866C6.28523 13.9529 6.14461 13.9998 6.00008 13.9998C5.85555 13.9998 5.71493 13.9529 5.59941 13.866C4.35941 12.7953 0.666748 9.32866 0.666748 5.99999C0.666748 4.5855 1.22865 3.22895 2.22885 2.22875C3.22904 1.22856 4.58559 0.666656 6.00008 0.666656C7.41457 0.666656 8.77112 1.22856 9.77132 2.22875C10.7715 3.22895 11.3334 4.5855 11.3334 5.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                  path(d='M6.00008 7.99999C7.10465 7.99999 8.00008 7.10456 8.00008 5.99999C8.00008 4.89542 7.10465 3.99999 6.00008 3.99999C4.89551 3.99999 4.00008 4.89542 4.00008 5.99999C4.00008 7.10456 4.89551 7.99999 6.00008 7.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+              | West Side
+            span.card-info__timing
+              span
+                svg(width='14' height='15' viewbox='0 0 14 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+                  path(d='M4.00008 0.666656V3.33332M9.33342 0.666656V3.33332M0.666748 5.99999H12.6667M2.00008 1.99999H11.3334C12.0698 1.99999 12.6667 2.59694 12.6667 3.33332V12.6667C12.6667 13.403 12.0698 14 11.3334 14H2.00008C1.2637 14 0.666748 13.403 0.666748 12.6667V3.33332C0.666748 2.59694 1.2637 1.99999 2.00008 1.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+              | November 2024
+            .card-footer
+              span.card-footer__paragraph 24 Premium Apartments
+              button.card-footer__button View
+      a(href='/OnGoingPage')
+        .project-card
+          .image-container
+            img(src='../../assets/images/card3.webp' alt='Blog1')
+          .card-info
+            span.card-info__header Serenity Heights Estate
+            span.card-info__location
+              span
+                svg(width='12' height='15' viewbox='0 0 12 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+                  path(d='M11.3334 5.99999C11.3334 9.32866 7.64075 12.7953 6.40075 13.866C6.28523 13.9529 6.14461 13.9998 6.00008 13.9998C5.85555 13.9998 5.71493 13.9529 5.59941 13.866C4.35941 12.7953 0.666748 9.32866 0.666748 5.99999C0.666748 4.5855 1.22865 3.22895 2.22885 2.22875C3.22904 1.22856 4.58559 0.666656 6.00008 0.666656C7.41457 0.666656 8.77112 1.22856 9.77132 2.22875C10.7715 3.22895 11.3334 4.5855 11.3334 5.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                  path(d='M6.00008 7.99999C7.10465 7.99999 8.00008 7.10456 8.00008 5.99999C8.00008 4.89542 7.10465 3.99999 6.00008 3.99999C4.89551 3.99999 4.00008 4.89542 4.00008 5.99999C4.00008 7.10456 4.89551 7.99999 6.00008 7.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+              | West Side
+            span.card-info__timing
+              span
+                svg(width='14' height='15' viewbox='0 0 14 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+                  path(d='M4.00008 0.666656V3.33332M9.33342 0.666656V3.33332M0.666748 5.99999H12.6667M2.00008 1.99999H11.3334C12.0698 1.99999 12.6667 2.59694 12.6667 3.33332V12.6667C12.6667 13.403 12.0698 14 11.3334 14H2.00008C1.2637 14 0.666748 13.403 0.666748 12.6667V3.33332C0.666748 2.59694 1.2637 1.99999 2.00008 1.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+              | Augest 2024
+            .card-footer
+              span.card-footer__paragraph 24 Premium Apartments
+              button.card-footer__button View
+      a(href='/OnGoingPage')
+        .project-card
+          .image-container
+            img(src='../../assets/images/card4.webp' alt='Blog1')
+          .card-info
+            span.card-info__header Grandview Manor Residences
+            span.card-info__location
+              span
+                svg(width='12' height='15' viewbox='0 0 12 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+                  path(d='M11.3334 5.99999C11.3334 9.32866 7.64075 12.7953 6.40075 13.866C6.28523 13.9529 6.14461 13.9998 6.00008 13.9998C5.85555 13.9998 5.71493 13.9529 5.59941 13.866C4.35941 12.7953 0.666748 9.32866 0.666748 5.99999C0.666748 4.5855 1.22865 3.22895 2.22885 2.22875C3.22904 1.22856 4.58559 0.666656 6.00008 0.666656C7.41457 0.666656 8.77112 1.22856 9.77132 2.22875C10.7715 3.22895 11.3334 4.5855 11.3334 5.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                  path(d='M6.00008 7.99999C7.10465 7.99999 8.00008 7.10456 8.00008 5.99999C8.00008 4.89542 7.10465 3.99999 6.00008 3.99999C4.89551 3.99999 4.00008 4.89542 4.00008 5.99999C4.00008 7.10456 4.89551 7.99999 6.00008 7.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+              | South End
+            span.card-info__timing
+              span
+                svg(width='14' height='15' viewbox='0 0 14 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+                  path(d='M4.00008 0.666656V3.33332M9.33342 0.666656V3.33332M0.666748 5.99999H12.6667M2.00008 1.99999H11.3334C12.0698 1.99999 12.6667 2.59694 12.6667 3.33332V12.6667C12.6667 13.403 12.0698 14 11.3334 14H2.00008C1.2637 14 0.666748 13.403 0.666748 12.6667V3.33332C0.666748 2.59694 1.2637 1.99999 2.00008 1.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+              | September 2024
+            .card-footer
+              span.card-footer__paragraph 24 Premium Apartments
+              button.card-footer__button View
+      a(href='/OnGoingPage')
+        .project-card
+          .image-container
+            img(src='../../assets/images/card3.webp' alt='Blog1')
+          .card-info
+            span.card-info__header Pinnacle View Condominiums
+            span.card-info__location
+              span
+                svg(width='12' height='15' viewbox='0 0 12 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+                  path(d='M11.3334 5.99999C11.3334 9.32866 7.64075 12.7953 6.40075 13.866C6.28523 13.9529 6.14461 13.9998 6.00008 13.9998C5.85555 13.9998 5.71493 13.9529 5.59941 13.866C4.35941 12.7953 0.666748 9.32866 0.666748 5.99999C0.666748 4.5855 1.22865 3.22895 2.22885 2.22875C3.22904 1.22856 4.58559 0.666656 6.00008 0.666656C7.41457 0.666656 8.77112 1.22856 9.77132 2.22875C10.7715 3.22895 11.3334 4.5855 11.3334 5.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                  path(d='M6.00008 7.99999C7.10465 7.99999 8.00008 7.10456 8.00008 5.99999C8.00008 4.89542 7.10465 3.99999 6.00008 3.99999C4.89551 3.99999 4.00008 4.89542 4.00008 5.99999C4.00008 7.10456 4.89551 7.99999 6.00008 7.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+              | East Side
+            span.card-info__timing
+              span
+                svg(width='14' height='15' viewbox='0 0 14 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+                  path(d='M4.00008 0.666656V3.33332M9.33342 0.666656V3.33332M0.666748 5.99999H12.6667M2.00008 1.99999H11.3334C12.0698 1.99999 12.6667 2.59694 12.6667 3.33332V12.6667C12.6667 13.403 12.0698 14 11.3334 14H2.00008C1.2637 14 0.666748 13.403 0.666748 12.6667V3.33332C0.666748 2.59694 1.2637 1.99999 2.00008 1.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+              | November 2024
+            .card-footer
+              span.card-footer__paragraph 24 Premium Apartments
+              button.card-footer__button View
+      a(href='/OnGoingPage')
+        .project-card
+          .image-container
+            img(src='../../assets/images/card2.webp' alt='Blog1')
+          .card-info
+            span.card-info__header Pinnacle View Condominiums
+            span.card-info__location
+              span
+                svg(width='12' height='15' viewbox='0 0 12 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+                  path(d='M11.3334 5.99999C11.3334 9.32866 7.64075 12.7953 6.40075 13.866C6.28523 13.9529 6.14461 13.9998 6.00008 13.9998C5.85555 13.9998 5.71493 13.9529 5.59941 13.866C4.35941 12.7953 0.666748 9.32866 0.666748 5.99999C0.666748 4.5855 1.22865 3.22895 2.22885 2.22875C3.22904 1.22856 4.58559 0.666656 6.00008 0.666656C7.41457 0.666656 8.77112 1.22856 9.77132 2.22875C10.7715 3.22895 11.3334 4.5855 11.3334 5.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                  path(d='M6.00008 7.99999C7.10465 7.99999 8.00008 7.10456 8.00008 5.99999C8.00008 4.89542 7.10465 3.99999 6.00008 3.99999C4.89551 3.99999 4.00008 4.89542 4.00008 5.99999C4.00008 7.10456 4.89551 7.99999 6.00008 7.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+              | East Side
+            span.card-info__timing
+              span
+                svg(width='14' height='15' viewbox='0 0 14 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+                  path(d='M4.00008 0.666656V3.33332M9.33342 0.666656V3.33332M0.666748 5.99999H12.6667M2.00008 1.99999H11.3334C12.0698 1.99999 12.6667 2.59694 12.6667 3.33332V12.6667C12.6667 13.403 12.0698 14 11.3334 14H2.00008C1.2637 14 0.666748 13.403 0.666748 12.6667V3.33332C0.666748 2.59694 1.2637 1.99999 2.00008 1.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+              | November 2024
+            .card-footer
+              span.card-footer__paragraph 24 Premium Apartments
+              button.card-footer__button View
+      a(href='/OnGoingPage')
+        .project-card
+          .image-container
+            img(src='../../assets/images/card3.webp' alt='Blog1')
+          .card-info
+            span.card-info__header Pinnacle View Condominiums
+            span.card-info__location
+              span
+                svg(width='12' height='15' viewbox='0 0 12 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+                  path(d='M11.3334 5.99999C11.3334 9.32866 7.64075 12.7953 6.40075 13.866C6.28523 13.9529 6.14461 13.9998 6.00008 13.9998C5.85555 13.9998 5.71493 13.9529 5.59941 13.866C4.35941 12.7953 0.666748 9.32866 0.666748 5.99999C0.666748 4.5855 1.22865 3.22895 2.22885 2.22875C3.22904 1.22856 4.58559 0.666656 6.00008 0.666656C7.41457 0.666656 8.77112 1.22856 9.77132 2.22875C10.7715 3.22895 11.3334 4.5855 11.3334 5.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                  path(d='M6.00008 7.99999C7.10465 7.99999 8.00008 7.10456 8.00008 5.99999C8.00008 4.89542 7.10465 3.99999 6.00008 3.99999C4.89551 3.99999 4.00008 4.89542 4.00008 5.99999C4.00008 7.10456 4.89551 7.99999 6.00008 7.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+              | East Side
+            span.card-info__timing
+              span
+                svg(width='14' height='15' viewbox='0 0 14 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+                  path(d='M4.00008 0.666656V3.33332M9.33342 0.666656V3.33332M0.666748 5.99999H12.6667M2.00008 1.99999H11.3334C12.0698 1.99999 12.6667 2.59694 12.6667 3.33332V12.6667C12.6667 13.403 12.0698 14 11.3334 14H2.00008C1.2637 14 0.666748 13.403 0.666748 12.6667V3.33332C0.666748 2.59694 1.2637 1.99999 2.00008 1.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+              | November 2024
+            .card-footer
+              span.card-footer__paragraph 24 Premium Apartments
+              button.card-footer__button View
+    //
+      <div class="view-more-button-container">
+      <button id="viewMoreBtn" class="view-more-btn">View More</button>
+      </div>
+.faq-container
+  .faq-section-header
+    .text
+      span.sectionHeading Frequently Asked Questions
+    .faq-items-container
+      .faq-item-card
+        .faq-question-header
+          span.faq-question-text How long does a typical construction project take?
+          span.faq-toggle-icon
+            svg(width='10' height='6' viewbox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg')
+              path(d='M0.666504 0.666626L4.6665 4.66663L8.6665 0.666626' stroke='#717182' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+        .faq-answer-content
+          p.faq-answer-text
+            | The duration varies based on project complexity and scale. Residential projects
+            | typically take 8-14 months, while commercial developments may require 12-24 months. We
+            | provide detailed timelines during project planning.
+      .faq-item-card
+        .faq-question-header
+          span.faq-question-text What types of projects do you specialize in?
+          span.faq-toggle-icon
+            svg(width='10' height='6' viewbox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg')
+              path(d='M0.666504 0.666626L4.6665 4.66663L8.6665 0.666626' stroke='#717182' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+        .faq-answer-content
+          p.faq-answer-text
+            | We specialize in residential condominiums, luxury estates, commercial buildings, and
+            | mixed-use developments. Our portfolio includes projects ranging from boutique apartments
+            | to large-scale residential complexes.
+      .faq-item-card
+        .faq-question-header
+          span.faq-question-text Do you offer warranties on completed projects?
+          span.faq-toggle-icon
+            svg(width='10' height='6' viewbox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg')
+              path(d='M0.666504 0.666626L4.6665 4.66663L8.6665 0.666626' stroke='#717182' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+        .faq-answer-content
+          p.faq-answer-text
+            | Yes, all our projects come with comprehensive warranties covering structural integrity,
+            | workmanship, and materials. We offer 10-year structural warranties and 2-year warranties
+            | on finishes and fittings.
+#contact-section.contact-container
+  .contact-section
+    .contact-card
+      h1.contact-card__heading
+        | Get in 
+        span touch
+      p.contact-card__description
+        | Ready to discuss your project? Contact us today to explore how
+        | we can bring
+        | your vision to life with precision and care.
+      .form-container
+        div
+          label(for='contact-name') Contact Name:
+          input#contact-name(type='text' name='contact-name')
+        div
+          label(for='address') Address:
+          input#address(type='text' name='address')
+        div
+          label(for='phone') Phone Number:
+          input#phone(type='tel' name='phone')
+        div
+          label(for='email') Email:
+          input#email(type='email' name='email')
+      button.contact-card__button Submit
+      .footer-info
+        .footerSection
+          div
+            span
+              svg(width='30' height='30' viewbox='0 0 30 30' fill='none' xmlns='http://www.w3.org/2000/svg')
+                path(d='M10.3293 11.8627C10.3293 12.069 10.4113 12.2668 10.5571 12.4126C10.7029 12.5585 10.9006 12.6405 11.1068 12.6405C11.313 12.6405 11.5107 12.5585 11.6565 12.4126C11.8023 12.2668 11.8842 12.069 11.8842 11.8627V10.3071C11.8842 10.1008 11.8023 9.90301 11.6565 9.75715C11.5107 9.61129 11.313 9.52935 11.1068 9.52935C10.9006 9.52935 10.7029 9.61129 10.5571 9.75715C10.4113 9.90301 10.3293 10.1008 10.3293 10.3071V11.8627ZM10.3293 11.8627C10.3293 13.9255 11.1484 15.9038 12.6064 17.3624C14.0644 18.821 16.0419 19.6404 18.1038 19.6404M18.1038 19.6404H19.6587C19.8649 19.6404 20.0626 19.5585 20.2084 19.4126C20.3542 19.2668 20.4361 19.069 20.4361 18.8627C20.4361 18.6564 20.3542 18.4586 20.2084 18.3127C20.0626 18.1668 19.8649 18.0849 19.6587 18.0849H18.1038C17.8976 18.0849 17.6999 18.1668 17.5541 18.3127C17.4083 18.4586 17.3264 18.6564 17.3264 18.8627C17.3264 19.069 17.4083 19.2668 17.5541 19.4126C17.6999 19.5585 17.8976 19.6404 18.1038 19.6404ZM1 28.9737L3.56557 23.0626C1.60277 20.2752 0.724267 16.8669 1.09492 13.4775C1.46557 10.088 3.0599 6.9504 5.5787 4.65344C8.09751 2.35648 11.3676 1.05808 14.7754 1.0019C18.1831 0.945724 21.4942 2.13563 24.0873 4.34832C26.6804 6.56101 28.3772 9.64437 28.8593 13.0198C29.3413 16.3951 28.5756 19.8305 26.7056 22.6812C24.8357 25.5318 21.9902 27.6018 18.7031 28.5026C15.4159 29.4034 11.9132 29.0731 8.8522 27.5737L1 28.9737Z' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+          .info
+            span.information WhatsApp
+            span.information 905604821
+        .footerSection
+          div
+            span
+              svg(width='28' height='28' viewbox='0 0 28 28' fill='none' xmlns='http://www.w3.org/2000/svg')
+                path(d='M15.4715 0V1.92844C17.3789 1.92844 19.1658 2.41055 20.8323 3.37476C22.4184 4.3189 23.6833 5.58443 24.6269 7.17137C25.5907 8.83867 26.0725 10.6265 26.0725 12.5348H28C28 10.2649 27.4278 8.15568 26.2834 6.20716C25.1791 4.3189 23.6833 2.82235 21.796 1.71751C19.8485 0.572505 17.7403 0 15.4715 0ZM5.50296 2.89266C4.96086 2.89266 4.48903 3.0634 4.08748 3.4049L0.98548 6.56874L1.07583 6.50847C0.573887 6.93032 0.242605 7.45261 0.0819839 8.07533C-0.0585599 8.69805 -0.0184045 9.30069 0.20245 9.88324C0.764625 11.4501 1.51754 13.0571 2.46119 14.7043C3.78632 16.9743 5.36241 19.0132 7.18948 20.8211C10.1208 23.774 13.7649 26.1042 18.1218 27.8117H18.1519C18.7341 28.0126 19.3164 28.0527 19.8987 27.9322C20.501 27.8117 21.033 27.5505 21.4948 27.1488L24.5366 24.1055C24.9382 23.7037 25.1389 23.2116 25.1389 22.629C25.1389 22.0264 24.9382 21.5242 24.5366 21.1224L20.5913 17.145C20.1898 16.7433 19.6878 16.5424 19.0855 16.5424C18.4832 16.5424 17.9812 16.7433 17.5797 17.145L15.6823 19.0734C14.1564 18.3503 12.8313 17.4564 11.707 16.3917C10.5826 15.307 9.68915 13.9912 9.02659 12.4444L10.954 10.516C11.3757 10.0741 11.5865 9.55179 11.5865 8.94915C11.5865 8.32643 11.3456 7.82423 10.8637 7.44256L10.954 7.53296L6.91843 3.4049C6.51688 3.0634 6.04506 2.89266 5.50296 2.89266ZM15.4715 3.85687V5.78531C16.6963 5.78531 17.8206 6.08663 18.8446 6.68927C19.8886 7.2919 20.7118 8.11551 21.3141 9.16008C21.9165 10.1846 22.2176 11.3095 22.2176 12.5348H24.1451C24.1451 10.968 23.7536 9.51161 22.9705 8.16572C22.1875 6.86001 21.1435 5.81544 19.8384 5.03202C18.4932 4.24859 17.0376 3.85687 15.4715 3.85687ZM5.50296 4.82109C5.56319 4.82109 5.63346 4.85122 5.71377 4.91149L9.65904 8.94915C9.67912 9.0295 9.65904 9.09981 9.5988 9.16008L6.73774 11.9925L6.94855 12.5951L7.34007 13.4388C7.66131 14.1218 8.03275 14.7847 8.45438 15.4275C9.03663 16.3314 9.67912 17.1048 10.3818 17.7476C11.3255 18.6717 12.4599 19.5154 13.785 20.2787C14.4476 20.6604 15.0097 20.9416 15.4715 21.1224L16.0739 21.3936L18.9952 18.4708C19.0353 18.4306 19.0654 18.4105 19.0855 18.4105C19.1056 18.4105 19.1357 18.4306 19.1759 18.4708L23.2416 22.5386C23.2817 22.5788 23.3018 22.6089 23.3018 22.629C23.3018 22.629 23.2817 22.6491 23.2416 22.6893L20.2299 25.6723C19.7882 26.054 19.3064 26.1544 18.7843 25.9736C14.6885 24.3867 11.2753 22.2172 8.54473 19.4652C6.8582 17.7778 5.38249 15.8594 4.1176 13.71C3.2141 12.1632 2.51138 10.6667 2.00944 9.22034V9.19021C1.92913 9.00942 1.91909 8.79849 1.97932 8.55744C2.03956 8.2963 2.14999 8.09542 2.31061 7.9548L5.29214 4.91149C5.35238 4.85122 5.42265 4.82109 5.50296 4.82109ZM15.4715 7.71375V9.64218C16.2746 9.64218 16.9573 9.92342 17.5194 10.4859C18.0816 11.0483 18.3627 11.7313 18.3627 12.5348H20.2902C20.2902 11.6711 20.0693 10.8675 19.6276 10.1243C19.206 9.38104 18.6237 8.79849 17.8808 8.37665C17.138 7.93471 16.3349 7.71375 15.4715 7.71375Z' fill='black')
+          .info
+            span.information Phone
+            span.information 905604821
+        .footerSection
+          div
+            span
+              svg(width='25' height='23' viewbox='0 0 25 23' fill='none' xmlns='http://www.w3.org/2000/svg')
+                path(d='M6.20455 0V1.97124L0 6.01065V22.75H24.8182V6.01065L18.6136 1.97124V0H6.20455ZM8.27273 2.06818H16.5455V10.0178L12.4091 12.6999L8.27273 10.0178V2.06818ZM9.30682 4.13636V6.20455H15.5114V4.13636H9.30682ZM6.20455 4.4272V8.66051L2.9407 6.56001L6.20455 4.4272ZM18.6136 4.4272L21.8775 6.56001L18.6136 8.66051V4.4272ZM9.30682 7.23864V9.30682H15.5114V7.23864H9.30682ZM2.06818 8.46662L12.4091 15.1559L22.75 8.46662V20.6818H2.06818V8.46662Z' fill='black')
+          .info
+            span.information E-MAIL
+            span.information info@company.com
+
+include layout/footer.pug
+script(src=utils.assetPath("/bundle/ProjectPage.js"))

@@ -1,0 +1,13 @@
+{
+    "apps" : [{
+        "name": "PRETHVIGA-HOMES",
+        "script": "bin/www",
+        "instances": 1,
+        "exec_mode": "cluster",
+        "watch": false,
+        "append_env_to_name": true
+    }],
+    "deploy" : {
+        "post-deploy" : "pm2 startOrReload ecosystem.json --env production && pm2 save"
+    }
+}
