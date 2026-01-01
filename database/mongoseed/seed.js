@@ -200,7 +200,7 @@ const seedMongoDB = async () => {
             },
         ]
         // await Connection.deleteMany({});
-        await discoverUsConnection.insertMany(insertdiscoverUsData);
+        await dicoverUsConnection.insertMany(insertdiscoverUsData);
         await OnGoingPageConnection.insertMany(insertOnGoingPageData);
         console.log('Seeding completed successfully');
         process.exit(0);
