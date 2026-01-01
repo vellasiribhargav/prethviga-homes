@@ -14,8 +14,8 @@ const seedMongoDB = async () => {
                 "page_section":"home_banner",
                 "page_content":[
                     {
-                        "projimage1":`${process.env.PROJECT_URL}/assets/images/homeani1.webp`,
-                        "projimage2":`${process.env.PROJECT_URL}/assets/images/homeani2.webp`,
+                        "projectimage1":`${process.env.PROJECT_URL}/assets/images/homeani1.webp`,
+                        "projectimage2":`${process.env.PROJECT_URL}/assets/images/homeani2.webp`,
                     },
                     {
                         "banner_text":`Exceptional service from start to finish! Prethviga Homes
