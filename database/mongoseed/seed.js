@@ -14,8 +14,8 @@ const seedMongoDB = async () => {
                 "page_section":"home_banner",
                 "page_content":[
                     {
-                        "projectimage1":`${process.env.PROJECT_URL}/assets/images/homeani1.webp`,
-                        "projectimage2":`${process.env.PROJECT_URL}/assets/images/homeani2.webp`,
+                        "projimage1":`${process.env.PROJECT_URL}/assets/images/homeani1.webp`,
+                        "projimage2":`${process.env.PROJECT_URL}/assets/images/homeani2.webp`,
                     },
                     {
                         "banner_text":`Exceptional service from start to finish! Prethviga Homes
@@ -213,7 +213,7 @@ const seedMongoDB = async () => {
 
             }
         ]
-        const OnGoingPageCollection = mongoose.connection.db.collection("OnGoingPage");
+        const OnGoingPageConnection = mongoose.connection.db.collection("OnGoingPage");
         const insertOnGoingPageData = [
             {
                 "page_slug":"OnGoingPage",
@@ -294,7 +294,7 @@ const seedMongoDB = async () => {
                 ]
             },
         ]
-        const discoverUsCollection = mongoose.connection.db.collection("discoverUs");
+        const dicoverUsConnection = mongoose.connection.db.collection("discoverUs");
         const insertdiscoverUsData = [
             // {
             //     "page_slug":"discoverUs",
@@ -408,8 +408,8 @@ const seedMongoDB = async () => {
         // await Connection.deleteMany({});
         await homeConnection.insertMany(insertHomeData);
         await ProjectPageConnection.insertMany(insertProjectPageData);
-        await OnGoingPageCollection.insertMany(insertOnGoingPageData);
-        await discoverUsCollection.insertMany(insertdiscoverUsData);
+        await OnGoingPageConnection.insertMany(insertOnGoingPageData);
+        await dicoverUsConnection.insertMany(insertdiscoverUsData);
         console.log('Seeding completed successfully');
         process.exit(0);
     } catch (error) {
