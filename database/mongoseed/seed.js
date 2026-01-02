@@ -213,7 +213,7 @@ const seedMongoDB = async () => {
 
             }
         ]
-                const OnGoingPageConnection = mongoose.connection.db.collection("OnGoingPage");
+        const OnGoingPageConnection = mongoose.connection.db.collection("OnGoingPage");
         const insertOnGoingPageData = [
             {
                 "page_slug":"OnGoingPage",
@@ -406,8 +406,10 @@ const seedMongoDB = async () => {
             }
         ]
         // await Connection.deleteMany({});
-        await dicoverUsConnection.insertMany(insertdiscoverUsData);
+        await homeConnection.insertMany(insertHomeData);
+        await ProjectPageConnection.insertMany(insertProjectPageData);
         await OnGoingPageConnection.insertMany(insertOnGoingPageData);
+        await dicoverUsConnection.insertMany(insertdiscoverUsData);
         console.log('Seeding completed successfully');
         process.exit(0);
     } catch (error) {
