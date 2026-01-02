@@ -11,6 +11,7 @@ const helmet = require("helmet");
 const mongoose = require("mongoose");
 const config = require("./config/config");
 const homeRoutes = require("./routes/homeRoutes");
+const onGoingPageRoutes = require("./routes/onGoingPageRoutes");
 
 (utils = require("./utils/index")), (env = process.env.NODE_ENV);
 
@@ -67,6 +68,7 @@ app.use((req, res, next) => {
 // app.use("/assetsForSale", assetsForSaleRoutes);
 // app.use("/file", fileRoutes);
 app.use("/", homeRoutes);
+app.use("/OnGoingPage", onGoingPageRoutes);
 
 app.use((req, res, next) => {
   res.setHeader(
@@ -110,7 +112,7 @@ app.get("/test", (req, res) => {
 // });
 
 // single slug
-app.get("/:slug", (req, res, next) => {
+app.get("/:slug", async (req, res, next) => {
   res.setHeader(
     "Content-Security-Policy",
 "default-src 'self' data: https://cdnjs.cloudflare.com; script-src 'self' https://code.jquery.com; style-src  'self' 'unsafe-inline'  https://cdnjs.cloudflare.com; img-src 'self' data: ;"  );
@@ -121,18 +123,16 @@ app.get("/:slug", (req, res, next) => {
   );
 
   const { slug } = req.params;
-  // //console.log("🚀 ~ app.get ~ slug:", slug)
-  const fileName = path.basename(slug); // prevents ../ usage;
+  const fileName = path.basename(slug);
 
-  if (slug === "login" || slug === "upload" || slug === "assetsale_upload") {
-    res.status(404).render("404", { message: "Page not found!" }); // Render 404 pag
+  if (slug === "login" || slug === "upload" || slug === "assetsale_upload" || slug === "OnGoingPage") {
+    return next();
   }
 
   const filePath = path.join(__dirname, "views", `${fileName}.pug`);
 
-  // Check if the file exists before rendering
   if (fs.existsSync(filePath)) {
-    res.render(slug); // Render the corresponding .pug file
+    res.render(slug);
   } else {
     next();
   }
