@@ -36,6 +36,7 @@ div
         button.tab-btn(data-project='Ongoing Project') Ongoing Project
     div
       .card-grid-wrapper
+      each review in bannerData.slice(1)
         a(href='/OnGoingPage')
           .project-card
             .image-container

@@ -11,7 +11,6 @@ const helmet = require("helmet");
 const mongoose = require("mongoose");
 const config = require("./config/config");
 const homeRoutes = require("./routes/homeRoutes");
-const onGoingPageRoutes = require("./routes/onGoingPageRoutes");
 
 (utils = require("./utils/index")), (env = process.env.NODE_ENV);
 
@@ -68,7 +67,6 @@ app.use((req, res, next) => {
 // app.use("/assetsForSale", assetsForSaleRoutes);
 // app.use("/file", fileRoutes);
 app.use("/", homeRoutes);
-app.use("/OnGoingPage", onGoingPageRoutes);
 
 app.use((req, res, next) => {
   res.setHeader(

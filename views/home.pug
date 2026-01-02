@@ -46,7 +46,7 @@ section.headerContainer
             .appImage
               img(src='../assets/images/home-profile.webp' alt='profile')
             .appContent
-              p.appText1= review.banner_text
+              p.appText1= review.reviewer
               p.appText2= review.user_name
               p.appText3= review.user_role
 section.projectContainer
@@ -74,7 +74,7 @@ section.projectContainer
                 |  #{project['project-date']}
             .projectCardFooter
               span.cardFooterText= project['card-footer-text']
-              button.cardFooterBtn View 
+              button.cardFooterBtn View
     button.projectBtn View More
 section.chooseContainer
   .titleContainer
@@ -422,6 +422,5 @@ section#contact-section.contact-container
           .info
             span.information E-MAIL
             span.information info@company.com
-            
 include layout/footer.pug
 script(src=utils.assetPath("/bundle/home.js"))

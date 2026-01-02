@@ -16,9 +16,12 @@ const seedMongoDB = async () => {
                     {
                         "projimage1":`${process.env.PROJECT_URL}/assets/images/homeani1.webp`,
                         "projimage2":`${process.env.PROJECT_URL}/assets/images/homeani2.webp`,
+                        "projimage3":`${process.env.PROJECT_URL}/assets/images/homeani3.webp`,
+                        "projimage4":`${process.env.PROJECT_URL}/assets/images/homeani4.webp`
+
                     },
                     {
-                        "banner_text":`Exceptional service from start to finish! Prethviga Homes
+                        "reviewer":`Exceptional service from start to finish! Prethviga Homes
                         | turned our outdated kitchen into a modern masterpiece. Their
                         | team was professional, efficient, and a pleasure to work
                         | with.`,
@@ -26,12 +29,19 @@ const seedMongoDB = async () => {
                         "user_role":"Manager, IT Field"
                     },
                     {
-                        "banner_text":`Outstanding work! 
+                        "reviewer":`Outstanding work! 
                         |They completed our commercial building ahead of schedule and 
                         |the quality exceeded our expectations. Highly professional team.`,
                         "user_name":"John Davidson",
                         "user_role":"CEO, Davidson Enterprises"
                     },
+                    {
+                        "reviewer":`Excellent work! 
+                        |They completed our commercial building ahead of schedule and 
+                        |the quality exceeded our expectations. Highly professional team.`,
+                        "user_name":"John Davidson",
+                        "user_role":"CEO, Davidson Enterprises"
+                    }
                 ]
             },
             {
@@ -192,21 +202,21 @@ const seedMongoDB = async () => {
                         "card-image":`${process.env.PROJECT_URL}/assets/images/card3.webp`,
                         "project-name":"Pinnacle View Condominiums",
                         "project-location":"East Side",
-                        "project-date":"November 2024 2024",
+                        "project-date":"November 2024",
                         "card-footer-text":"24 Premium Apartments",
                     },
                     {
                         "card-image":`${process.env.PROJECT_URL}/assets/images/card3.webp`,
                         "project-name":"Pinnacle View Condominiums",
                         "project-location":"East Side",
-                        "project-date":"November 2024 2024",
+                        "project-date":"November 2024",
                         "card-footer-text":"24 Premium Apartments",
                     },
                     {
                         "card-image":`${process.env.PROJECT_URL}/assets/images/card2.webp`,
                         "project-name":"Pinnacle View Condominiums",
                         "project-location":"East Side",
-                        "project-date":"November 2024 2024",
+                        "project-date":"November 2024",
                         "card-footer-text":"24 Premium Apartments",
                     }
                 ]
