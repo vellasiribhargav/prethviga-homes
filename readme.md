@@ -19,5 +19,7 @@
 ### build cmd
 ## npm start
 
+### MongoDB seed cmd
+## node database/mongoseed/seed.js
 
 ## npx kill-port 4008

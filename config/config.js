@@ -32,4 +32,7 @@ module.exports = {
     seederStorage: 'sequelize',
     seederStorageTableName: 'CustomSeederTable',
   },
+  mongodb: {
+    uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/prethviga-homes'
+  }
 };

@@ -40,106 +40,41 @@ section.headerContainer
               .heroNumber
                 h1.numberText +1 (555) 123-4567
     .heroReview
-      .heroCard
-        .heroApp
-          .appImage
-            img(src='../assets/images/home-profile.webp' alt='profile')
-          .appContent
-            p.appText1
-              | &quot;Prethviga Homes built our dream home with meticulous
-              | attention to detail. Their commitment to quality and
-              | customer satisfaction is evident in every aspect of the
-              | project. Highly recommend!&quot;
-            p.appText2 Evelyn Hayes
-            p.appText3 Founder, Hayes Group
-      .heroCard
-        .heroApp
-          .appImage
-            img(src='../assets/images/home-profile.webp' alt='profile')
-          .appContent
-            p.appText1
-              | &quot;Exceptional service from start to finish! Prethviga Homes
-              | turned our outdated kitchen into a modern masterpiece. Their
-              | team was professional, efficient, and a pleasure to work
-              | with.&quot;
-            p.appText2 Arun Kumar
-            p.appText3 Manager, IT Field
-      .heroCard
-        .heroApp
-          .appImage
-            img(src='../assets/images/home-profile.webp' alt='profile')
-          .appContent
-            p.appText1
-              | &quot;Outstanding work! They completed our commercial building
-              | ahead of schedule and the quality exceeded our expectations.
-              | Highly professional team.&quot;
-            p.appText2 John Davidson
-            p.appText3 CEO, Davidson Enterprises
+      each review in bannerData.slice(1)
+        .heroCard
+          .heroApp
+            .appImage
+              img(src='../assets/images/home-profile.webp' alt='profile')
+            .appContent
+              p.appText1= review.banner_text
+              p.appText2= review.user_name
+              p.appText3= review.user_role
 section.projectContainer
   .projectWrapper
     h3.sectionHeading
       | Recent Projects
     .CardContainer
-      .projectCard
-        .cardImage
-          img(src='../assets/images/projecthome1.webp' alt='')
-        .projectDetails
-          .projectName Pinnacle View Condominiums
-          .projectInfo
-            .projectArea
-              span
-                svg(width='12' height='15' viewbox='0 0 12 15' fill='none' xmlns='http://www.w3.org/2000/svg')
-                  path(d='M11.3334 5.99999C11.3334 9.32866 7.64069 12.7953 6.40069 13.866C6.28517 13.9529 6.14455 13.9998 6.00002 13.9998C5.85549 13.9998 5.71487 13.9529 5.59935 13.866C4.35935 12.7953 0.666687 9.32866 0.666687 5.99999C0.666687 4.5855 1.22859 3.22895 2.22878 2.22875C3.22898 1.22856 4.58553 0.666656 6.00002 0.666656C7.41451 0.666656 8.77106 1.22856 9.77126 2.22875C10.7715 3.22895 11.3334 4.5855 11.3334 5.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
-                  path(d='M6.00002 7.99999C7.10459 7.99999 8.00002 7.10456 8.00002 5.99999C8.00002 4.89542 7.10459 3.99999 6.00002 3.99999C4.89545 3.99999 4.00002 4.89542 4.00002 5.99999C4.00002 7.10456 4.89545 7.99999 6.00002 7.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
-              |   East Side
-            .projectDate
-              span
-                svg(width='14' height='15' viewbox='0 0 14 15' fill='none' xmlns='http://www.w3.org/2000/svg')
-                  path(d='M3.99996 0.666687V3.33335M9.33329 0.666687V3.33335M0.666626 6.00002H12.6666M1.99996 2.00002H11.3333C12.0697 2.00002 12.6666 2.59697 12.6666 3.33335V12.6667C12.6666 13.4031 12.0697 14 11.3333 14H1.99996C1.26358 14 0.666626 13.4031 0.666626 12.6667V3.33335C0.666626 2.59697 1.26358 2.00002 1.99996 2.00002Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
-              |  November 2024
-          .projectCardFooter
-            span.cardFooterText 24 Premium Apartments
-            button.cardFooterBtn View 
-      .projectCard
-        .cardImage
-          img(src='../assets/images/projecthome2.webp' alt='')
-        .projectDetails
-          .projectName Pinnacle View Condominiums
-          .projectInfo
-            .projectArea
-              span
-                svg(width='12' height='15' viewbox='0 0 12 15' fill='none' xmlns='http://www.w3.org/2000/svg')
-                  path(d='M11.3334 5.99999C11.3334 9.32866 7.64069 12.7953 6.40069 13.866C6.28517 13.9529 6.14455 13.9998 6.00002 13.9998C5.85549 13.9998 5.71487 13.9529 5.59935 13.866C4.35935 12.7953 0.666687 9.32866 0.666687 5.99999C0.666687 4.5855 1.22859 3.22895 2.22878 2.22875C3.22898 1.22856 4.58553 0.666656 6.00002 0.666656C7.41451 0.666656 8.77106 1.22856 9.77126 2.22875C10.7715 3.22895 11.3334 4.5855 11.3334 5.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
-                  path(d='M6.00002 7.99999C7.10459 7.99999 8.00002 7.10456 8.00002 5.99999C8.00002 4.89542 7.10459 3.99999 6.00002 3.99999C4.89545 3.99999 4.00002 4.89542 4.00002 5.99999C4.00002 7.10456 4.89545 7.99999 6.00002 7.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
-              |   East Side
-            .projectDate
-              span
-                svg(width='14' height='15' viewbox='0 0 14 15' fill='none' xmlns='http://www.w3.org/2000/svg')
-                  path(d='M3.99996 0.666687V3.33335M9.33329 0.666687V3.33335M0.666626 6.00002H12.6666M1.99996 2.00002H11.3333C12.0697 2.00002 12.6666 2.59697 12.6666 3.33335V12.6667C12.6666 13.4031 12.0697 14 11.3333 14H1.99996C1.26358 14 0.666626 13.4031 0.666626 12.6667V3.33335C0.666626 2.59697 1.26358 2.00002 1.99996 2.00002Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
-              |  November 2024
-          .projectCardFooter
-            span.cardFooterText 24 Premium Apartments
-            button.cardFooterBtn View 
-      .projectCard
-        .cardImage
-          img(src='../assets/images/projecthome3.webp' alt='')
-        .projectDetails
-          .projectName Pinnacle View Condominiums
-          .projectInfo
-            .projectArea
-              span
-                svg(width='12' height='15' viewbox='0 0 12 15' fill='none' xmlns='http://www.w3.org/2000/svg')
-                  path(d='M11.3334 5.99999C11.3334 9.32866 7.64069 12.7953 6.40069 13.866C6.28517 13.9529 6.14455 13.9998 6.00002 13.9998C5.85549 13.9998 5.71487 13.9529 5.59935 13.866C4.35935 12.7953 0.666687 9.32866 0.666687 5.99999C0.666687 4.5855 1.22859 3.22895 2.22878 2.22875C3.22898 1.22856 4.58553 0.666656 6.00002 0.666656C7.41451 0.666656 8.77106 1.22856 9.77126 2.22875C10.7715 3.22895 11.3334 4.5855 11.3334 5.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
-                  path(d='M6.00002 7.99999C7.10459 7.99999 8.00002 7.10456 8.00002 5.99999C8.00002 4.89542 7.10459 3.99999 6.00002 3.99999C4.89545 3.99999 4.00002 4.89542 4.00002 5.99999C4.00002 7.10456 4.89545 7.99999 6.00002 7.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
-              |   East Side
-            .projectDate
-              span
-                svg(width='14' height='15' viewbox='0 0 14 15' fill='none' xmlns='http://www.w3.org/2000/svg')
-                  path(d='M3.99996 0.666687V3.33335M9.33329 0.666687V3.33335M0.666626 6.00002H12.6666M1.99996 2.00002H11.3333C12.0697 2.00002 12.6666 2.59697 12.6666 3.33335V12.6667C12.6666 13.4031 12.0697 14 11.3333 14H1.99996C1.26358 14 0.666626 13.4031 0.666626 12.6667V3.33335C0.666626 2.59697 1.26358 2.00002 1.99996 2.00002Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
-              |  November 2024
-          .projectCardFooter
-            span.cardFooterText 24 Premium Apartments
-            button.cardFooterBtn View 
+      each project in projectsData
+        .projectCard
+          .cardImage
+            img(src=project['card-image'] alt='')
+          .projectDetails
+            .projectName= project['project-name']
+            .projectInfo
+              .projectArea
+                span
+                  svg(width='12' height='15' viewbox='0 0 12 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+                    path(d='M11.3334 5.99999C11.3334 9.32866 7.64069 12.7953 6.40069 13.866C6.28517 13.9529 6.14455 13.9998 6.00002 13.9998C5.85549 13.9998 5.71487 13.9529 5.59935 13.866C4.35935 12.7953 0.666687 9.32866 0.666687 5.99999C0.666687 4.5855 1.22859 3.22895 2.22878 2.22875C3.22898 1.22856 4.58553 0.666656 6.00002 0.666656C7.41451 0.666656 8.77106 1.22856 9.77126 2.22875C10.7715 3.22895 11.3334 4.5855 11.3334 5.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                    path(d='M6.00002 7.99999C7.10459 7.99999 8.00002 7.10456 8.00002 5.99999C8.00002 4.89542 7.10459 3.99999 6.00002 3.99999C4.89545 3.99999 4.00002 4.89542 4.00002 5.99999C4.00002 7.10456 4.89545 7.99999 6.00002 7.99999Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                |   #{project['project-area']}
+              .projectDate
+                span
+                  svg(width='14' height='15' viewbox='0 0 14 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+                    path(d='M3.99996 0.666687V3.33335M9.33329 0.666687V3.33335M0.666626 6.00002H12.6666M1.99996 2.00002H11.3333C12.0697 2.00002 12.6666 2.59697 12.6666 3.33335V12.6667C12.6666 13.4031 12.0697 14 11.3333 14H1.99996C1.26358 14 0.666626 13.4031 0.666626 12.6667V3.33335C0.666626 2.59697 1.26358 2.00002 1.99996 2.00002Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                |  #{project['project-date']}
+            .projectCardFooter
+              span.cardFooterText= project['card-footer-text']
+              button.cardFooterBtn View 
     button.projectBtn View More
 section.chooseContainer
   .titleContainer

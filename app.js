@@ -8,6 +8,9 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const createError = require("http-errors");
 const helmet = require("helmet");
+const mongoose = require("mongoose");
+const config = require("./config/config");
+const homeRoutes = require("./routes/homeRoutes");
 
 (utils = require("./utils/index")), (env = process.env.NODE_ENV);
 
@@ -23,6 +26,11 @@ var hsts = require("hsts");
 
 // Initialize dotenv for environment variables
 dotenv.config();
+
+// MongoDB connection
+mongoose.connect(config.mongodb.uri)
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
 // Initialize the app
 const app = express();
@@ -58,6 +66,7 @@ app.use((req, res, next) => {
 // app.use("/policy", policyfileRoutes);
 // app.use("/assetsForSale", assetsForSaleRoutes);
 // app.use("/file", fileRoutes);
+app.use("/", homeRoutes);
 
 app.use((req, res, next) => {
   res.setHeader(
@@ -74,7 +83,7 @@ app.use(
   })
 );
 
-app.get("/", (req, res) => {
+app.get("/test", (req, res) => {
   res.setHeader(
     "Content-Security-Policy",
     "default-src 'self' data: https://cdnjs.cloudflare.com; script-src 'self' https://code.jquery.com; style-src  'self' 'unsafe-inline'  https://cdnjs.cloudflare.com; img-src 'self' data: ;"
