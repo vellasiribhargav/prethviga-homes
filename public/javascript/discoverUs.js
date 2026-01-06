@@ -8,4 +8,4 @@ import "../css/discoverUs.css";
 import "../javascript/components/home";
 import "../javascript/components/discoverUs";
 import "../javascript/common/header";
-import "../javascript/contact";
+import "../javascript/components/contact";

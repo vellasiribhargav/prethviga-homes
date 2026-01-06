@@ -4,6 +4,9 @@ const getonGoingPageData = async (req, res) => {
   try {
     console.log('OnGoingPage controller called');
     const onGoingPageData = await mongoose.connection.db.collection('OnGoingPage').find({ page_slug: 'OnGoingPage' }).toArray();
+
+    // const projectData = onGoingPageData.find(item => item.page_section === 'hero-section')?.page_content || [];
+    // const floorData = onGoingPageData.find(item => item.page_section === 'floor-image')?.page_content || [];
     const featureData = onGoingPageData.find(item => item.page_section === 'features-grid')?.page_content || [];
     const amenityData = onGoingPageData.find(item => item.page_section === 'amenities-list')?.page_content || [];
     const locationData = onGoingPageData.find(item => item.page_section === 'location-container')?.page_content || [];

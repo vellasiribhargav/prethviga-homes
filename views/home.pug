@@ -212,16 +212,20 @@ section#contact-section.contact-container
       .form-container
         div
           label(for='contact-name') Contact Name:
-          input#contact-name(type='text' name='contact-name')
+          input#contact-name(type='text' name='contact-name' required)
+          .required-message * required
         div
           label(for='address') Address:
-          input#address(type='text' name='address')
+          input#address(type='text' name='address' required)
+          .required-message * required
         div
           label(for='phone') Phone Number:
-          input#phone(type='tel' name='phone')
+          input#phone(type='tel' name='phone' required)
+          .required-message * required
         div
           label(for='email') Email:
-          input#email(type='email' name='email')
+          input#email(type='email' name='email' required)
+          .required-message * required
       button.contact-card__button Submit
       .footer-info
         .footerSection

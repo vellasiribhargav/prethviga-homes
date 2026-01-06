@@ -9,4 +9,4 @@ import "../css/OnGoingPage.css";
 import "../javascript/components/home";
 import "../javascript/components/OnGoingPage";
 import "../javascript/common/header";
-import "../javascript/contact";
+import "../javascript/components/contact";

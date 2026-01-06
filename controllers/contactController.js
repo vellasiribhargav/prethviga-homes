@@ -1,3 +1,4 @@
+const { exist } = require("joi");
 const {knex:db} = require("../config/mysql");
 
 class contactFunction {
@@ -8,11 +9,17 @@ class contactFunction {
             if (!name || !email) {
             return res.json({ success: false, message: 'Name and email required' });
             }
+
+            const existContact = await db('contact').where("email", email).orWhere("phone", phone).first();
+            if (existContact) {
+                return res.json({ success: false, message: 'User is already exists' });
+            }
             
-            await db('contacts').insert({ name, address, phone, email });
+            await db('contact').insert({ name, address, phone, email });
             
             res.json({ success: true, message: 'Contact saved successfully' });
         } catch (error) {
+            console.log(error,'error in contact insert');
             res.json({ success: false, message: 'Server error' });
         }
     }
