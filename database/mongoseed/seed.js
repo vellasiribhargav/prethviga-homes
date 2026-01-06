@@ -1,12 +1,14 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
-const connectMongoDB = require("../../config/mongodb.js");
+// const connectMongoDB = require("../../config/mongodb.js");
+const config = require("../../config/config.js");
 const PROJECT_URL = process.env.PROJECT_URL;
 
 
 const seedMongoDB = async () => {
     try {
-        await connectMongoDB();
+        await mongoose.connect(config.mongodb.uri);
+        console.log('MongoDB connected successfully');
         console.log('Seeding MongoDB...');
         const homeConnection = mongoose.connection.db.collection("home");
         const insertHomeData = [
@@ -15,34 +17,49 @@ const seedMongoDB = async () => {
                 "page_section":"home_banner",
                 "page_content":[
                     {
-                        "projimage1":`${process.env.PROJECT_URL}assets/images/homeani1.webp`,
-                        "projimage2":`${process.env.PROJECT_URL}assets/images/homeani2.webp`,
-                        "projimage3":`${process.env.PROJECT_URL}assets/images/homeani3.webp`,
-                        "projimage4":`${process.env.PROJECT_URL}assets/images/homeani4.webp`
+                        "projimage":`${process.env.PROJECT_URL}/assets/images/homeani1.webp`
+                    },
+                    {
+                        "projimage":`${process.env.PROJECT_URL}/assets/images/homeani2.webp`
+                    },
+                    {
+                        "projimage":`${process.env.PROJECT_URL}/assets/images/homeani3.webp`
+                    },
+                    {
+                        "projimage":`${process.env.PROJECT_URL}/assets/images/homeani4.webp`
 
-                    },
+                    }
+                ]
+            },
+            {
+                "page_slug":"home",
+                "page_section":"home_reviews",
+                "page_content":[
                     {
-                        "reviewer":`Exceptional service from start to finish! Prethviga Homes
-                        | turned our outdated kitchen into a modern masterpiece. Their
-                        | team was professional, efficient, and a pleasure to work
-                        | with.`,
-                        "user_name":"Arun Kumar",
-                        "user_role":"Manager, IT Field"
-                    },
-                    {
-                        "reviewer":`Outstanding work! 
-                        |They completed our commercial building ahead of schedule and 
-                        |the quality exceeded our expectations. Highly professional team.`,
+                        "profile_image":`${process.env.PROJECT_URL}/assets/images/home-profile.webp`,
+                        "reviewer":`Outstanding work!
+                        They completed out commercial building ahead of schedule and
+                        the quality exceeded our expectations. Highly professional team.`,
                         "user_name":"John Davidson",
-                        "user_role":"CEO, Davidson Enterprises"
+                        "user_role":"CEO, Davidson Enterprices"
                     },
                     {
-                        "reviewer":`Excellent work! 
-                        |They completed our commercial building ahead of schedule and 
-                        |the quality exceeded our expectations. Highly professional team.`,
+                        "profile_image":`${process.env.PROJECT_URL}/assets/images/home-profile.webp`,
+                        "reviewer":`Outstanding work!
+                        They completed out commercial building ahead of schedule and
+                        the quality exceeded our expectations. Highly professional team.`,
+                        "user_name":"John Davidson",
+                        "user_role":"CEO, Davidson Enterprices"
+                    },
+                    {
+                        "profile_image":`${process.env.PROJECT_URL}/assets/images/home-profile.webp`,
+                        "reviewer":`Excellent  work!
+                        They completed our commercial building ahead of schedule and
+                        the quality exceeded our excpectations. Highly professional team.`,
                         "user_name":"John Davidson",
                         "user_role":"CEO, Davidson Enterprises"
                     }
+
                 ]
             },
             {
@@ -50,21 +67,21 @@ const seedMongoDB = async () => {
                 "page_section":"recent_projects",
                 "page_content":[
                     {
-                        "card-image":`${process.env.PROJECT_URL}assets/images/projecthome1.webp`,
+                        "card-image":`${process.env.PROJECT_URL}/assets/images/projecthome1.webp`,
                         "project-name":"Pinnacle View Condominiums",
                         "project-area":"East Side",
                         "project-date":"November 2024",
                         "card-footer-text":"24 Premium Apartments",
                     },
                     {
-                        "card-image":`${process.env.PROJECT_URL}assets/images/projecthome2.webp`,
+                        "card-image":`${process.env.PROJECT_URL}/assets/images/projecthome2.webp`,
                         "project-name":"Pinnacle View Condominiums",
                         "project-area":"East Side",
                         "project-date":"November 2024",
                         "card-footer-text":"24 Premium Apartments",
                     },
                     {
-                        "card-image":`${process.env.PROJECT_URL}assets/images/projecthome3.webp`,
+                        "card-image":`${process.env.PROJECT_URL}/assets/images/projecthome3.webp`,
                         "project-name":"Pinnacle View Condominiums",
                         "project-area":"East Side",
                         "project-date":"November 2024",
@@ -124,105 +141,129 @@ const seedMongoDB = async () => {
             }
 
         ]
-        const ProjectPageConnection = mongoose.connection.db.collection("ProjectPage");
+        const ProjectPageConnection= mongoose.connection.db.collection("ProjectPage");
         const insertProjectPageData=[
             {
-                "page_slug":"ProjectPageConnection",
+                "page_slug":"ProjectPage",
                 "page_section":"ongoing-gallery",
                 "page_content":[
                     {
-                        "card-image":`${process.env.PROJECT_URL}assets/images/card1.webp`,
+                        "card_image":`${process.env.PROJECT_URL}/assets/images/card1.webp`,
+                        "project_name":"Pinnacle View Condominiums",
+                        "project_location":"West side",
+                        "project_date":"November 2024",
+                        "card_footer_text":"24 Premium Apartments"
+                    },
+                    {
+                        "card_image":`${process.env.PROJECT_URL}/assets/images/card2.webp`,
+                        "project_name":"Serenity Heights Estate",
+                        "project_location":"West side",
+                        "project_date":"August 2024",
+                        "card_footer_text":"24 Premium Apartments",
+                    },
+                    {
+                        "card_image":`${process.env.PROJECT_URL}/assets/images/card3.webp`,
+                        "project_name":"Grandview Manor Residences",
+                        "project_location":"South End",
+                        "project_date":"September 2024",
+                        "card_footer_text":"24 Premium Apartments",
+                    },
+                    {
+                        "card-image":`${process.env.PROJECT_URL}/assets/images/card4.webp`,
                         "project-name":"Pinnacle View Condominiums",
-                        "project-location":"West side",
+                        "project-location":"East Side",
                         "project-date":"November 2024",
-                        "card-footer-text":"24 Premium Apartments",
+                        "card-footer-text":"24 Premium Apartments"
                     },
                     {
-                        "card-image":`${process.env.PROJECT_URL}assets/images/card2.webp`,
-                        "project-name":"Serenity Heights Estate",
-                        "project-location":"West side",
-                        "project-date":"August 2024",
-                        "card-footer-text":"24 Premium Apartments",
-                    },
-                    {
-                        "card-image":`${process.env.PROJECT_URL}assets/images/card3.webp`,
-                        "project-name":"Grandview Manor Residences",
-                        "project-location":"South End",
-                        "project-date":"September 2024",
-                        "card-footer-text":"24 Premium Apartments",
-                    },
-                    {
-                        "card-image":`${process.env.PROJECT_URL}assets/images/card4.webp`,
+                        "card-image":`${process.env.PROJECT_URL}/assets/images/card1.webp`,
                         "project-name":"Pinnacle View Condominiums",
                         "project-location":"East Side",
-                        "project-date":"November 2024 2024",
-                        "card-footer-text":"24 Premium Apartments",
+                        "project-date":"November 2024",
+                        "card-footer-text":"24 Premium Apartments"
                     },
                     {
-                        "card-image":`${process.env.PROJECT_URL}assets/images/card1.webp`,
+                        "card-image":`${process.env.PROJECT_URL}/assets/images/card4.webp`,
                         "project-name":"Pinnacle View Condominiums",
                         "project-location":"East Side",
-                        "project-date":"November 2024 2024",
-                        "card-footer-text":"24 Premium Apartments",
-                    },
-                    {
-                        "card-image":`${process.env.PROJECT_URL}assets/images/card4.webp`,
-                        "project-name":"Pinnacle View Condominiums",
-                        "project-location":"East Side",
-                        "project-date":"November 2024 2024",
-                        "card-footer-text":"24 Premium Apartments",
+                        "project-date":"November 2024",
+                        "card-footer-text":"24 Premium Apartments"
                     }
                 ]
             },
             {
-                "page_slug":"ProjectPageConnection",
-                "page_section":"completed-gallery",
+                "page_slug":"ProjectPage",
+                "page_section":"card-grid-wrapper",
                 "page_content":[
                     {
-                        "card-image":`${process.env.PROJECT_URL}assets/images/card2.webp`,
+                        "card-image":`${process.env.PROJECT_URL}/assets/images/card2.webp`,
                         "project-name":"Pinnacle View Condominiums",
                         "project-location":"West side",
                         "project-date":"November 2024",
-                        "card-footer-text":"24 Premium Apartments",
+                        "card-footer-text":"24 Premium Apartments"
                     },
                     {
-                        "card-image":`${process.env.PROJECT_URL}assets/images/card3.webp`,
+                        "card-image":`${process.env.PROJECT_URL}/assets/images/card3.webp`,
                         "project-name":"Serenity Heights Estate",
                         "project-location":"West side",
                         "project-date":"August 2024",
-                        "card-footer-text":"24 Premium Apartments",
+                        "card-footer-text":"24 Premium Apartments"
                     },
                     {
-                        "card-image":`${process.env.PROJECT_URL}assets/images/card4.webp`,
-                        "project-name":"Grandview Manor Residences",
-                        "project-location":"South End",
-                        "project-date":"September 2024",
-                        "card-footer-text":"24 Premium Apartments",
+                        "card_image":`${process.env.PROJECT_URL}/assets/images/card4.webp`,
+                        "project_name":"Grandview Manor Residences",
+                        "project_location":"South End",
+                        "project_date":"September 2024",
+                        "card_footer_text":"24 Premium Apartments",
                     },
                     {
-                        "card-image":`${process.env.PROJECT_URL}assets/images/card3.webp`,
-                        "project-name":"Pinnacle View Condominiums",
-                        "project-location":"East Side",
-                        "project-date":"November 2024 2024",
-                        "card-footer-text":"24 Premium Apartments",
+                        "card_image":`${process.env.PROJECT_URL}/assets/images/card3.webp`,
+                        "project_name":"Pinnacle View Condominiums",
+                        "project_location":"East Side",
+                        "project_date":"November 2024",
+                        "card_footer_text":"24 Premium Apartments",
                     },
                     {
-                        "card-image":`${process.env.PROJECT_URL}assets/images/card3.webp`,
-                        "project-name":"Pinnacle View Condominiums",
-                        "project-location":"East Side",
-                        "project-date":"November 2024 2024",
-                        "card-footer-text":"24 Premium Apartments",
+                        "card_image":`${process.env.PROJECT_URL}/assets/images/card3.webp`,
+                        "project_name":"Pinnacle View Condominiums",
+                        "project_location":"East Side",
+                        "project_date":"November 2024",
+                        "card_footer_text":"24 Premium Apartments",
                     },
                     {
-                        "card-image":`${process.env.PROJECT_URL}assets/images/card2.webp`,
-                        "project-name":"Pinnacle View Condominiums",
-                        "project-location":"East Side",
-                        "project-date":"November 2024 2024",
-                        "card-footer-text":"24 Premium Apartments",
+                        "card_image":`${process.env.PROJECT_URL}/assets/images/card2.webp`,
+                        "project_name":"Pinnacle View Condominiums",
+                        "project_location":"East Side",
+                        "project_date":"November 2024",
+                        "card_footer-text":"24 Premium Apartments"
                     }
                 ]
 
-            }
+            },
+            {
+                "page_slug":"ProjectPage",
+                "page_section":"faq-section-header",
+                "page_content":[
+                    {
+                        "question": "How long does a typical construction project take?",
+                        "answer": `The duration varies based on project complexity and scale. Residential projects
+                        typically take 8-14 months, while commercial developments may require 12-24 months. We
+                        provide detailed timelines during project planning.`,
+                    },
+                    {
+                        "question": "What types of projects do you specialize in?",
+                        "answer": `We specialize in residential condominiums, luxury estates, commercial buildings, and
+                        mixed-use developments. Our portfolio includes projects ranging from boutique apartments
+                        to large-scale residential complexes.`,
+                    },
+                    {
+                        "question": "Do you offer warranties on completed projects?",
+                        "answer": `Yes, all our projects come with comprehensive warranties covering structural integrity,
+                        workmanship, and materials. We offer 10-year structural warranties and 2-year warranties
+                        on finishes and fittings.`,
+                    }
+                ]
+            },
         ]
         const OnGoingPageConnection = mongoose.connection.db.collection("OnGoingPage");
         const insertOnGoingPageData = [
@@ -408,20 +449,20 @@ const seedMongoDB = async () => {
                     {
                         "question": "How long does a typical construction project take?",
                         "answer": `The duration varies based on project complexity and scale. Residential projects
-                        | typically take 8-14 months, while commercial developments may require 12-24 months. We
-                        | provide detailed timelines during project planning.`,
+                        typically take 8-14 months, while commercial developments may require 12-24 months. We
+                        provide detailed timelines during project planning.`,
                     },
                     {
                         "question": "What types of projects do you specialize in?",
                         "answer": `We specialize in residential condominiums, luxury estates, commercial buildings, and
-                        | mixed-use developments. Our portfolio includes projects ranging from boutique apartments
-                        | to large-scale residential complexes.`,
+                        mixed-use developments. Our portfolio includes projects ranging from boutique apartments
+                        to large-scale residential complexes.`,
                     },
                     {
                         "question": "Do you offer warranties on completed projects?",
                         "answer": `Yes, all our projects come with comprehensive warranties covering structural integrity,
-                        | workmanship, and materials. We offer 10-year structural warranties and 2-year warranties
-                        | on finishes and fittings.`,
+                        workmanship, and materials. We offer 10-year structural warranties and 2-year warranties
+                        on finishes and fittings.`,
                     }
                 ]
             },
@@ -449,17 +490,17 @@ const seedMongoDB = async () => {
                     {
                         card_head: "Integrity",
                         description_text:`We uphold the highest standards of honesty and transparency in
-                        | every interaction and decision.`,
+                        every interaction and decision.`,
                     },
                     {
                         card_head: "Excellence",
                         description_text:`We strive for perfection in every project, ensuring superior
-                        | quality and attention to detail.`,
+                        quality and attention to detail.`,
                     },
                     {
                         card_head: "Customer First",
                         description_text:`We uphold the highest standards of honesty and transparency in
-                        | every interaction and decision.`,
+                        every interaction and decision.`,
                     },
                 ]
             },
@@ -509,7 +550,7 @@ const seedMongoDB = async () => {
                         c_times: "4 min read",
                         h_texts: "Innovative Materials Revolutionizing Construction",
                         cs_text: `Explore cutting-edge materials that enhance structural
-                        | integrity and reduce costs in modern building projects.`,
+                        integrity and reduce costs in modern building projects.`,
                     },
                     {
                         inner_img: `${process.env.PROJECT_URL}assets/images/blog2.webp`,
@@ -518,7 +559,7 @@ const seedMongoDB = async () => {
                         c_times: "4 min read",
                         h_texts: "Top 10 Sustainable Building Practices for 2025",
                         cs_text: `Explore cutting-edge materials that enhance structural
-                        | integrity and reduce costs in modern building projects.`,
+                        integrity and reduce costs in modern building projects.`,
                     },
                     {
                         inner_img: `${process.env.PROJECT_URL}assets/images/proimage5.webp`,
@@ -527,7 +568,7 @@ const seedMongoDB = async () => {
                         c_times: "4 min read",
                         h_texts: "Eco-Friendly Construction: The Future of Home Building",
                         cs_text: `Explore cutting-edge materials that enhance structural
-                        | integrity and reduce costs in modern building projects.`,
+                        integrity and reduce costs in modern building projects.`,
                     },
                 ]
             }

@@ -11,6 +11,7 @@ const helmet = require("helmet");
 const mongoose = require("mongoose");
 const config = require("./config/config");
 const homeRoutes = require("./routes/homeRoutes");
+const projectsRoutes = require("./routes/projectsRoutes");
 const onGoingPageRoutes = require("./routes/onGoingPageRoutes");
 const discoverUsRoutes = require("./routes/discoverUsRoutes");
 const contactRoutes = require('./routes/contactRoutes');
@@ -73,6 +74,8 @@ app.use((req, res, next) => {
 // app.use("/assetsForSale", assetsForSaleRoutes);
 // app.use("/file", fileRoutes);
 app.use("/", homeRoutes);
+app.use('/home', homeRoutes);
+app.use("/ProjectPage", projectsRoutes);
 app.use("/OnGoingPage", onGoingPageRoutes);
 app.use("/discoverUs", discoverUsRoutes);
 app.use('/', contactRoutes);
@@ -92,7 +95,7 @@ app.use(
   })
 );
 
-app.get("/test", (req, res) => {
+app.get("/", (req, res) => {
   res.setHeader(
     "Content-Security-Policy",
     "default-src 'self' data: https://cdnjs.cloudflare.com; script-src 'self' https://code.jquery.com; style-src  'self' 'unsafe-inline'  https://cdnjs.cloudflare.com; img-src 'self' data: ;"
@@ -137,6 +140,7 @@ app.get("/:slug", async (req, res, next) => {
   }
 
   const filePath = path.join(__dirname, "views", `${fileName}.pug`);
+  console.log(filePath,'filePath')
 
   if (fs.existsSync(filePath)) {
     res.render(slug);
