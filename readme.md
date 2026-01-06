@@ -2,7 +2,7 @@
  ### npx knex migarte:make create_users.js
 
  ## Run migrations:
-  ### npx knex migarte:latest
+  ### npx knex migrate:latest
 
 ## Create a seeder:
  ### npx knex seed:make --name demo-user

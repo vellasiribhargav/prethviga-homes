@@ -6,5 +6,5 @@ import "../css/home.css";
 
 import "../javascript/components/home";
 import "../javascript/common/header";
-import "../javascript/contact";
+import "../javascript/components/contact";
 

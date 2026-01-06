@@ -308,6 +308,22 @@
   width: 16px;
   height: 16px;
 }
+
+.required-message {
+  font-size: 12px;
+  color: #e74c3c;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+.form-container input:valid + .required-message {
+  display: none;
+}
+
+.form-container input:focus + .required-message {
+  color: #3498db;
+}
+
 @media screen and (max-width: 768px) {
   .navbarContainer .callBtn {
     padding: 10px;

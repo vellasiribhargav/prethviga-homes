@@ -8,5 +8,5 @@ import "../css/ProjectPage.css";
 import "../javascript/components/home";
 import "../javascript/components/ProjectPage";
 import "../javascript/common/header";
-import "../javascript/contact";
+import "../javascript/components/contact";
 
