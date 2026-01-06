@@ -5,7 +5,8 @@
     "build": "webpack --env build=true",
     "esdev": "node esbuild.config.mjs",
     "esprod": "node esbuild.config.mjs --production",
-    "build:css": "esbuild public/stylesheets/common/**/*.css --outdir=public/bundle"
+    "build:css": "esbuild public/stylesheets/common/**/*.css --outdir=public/bundle",
+    "seed": "node database/mongoseed/seed.js"
   },
   "dependencies": {
     "assert": "^2.1.0",
