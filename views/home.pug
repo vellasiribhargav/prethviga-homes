@@ -136,17 +136,38 @@ section.aboutWorksContainer
         span.workListIcon.arrowIcon
           svg(width='29' height='25' viewbox='0 0 29 25' fill='none')
             path(fill-rule='evenodd' clip-rule='evenodd' d='M29 12.5C29 12.9144 28.8303 13.3119 28.5281 13.6049L17.2503 24.5424C16.6212 25.1525 15.601 25.1525 14.9719 24.5424C14.3428 23.9322 14.3428 22.9428 14.9719 22.3327L23.4993 14.0625H1.61111C0.721294 14.0625 -9.53674e-07 13.363 -9.53674e-07 12.5C-9.53674e-07 11.637 0.721294 10.9375 1.61111 10.9375H23.4993L14.9719 2.66736C14.3428 2.05716 14.3428 1.06785 14.9719 0.457641C15.601 -0.152547 16.6212 -0.152547 17.2503 0.457641L28.5281 11.3952C28.8303 11.6881 29 12.0856 29 12.5Z' fill='#BC5322')
+      
+      .workList
+        span.workListIcon
+          svg(width="42" height="43" viewBox="0 0 42 43" fill="none" xmlns="http://www.w3.org/2000/svg")
+            path(d='M14.4762 40.4189V27.4459C14.4762 26.2991 14.9319 25.1992 15.7431 24.3882C16.5542 23.5772 17.6544 23.1216 18.8016 23.1216H22.2619M38.2659 18.7973L20.9643 1.5L1.5 20.9595H5.8254V36.0946C5.8254 37.2415 6.28111 38.3414 7.09227 39.1524C7.90344 39.9633 9.00362 40.4189 10.1508 40.4189H19.1455M33.9405 38.2568C32.7933 38.2568 31.6931 37.8012 30.882 36.9902C30.0708 36.1792 29.6151 35.0793 29.6151 33.9324C29.6151 32.7855 30.0708 31.6856 30.882 30.8747C31.6931 30.0637 32.7933 29.6081 33.9405 29.6081M33.9405 38.2568C35.0876 38.2568 36.1878 37.8012 36.999 36.9902C37.8102 36.1792 38.2659 35.0793 38.2659 33.9324C38.2659 32.7855 37.8102 31.6856 36.999 30.8747C36.1878 30.0637 35.0876 29.6081 33.9405 29.6081M33.9405 38.2568V41.5M33.9405 29.6081V26.3649M40.4978 30.1486L37.6885 31.7703M30.1989 36.0946L27.3874 37.7162M27.3874 30.1486L30.1989 31.7703M37.6885 36.0946L40.5 37.7162' stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round")
+        .workInfo
+          h3 We put resistance
+          p We take responsibility for any repairs needed after construction.
+        span.workListIcon.arrowIcon
+          svg(width="29" height="25" viewBox="0 0 29 25" fill="none" xmlns="http://www.w3.org/2000/svg")
+            path(d='M29 12.5C29 12.9144 28.8303 13.3119 28.5281 13.6049L17.2503 24.5424C16.6212 25.1525 15.601 25.1525 14.9719 24.5424C14.3428 23.9322 14.3428 22.9428 14.9719 22.3327L23.4993 14.0625H1.61111C0.721294 14.0625 -9.53674e-07 13.363 -9.53674e-07 12.5C-9.53674e-07 11.637 0.721294 10.9375 1.61111 10.9375H23.4993L14.9719 2.66736C14.3428 2.05716 14.3428 1.06785 14.9719 0.457641C15.601 -0.152547 16.6212 -0.152547 17.2503 0.457641L28.5281 11.3952C28.8303 11.6881 29 12.0856 29 12.5Z' fill="#BC5322")
 
 section.technologiesContainer
   .technologiesImage
     h1 Technologies
   
   .technologiesCards
-    each tech in techData.slice(1)
+    each tech, index in techData.slice(1)
       .technologiesCard
         span.technologiesIcon
-          svg(width='43' height='43' viewbox='0 0 43 43' fill='none')
-            path(d='M1.5 11.5H41.5M41.5 21.5H1.5M1.5 31.5H41.5M14 1.5V11.5M26.5 11.5V21.5M11.5 21.5V31.5M31.5 21.5V31.5M19 31.5V41.5M1.5 6.5C1.5 5.17392 2.02678 3.90215 2.96447 2.96447C3.90215 2.02678 5.17392 1.5 6.5 1.5H36.5C37.8261 1.5 39.0979 2.02678 40.0355 2.96447C40.9732 3.90215 41.5 5.17392 41.5 6.5V36.5C41.5 37.8261 40.9732 39.0979 40.0355 40.0355C39.0979 40.9732 37.8261 41.5 36.5 41.5H6.5C5.17392 41.5 3.90215 40.9732 2.96447 40.0355C2.02678 39.0979 1.5 37.8261 1.5 36.5V6.5Z' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round')
+          if index === 0
+            svg(width='43' height='43' viewbox='0 0 43 43' fill='none')
+              path(d='M1.5 11.5H41.5M41.5 21.5H1.5M1.5 31.5H41.5M14 1.5V11.5M26.5 11.5V21.5M11.5 21.5V31.5M31.5 21.5V31.5M19 31.5V41.5M1.5 6.5C1.5 5.17392 2.02678 3.90215 2.96447 2.96447C3.90215 2.02678 5.17392 1.5 6.5 1.5H36.5C37.8261 1.5 39.0979 2.02678 40.0355 2.96447C40.9732 3.90215 41.5 5.17392 41.5 6.5V36.5C41.5 37.8261 40.9732 39.0979 40.0355 40.0355C39.0979 40.9732 37.8261 41.5 36.5 41.5H6.5C5.17392 41.5 3.90215 40.9732 2.96447 40.0355C2.02678 39.0979 1.5 37.8261 1.5 36.5V6.5Z' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round')
+          
+          else if index === 1
+            svg(width='43' height='43' viewbox='0 0 43 43' fill='none')
+              path(d='M14.8333 41.5V28.1667C14.8333 26.9879 15.3016 25.8575 16.1351 25.024C16.9686 24.1905 18.099 23.7222 19.2778 23.7222H23.7222C24.901 23.7222 26.0314 24.1905 26.8649 25.024C27.6984 25.8575 28.1667 26.9879 28.1667 28.1667V41.5M5.94444 21.5H1.5L21.5 1.5L41.5 21.5H37.0556V37.0556C37.0556 38.2343 36.5873 39.3648 35.7538 40.1983C34.9203 41.0317 33.7899 41.5 32.6111 41.5H10.3889C9.21015 41.5 8.07969 41.0317 7.24619 40.1983C6.4127 39.3648 5.94444 38.2343 5.94444 37.0556V21.5Z' stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" )
+          
+          else if index === 2
+            svg(width='43' height='43' viewbox='0 0 43 43' fill='none')
+              path(d='M21 3.51748V38.5009M1 21.0092H41M35.5 40.9998L5.5 37.2515C3 37.0017 1 35.0026 1 32.5038V9.51472C1 7.01591 3 5.01686 5.5 4.76697L35.5 1.01875C38.5 0.768873 41 3.01781 41 5.7665V36.0021C41 39.0007 38.25 41.2496 35.5 40.7499V40.9998Z' stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
+
         h3= tech['tech-name']
         p= tech['tech-text']
 
@@ -212,20 +233,16 @@ section#contact-section.contact-container
       .form-container
         div
           label(for='contact-name') Contact Name:
-          input#contact-name(type='text' name='contact-name' required)
-          .required-message * required
+          input#contact-name(type='text' name='contact-name')
         div
           label(for='address') Address:
-          input#address(type='text' name='address' required)
-          .required-message * required
+          input#address(type='text' name='address')
         div
           label(for='phone') Phone Number:
-          input#phone(type='tel' name='phone' required)
-          .required-message * required
+          input#phone(type='tel' name='phone')
         div
           label(for='email') Email:
-          input#email(type='email' name='email' required)
-          .required-message * required
+          input#email(type='email' name='email')
       button.contact-card__button Submit
       .footer-info
         .footerSection

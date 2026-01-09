@@ -12,7 +12,12 @@ const entryPoints = {
   home:"./public/javascript/home.js",
   discoverUs:"./public/javascript/discoverUs.js",
   OnGoingPage:"./public/javascript/OnGoingPage.js",
-  ProjectPage:"./public/javascript/ProjectPage.js"
+  ProjectPage:"./public/javascript/ProjectPage.js",
+
+  upcoming: "./public/javascript/admin/upcoming.js",
+  blog: "./public/javascript/admin/blog.js",
+  gallery: "./public/javascript/admin/gallery.js",
+  completed: "./public/javascript/admin/completed.js"
 };
 
 
