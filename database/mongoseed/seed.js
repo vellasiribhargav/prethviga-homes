@@ -267,29 +267,29 @@ const seedMongoDB = async () => {
         ]
         const OnGoingPageConnection = mongoose.connection.db.collection("OnGoingPage");
         const insertOnGoingPageData = [
-            // {
-            //     "page_slug": "OnGoingPage",
-            //     "page_section": "hero-section",
-            //     "page_content": [
-            //         {
-            //             "pimage": `${process.env.PROJECT_URL}assets/images/onGoingBG.webp`,
-            //             "title": "Sunset Ridge Residence",
-            //             "buiding_name": "24 Premium Apartments",
-            //             "data": "November 15, 2025",
-            //             "location": "Chennai"
-            //         }
-            //     ]
-            // },
-            // {
-            //     "page_slug": "OnGoingPage",
-            //     "page_section": "floor-image",
-            //     "page_content": [
-            //         {
-            //             "title": "Floor Layout",
-            //             "floor_image": `${process.env.PROJECT_URL}assets/images/Rectangle 42.webp`
-            //         }
-            //     ]
-            // },
+            {
+                "page_slug": "OnGoingPage",
+                "page_section": "hero-section",
+                "page_content": [
+                    {
+                        "pimage": `${process.env.PROJECT_URL}assets/images/onGoingBG.webp`,
+                        "title": "Sunset Ridge Residence",
+                        "buiding_name": "24 Premium Apartments",
+                        "date": "November 15, 2025",
+                        "location": "Chennai"
+                    }
+                ]
+            },
+            {
+                "page_slug": "OnGoingPage",
+                "page_section": "floor-image",
+                "page_content": [
+                    {
+                        "title": "Floor Layout",
+                        "floor_image": `${process.env.PROJECT_URL}assets/images/Rectangle 42.webp`
+                    }
+                ]
+            },
             {
                 "page_slug": "OnGoingPage",
                 "page_section": "features-grid",
@@ -596,12 +596,13 @@ const seedMongoDB = async () => {
                 ]
             }
         ]
+
         // Clear existing data to prevent duplicates
         await homeConnection.deleteMany({});
         await ProjectPageConnection.deleteMany({});
         await OnGoingPageConnection.deleteMany({});
         await discoverUsConnection.deleteMany({});
-        
+
         // Insert fresh data
         await homeConnection.insertMany(insertHomeData);
         await ProjectPageConnection.insertMany(insertProjectPageData);

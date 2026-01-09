@@ -15,7 +15,10 @@ const projectsRoutes = require("./routes/projectsRoutes");
 const onGoingPageRoutes = require("./routes/onGoingPageRoutes");
 const discoverUsRoutes = require("./routes/discoverUsRoutes");
 const contactRoutes = require('./routes/contactRoutes');
-
+const upcomingRoutes = require('./adminPanel/routes/upcomingRoutes');
+const completedRoutes = require('./adminPanel/routes/completedRoutes');
+const galleryRoutes = require('./adminPanel/routes/galleryRoutes');
+const blogRoutes = require('./adminPanel/routes/blogRoutes');
 
 (utils = require("./utils/index")), (env = process.env.NODE_ENV);
 
@@ -79,6 +82,10 @@ app.use("/ProjectPage", projectsRoutes);
 app.use("/OnGoingPage", onGoingPageRoutes);
 app.use("/discoverUs", discoverUsRoutes);
 app.use('/', contactRoutes);
+app.use('/admin/upcoming', upcomingRoutes);
+app.use('/admin/completed', completedRoutes);
+app.use('/admin/gallery', galleryRoutes);
+app.use('/admin/blog', blogRoutes);
 
 app.use((req, res, next) => {
   res.setHeader(
@@ -107,19 +114,31 @@ app.get("/", (req, res) => {
   res.render("home");
 });
 
-// app.get("/adminpanel", (req, res) => {
-//   res.setHeader(
-//     "Content-Security-Policy",
-// "default-src 'self' data: https://cdnjs.cloudflare.com; script-src 'self' https://code.jquery.com; style-src  'self' 'unsafe-inline'  https://cdnjs.cloudflare.com; img-src 'self' data: ;"
-//   );
+app.get("/:cat/:slug", (req, res, next) => {
+  res.setHeader(
+    "Content-Security-Policy",
+    "default-src 'self' data: https://cdnjs.cloudflare.com; script-src 'self' https://code.jquery.com; style-src  'self' 'unsafe-inline'  https://cdnjs.cloudflare.com; img-src 'self' data: ;"
+  );
 
-//   res.setHeader(
-//     "Strict-Transport-Security",
-//     "max-age=31536000; includeSubDomains"
-//   );
+  res.setHeader(
+    "Strict-Transport-Security",
+    "max-age=31536000; includeSubDomains"
+  );
 
-//   res.render("login");
-// });
+  const { slug, cat } = req.params;
+
+  const fileName = path.basename(slug);
+
+  const filePath = path.join(__dirname, `views/${cat}`, `${fileName}.pug`);
+  console.log(filePath,'filePath')
+
+  if (fs.existsSync(filePath)) {
+    res.render(`${cat}/${slug}`);
+  } else {
+    next();
+  }
+
+});
 
 // single slug
 app.get("/:slug", async (req, res, next) => {
@@ -133,9 +152,10 @@ app.get("/:slug", async (req, res, next) => {
   );
 
   const { slug } = req.params;
+
   const fileName = path.basename(slug);
 
-  if (slug === "login" || slug === "upload" || slug === "assetsale_upload" || slug === "OnGoingPage") {
+  if (slug === "login" || slug === "upload" || slug === "assetsale_upload" || slug === "OnGoingPage" || slug  === "admin") {
     return next();
   }
 
