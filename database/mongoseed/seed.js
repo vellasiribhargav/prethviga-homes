@@ -235,7 +235,7 @@ const seedMongoDB = async () => {
                         "project_name":"Pinnacle View Condominiums",
                         "project_location":"East Side",
                         "project_date":"November 2024",
-                        "card_footer-text":"24 Premium Apartments"
+                        "card_footer_text":"24 Premium Apartments"
                     }
                 ]
 

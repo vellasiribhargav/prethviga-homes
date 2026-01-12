@@ -130,7 +130,7 @@ app.get("/:cat/:slug", (req, res, next) => {
   const fileName = path.basename(slug);
 
   const filePath = path.join(__dirname, `views/${cat}`, `${fileName}.pug`);
-  console.log(filePath,'filePath')
+  // console.log(filePath,'filePath')
 
   if (fs.existsSync(filePath)) {
     res.render(`${cat}/${slug}`);
@@ -160,7 +160,7 @@ app.get("/:slug", async (req, res, next) => {
   }
 
   const filePath = path.join(__dirname, "views", `${fileName}.pug`);
-  console.log(filePath,'filePath')
+  // console.log(filePath,'filePath')
 
   if (fs.existsSync(filePath)) {
     res.render(slug);

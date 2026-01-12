@@ -26,25 +26,39 @@ const getupcomingGallery = async (req, res) => {
 
 const addupcomingItem = async (req, res) => {
     try {
-        const file = req.file || req.files;
-        console.log('file',file)
-        if(!file){
-            return res.status(422).json({success:false, message:"file is not uploaded or file is required"});
+        // console.log('Request body:', req.body);
+        // console.log('Request files:', req.files);
+        
+        const upcomingArr = JSON.parse(req.body.upcomingArr || '[]');
+        
+        if (!upcomingArr.length) {
+            return res.status(422).json({success: false, message: "No projects data provided"});
         }
-        const upcomingArr = req.body.upcomingArr;
+
         const collection = mongoose.connection.db.collection("ProjectPage");
-        const ongoingData = {
-            ...req.body,
-            image: req.file ? `/uploads/gallery/${req.file.filename}` : null
-        };
+        const projectsToAdd = [];
+
+        for (let i = 0; i < upcomingArr.length; i++) {
+            const file = req.files.find(f => f.fieldname === `file_${i}`);
+            if (!file) {
+                return res.status(422).json({success: false, message: `File required for project ${i + 1}`});
+            }
+
+            projectsToAdd.push({
+                ...upcomingArr[i],
+                card_image: `${process.env.PROJECT_URL}uploads/gallery/${file.filename}`
+            });
+        }
 
         await collection.updateOne(
             { page_slug: "ProjectPage", page_section: "ongoing-gallery" },
-            { $push: { page_content: ongoingData } }
+            { $push: { page_content: { $each: projectsToAdd } } },
+            { upsert: true }
         );
 
-        res.json({ success: true, message: 'Ongoing project added successfully!' });
+        res.json({ success: true, message: `${projectsToAdd.length} projects added successfully!` });
     } catch (error) {
+        console.error('Error in addupcomingItem:', error);
         res.status(500).json({ success: false, message: error.message });
     }
 };
@@ -59,6 +73,7 @@ const updateupcomingItem = async (req, res) => {
         const upcomingArr = req.body.upcomingArr;
 
         const { index } = req.params;
+        console.log('index',index)
         const collection = mongoose.connection.db.collection("ProjectPage");
         
         const updateData = {
