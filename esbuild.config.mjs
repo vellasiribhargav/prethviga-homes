@@ -15,7 +15,7 @@ const entryPoints = {
   ProjectPage:"./public/javascript/ProjectPage.js",
 
   upcoming: "./public/javascript/admin/upcoming.js",
-  blog: "./public/javascript/admin/blog.js",
+  // blog: "./public/javascript/admin/blog.js",
   gallery: "./public/javascript/admin/gallery.js",
   completed: "./public/javascript/admin/completed.js"
 };

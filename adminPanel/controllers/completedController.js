@@ -15,25 +15,39 @@ const getcompletedGallery = async (req, res) => {
 
 const addcompletedItem = async (req, res) => {
     try {
-        const file = req.file || req.files;
-        console.log('file',file)
-        if(!file){
-            return res.status(422).json({success:false, message:"file is not uploaded or file is required"});
+        // console.log('Request body:', req.body);
+        // console.log('Request files:', req.files);
+        
+        const completedArr = JSON.parse(req.body.completedArr || '[]');
+        
+        if (!completedArr.length) {
+            return res.status(422).json({success: false, message: "No projects data provided"});
         }
-        const upcomingArr = req.body.upcomingArr;
+
         const collection = mongoose.connection.db.collection("ProjectPage");
-        const ongoingData = {
-            ...req.body,
-            image: req.file ? `/uploads/gallery/${req.file.filename}` : null
-        };
+        const projectsToAdd = [];
+
+        for (let i = 0; i < completedArr.length; i++) {
+            const file = req.files.find(f => f.fieldname === `file_${i}`);
+            if (!file) {
+                return res.status(422).json({success: false, message: `File required for project ${i + 1}`});
+            }
+
+            projectsToAdd.push({
+                ...completedArr[i],
+                card_image: `${process.env.PROJECT_URL}uploads/gallery/${file.filename}`
+            });
+        }
 
         await collection.updateOne(
             { page_slug: "ProjectPage", page_section: "card-grid-wrapper" },
-            { $push: { page_content: ongoingData } }
+            { $push: { page_content: { $each: projectsToAdd } } },
+            { upsert: true }
         );
 
-        res.json({ success: true, message: 'Ongoing project added successfully!' });
+        res.json({ success: true, message: `${projectsToAdd.length} projects added successfully!` });
     } catch (error) {
+        console.error('Error in addcompletedItem:', error);
         res.status(500).json({ success: false, message: error.message });
     }
 };
@@ -45,7 +59,7 @@ const updatecompletedItem = async (req, res) => {
         if(!file){
             return res.status(422).json({success:false, message:"file is not uploaded or file is required"});
         }
-        const upcomingArr = req.body.upcomingArr;
+        const completedArr = req.body.completedArr;
         const collection = mongoose.connection.db.collection("ProjectPage");
         const updateData = {
             ...req.body,

@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             </svg>
                         </div>
                         <p class="upload-text">Tap to upload</p>
-                        <p class="upload-subtext">SVG, PNG, JPG (max. 2MB)</p>
+                        <p class="upload-subtext">SVG, PNG, JPG (max. 5MB)</p>
                     </button>
                     <input type="file" accept="image/*" style="display: none;">
                 </div>
@@ -274,28 +274,64 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    function handleSubmit(submitBtn) {
-        const form = submitBtn.closest('.content-card');
-        if (!form) return;
+async function handleSubmit(submitBtn) {
+    updateFormsCache();
+    
+    const upcomingArr = [];
+    const formData = new FormData();
+    
+    for (let i = 0; i < formsCache.length; i++) {
+        const form = formsCache[i];
+        const data = getFormData(form);
+        const fileInput = form.querySelector('input[type="file"]');
         
-        const formData = getFormData(form);
+        if (!data.projectName && !data.projectLocation) continue;
         
-        // Check if form has data
-        if (!formData.projectName && !formData.projectLocation) {
-            alert('Please fill in at least the project name or location.');
+        if (!fileInput || !fileInput.files.length) {
+            alert(`Project image required for form ${i + 1}`);
             return;
         }
         
-        // Add to projects list
-        addToProjectsList(formData);
-        showAddedItemsSection();
+        upcomingArr.push({
+            project_name: data.projectName,
+            project_location: data.projectLocation,
+            project_date: data.timelineDate ? new Date(data.timelineDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '',
+            card_footer_text: data.projectDescription
+        });
         
-        // Clear form
-        clearForm(form);
-        
-        // Show success message
-        showSuccessMessage('Project saved successfully!');
+        formData.append(`file_${i}`, fileInput.files[0]);
     }
+    
+    if (!upcomingArr.length) {
+        alert('Please fill at least one project');
+        return;
+    }
+    
+    formData.append('upcomingArr', JSON.stringify(upcomingArr));
+    
+    try {
+        const res = await fetch('/admin/upcoming/addupcoming', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        
+        const result = await res.json();
+        
+        if (!result.success) {
+            alert(result.message);
+            return;
+        }
+
+        formsCache.forEach(form => clearForm(form));
+        showSuccessMessage(`${upcomingArr.length} projects saved!`);
+        
+    } catch (err) {
+        console.error(err);
+        alert('Server error occurred');
+    }
+}
     
     function clearForm(form) {
         const inputs = form.querySelectorAll('input[type="text"], input[type="date"]');
@@ -312,7 +348,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </svg>
                 </div>
                 <p class="upload-text">Tap to upload</p>
-                <p class="upload-subtext">SVG, PNG, JPG (max. 2MB)</p>
+                <p class="upload-subtext">SVG, PNG, JPG (max. 5MB)</p>
             `;
         }
     }
@@ -404,9 +440,9 @@ window.handleProjectImageUpload = function(input) {
     const file = input.files[0];
     if (!file) return;
     
-    // Validate file size (2MB limit)
-    if (file.size > 2 * 1024 * 1024) {
-        alert('File size must be less than 2MB');
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+        alert('File size must be less than 5MB');
         input.value = '';
         return;
     }

@@ -1,0 +1,93 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
+    title Gallery Management 
+    link(rel='stylesheet' href=utils.assetPath("/bundle/gallery.css"))
+
+  body
+    - var activeLink = 'gallery'
+    include ../layout/sidebar.pug
+
+    // Main Page Content
+    .main-container.with-sidebar
+      // Top App Bar
+      header.app-header
+        .header-left
+          button.menu-btn
+            img.icon(src='assets/icons/menu.svg' alt='')
+          h1.page-title Gallery Management
+
+      // Breadcrumbs
+      .breadcrumbs
+        p.breadcrumb-text
+          span.breadcrumb-item Prethviga Homes
+          img.icon(src='assets/icons/chevron_right.svg' alt='')
+          span.breadcrumb-item Content Management
+          img.icon(src='assets/icons/chevron_right.svg' alt='')
+          span.breadcrumb-item.active Gallery Management
+
+      main.main-content
+        // Content Header
+        .content-header
+          h2.content-title Gallery Management
+          button.add-more-btn Add More
+
+
+        // Form Container
+        .form-container
+          .content-card
+            .form-header
+              span.form-number 1
+            .form-section
+              // Type of Project Dropdown
+              .form-group
+                label.form-label Type of Project
+                select.form-select#projectType
+                  option(value='upcoming') Upcoming Projects
+                  option(value='completed') Completed Projects
+              
+              // Select Project Dropdown
+              .form-group
+                label.form-label Select Project
+                select.form-select#selectProject(disabled)
+              
+              // Gallery Name
+              .form-group
+                label.form-label Gallery Name
+                input.form-input(type='text' placeholder='e.g. Plaza Images Collection')
+              
+              // Description
+              .form-group
+                label.form-label Image Description
+                textarea.form-textarea(placeholder='Describe the content of this gallery...')
+              
+                // Image Upload Grid
+              .form-group
+                label.form-label Upload Images
+                .image-grid
+                  .image-slot.empty
+                    input.image-upload(type='file' accept='image/*' multiple style='display: none;')
+                    .upload-icon
+                      svg.icon(xmlns='http://www.w3.org/2000/svg', height='24', viewBox='0 -960 960 960', width='24', fill='currentColor')
+                        path(d='M480-260q75 0 127.5-52.5T660-440q0-75-52.5-127.5T480-620q-75 0-127.5 52.5T300-440q0 75 52.5 127.5T480-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM160-120q-33 0-56.5-23.5T80-200v-480q0-33 23.5-56.5T160-760h126l74-80h240l74 80h126q33 0 56.5 23.5T880-680v480q0 33-23.5 56.5T800-120H160Zm0-80h640v-480H638l-73-80H395l-73 80H160v480Zm320-240Z')
+                    span.upload-text Upload
+                
+                p.upload-hint Supported formats: JPG, PNG. Max 5MB.
+            
+            // Submit Button
+            .submit-section
+              button.submit-btn Submit
+            
+            // Navigation buttons
+            .navigation-buttons
+              button.nav-btn.prev-btn(onclick="previousForm()" disabled) Previous
+              button.nav-btn.next-btn(onclick="nextForm()") Next
+        
+        // Added Items Section
+        .added-items-section(style='display: none;')
+          h3.section-title Added Gallery Items
+          .added-items-list
+
+    script(src=utils.assetPath("/bundle/gallery.js"))
