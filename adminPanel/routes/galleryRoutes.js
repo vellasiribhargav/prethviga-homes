@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const ongoingController = require('../controllers/galleryController');
+const galleryController = require('../controllers/galleryController');
 const { createImageUpload } = require("../utils/commonFileupload");
 
 const upload = createImageUpload("gallery");
 
-router.get('/getgallery', ongoingController.getGallery);
-router.post('/addgallery', upload.single('file'), ongoingController.addGalleryItem);
-router.put('/updategallery/:id', ongoingController.updateGalleryItem);
-router.delete('/deletegallery/:id', ongoingController.deleteGalleryItem);
+router.get('/getgallery', galleryController.getGallery);
+router.get('/getgallery/:projectId', galleryController.getGalleryByProject);
+router.post('/addgallery', upload.array('file', 10), galleryController.addGalleryItem);
+router.put('/updategallery/:id', galleryController.updateGalleryItem);
+router.delete('/deletegallery/:id', galleryController.deleteGalleryItem);
 
 module.exports = router;

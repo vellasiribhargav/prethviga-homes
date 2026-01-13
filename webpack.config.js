@@ -19,7 +19,11 @@ module.exports = env => {
 			login:"./public/javascript/login.js",
 			policyupload: "./public/javascript/policyupload.js",
 			policy: "./public/javascript/policy.js",
-			ourbusiness: "./public/javascript/ourbusiness.js"
+			ourbusiness: "./public/javascript/ourbusiness.js",
+			upcoming: "./public/javascript/admin/upcoming.js",
+			completed: "./public/javascript/admin/completed.js",
+			gallery: "./public/javascript/admin/gallery.js",
+			blogDiscover: "./public/javascript/admin/blogDiscover.js"
 		  
 		},
 		output: {

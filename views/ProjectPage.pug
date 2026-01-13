@@ -35,8 +35,8 @@ div
     
     div
       .card-grid-wrapper
-        each card in ongoing
-          a(href='/OnGoingPage')
+        each card in completed
+          a(href=`/OnGoingPage/${card['project_id']}`)
             .project-card
               .image-container
                 img(src=card['card-image'] || card['card_image'] alt=card['project-name'] || card['project_name'])
@@ -60,8 +60,8 @@ div
   #ongoing-title.project-body-wrapper
     div
       .card-grid-wrapper
-        each card in completed
-          a(href='/OnGoingPage')
+        each card in ongoing
+          a(href=`/OnGoingPage/${card['project_id']}`)
             .project-card
               .image-container
                 img(src=card['card-image'] || card['card_image'] alt=card['project-name'] || card['project_name'])

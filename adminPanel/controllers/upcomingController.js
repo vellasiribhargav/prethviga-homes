@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
-
+const {ObjectId} = require("mongodb");
 
 const renderUpcomingPage = async (req, res) => {
     try {
-        console.log('Rendering admin/upcoming page');
+        // console.log('Rendering admin/upcoming page');
         res.render('admin/upcoming');
     }catch (error) {
         console.error('Error fetching upcoming data:', error);
@@ -18,7 +18,14 @@ const getupcomingGallery = async (req, res) => {
             page_slug: "ProjectPage",
             page_section: "ongoing-gallery"
         });
-        res.json({ success: true, data: data?.page_content || [] });
+        
+        // Ensure each project has proper ID mapping
+        const projects = data?.page_content?.map(project => ({
+            ...project,
+            id: project.project_id || project._id
+        })) || [];
+        
+        res.json({ success: true, data: projects });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -46,7 +53,8 @@ const addupcomingItem = async (req, res) => {
 
             projectsToAdd.push({
                 ...upcomingArr[i],
-                card_image: `${process.env.PROJECT_URL}uploads/gallery/${file.filename}`
+                card_image: `${process.env.PROJECT_URL}uploads/gallery/${file.filename}`,
+                project_id: new ObjectId(),
             });
         }
 

@@ -18,7 +18,7 @@ const contactRoutes = require('./routes/contactRoutes');
 const upcomingRoutes = require('./adminPanel/routes/upcomingRoutes');
 const completedRoutes = require('./adminPanel/routes/completedRoutes');
 const galleryRoutes = require('./adminPanel/routes/galleryRoutes');
-const blogRoutes = require('./adminPanel/routes/blogRoutes');
+const blogDiscoverRoutes = require('./adminPanel/routes/blogDiscoverRoutes');
 
 (utils = require("./utils/index")), (env = process.env.NODE_ENV);
 
@@ -85,7 +85,7 @@ app.use('/', contactRoutes);
 app.use('/admin/upcoming', upcomingRoutes);
 app.use('/admin/completed', completedRoutes);
 app.use('/admin/gallery', galleryRoutes);
-app.use('/admin/blog', blogRoutes);
+app.use('/admin/blogDiscover', blogDiscoverRoutes);
 
 app.use((req, res, next) => {
   res.setHeader(
@@ -126,7 +126,6 @@ app.get("/:cat/:slug", (req, res, next) => {
   );
 
   const { slug, cat } = req.params;
-
   const fileName = path.basename(slug);
 
   const filePath = path.join(__dirname, `views/${cat}`, `${fileName}.pug`);

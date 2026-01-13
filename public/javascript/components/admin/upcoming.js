@@ -1,3 +1,5 @@
+import Swal from 'sweetalert2';
+
 document.addEventListener('DOMContentLoaded', function() {
     const addMoreBtn = document.querySelector('.add-more-btn');
     const formContainer = document.querySelector('.form-container');
@@ -11,6 +13,55 @@ document.addEventListener('DOMContentLoaded', function() {
     
     let formCount = 0;
     let formsCache = [];
+
+    // Add required field validation
+    function addRequiredFieldValidation(form) {
+        const inputs = [
+            { selector: 'input[name="project-name"]', message: '* Project name is required' },
+            { selector: 'input[name="project-location"]', message: '* Project location is required' },
+            { selector: 'input[name="timeline-date"]', message: '* Timeline date is required' }
+        ];
+
+        inputs.forEach(({ selector, message }) => {
+            const input = form.querySelector(selector);
+            if (!input) return;
+
+            const msg = document.createElement('div');
+            msg.className = 'required-message';
+            msg.textContent = message;
+            msg.style.cssText = 'font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic';
+
+            input.parentNode.appendChild(msg);
+
+            input.addEventListener('input', () => {
+                msg.style.display = 'none';
+            });
+        });
+    }
+
+    function validateForm(form) {
+        let isValid = true;
+        const inputs = [
+            { selector: 'input[name="project-name"]', message: '* Project name is required' },
+            { selector: 'input[name="project-location"]', message: '* Project location is required' },
+            { selector: 'input[name="timeline-date"]', message: '* Timeline date is required' }
+        ];
+
+        inputs.forEach(({ selector }) => {
+            const input = form.querySelector(selector);
+            if (!input) return;
+            
+            const msg = input.parentNode.querySelector('.required-message');
+            if (input.value.trim() === '') {
+                msg.style.display = 'block';
+                isValid = false;
+            } else {
+                msg.style.display = 'none';
+            }
+        });
+
+        return isValid;
+    }
 
     // Event delegation for upload buttons and navigation
     document.addEventListener('click', function(e) {
@@ -237,6 +288,7 @@ document.addEventListener('DOMContentLoaded', function() {
         updateFormsCache(); // Update cache after adding new form
         updateSubmitButtons();
         updateNavigationButtons();
+        addRequiredFieldValidation(newForm);
     }
 
     function updateFormsCache() {
@@ -262,6 +314,11 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         updateNavigationButtons();
         addSubmitHandlers();
+        // Add validation to initial form
+        const initialForm = document.querySelector('.content-card');
+        if (initialForm) {
+            addRequiredFieldValidation(initialForm);
+        }
     }, 100);
     
     // Add submit button handlers
@@ -282,13 +339,23 @@ async function handleSubmit(submitBtn) {
     
     for (let i = 0; i < formsCache.length; i++) {
         const form = formsCache[i];
+        
+        if (!validateForm(form)) {
+            return;
+        }
+        
         const data = getFormData(form);
         const fileInput = form.querySelector('input[type="file"]');
         
         if (!data.projectName && !data.projectLocation) continue;
         
         if (!fileInput || !fileInput.files.length) {
-            alert(`Project image required for form ${i + 1}`);
+            Swal.fire({
+                icon: 'warning',
+                title: 'Missing Image!',
+                text: `Project image required for form ${i + 1}`,
+                confirmButtonColor: '#BC5322'
+            });
             return;
         }
         
@@ -303,7 +370,12 @@ async function handleSubmit(submitBtn) {
     }
     
     if (!upcomingArr.length) {
-        alert('Please fill at least one project');
+        Swal.fire({
+            icon: 'warning',
+            title: 'No Data!',
+            text: 'Please fill at least one project',
+            confirmButtonColor: '#BC5322'
+        });
         return;
     }
     
@@ -325,11 +397,22 @@ async function handleSubmit(submitBtn) {
         }
 
         formsCache.forEach(form => clearForm(form));
-        showSuccessMessage(`${upcomingArr.length} projects saved!`);
+        
+        Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: `${upcomingArr.length} project(s) saved successfully!`,
+            confirmButtonColor: '#BC5322'
+        });
         
     } catch (err) {
         console.error(err);
-        alert('Server error occurred');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: 'Server error occurred',
+            confirmButtonColor: '#BC5322'
+        });
     }
 }
     
