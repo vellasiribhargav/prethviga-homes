@@ -8,7 +8,7 @@ const upload = createImageUpload("gallery");
 
 // router.get('/', upcomingController.renderUpcomingPage);
 router.get('/getupcoming', upcomingController.getupcomingGallery);
-router.post('/addupcoming', upload.any(), upcomingController.addupcomingItem);
+router.post('/addupcoming', upload.single('file'), upcomingController.addupcomingItem);
 router.put('/updateupcoming/:index', upload.single('file'), upcomingController.updateupcomingItem);
 router.delete('/deleteupcoming/:index', upcomingController.deleteupcomingItem);
 

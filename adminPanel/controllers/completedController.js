@@ -1,13 +1,21 @@
 const mongoose = require('mongoose');
+const {ObjectId} = require("mongodb");
 
 const getcompletedGallery = async (req, res) => {
     try {
         const collection = mongoose.connection.db.collection("ProjectPage");
         const data = await collection.findOne({
             page_slug: "ProjectPage",
-            page_section: "card-grid-wrapper"
+            page_section: "completed-gallery"
         });
-        res.json({ success: true, data: data?.page_content || [] });
+        
+        // Ensure each project has proper ID mapping
+        const projects = data?.page_content?.map(project => ({
+            ...project,
+            id: project.project_id || project._id
+        })) || [];
+        
+        res.json({ success: true, data: projects });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -35,12 +43,13 @@ const addcompletedItem = async (req, res) => {
 
             projectsToAdd.push({
                 ...completedArr[i],
+                project_id: new ObjectId(),
                 card_image: `${process.env.PROJECT_URL}uploads/gallery/${file.filename}`
             });
         }
 
         await collection.updateOne(
-            { page_slug: "ProjectPage", page_section: "card-grid-wrapper" },
+            { page_slug: "ProjectPage", page_section: "completed-gallery" },
             { $push: { page_content: { $each: projectsToAdd } } },
             { upsert: true }
         );
@@ -55,7 +64,7 @@ const addcompletedItem = async (req, res) => {
 const updatecompletedItem = async (req, res) => {
     try {
         const file = req.file || req.files;
-        console.log('file',file)
+        // console.log('file',file)
         if(!file){
             return res.status(422).json({success:false, message:"file is not uploaded or file is required"});
         }
@@ -63,11 +72,11 @@ const updatecompletedItem = async (req, res) => {
         const collection = mongoose.connection.db.collection("ProjectPage");
         const updateData = {
             ...req.body,
-            image: req.file ? `/uploads/gallery/${req.file.filename}` : null
+            image: req.file ? `${process.env.PROJECT_URL}uploads/gallery/${req.file.filename}` : null
         };
 
         await collection.updateOne(
-            { page_slug: "ProjectPage", page_section: "card-grid-wrapper" },
+            { page_slug: "ProjectPage", page_section: "completed-gallery" },
             { $set: { [`page_content.${index}`]: updateData } }
         );
         res.json({ success: true, message: 'Ongoing project updated successfully!' });
@@ -82,13 +91,13 @@ const deletecompletedItem = async (req, res) => {
         const collection = mongoose.connection.db.collection("ProjectPage");
         const data = await collection.findOne({
             page_slug: "ProjectPage",
-            page_section: "card-grid-wrapper"
+            page_section: "completed-gallery"
         });
         
         if (data?.page_content) {
             data.page_content.splice(parseInt(index), 1);
             await collection.updateOne(
-                { page_slug: "ProjectPage", page_section: "card-grid-wrapper" },
+                { page_slug: "ProjectPage", page_section: "completed-gallery" },
                 { $set: { page_content: data.page_content } }
             );
         }
