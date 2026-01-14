@@ -8,35 +8,36 @@ head
 include layout/header.pug 
 
 .sunset-ridge-wrapper
-  - var ongoingStyle = projectData && projectData.length > 0 ? `background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(${projectData[0].pimage});` : ''
-  .hero-section(style=ongoingStyle)
-    each hero in projectData
-      //- img(src="../assets/images/onGoingBG.webp" alt="ProjectName")
-      .hero-content
-        .title-container
-          h1.hero-title #{hero.title}
-        .info-section
-          .info-item
-            span
-              svg(width='15' height='15' viewbox='0 0 15 15' fill='none' xmlns='http://www.w3.org/2000/svg')
-                path(d='M3.33104 13.995V1.99801C3.33104 1.64447 3.47148 1.30542 3.72147 1.05544C3.97145 0.805449 4.31051 0.665009 4.66404 0.665009H9.99604C10.3496 0.665009 10.6886 0.805449 10.9386 1.05544C11.1886 1.30542 11.329 1.64447 11.329 1.99801V13.995M3.33104 13.995H11.329M3.33104 13.995L1.99804 13.995C1.64451 13.995 1.30545 13.8546 1.05547 13.6046C0.80548 13.3546 0.665039 13.0155 0.665039 12.662V8.66301C0.665039 8.30947 0.80548 7.97042 1.05547 7.72044C1.30545 7.47045 1.64451 7.33001 1.99804 7.33001H3.33104M11.329 13.995L12.662 13.995C13.0156 13.995 13.3546 13.8546 13.6046 13.6046C13.8546 13.3546 13.995 13.0155 13.995 12.662V6.66351C13.995 6.30997 13.8546 5.97092 13.6046 5.72094C13.3546 5.47095 13.0156 5.33051 12.662 5.33051H11.329M5.99704 3.33101H8.66304M5.99704 5.99701H8.66304M5.99704 8.66301H8.66304M5.99704 11.329H8.66304' stroke='white' stroke-width='1.33' stroke-linecap='round' stroke-linejoin='round')
-            span #{hero.buiding_name}
-          .info-item
-            span
-              svg(width='14' height='15' viewbox='0 0 14 15' fill='none' xmlns='http://www.w3.org/2000/svg')
-                path(d='M4.00033 0.666656V3.33332M9.33366 0.666656V3.33332M0.666992 5.99999H12.667M2.00033 1.99999H11.3337C12.07 1.99999 12.667 2.59694 12.667 3.33332V12.6667C12.667 13.403 12.07 14 11.3337 14H2.00033C1.26395 14 0.666992 13.403 0.666992 12.6667V3.33332C0.666992 2.59694 1.26395 1.99999 2.00033 1.99999Z' stroke='white' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
-            span #{hero.date}
-          .info-item
-            span
-              svg(width='12' height='15' viewbox='0 0 12 15' fill='none' xmlns='http://www.w3.org/2000/svg')
-                path(d='M11.3337 5.99999C11.3337 9.32866 7.64099 12.7953 6.40099 13.866C6.28548 13.9529 6.14486 13.9998 6.00033 13.9998C5.85579 13.9998 5.71518 13.9529 5.59966 13.866C4.35966 12.7953 0.666992 9.32866 0.666992 5.99999C0.666992 4.5855 1.2289 3.22895 2.22909 2.22875C3.22928 1.22856 4.58584 0.666656 6.00033 0.666656C7.41481 0.666656 8.77137 1.22856 9.77156 2.22875C10.7718 3.22895 11.3337 4.5855 11.3337 5.99999Z' stroke='white' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
-                path(d='M6.00033 7.99999C7.10489 7.99999 8.00033 7.10456 8.00033 5.99999C8.00033 4.89542 7.10489 3.99999 6.00033 3.99999C4.89576 3.99999 4.00033 4.89542 4.00033 5.99999C4.00033 7.10456 4.89576 7.99999 6.00033 7.99999Z' stroke='white' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
-            span #{hero.location}
-        button.cta-button
-          span.cta-text GET FREE QUOTE
-          span.cta-icon
-            svg(width='6' height='11' viewbox='0 0 6 11' fill='none' xmlns='http://www.w3.org/2000/svg')
-              path(d='M0.666992 0.666656L5.33366 5.33332L0.666992 9.99999' stroke='white' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+  .hero-section
+    - var bgImage = (projectData && projectData.length > 0 && projectData[0].pimage) ? projectData[0].pimage : '/assets/images/onGoingBG.webp'
+    - var hero = projectData && projectData.length > 0 ? projectData[0] : {}
+    img.hero-bg-image(src=bgImage alt="Project background")
+    .hero-overlay
+    .hero-content
+      .title-container
+        h1.hero-title #{hero.title || 'Sunset Ridge Residence'}
+      .info-section
+        .info-item
+          span
+            svg(width='15' height='15' viewbox='0 0 15 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+              path(d='M3.33104 13.995V1.99801C3.33104 1.64447 3.47148 1.30542 3.72147 1.05544C3.97145 0.805449 4.31051 0.665009 4.66404 0.665009H9.99604C10.3496 0.665009 10.6886 0.805449 10.9386 1.05544C11.1886 1.30542 11.329 1.64447 11.329 1.99801V13.995M3.33104 13.995H11.329M3.33104 13.995L1.99804 13.995C1.64451 13.995 1.30545 13.8546 1.05547 13.6046C0.80548 13.3546 0.665039 13.0155 0.665039 12.662V8.66301C0.665039 8.30947 0.80548 7.97042 1.05547 7.72044C1.30545 7.47045 1.64451 7.33001 1.99804 7.33001H3.33104M11.329 13.995L12.662 13.995C13.0156 13.995 13.3546 13.8546 13.6046 13.6046C13.8546 13.3546 13.995 13.0155 13.995 12.662V6.66351C13.995 6.30997 13.8546 5.97092 13.6046 5.72094C13.3546 5.47095 13.0156 5.33051 12.662 5.33051H11.329M5.99704 3.33101H8.66304M5.99704 5.99701H8.66304M5.99704 8.66301H8.66304M5.99704 11.329H8.66304' stroke='white' stroke-width='1.33' stroke-linecap='round' stroke-linejoin='round')
+          span #{hero.buiding_name || 'Prethviga Homes'}
+        .info-item
+          span
+            svg(width='14' height='15' viewbox='0 0 14 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+              path(d='M4.00033 0.666656V3.33332M9.33366 0.666656V3.33332M0.666992 5.99999H12.667M2.00033 1.99999H11.3337C12.07 1.99999 12.667 2.59694 12.667 3.33332V12.6667C12.667 13.403 12.07 14 11.3337 14H2.00033C1.26395 14 0.666992 13.403 0.666992 12.6667V3.33332C0.666992 2.59694 1.26395 1.99999 2.00033 1.99999Z' stroke='white' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+          span #{hero.date || 'November 24 2025'}
+        .info-item
+          span
+            svg(width='12' height='15' viewbox='0 0 12 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+              path(d='M11.3337 5.99999C11.3337 9.32866 7.64099 12.7953 6.40099 13.866C6.28548 13.9529 6.14486 13.9998 6.00033 13.9998C5.85579 13.9998 5.71518 13.9529 5.59966 13.866C4.35966 12.7953 0.666992 9.32866 0.666992 5.99999C0.666992 4.5855 1.2289 3.22895 2.22909 2.22875C3.22928 1.22856 4.58584 0.666656 6.00033 0.666656C7.41481 0.666656 8.77137 1.22856 9.77156 2.22875C10.7718 3.22895 11.3337 4.5855 11.3337 5.99999Z' stroke='white' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+              path(d='M6.00033 7.99999C7.10489 7.99999 8.00033 7.10456 8.00033 5.99999C8.00033 4.89542 7.10489 3.99999 6.00033 3.99999C4.89576 3.99999 4.00033 4.89542 4.00033 5.99999C4.00033 7.10456 4.89576 7.99999 6.00033 7.99999Z' stroke='white' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+          span #{hero.location || 'Chennai'}
+      button.cta-button
+        span.cta-text GET FREE QUOTE
+        span.cta-icon
+          svg(width='6' height='11' viewbox='0 0 6 11' fill='none' xmlns='http://www.w3.org/2000/svg')
+            path(d='M0.666992 0.666656L5.33366 5.33332L0.666992 9.99999' stroke='white' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
 .project-details-section
   .project-details-container
     .project-features-header
