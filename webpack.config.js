@@ -1,14 +1,15 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('css-minimizer-webpack-plugin');
-const  { WebpackManifestPlugin } = require('webpack-manifest-plugin');
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const{CleanWebpackPlugin} = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 module.exports = env => {
 	return {
 		mode: env && env.build === 'true' ? "production" : "development",
 		entry: {
 			home: "./public/javascript/home.js",
+<<<<<<< HEAD
 			enqueryform:"./public/javascript/enqueryform.js",
 			admin:"./public/javascript/admin.js",
 			about: "./public/javascript/about.js",
@@ -25,6 +26,16 @@ module.exports = env => {
 			gallery: "./public/javascript/admin/gallery.js",
 			blogDiscover: "./public/javascript/admin/blogDiscover.js"
 		  
+=======
+			OnGoingPage: "./public/javascript/OnGoingPage.js",
+			ProjectPage: "./public/javascript/ProjectPage.js",
+			discoverUs: "./public/javascript/discoverUs.js",
+			// Admin entries
+			upcoming: "./public/javascript/admin/upcoming.js",
+			gallery: "./public/javascript/admin/gallery.js",
+			completed: "./public/javascript/admin/completed.js",
+			banner: "./public/javascript/admin/banner.js"
+>>>>>>> a1cba77 (Banner pages and other updates)
 		},
 		output: {
 			path: path.resolve(__dirname, "public/bundle"),
@@ -33,33 +44,33 @@ module.exports = env => {
 		},
 		module: {
 			rules: [{
-					test: [/.js$/],
-					exclude: /(node_modules)/,
-					use: {
-						loader: 'babel-loader',
-						options: {
-							presets: [
-								'@babel/preset-env'
-							]
-						}
+				test: [/.js$/],
+				exclude: /(node_modules)/,
+				use: {
+					loader: 'babel-loader',
+					options: {
+						presets: [
+							'@babel/preset-env'
+						]
 					}
-				},
-				{
-					test: /\.(png|svg|jpg|gif|mp4|pdf)$/,
-					use: [
-						'file-loader'
-					]
-				},
-				{
-					test: /\.(woff|woff2|eot|ttf|otf)$/,
-					use: [
-						'file-loader'
-					]
-				},
-				{
-					test: /\.(css)$/,
-					use: [MiniCssExtractPlugin.loader, 'css-loader']
-				},
+				}
+			},
+			{
+				test: /\.(png|svg|jpg|gif|mp4|pdf)$/,
+				use: [
+					'file-loader'
+				]
+			},
+			{
+				test: /\.(woff|woff2|eot|ttf|otf)$/,
+				use: [
+					'file-loader'
+				]
+			},
+			{
+				test: /\.(css)$/,
+				use: [MiniCssExtractPlugin.loader, 'css-loader']
+			},
 			]
 		},
 		plugins: [
@@ -72,7 +83,7 @@ module.exports = env => {
 					to: 'assets/images'
 				}]
 			}),
-		new CleanWebpackPlugin(),
+			new CleanWebpackPlugin(),
 			new WebpackManifestPlugin({
 				basePath: '/bundle/'
 			}),

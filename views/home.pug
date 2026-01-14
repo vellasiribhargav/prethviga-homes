@@ -206,21 +206,22 @@ section.reviewContainer
   h2.sectionHeading Loved by our clients
   .reviewCardsWrapper
     .reviewCards
-      each review in reviewsData.slice(1)
-        .reviewCard
-          .reviewIcon
-            span
-              svg(width='34' height='34' viewbox='0 0 34 34' fill='none')
-                path(d='M23.3333 1.66675C22.4492 1.66675 21.6014 2.01794 20.9763 2.64306C20.3511 3.26818 20 4.11603 20 5.00008V15.0001C20 15.8841 20.3511 16.732 20.9763 17.3571C21.6014 17.9822 22.4492 18.3334 23.3333 18.3334C23.7753 18.3334 24.1992 18.509 24.5118 18.8216C24.8244 19.1341 25 19.5581 25 20.0001V21.6667C25 22.5508 24.6488 23.3986 24.0236 24.0238C23.3985 24.6489 22.5507 25.0001 21.6666 25.0001C21.2246 25.0001 20.8007 25.1757 20.4881 25.4882C20.1756 25.8008 20 26.2247 20 26.6667V30.0001C20 30.4421 20.1756 30.866 20.4881 31.1786C20.8007 31.4912 21.2246 31.6667 21.6666 31.6667C24.3188 31.6667 26.8623 30.6132 28.7377 28.7378C30.6131 26.8625 31.6666 24.3189 31.6666 21.6667V5.00008C31.6666 4.11603 31.3154 3.26818 30.6903 2.64306C30.0652 2.01794 29.2173 1.66675 28.3333 1.66675H23.3333Z' stroke='#C1834E' stroke-opacity='0.2' stroke-width='3.33333' stroke-linecap='round' stroke-linejoin='round')
-          .reviewText
-            p= review['review-text']
-          .clientDetail
-            .clientImage
-              span= review['client-name'].charAt(0)
-            .clientInfo
-              h3.clientName= review['client-name']
-              p.clientRole= review['client-role']
-          .reviewFooter= review['review-footer']
+      each i in [1, 2]
+        each review in reviewsData.slice(1)
+          .reviewCard
+            .reviewIcon
+              span
+                svg(width='34' height='34' viewbox='0 0 34 34' fill='none')
+                  path(d='M23.3333 1.66675C22.4492 1.66675 21.6014 2.01794 20.9763 2.64306C20.3511 3.26818 20 4.11603 20 5.00008V15.0001C20 15.8841 20.3511 16.732 20.9763 17.3571C21.6014 17.9822 22.4492 18.3334 23.3333 18.3334C23.7753 18.3334 24.1992 18.509 24.5118 18.8216C24.8244 19.1341 25 19.5581 25 20.0001V21.6667C25 22.5508 24.6488 23.3986 24.0236 24.0238C23.3985 24.6489 22.5507 25.0001 21.6666 25.0001C21.2246 25.0001 20.8007 25.1757 20.4881 25.4882C20.1756 25.8008 20 26.2247 20 26.6667V30.0001C20 30.4421 20.1756 30.866 20.4881 31.1786C20.8007 31.4912 21.2246 31.6667 21.6666 31.6667C24.3188 31.6667 26.8623 30.6132 28.7377 28.7378C30.6131 26.8625 31.6666 24.3189 31.6666 21.6667V5.00008C31.6666 4.11603 31.3154 3.26818 30.6903 2.64306C30.0652 2.01794 29.2173 1.66675 28.3333 1.66675H23.3333Z' stroke='#C1834E' stroke-opacity='0.2' stroke-width='3.33333' stroke-linecap='round' stroke-linejoin='round')
+            .reviewText
+              p= review['review-text']
+            .clientDetail
+              .clientImage
+                span= review['client-name'].charAt(0)
+              .clientInfo
+                h3.clientName= review['client-name']
+                p.clientRole= review['client-role']
+            .reviewFooter= review['review-footer']
 section#contact-section.contact-container
   .contact-section
     .contact-card

@@ -5,7 +5,13 @@ const fs = require('fs');
 const createImageUpload = (folderName) => {
   const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-      const folderPath = path.join('uploads', folderName);
+      let folderPath;
+      if (typeof folderName === 'function') {
+        folderPath = folderName(req);
+      } else {
+        folderPath = path.join('uploads', folderName);
+      }
+
       if (!fs.existsSync(folderPath)) {
         fs.mkdirSync(folderPath, { recursive: true });
       }
@@ -21,7 +27,7 @@ const createImageUpload = (folderName) => {
     const allowedTypes = /jpeg|jpg|png|webp/;
     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = allowedTypes.test(file.mimetype);
-    
+
     if (extname && mimetype) {
       cb(null, true);
     } else {

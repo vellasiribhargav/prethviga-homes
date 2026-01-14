@@ -17,6 +17,7 @@ const seedMongoDB = async () => {
                 "page_section": "home_banner",
                 "page_content": [
                     {
+<<<<<<< HEAD
                         "projimage": `${process.env.PROJECT_URL}/assets/images/homeani1.webp`
                     },
                     {
@@ -27,6 +28,18 @@ const seedMongoDB = async () => {
                     },
                     {
                         "projimage": `${process.env.PROJECT_URL}/assets/images/homeani4.webp`
+=======
+                        "projimage": `/assets/images/homeani1.webp`
+                    },
+                    {
+                        "projimage": `/assets/images/homeani2.webp`
+                    },
+                    {
+                        "projimage": `/assets/images/homeani3.webp`
+                    },
+                    {
+                        "projimage": `/assets/images/homeani4.webp`
+>>>>>>> a1cba77 (Banner pages and other updates)
 
                     }
                 ]
@@ -36,7 +49,11 @@ const seedMongoDB = async () => {
                 "page_section": "home_reviews",
                 "page_content": [
                     {
+<<<<<<< HEAD
                         "profile_image": `${process.env.PROJECT_URL}/assets/images/home-profile.webp`,
+=======
+                        "profile_image": `/assets/images/home-profile.webp`,
+>>>>>>> a1cba77 (Banner pages and other updates)
                         "reviewer": `Outstanding work!
                         They completed out commercial building ahead of schedule and
                         the quality exceeded our expectations. Highly professional team.`,
@@ -44,7 +61,11 @@ const seedMongoDB = async () => {
                         "user_role": "CEO, Davidson Enterprices"
                     },
                     {
+<<<<<<< HEAD
                         "profile_image": `${process.env.PROJECT_URL}/assets/images/home-profile.webp`,
+=======
+                        "profile_image": `/assets/images/home-profile.webp`,
+>>>>>>> a1cba77 (Banner pages and other updates)
                         "reviewer": `Outstanding work!
                         They completed out commercial building ahead of schedule and
                         the quality exceeded our expectations. Highly professional team.`,
@@ -52,7 +73,11 @@ const seedMongoDB = async () => {
                         "user_role": "CEO, Davidson Enterprices"
                     },
                     {
+<<<<<<< HEAD
                         "profile_image": `${process.env.PROJECT_URL}/assets/images/home-profile.webp`,
+=======
+                        "profile_image": `/assets/images/home-profile.webp`,
+>>>>>>> a1cba77 (Banner pages and other updates)
                         "reviewer": `Excellent  work!
                         They completed our commercial building ahead of schedule and
                         the quality exceeded our excpectations. Highly professional team.`,
@@ -67,6 +92,7 @@ const seedMongoDB = async () => {
                 "page_section": "recent_projects",
                 "page_content": [
                     {
+<<<<<<< HEAD
                         "card_image": `${process.env.PROJECT_URL}/assets/images/projecthome1.webp`,
                         "project_name": "Pinnacle View Condominiums",
                         "project-area": "East Side",
@@ -86,6 +112,27 @@ const seedMongoDB = async () => {
                         "project-area": "East Side",
                         "project_date": "November 2024",
                         "card_footer_text": "24 Premium Apartments",
+=======
+                        "card-image": `/assets/images/projecthome1.webp`,
+                        "project-name": "Pinnacle View Condominiums",
+                        "project-area": "East Side",
+                        "project-date": "November 2024",
+                        "card-footer-text": "24 Premium Apartments",
+                    },
+                    {
+                        "card-image": `/assets/images/projecthome2.webp`,
+                        "project-name": "Pinnacle View Condominiums",
+                        "project-area": "East Side",
+                        "project-date": "November 2024",
+                        "card-footer-text": "24 Premium Apartments",
+                    },
+                    {
+                        "card-image": `/assets/images/projecthome3.webp`,
+                        "project-name": "Pinnacle View Condominiums",
+                        "project-area": "East Side",
+                        "project-date": "November 2024",
+                        "card-footer-text": "24 Premium Apartments",
+>>>>>>> a1cba77 (Banner pages and other updates)
                     },
                 ]
             },
@@ -94,7 +141,11 @@ const seedMongoDB = async () => {
                 "page_section": "home_tech",
                 "page_content": [
                     {
+<<<<<<< HEAD
                         "technologies-image": `${process.env.PROJECT_URL}assets/images/window.svg`,
+=======
+                        "technologies-image": `/assets/images/window.svg`,
+>>>>>>> a1cba77 (Banner pages and other updates)
                         "technologies-title": "Technologies",
                     },
                     {
@@ -148,7 +199,10 @@ const seedMongoDB = async () => {
                 "page_section": "ongoing-gallery",
                 "page_content": [
                     {
+<<<<<<< HEAD
                         "project_id": new ObjectId(),
+=======
+>>>>>>> a1cba77 (Banner pages and other updates)
                         "card_image": `${process.env.PROJECT_URL}/assets/images/card1.webp`,
                         "project_name": "Pinnacle View Condominiums",
                         "project_location": "West side",
@@ -156,7 +210,10 @@ const seedMongoDB = async () => {
                         "card_footer_text": "24 Premium Apartments"
                     },
                     {
+<<<<<<< HEAD
                         "project_id": new ObjectId(),
+=======
+>>>>>>> a1cba77 (Banner pages and other updates)
                         "card_image": `${process.env.PROJECT_URL}/assets/images/card2.webp`,
                         "project_name": "Serenity Heights Estate",
                         "project_location": "West side",
@@ -164,7 +221,10 @@ const seedMongoDB = async () => {
                         "card_footer_text": "24 Premium Apartments",
                     },
                     {
+<<<<<<< HEAD
                         "project_id": new ObjectId(),
+=======
+>>>>>>> a1cba77 (Banner pages and other updates)
                         "card_image": `${process.env.PROJECT_URL}/assets/images/card3.webp`,
                         "project_name": "Grandview Manor Residences",
                         "project_location": "South End",
@@ -172,6 +232,7 @@ const seedMongoDB = async () => {
                         "card_footer_text": "24 Premium Apartments",
                     },
                     {
+<<<<<<< HEAD
                         "project_id": new ObjectId(),
                         "card_image": `${process.env.PROJECT_URL}/assets/images/card4.webp`,
                         "project_name": "Pinnacle View Condominiums",
@@ -194,11 +255,33 @@ const seedMongoDB = async () => {
                         "project_location": "East Side",
                         "project_date": "November 2024",
                         "card_footer_text": "24 Premium Apartments"
+=======
+                        "card-image": `${process.env.PROJECT_URL}/assets/images/card4.webp`,
+                        "project-name": "Pinnacle View Condominiums",
+                        "project-location": "East Side",
+                        "project-date": "November 2024",
+                        "card-footer-text": "24 Premium Apartments"
+                    },
+                    {
+                        "card-image": `${process.env.PROJECT_URL}/assets/images/card1.webp`,
+                        "project-name": "Pinnacle View Condominiums",
+                        "project-location": "East Side",
+                        "project-date": "November 2024",
+                        "card-footer-text": "24 Premium Apartments"
+                    },
+                    {
+                        "card-image": `${process.env.PROJECT_URL}/assets/images/card4.webp`,
+                        "project-name": "Pinnacle View Condominiums",
+                        "project-location": "East Side",
+                        "project-date": "November 2024",
+                        "card-footer-text": "24 Premium Apartments"
+>>>>>>> a1cba77 (Banner pages and other updates)
                     }
                 ]
             },
             {
                 "page_slug": "ProjectPage",
+<<<<<<< HEAD
                 "page_section": "completed-gallery",
                 "page_content": [
                     {
@@ -219,6 +302,25 @@ const seedMongoDB = async () => {
                     },
                     {
                         "project_id": new ObjectId(),
+=======
+                "page_section": "card-grid-wrapper",
+                "page_content": [
+                    {
+                        "card-image": `${process.env.PROJECT_URL}/assets/images/card2.webp`,
+                        "project-name": "Pinnacle View Condominiums",
+                        "project-location": "West side",
+                        "project-date": "November 2024",
+                        "card-footer-text": "24 Premium Apartments"
+                    },
+                    {
+                        "card-image": `${process.env.PROJECT_URL}/assets/images/card3.webp`,
+                        "project-name": "Serenity Heights Estate",
+                        "project-location": "West side",
+                        "project-date": "August 2024",
+                        "card-footer-text": "24 Premium Apartments"
+                    },
+                    {
+>>>>>>> a1cba77 (Banner pages and other updates)
                         "card_image": `${process.env.PROJECT_URL}/assets/images/card4.webp`,
                         "project_name": "Grandview Manor Residences",
                         "project_location": "South End",
@@ -226,7 +328,10 @@ const seedMongoDB = async () => {
                         "card_footer_text": "24 Premium Apartments",
                     },
                     {
+<<<<<<< HEAD
                         "project_id": new ObjectId(),
+=======
+>>>>>>> a1cba77 (Banner pages and other updates)
                         "card_image": `${process.env.PROJECT_URL}/assets/images/card3.webp`,
                         "project_name": "Pinnacle View Condominiums",
                         "project_location": "East Side",
@@ -234,7 +339,10 @@ const seedMongoDB = async () => {
                         "card_footer_text": "24 Premium Apartments",
                     },
                     {
+<<<<<<< HEAD
                         "project_id": new ObjectId(),
+=======
+>>>>>>> a1cba77 (Banner pages and other updates)
                         "card_image": `${process.env.PROJECT_URL}/assets/images/card3.webp`,
                         "project_name": "Pinnacle View Condominiums",
                         "project_location": "East Side",
@@ -242,7 +350,10 @@ const seedMongoDB = async () => {
                         "card_footer_text": "24 Premium Apartments",
                     },
                     {
+<<<<<<< HEAD
                         "project_id": new ObjectId(),
+=======
+>>>>>>> a1cba77 (Banner pages and other updates)
                         "card_image": `${process.env.PROJECT_URL}/assets/images/card2.webp`,
                         "project_name": "Pinnacle View Condominiums",
                         "project_location": "East Side",
@@ -284,7 +395,7 @@ const seedMongoDB = async () => {
                 "page_section": "hero-section",
                 "page_content": [
                     {
-                        "pimage": `${process.env.PROJECT_URL}assets/images/onGoingBG.webp`,
+                        "pimage": `/assets/images/onGoingBG.webp`,
                         "title": "Sunset Ridge Residence",
                         "buiding_name": "24 Premium Apartments",
                         "date": "November 15, 2025",
@@ -298,7 +409,7 @@ const seedMongoDB = async () => {
                 "page_content": [
                     {
                         "title": "Floor Layout",
-                        "floor_image": `${process.env.PROJECT_URL}assets/images/Rectangle 42.webp`
+                        "floor_image": `/assets/images/Rectangle 42.webp`
                     }
                 ]
             },

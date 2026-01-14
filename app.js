@@ -18,7 +18,12 @@ const contactRoutes = require('./routes/contactRoutes');
 const upcomingRoutes = require('./adminPanel/routes/upcomingRoutes');
 const completedRoutes = require('./adminPanel/routes/completedRoutes');
 const galleryRoutes = require('./adminPanel/routes/galleryRoutes');
+<<<<<<< HEAD
 const blogDiscoverRoutes = require('./adminPanel/routes/blogDiscoverRoutes');
+=======
+const blogRoutes = require('./adminPanel/routes/blogRoutes');
+const bannerRoutes = require('./adminPanel/routes/bannerRoutes');
+>>>>>>> a1cba77 (Banner pages and other updates)
 
 (utils = require("./utils/index")), (env = process.env.NODE_ENV);
 
@@ -66,6 +71,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use((req, res, next) => {
   res.locals.utils = utils;
   res.locals.env = env;
+  res.locals.query = req.query; // expose query params to views (used for slug)
   next();
 });
 
@@ -85,7 +91,13 @@ app.use('/', contactRoutes);
 app.use('/admin/upcoming', upcomingRoutes);
 app.use('/admin/completed', completedRoutes);
 app.use('/admin/gallery', galleryRoutes);
+<<<<<<< HEAD
 app.use('/admin/blogDiscover', blogDiscoverRoutes);
+=======
+app.use('/admin/blog', blogRoutes);
+app.use('/admin/banners', bannerRoutes);
+
+>>>>>>> a1cba77 (Banner pages and other updates)
 app.use((req, res, next) => {
   res.setHeader(
     "Strict-Transport-Security",
