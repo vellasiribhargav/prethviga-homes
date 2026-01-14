@@ -9,10 +9,10 @@ const isProduction = args.includes("--production");
 
 
 const entryPoints = {
-  home:"./public/javascript/home.js",
-  discoverUs:"./public/javascript/discoverUs.js",
-  OnGoingPage:"./public/javascript/OnGoingPage.js",
-  ProjectPage:"./public/javascript/ProjectPage.js",
+  home: "./public/javascript/home.js",
+  discoverUs: "./public/javascript/discoverUs.js",
+  OnGoingPage: "./public/javascript/OnGoingPage.js",
+  ProjectPage: "./public/javascript/ProjectPage.js",
 
   upcoming: "./public/javascript/admin/upcoming.js",
   blogDiscover: "./public/javascript/admin/blogDiscover.js",
@@ -37,11 +37,11 @@ function unhash(file_hashed) {
     file_path
   );
 }
-const outdir_clear={
+const outdir_clear = {
   name: "OutDir_Clear",
   setup: (build) => {
     const options = build.initialOptions;
-    build.onEnd(async(result) => {
+    build.onEnd(async (result) => {
       const safelist = new Set(Object.keys(result.metafile.outputs));
       const files = await fs.promises.readdir(options.outdir);
       await Promise.all(
@@ -117,4 +117,4 @@ await esbuild.build({
   metafile: true,
 
 
-  });
+});

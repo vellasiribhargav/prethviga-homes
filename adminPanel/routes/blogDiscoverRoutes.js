@@ -7,7 +7,7 @@ const upload = createImageUpload("blogDiscover");
 
 // router.get('/', blogDiscoverController.renderBlogDiscoverPage);
 router.get('/getblogdiscover', blogDiscoverController.getBlogDiscover);
-router.post('/addblogdiscover', upload.array('file', 10), blogDiscoverController.addBlogDiscoverItem);
+router.post('/addblogdiscover', upload.any(), blogDiscoverController.addBlogDiscoverItem);
 router.put('/updateblogdiscover/:index', upload.single('file'), blogDiscoverController.updateBlogDiscoverItem);
 router.delete('/deleteblogdiscover/:index', blogDiscoverController.deleteBlogDiscoverItem);
 

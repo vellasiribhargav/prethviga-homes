@@ -6,10 +6,10 @@ const getdiscoverUsData = async (req, res) => {
 
     const ourvaluesData = discoverUsData.find(item => item.page_section === 'value-container')?.page_content || [];
     const blogData = discoverUsData.find(item => item.page_section === 'blogs-card')?.page_content || [];
-    
+
     res.render('discoverUs', {
-        ourvaluesData,
-        blogData
+      ourvaluesData,
+      blogData
     });
   } catch (error) {
     console.error('Error fetching discoverUs data:', error);

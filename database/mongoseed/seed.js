@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 // const connectMongoDB = require("../../config/mongodb.js");
 const config = require("../../config/config.js");
 const PROJECT_URL = process.env.PROJECT_URL;
-const {ObjectId} = require("mongodb");
+const { ObjectId } = require("mongodb");
 
 const seedMongoDB = async () => {
     try {
@@ -13,249 +13,249 @@ const seedMongoDB = async () => {
         const homeConnection = mongoose.connection.db.collection("home");
         const insertHomeData = [
             {
-                "page_slug":"home",
-                "page_section":"home_banner",
-                "page_content":[
+                "page_slug": "home",
+                "page_section": "home_banner",
+                "page_content": [
                     {
-                        "projimage":`${process.env.PROJECT_URL}/assets/images/homeani1.webp`
+                        "projimage": `${process.env.PROJECT_URL}/assets/images/homeani1.webp`
                     },
                     {
-                        "projimage":`${process.env.PROJECT_URL}/assets/images/homeani2.webp`
+                        "projimage": `${process.env.PROJECT_URL}/assets/images/homeani2.webp`
                     },
                     {
-                        "projimage":`${process.env.PROJECT_URL}/assets/images/homeani3.webp`
+                        "projimage": `${process.env.PROJECT_URL}/assets/images/homeani3.webp`
                     },
                     {
-                        "projimage":`${process.env.PROJECT_URL}/assets/images/homeani4.webp`
+                        "projimage": `${process.env.PROJECT_URL}/assets/images/homeani4.webp`
 
                     }
                 ]
             },
             {
-                "page_slug":"home",
-                "page_section":"home_reviews",
-                "page_content":[
+                "page_slug": "home",
+                "page_section": "home_reviews",
+                "page_content": [
                     {
-                        "profile_image":`${process.env.PROJECT_URL}/assets/images/home-profile.webp`,
-                        "reviewer":`Outstanding work!
+                        "profile_image": `${process.env.PROJECT_URL}/assets/images/home-profile.webp`,
+                        "reviewer": `Outstanding work!
                         They completed out commercial building ahead of schedule and
                         the quality exceeded our expectations. Highly professional team.`,
-                        "user_name":"John Davidson",
-                        "user_role":"CEO, Davidson Enterprices"
+                        "user_name": "John Davidson",
+                        "user_role": "CEO, Davidson Enterprices"
                     },
                     {
-                        "profile_image":`${process.env.PROJECT_URL}/assets/images/home-profile.webp`,
-                        "reviewer":`Outstanding work!
+                        "profile_image": `${process.env.PROJECT_URL}/assets/images/home-profile.webp`,
+                        "reviewer": `Outstanding work!
                         They completed out commercial building ahead of schedule and
                         the quality exceeded our expectations. Highly professional team.`,
-                        "user_name":"John Davidson",
-                        "user_role":"CEO, Davidson Enterprices"
+                        "user_name": "John Davidson",
+                        "user_role": "CEO, Davidson Enterprices"
                     },
                     {
-                        "profile_image":`${process.env.PROJECT_URL}/assets/images/home-profile.webp`,
-                        "reviewer":`Excellent  work!
+                        "profile_image": `${process.env.PROJECT_URL}/assets/images/home-profile.webp`,
+                        "reviewer": `Excellent  work!
                         They completed our commercial building ahead of schedule and
                         the quality exceeded our excpectations. Highly professional team.`,
-                        "user_name":"John Davidson",
-                        "user_role":"CEO, Davidson Enterprises"
+                        "user_name": "John Davidson",
+                        "user_role": "CEO, Davidson Enterprises"
                     }
 
                 ]
             },
             {
-                "page_slug":"home",
-                "page_section":"recent_projects",
-                "page_content":[
+                "page_slug": "home",
+                "page_section": "recent_projects",
+                "page_content": [
                     {
-                        "card_image":`${process.env.PROJECT_URL}/assets/images/projecthome1.webp`,
-                        "project_name":"Pinnacle View Condominiums",
-                        "project-area":"East Side",
-                        "project_date":"November 2024",
-                        "card_footer_text":"24 Premium Apartments",
+                        "card_image": `${process.env.PROJECT_URL}/assets/images/projecthome1.webp`,
+                        "project_name": "Pinnacle View Condominiums",
+                        "project-area": "East Side",
+                        "project_date": "November 2024",
+                        "card_footer_text": "24 Premium Apartments",
                     },
                     {
-                        "card_image":`${process.env.PROJECT_URL}/assets/images/projecthome2.webp`,
-                        "project_name":"Pinnacle View Condominiums",
-                        "project-area":"East Side",
-                        "project_date":"November 2024",
-                        "card_footer_text":"24 Premium Apartments",
+                        "card_image": `${process.env.PROJECT_URL}/assets/images/projecthome2.webp`,
+                        "project_name": "Pinnacle View Condominiums",
+                        "project-area": "East Side",
+                        "project_date": "November 2024",
+                        "card_footer_text": "24 Premium Apartments",
                     },
                     {
-                        "card_image":`${process.env.PROJECT_URL}/assets/images/projecthome3.webp`,
-                        "project_name":"Pinnacle View Condominiums",
-                        "project-area":"East Side",
-                        "project_date":"November 2024",
-                        "card_footer_text":"24 Premium Apartments",
+                        "card_image": `${process.env.PROJECT_URL}/assets/images/projecthome3.webp`,
+                        "project_name": "Pinnacle View Condominiums",
+                        "project-area": "East Side",
+                        "project_date": "November 2024",
+                        "card_footer_text": "24 Premium Apartments",
                     },
                 ]
             },
             {
-                "page_slug":"home",
-                "page_section":"home_tech",
-                "page_content":[
+                "page_slug": "home",
+                "page_section": "home_tech",
+                "page_content": [
                     {
-                        "technologies-image":`${process.env.PROJECT_URL}assets/images/window.svg`,
-                        "technologies-title":"Technologies",
+                        "technologies-image": `${process.env.PROJECT_URL}assets/images/window.svg`,
+                        "technologies-title": "Technologies",
                     },
                     {
-                        "tech-name":"Wall",
-                        "tech-text":"We use top-tier materials like reinforced composites and sustainable timber, customized for your project and local climate."
+                        "tech-name": "Wall",
+                        "tech-text": "We use top-tier materials like reinforced composites and sustainable timber, customized for your project and local climate."
                     },
                     {
-                        "tech-name":"Roof",
-                        "tech-text":"We ensure dry, comfortable, energy-efficient homes with advanced waterproofing, insulation, and cladding for year-round protection."
+                        "tech-name": "Roof",
+                        "tech-text": "We ensure dry, comfortable, energy-efficient homes with advanced waterproofing, insulation, and cladding for year-round protection."
 
                     },
                     {
-                        "tech-name":"Window",
-                        "tech-text":"Our windows offer stunning views, energy efficiency, and security, seamlessly integrating indoor and outdoor living spaces."
+                        "tech-name": "Window",
+                        "tech-text": "Our windows offer stunning views, energy efficiency, and security, seamlessly integrating indoor and outdoor living spaces."
                     }
                 ]
             },
             {
-                "page_slug":"home",
-                "page_section":"reviews",
-                "page_content":[
+                "page_slug": "home",
+                "page_section": "reviews",
+                "page_content": [
                     {
-                        "review-title":"Loved by our clients"
+                        "review-title": "Loved by our clients"
                     },
                     {
-                        "review-text":"Prethviga Homes transformed our dream into reality. Their attention to detail and commitment to quality is unmatched. Our new home is everything we hoped for and more!",
-                        "client-name":"Rajesh Kumar",
-                        "client-role":"Homeowner",
-                        "review-footer":"Project: Sunset Ridge Residence"
+                        "review-text": "Prethviga Homes transformed our dream into reality. Their attention to detail and commitment to quality is unmatched. Our new home is everything we hoped for and more!",
+                        "client-name": "Rajesh Kumar",
+                        "client-role": "Homeowner",
+                        "review-footer": "Project: Sunset Ridge Residence"
                     },
                     {
-                        "review-text":"Working with Prethviga Homes was a seamless experience. They delivered our commercial space on time and within budget. Professional team with excellent communication!",
-                        "client-name":"Priya Sharma",
-                        "client-role":"Business Owner",
-                        "review-footer":"Project: Tech Hub Commercial Plaza"
+                        "review-text": "Working with Prethviga Homes was a seamless experience. They delivered our commercial space on time and within budget. Professional team with excellent communication!",
+                        "client-name": "Priya Sharma",
+                        "client-role": "Business Owner",
+                        "review-footer": "Project: Tech Hub Commercial Plaza"
                     },
                     {
-                        "review-text":"I've invested in multiple projects with Prethviga Homes and every time they've exceeded expectations. Their transparency and quality construction make them my go-to builder",
-                        "client-name":"Arun Venkatesh",
-                        "client-role":"Investor",
-                        "review-footer":"Project: Green Valley Apartments"
+                        "review-text": "I've invested in multiple projects with Prethviga Homes and every time they've exceeded expectations. Their transparency and quality construction make them my go-to builder",
+                        "client-name": "Arun Venkatesh",
+                        "client-role": "Investor",
+                        "review-footer": "Project: Green Valley Apartments"
                     }
                 ]
             }
 
         ]
-        const ProjectPageConnection= mongoose.connection.db.collection("ProjectPage");
-        const insertProjectPageData=[
+        const ProjectPageConnection = mongoose.connection.db.collection("ProjectPage");
+        const insertProjectPageData = [
             {
-                "page_slug":"ProjectPage",
-                "page_section":"ongoing-gallery",
-                "page_content":[
+                "page_slug": "ProjectPage",
+                "page_section": "ongoing-gallery",
+                "page_content": [
                     {
-                        "project_id":new ObjectId(),
-                        "card_image":`${process.env.PROJECT_URL}/assets/images/card1.webp`,
-                        "project_name":"Pinnacle View Condominiums",
-                        "project_location":"West side",
-                        "project_date":"November 2024",
-                        "card_footer_text":"24 Premium Apartments"
+                        "project_id": new ObjectId(),
+                        "card_image": `${process.env.PROJECT_URL}/assets/images/card1.webp`,
+                        "project_name": "Pinnacle View Condominiums",
+                        "project_location": "West side",
+                        "project_date": "November 2024",
+                        "card_footer_text": "24 Premium Apartments"
                     },
                     {
-                        "project_id":new ObjectId(),
-                        "card_image":`${process.env.PROJECT_URL}/assets/images/card2.webp`,
-                        "project_name":"Serenity Heights Estate",
-                        "project_location":"West side",
-                        "project_date":"August 2024",
-                        "card_footer_text":"24 Premium Apartments",
+                        "project_id": new ObjectId(),
+                        "card_image": `${process.env.PROJECT_URL}/assets/images/card2.webp`,
+                        "project_name": "Serenity Heights Estate",
+                        "project_location": "West side",
+                        "project_date": "August 2024",
+                        "card_footer_text": "24 Premium Apartments",
                     },
                     {
-                        "project_id":new ObjectId(),
-                        "card_image":`${process.env.PROJECT_URL}/assets/images/card3.webp`,
-                        "project_name":"Grandview Manor Residences",
-                        "project_location":"South End",
-                        "project_date":"September 2024",
-                        "card_footer_text":"24 Premium Apartments",
+                        "project_id": new ObjectId(),
+                        "card_image": `${process.env.PROJECT_URL}/assets/images/card3.webp`,
+                        "project_name": "Grandview Manor Residences",
+                        "project_location": "South End",
+                        "project_date": "September 2024",
+                        "card_footer_text": "24 Premium Apartments",
                     },
                     {
-                        "project_id":new ObjectId(),
-                        "card_image":`${process.env.PROJECT_URL}/assets/images/card4.webp`,
-                        "project_name":"Pinnacle View Condominiums",
-                        "project_location":"East Side",
-                        "project_date":"November 2024",
-                        "card_footer_text":"24 Premium Apartments"
+                        "project_id": new ObjectId(),
+                        "card_image": `${process.env.PROJECT_URL}/assets/images/card4.webp`,
+                        "project_name": "Pinnacle View Condominiums",
+                        "project_location": "East Side",
+                        "project_date": "November 2024",
+                        "card_footer_text": "24 Premium Apartments"
                     },
                     {
-                        "project_id":new ObjectId(),
-                        "card_image":`${process.env.PROJECT_URL}/assets/images/card1.webp`,
-                        "project_name":"Pinnacle View Condominiums",
-                        "project_location":"East Side",
-                        "project_date":"November 2024",
-                        "card_footer_text":"24 Premium Apartments"
+                        "project_id": new ObjectId(),
+                        "card_image": `${process.env.PROJECT_URL}/assets/images/card1.webp`,
+                        "project_name": "Pinnacle View Condominiums",
+                        "project_location": "East Side",
+                        "project_date": "November 2024",
+                        "card_footer_text": "24 Premium Apartments"
                     },
                     {
-                        "project_id":new ObjectId(),
-                        "card_image":`${process.env.PROJECT_URL}/assets/images/card4.webp`,
-                        "project_name":"Pinnacle View Condominiums",
-                        "project_location":"East Side",
-                        "project_date":"November 2024",
-                        "card_footer_text":"24 Premium Apartments"
+                        "project_id": new ObjectId(),
+                        "card_image": `${process.env.PROJECT_URL}/assets/images/card4.webp`,
+                        "project_name": "Pinnacle View Condominiums",
+                        "project_location": "East Side",
+                        "project_date": "November 2024",
+                        "card_footer_text": "24 Premium Apartments"
                     }
                 ]
             },
             {
-                "page_slug":"ProjectPage",
-                "page_section":"completed-gallery",
-                "page_content":[
+                "page_slug": "ProjectPage",
+                "page_section": "completed-gallery",
+                "page_content": [
                     {
-                        "project_id":new ObjectId(),
-                        "card_image":`${process.env.PROJECT_URL}/assets/images/card2.webp`,
-                        "project_name":"Pinnacle View Condominiums",
-                        "project_location":"West side",
-                        "project_date":"November 2024",
-                        "card_footer_text":"24 Premium Apartments"
+                        "project_id": new ObjectId(),
+                        "card_image": `${process.env.PROJECT_URL}/assets/images/card2.webp`,
+                        "project_name": "Pinnacle View Condominiums",
+                        "project_location": "West side",
+                        "project_date": "November 2024",
+                        "card_footer_text": "24 Premium Apartments"
                     },
                     {
-                        "project_id":new ObjectId(),
-                        "card_image":`${process.env.PROJECT_URL}/assets/images/card3.webp`,
-                        "project_name":"Serenity Heights Estate",
-                        "project_location":"West side",
-                        "project_date":"August 2024",
-                        "card_footer_text":"24 Premium Apartments"
+                        "project_id": new ObjectId(),
+                        "card_image": `${process.env.PROJECT_URL}/assets/images/card3.webp`,
+                        "project_name": "Serenity Heights Estate",
+                        "project_location": "West side",
+                        "project_date": "August 2024",
+                        "card_footer_text": "24 Premium Apartments"
                     },
                     {
-                        "project_id":new ObjectId(),
-                        "card_image":`${process.env.PROJECT_URL}/assets/images/card4.webp`,
-                        "project_name":"Grandview Manor Residences",
-                        "project_location":"South End",
-                        "project_date":"September 2024",
-                        "card_footer_text":"24 Premium Apartments",
+                        "project_id": new ObjectId(),
+                        "card_image": `${process.env.PROJECT_URL}/assets/images/card4.webp`,
+                        "project_name": "Grandview Manor Residences",
+                        "project_location": "South End",
+                        "project_date": "September 2024",
+                        "card_footer_text": "24 Premium Apartments",
                     },
                     {
-                        "project_id":new ObjectId(),
-                        "card_image":`${process.env.PROJECT_URL}/assets/images/card3.webp`,
-                        "project_name":"Pinnacle View Condominiums",
-                        "project_location":"East Side",
-                        "project_date":"November 2024",
-                        "card_footer_text":"24 Premium Apartments",
+                        "project_id": new ObjectId(),
+                        "card_image": `${process.env.PROJECT_URL}/assets/images/card3.webp`,
+                        "project_name": "Pinnacle View Condominiums",
+                        "project_location": "East Side",
+                        "project_date": "November 2024",
+                        "card_footer_text": "24 Premium Apartments",
                     },
                     {
-                        "project_id":new ObjectId(),
-                        "card_image":`${process.env.PROJECT_URL}/assets/images/card3.webp`,
-                        "project_name":"Pinnacle View Condominiums",
-                        "project_location":"East Side",
-                        "project_date":"November 2024",
-                        "card_footer_text":"24 Premium Apartments",
+                        "project_id": new ObjectId(),
+                        "card_image": `${process.env.PROJECT_URL}/assets/images/card3.webp`,
+                        "project_name": "Pinnacle View Condominiums",
+                        "project_location": "East Side",
+                        "project_date": "November 2024",
+                        "card_footer_text": "24 Premium Apartments",
                     },
                     {
-                        "project_id":new ObjectId(),
-                        "card_image":`${process.env.PROJECT_URL}/assets/images/card2.webp`,
-                        "project_name":"Pinnacle View Condominiums",
-                        "project_location":"East Side",
-                        "project_date":"November 2024",
-                        "card_footer_text":"24 Premium Apartments"
+                        "project_id": new ObjectId(),
+                        "card_image": `${process.env.PROJECT_URL}/assets/images/card2.webp`,
+                        "project_name": "Pinnacle View Condominiums",
+                        "project_location": "East Side",
+                        "project_date": "November 2024",
+                        "card_footer_text": "24 Premium Apartments"
                     }
                 ]
 
             },
             {
-                "page_slug":"ProjectPage",
-                "page_section":"faq-section-header",
-                "page_content":[
+                "page_slug": "ProjectPage",
+                "page_section": "faq-section-header",
+                "page_content": [
                     {
                         "question": "How long does a typical construction project take?",
                         "answer": `The duration varies based on project complexity and scale. Residential projects
@@ -340,18 +340,18 @@ const seedMongoDB = async () => {
                         feature: "Modern Architecture",
                         description: "High-quality materials and superior craftsmanship ensuring lasting value",
                         svg: {
-                                width: 30,
-                                height: 30,
-                                viewBox: "0 0 30 30",
-                                path: "M6.66634 28V4.00001C6.66634 3.29277 6.94729 2.61449 7.44739 2.11439C7.94749 1.61429 8.62576 1.33334 9.33301 1.33334H19.9997C20.7069 1.33334 21.3852 1.61429 21.8853 2.11439C22.3854 2.61449 22.6663 3.29277 22.6663 4.00001V28M6.66634 28H22.6663M6.66634 28L3.99967 28C3.29243 28 2.61415 27.7191 2.11406 27.219C1.61396 26.7189 1.33301 26.0406 1.33301 25.3333V17.3333C1.33301 16.6261 1.61396 15.9478 2.11406 15.4477C2.61415 14.9476 3.29243 14.6667 3.99967 14.6667H6.66634M22.6663 28L25.333 28C26.0403 28 26.7185 27.7191 27.2186 27.219C27.7187 26.7189 27.9997 26.0406 27.9997 25.3333V13.3333C27.9997 12.6261 27.7187 11.9478 27.2186 11.4477C26.7185 10.9476 26.0403 10.6667 25.333 10.6667H22.6663M11.9997 6.66668H17.333M11.9997 12H17.333M11.9997 17.3333H17.333M11.9997 22.6667H17.333"
+                            width: 30,
+                            height: 30,
+                            viewBox: "0 0 30 30",
+                            path: "M6.66634 28V4.00001C6.66634 3.29277 6.94729 2.61449 7.44739 2.11439C7.94749 1.61429 8.62576 1.33334 9.33301 1.33334H19.9997C20.7069 1.33334 21.3852 1.61429 21.8853 2.11439C22.3854 2.61449 22.6663 3.29277 22.6663 4.00001V28M6.66634 28H22.6663M6.66634 28L3.99967 28C3.29243 28 2.61415 27.7191 2.11406 27.219C1.61396 26.7189 1.33301 26.0406 1.33301 25.3333V17.3333C1.33301 16.6261 1.61396 15.9478 2.11406 15.4477C2.61415 14.9476 3.29243 14.6667 3.99967 14.6667H6.66634M22.6663 28L25.333 28C26.0403 28 26.7185 27.7191 27.2186 27.219C27.7187 26.7189 27.9997 26.0406 27.9997 25.3333V13.3333C27.9997 12.6261 27.7187 11.9478 27.2186 11.4477C26.7185 10.9476 26.0403 10.6667 25.333 10.6667H22.6663M11.9997 6.66668H17.333M11.9997 12H17.333M11.9997 17.3333H17.333M11.9997 22.6667H17.333"
                         }
                     }
                 ]
             },
             {
-                "page_slug":"OnGoingPage",
-                "page_section":"amenities-list",
-                "page_content":[
+                "page_slug": "OnGoingPage",
+                "page_section": "amenities-list",
+                "page_content": [
                     {
                         "feature": "Swimming Pool"
                     },
@@ -376,68 +376,68 @@ const seedMongoDB = async () => {
                 "page_slug": "OnGoingPage",
                 "page_section": "location-container",
                 "page_content": {
-                    image:`${process.env.PROJECT_URL}assets/images/Rectangle.webp`,
+                    image: `${process.env.PROJECT_URL}assets/images/Rectangle.webp`,
                     details: [
-                    {
-                        type: "address",
-                        title: "Address",
-                        text: "Avinashi Road, Coimbatore - 641018",
-                        svg: {
-                        width: 18,
-                        height: 22,
-                        viewBox: "0 0 18 22",
-                        path: [
-                            "M17 9C17 13.993 11.461 19.193 9.601 20.799C9.42772 20.9293 9.2168 20.9998 9 20.9998C8.7832 20.9998 8.57228 20.9293 8.399 20.799C6.539 19.193 1 13.993 1 9C1 6.87827 1.84285 4.84344 3.34315 3.34315C4.84344 1.84285 6.87827 1 9 1C11.1217 1 13.1566 1.84285 14.6569 3.34315C16.1571 4.84344 17 6.87827 17 9Z",
-                            "M9 12C10.6569 12 12 10.6569 12 9C12 7.34315 10.6569 6 9 6C7.34315 6 6 7.34315 6 9C6 10.6569 7.34315 12 9 12Z"
-                        ],
-                        stroke: "#C1834E",
-                        strokeWidth: 2,
-                        strokeLinecap: "round",
-                        strokeLinejoin: "round",
-                        fill: "none"
+                        {
+                            type: "address",
+                            title: "Address",
+                            text: "Avinashi Road, Coimbatore - 641018",
+                            svg: {
+                                width: 18,
+                                height: 22,
+                                viewBox: "0 0 18 22",
+                                path: [
+                                    "M17 9C17 13.993 11.461 19.193 9.601 20.799C9.42772 20.9293 9.2168 20.9998 9 20.9998C8.7832 20.9998 8.57228 20.9293 8.399 20.799C6.539 19.193 1 13.993 1 9C1 6.87827 1.84285 4.84344 3.34315 3.34315C4.84344 1.84285 6.87827 1 9 1C11.1217 1 13.1566 1.84285 14.6569 3.34315C16.1571 4.84344 17 6.87827 17 9Z",
+                                    "M9 12C10.6569 12 12 10.6569 12 9C12 7.34315 10.6569 6 9 6C7.34315 6 6 7.34315 6 9C6 10.6569 7.34315 12 9 12Z"
+                                ],
+                                stroke: "#C1834E",
+                                strokeWidth: 2,
+                                strokeLinecap: "round",
+                                strokeLinejoin: "round",
+                                fill: "none"
+                            }
+                        },
+                        {
+                            type: "landmarks",
+                            title: "Nearby Landmarks",
+                            list: [
+                                "2 km from City Center",
+                                "5 min to Schools & Hospitals",
+                                "10 min to Shopping Malls",
+                                "Easy access to IT Parks"
+                            ],
+                            svg: {
+                                width: 21,
+                                height: 22,
+                                viewBox: "0 0 21 22",
+                                path: [
+                                    "M5 21V3C5 2.46957 5.21071 1.96086 5.58579 1.58579C5.96086 1.21071 6.46957 1 7 1H15C15.5304 1 16.0391 1.21071 16.4142 1.58579C16.7893 1.96086 17 2.46957 17 3V21M5 21H17M5 21H3C2.46957 21 1.96086 20.7893 1.58579 20.4142C1.21071 20.0391 1 19.5304 1 19V13C1 12.4696 1.21071 11.9609 1.58579 11.5858C1.96086 11.2107 2.46957 11 3 11H5M17 21H19C19.5304 21 20.0391 20.7893 20.4142 20.4142C20.7893 20.0391 21 19.5304 21 19V10C21 9.46957 20.7893 8.96086 20.4142 8.58579C20.0391 8.21071 19.5304 8 19 8H17M9 5H13M9 9H13M9 13H13M9 17H13"
+                                ],
+                                stroke: "#C1834E",
+                                strokeWidth: 2,
+                                strokeLinecap: "round",
+                                strokeLinejoin: "round",
+                                fill: "none"
+                            }
+                        },
+                        {
+                            type: "connectivity",
+                            title: "Connectivity",
+                            text: "Well-connected by major roads and public transport with easy access to highways",
+                            svg: {
+                                width: 18,
+                                height: 13,
+                                viewBox: "0 0 18 13",
+                                path: [
+                                    "M17 1L6 12L1 7"
+                                ],
+                                stroke: "#C1834E",
+                                strokeWidth: 2,
+                                strokeLinecap: "round",
+                                strokeLinejoin: "round",
+                                fill: "none"
+                            }
                         }
-                    },
-                    {
-                        type: "landmarks",
-                        title: "Nearby Landmarks",
-                        list: [
-                        "2 km from City Center",
-                        "5 min to Schools & Hospitals",
-                        "10 min to Shopping Malls",
-                        "Easy access to IT Parks"
-                        ],
-                        svg: {
-                        width: 21,
-                        height: 22,
-                        viewBox: "0 0 21 22",
-                        path: [
-                            "M5 21V3C5 2.46957 5.21071 1.96086 5.58579 1.58579C5.96086 1.21071 6.46957 1 7 1H15C15.5304 1 16.0391 1.21071 16.4142 1.58579C16.7893 1.96086 17 2.46957 17 3V21M5 21H17M5 21H3C2.46957 21 1.96086 20.7893 1.58579 20.4142C1.21071 20.0391 1 19.5304 1 19V13C1 12.4696 1.21071 11.9609 1.58579 11.5858C1.96086 11.2107 2.46957 11 3 11H5M17 21H19C19.5304 21 20.0391 20.7893 20.4142 20.4142C20.7893 20.0391 21 19.5304 21 19V10C21 9.46957 20.7893 8.96086 20.4142 8.58579C20.0391 8.21071 19.5304 8 19 8H17M9 5H13M9 9H13M9 13H13M9 17H13"
-                        ],
-                        stroke: "#C1834E",
-                        strokeWidth: 2,
-                        strokeLinecap: "round",
-                        strokeLinejoin: "round",
-                        fill: "none"
-                        }
-                    },
-                    {
-                        type: "connectivity",
-                        title: "Connectivity",
-                        text: "Well-connected by major roads and public transport with easy access to highways",
-                        svg: {
-                        width: 18,
-                        height: 13,
-                        viewBox: "0 0 18 13",
-                        path: [
-                            "M17 1L6 12L1 7"
-                        ],
-                        stroke: "#C1834E",
-                        strokeWidth: 2,
-                        strokeLinecap: "round",
-                        strokeLinejoin: "round",
-                        fill: "none"
-                        }
-                    }
                     ]
                 }
             },
@@ -446,41 +446,41 @@ const seedMongoDB = async () => {
                 "page_section": "gallery-wrapper",
                 "page_content": [
                     {
-                    title: "Living Room - 3BHK",
-                    text: "Spacious living area with modern amenities",
-                    coverImage: `${process.env.PROJECT_URL}assets/images/blog1.webp`,
+                        title: "Living Room - 3BHK",
+                        text: "Spacious living area with modern amenities",
+                        coverImage: `${process.env.PROJECT_URL}assets/images/blog1.webp`,
                     },
                     {
-                    title: "Master Bedroom",
-                    text: "Elegant bedroom with premium finishes",
-                    coverImage: `${process.env.PROJECT_URL}assets/images/blog2.webp`,
+                        title: "Master Bedroom",
+                        text: "Elegant bedroom with premium finishes",
+                        coverImage: `${process.env.PROJECT_URL}assets/images/blog2.webp`,
                     },
                     {
-                    title: "Modern Kitchen",
-                    text: "Fully equipped modular kitchen",
-                    coverImage: `${process.env.PROJECT_URL}assets/images/card4.webp`,
+                        title: "Modern Kitchen",
+                        text: "Fully equipped modular kitchen",
+                        coverImage: `${process.env.PROJECT_URL}assets/images/card4.webp`,
                     },
                     {
-                    title: "Luxury Bathroom",
-                    text: "Designer bathroom with premium fixtures",
-                    coverImage: `${process.env.PROJECT_URL}assets/images/card1.webp`,
+                        title: "Luxury Bathroom",
+                        text: "Designer bathroom with premium fixtures",
+                        coverImage: `${process.env.PROJECT_URL}assets/images/card1.webp`,
                     },
                     {
-                    title: "Private Balcony",
-                    text: "Spacious balcony with scenic views",
-                    coverImage: `${process.env.PROJECT_URL}assets/images/card5.webp`,
+                        title: "Private Balcony",
+                        text: "Spacious balcony with scenic views",
+                        coverImage: `${process.env.PROJECT_URL}assets/images/card5.webp`,
                     },
                     {
-                    title: "Dining Area",
-                    text: "Contemporary dining space",
-                    coverImage: `${process.env.PROJECT_URL}assets/images/card6.webp`,
+                        title: "Dining Area",
+                        text: "Contemporary dining space",
+                        coverImage: `${process.env.PROJECT_URL}assets/images/card6.webp`,
                     }
                 ]
             },
             {
-                "page_slug":"OnGoingPage",
-                "page_section":"faq-items-container",
-                "page_content":[
+                "page_slug": "OnGoingPage",
+                "page_section": "faq-items-container",
+                "page_content": [
                     {
                         "question": "How long does a typical construction project take?",
                         "answer": `The duration varies based on project complexity and scale. Residential projects
@@ -519,22 +519,22 @@ const seedMongoDB = async () => {
             //     ]
             // },
             {
-                "page_slug":"discoverUs",
-                "page_section":"value-container",
-                "page_content":[
+                "page_slug": "discoverUs",
+                "page_section": "value-container",
+                "page_content": [
                     {
                         card_head: "Integrity",
-                        description_text:`We uphold the highest standards of honesty and transparency in
+                        description_text: `We uphold the highest standards of honesty and transparency in
                         every interaction and decision.`,
                     },
                     {
                         card_head: "Excellence",
-                        description_text:`We strive for perfection in every project, ensuring superior
+                        description_text: `We strive for perfection in every project, ensuring superior
                         quality and attention to detail.`,
                     },
                     {
                         card_head: "Customer First",
-                        description_text:`We uphold the highest standards of honesty and transparency in
+                        description_text: `We uphold the highest standards of honesty and transparency in
                         every interaction and decision.`,
                     },
                 ]
@@ -575,9 +575,9 @@ const seedMongoDB = async () => {
             //     ]
             // },
             {
-                "page_slug":"discoverUs",
-                "page_section":"blogs-card",
-                "page_content":[
+                "page_slug": "discoverUs",
+                "page_section": "blogs-card",
+                "page_content": [
                     {
                         inner_img: `${process.env.PROJECT_URL}assets/images/blog1.webp`,
                         badge_text: "Sustainability",
