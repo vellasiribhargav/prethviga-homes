@@ -15,7 +15,8 @@ head
     .container
       .about-content
         .about-content__image
-          img(src='../../assets/images/discover.webp' alt='Prethviga Homes Construction')
+          - var bannerImg = (bannerData && bannerData.length > 0) ? bannerData[0].image : '../../assets/images/discover.webp'
+          img(src=bannerImg alt='Prethviga Homes Construction')
         .about-content__text
           h1.about-content__title Building Dreams Since Inception
           p.about-content__description

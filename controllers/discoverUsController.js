@@ -6,16 +6,20 @@ const getdiscoverUsData = async (req, res) => {
 
     const ourvaluesData = discoverUsData.find(item => item.page_section === 'value-container')?.page_content || [];
     const blogData = discoverUsData.find(item => item.page_section === 'blogs-card')?.page_content || [];
+    const bannerData = discoverUsData.find(item => item.page_section === 'discover-banner')?.page_content || [];
+
 
     res.render('discoverUs', {
       ourvaluesData,
-      blogData
+      blogData,
+      bannerData
     });
   } catch (error) {
     console.error('Error fetching discoverUs data:', error);
     res.render('discoverUs', {
       ourvaluesData: [],
-      blogData: []
+      blogData: [],
+      bannerData: []
     });
   }
 };

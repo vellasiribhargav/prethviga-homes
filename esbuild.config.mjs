@@ -17,7 +17,8 @@ const entryPoints = {
   upcoming: "./public/javascript/admin/upcoming.js",
   blogDiscover: "./public/javascript/admin/blogDiscover.js",
   gallery: "./public/javascript/admin/gallery.js",
-  completed: "./public/javascript/admin/completed.js"
+  completed: "./public/javascript/admin/completed.js",
+  banner: './public/javascript/admin/banner.js'
 };
 
 
@@ -108,11 +109,6 @@ await esbuild.build({
     ".svg": "file",
     '.webp': 'file',
     '.ttf': "file"
-  },
-  define: {
-    $: '$',
-    jQuery: '$',
-    'window.jQuery': '$',
   },
   metafile: true,
 

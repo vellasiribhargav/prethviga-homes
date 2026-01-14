@@ -97,7 +97,8 @@
   margin-left: auto;
 }
 
-.sidebar-dropdown.open .dropdown-arrow {
+.sidebar-dropdown.open .dropdown-arrow,
+.nav-dropdown.open .dropdown-arrow {
   transform: rotate(180deg);
 }
 
@@ -108,8 +109,9 @@
   background: rgba(0, 0, 0, 0.2);
 }
 
-.sidebar-dropdown.open .dropdown-content {
-  max-height: 200px;
+.sidebar-dropdown.open .dropdown-content,
+.nav-dropdown.open .dropdown-content {
+  max-height: 500px;
 }
 
 .dropdown-item {

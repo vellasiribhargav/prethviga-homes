@@ -34,7 +34,6 @@ html(lang='en')
           h2.content-title Gallery Management
           button.add-more-btn Add More
 
-
         // Form Container
         .form-container
           .content-card
@@ -76,14 +75,10 @@ html(lang='en')
                 
                 p.upload-hint Supported formats: JPG, PNG. Max 5MB.
             
-            // Submit Button
-            .submit-section
-              button.submit-btn Submit
-            
             // Navigation buttons
             .navigation-buttons
-              button.nav-btn.prev-btn Previous
-              button.nav-btn.next-btn Next
+              button.nav-btn.prev-btn(onclick="previousForm()" disabled) Previous
+              button.nav-btn.next-btn(onclick="nextForm()") Next
         
         // Added Items Section
         .added-items-section(style='display: none;')

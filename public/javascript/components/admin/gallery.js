@@ -1,13 +1,13 @@
 import Swal from 'sweetalert2';
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const addMoreBtn = document.querySelector('.add-more-btn');
     const formContainer = document.querySelector('.form-container');
     const addedItemsSection = document.querySelector('.added-items-section');
     const addedItemsList = document.querySelector('.added-items-list');
     const projectTypeSelect = document.getElementById('projectType');
     const selectProjectSelect = document.getElementById('selectProject');
-    
+
     let formCount = 0;
     let galleryArr = [];
 
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
         inputs.forEach(({ selector }) => {
             const input = form.querySelector(selector);
             if (!input) return;
-            
+
             const msg = input.parentNode.querySelector('.required-message');
             if (input.value.trim() === '') {
                 msg.style.display = 'block';
@@ -73,9 +73,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function fetchProjects() {
         const xhr1 = new XMLHttpRequest();
         const xhr2 = new XMLHttpRequest();
-        
+
         xhr1.open('GET', '/admin/upcoming/getupcoming', true);
-        xhr1.onreadystatechange = function() {
+        xhr1.onreadystatechange = function () {
             if (xhr1.readyState === 4 && xhr1.status === 200) {
                 const upcomingData = JSON.parse(xhr1.responseText);
                 projectData.upcoming = upcomingData.data?.map((project, index) => {
@@ -86,9 +86,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 }) || [];
             }
         };
-        
+
         xhr2.open('GET', '/admin/completed/getcompleted', true);
-        xhr2.onreadystatechange = function() {
+        xhr2.onreadystatechange = function () {
             if (xhr2.readyState === 4 && xhr2.status === 200) {
                 const completedData = JSON.parse(xhr2.responseText);
                 projectData.completed = completedData.data?.map((project, index) => {
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }) || [];
             }
         };
-        
+
         xhr1.send();
         xhr2.send();
     }
@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (projectGroup) {
                 projectGroup.style.display = 'none';
             }
-            
+
             // Reset project type to empty
             projectTypeSelect.value = '';
             selectProjectSelect.innerHTML = '<option value="">Select a project</option>';
@@ -123,16 +123,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // Helper function to populate project dropdown
     function populateProjectDropdown(selectElement, projectType) {
         const projectGroup = selectElement.closest('.form-group');
-        
+
         selectElement.innerHTML = '<option value="">Select a project</option>';
-        
+
         if (projectType && (projectType === 'upcoming' || projectType === 'completed') && projectData[projectType]) {
             // Show project dropdown
             if (projectGroup) {
                 projectGroup.style.display = 'block';
             }
             selectElement.disabled = false;
-            
+
             projectData[projectType].forEach(project => {
                 const option = document.createElement('option');
                 option.value = project.id;
@@ -151,93 +151,97 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle project type dropdown change for initial form
     function setupDropdownHandlers(projectTypeSelect, selectProjectSelect) {
         if (projectTypeSelect) {
-            projectTypeSelect.addEventListener('change', function() {
+            projectTypeSelect.addEventListener('change', function () {
                 const selectedType = this.value;
                 populateProjectDropdown(selectProjectSelect, selectedType);
             });
         }
     }
-    
+
     // Initialize data and setup
     fetchProjects();
     initializeFirstDropdown();
-    
+
     // Setup initial form dropdowns
     setupDropdownHandlers(projectTypeSelect, selectProjectSelect);
-    
+
     // Setup image upload for initial form
     setupImageUpload(document.querySelector('.content-card'));
     addRequiredFieldValidation(document.querySelector('.content-card'));
-    
+
     // Image upload functionality
     function setupImageUpload(formCard) {
         const imageGrid = formCard.querySelector('.image-grid');
         const uploadSlot = formCard.querySelector('.image-slot.empty');
         const fileInput = formCard.querySelector('.image-upload');
-        
+
         if (uploadSlot && fileInput) {
             uploadSlot.addEventListener('click', () => {
                 fileInput.click();
             });
-            
+
             fileInput.addEventListener('change', (e) => {
                 const files = Array.from(e.target.files);
                 handleImageUpload(files, imageGrid, uploadSlot);
             });
         }
     }
-    
+
     function handleImageUpload(files, imageGrid, uploadSlot) {
         files.forEach(file => {
             if (file.size > 5 * 1024 * 1024) {
                 alert(`${file.name} is too large. Max size is 5MB.`);
                 return;
             }
-            
+
             const reader = new FileReader();
             reader.onload = (e) => {
                 const imageSlot = document.createElement('div');
                 imageSlot.className = 'image-slot filled';
                 imageSlot.innerHTML = `
                     <img src="${e.target.result}" alt="Uploaded image">`;
-                
+
                 imageGrid.insertBefore(imageSlot, uploadSlot);
                 uploadSlot.style.display = 'none';
             };
             reader.readAsDataURL(file);
         });
     }
-    
-    window.removeImage = function(button) {
+
+    window.removeImage = function (button) {
         const imageGrid = button.closest('.image-grid');
         const uploadSlot = imageGrid.querySelector('.image-slot.empty');
-    
+
         button.parentElement.remove();
-    
+
         // Show upload slot if no images remain
         const remainingImages = imageGrid.querySelectorAll('.image-slot.filled');
         if (remainingImages.length === 0) {
             uploadSlot.style.display = 'block';
         }
-};
+    };
 
     // Handle Add More button click
-    addMoreBtn.addEventListener('click', function() {
-        const currentForm = document.querySelector('.content-card:last-of-type');
-        const formData = getFormData(currentForm);
-        
-        if (formData.galleryName || formData.description) {
-            addToGalleryList(formData);
-            clearCurrentForm(currentForm);
-            showAddedItemsSection();
-        }
-        
-        createNewForm();
-    });
+    if (addMoreBtn) {
+        addMoreBtn.addEventListener('click', function () {
+            const currentForm = document.querySelector('.content-card:last-of-type');
+            if (currentForm) {
+                const formData = getFormData(currentForm);
+
+                if (formData.galleryName || formData.description || (formData.images && formData.images.length > 0)) {
+                    addToGalleryList(formData);
+                    clearCurrentForm(currentForm);
+                    showAddedItemsSection();
+                }
+            }
+
+            createNewForm();
+        });
+    }
 
     // Initialize currentFormIndex properly
     window.currentFormIndex = 0;
-    
+
     // Make sure the first form is visible and properly indexed
     const initialForm = document.querySelector('.content-card');
     if (initialForm) {
@@ -247,12 +251,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Global navigation functions
-    window.previousForm = function() {
+    window.previousForm = function () {
         const forms = document.querySelectorAll('.content-card');
         // console.log('Previous - Current index:', window.currentFormIndex, 'Total forms:', forms.length);
-        
+
         if (forms.length <= 1) return;
-        
+
         if (window.currentFormIndex > 0) {
             forms[window.currentFormIndex].style.display = 'none';
             window.currentFormIndex--;
@@ -261,13 +265,13 @@ document.addEventListener('DOMContentLoaded', function() {
             updateSubmitButtonVisibility();
         }
     };
-    
-    window.nextForm = function() {
+
+    window.nextForm = function () {
         const forms = document.querySelectorAll('.content-card');
         // console.log('Next - Current index:', window.currentFormIndex, 'Total forms:', forms.length);
-        
+
         if (forms.length <= 1) return;
-        
+
         if (window.currentFormIndex < forms.length - 1) {
             forms[window.currentFormIndex].style.display = 'none';
             window.currentFormIndex++;
@@ -278,14 +282,14 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // Handle Submit button click and navigation
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
         if (e.target.classList.contains('submit-btn')) {
             e.preventDefault();
-            
+
             // Collect data from all forms
             const allForms = document.querySelectorAll('.content-card');
             const allFormData = [];
-            
+
             // Validate all forms first
             let allValid = true;
             allForms.forEach((form, index) => {
@@ -293,9 +297,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     allValid = false;
                 }
             });
-            
+
             if (!allValid) return;
-            
+
             allForms.forEach(form => {
                 const formData = getFormData(form);
                 if (formData.galleryName || formData.description || formData.projectType || formData.selectedProject || formData.images) {
@@ -306,13 +310,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     allFormData.push(formData);
                 }
             });
-            
+
             if (allFormData.length > 0) {
                 // Add all items to gallery list
                 allFormData.forEach(data => {
                     addToGalleryList(data);
                 });
-                
+
                 // Show success message
                 Swal.fire({
                     icon: 'success',
@@ -320,15 +324,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     text: `${allFormData.length} gallery item(s) saved successfully!`,
                     confirmButtonColor: '#BC5322'
                 });
-                
+
                 // Clear all forms first
                 allForms.forEach(form => {
                     clearCurrentForm(form);
                     clearFormImages(form);
                 });
-                
+
                 showAddedItemsSection();
-                
+
                 // Reset to first form and hide others
                 allForms.forEach((form, index) => {
                     if (index === 0) {
@@ -340,20 +344,32 @@ document.addEventListener('DOMContentLoaded', function() {
                         form.remove();
                     }
                 });
-                
+
                 // Reset counters
                 formCount = 0;
                 window.currentFormIndex = 0;
                 updateSubmitButtonVisibility();
             }
         }
-        
+
         if (e.target.classList.contains('prev-btn')) {
             e.preventDefault();
             // console.log('Previous button clicked');
             window.previousForm();
         }
-        
+
+        if (e.target.classList.contains('next-btn')) {
+            e.preventDefault();
+            // console.log('Next button clicked');
+            window.nextForm();
+        }
+
+        if (e.target.classList.contains('prev-btn')) {
+            e.preventDefault();
+            // console.log('Previous button clicked');
+            window.previousForm();
+        }
+
         if (e.target.classList.contains('next-btn')) {
             e.preventDefault();
             // console.log('Next button clicked');
@@ -366,7 +382,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const selectedProject = form.querySelector('#selectProject, [id^="selectProject"]')?.value || '';
         const galleryName = form.querySelector('input[placeholder*="Plaza Images Collection"]').value;
         const description = form.querySelector('textarea[placeholder*="Describe the content"]').value;
-        
+
         // Get uploaded images - filter out non-data URLs
         const images = [];
         const imageSlots = form.querySelectorAll('.image-slot.filled img');
@@ -376,7 +392,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 images.push(img.src);
             }
         });
-        
+
         return {
             projectType,
             selectedProject,
@@ -388,7 +404,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function addToGalleryList(data) {
         const selectedProjectData = getSelectedProjectData(data.projectType, data.selectedProject);
-        
+
         const formData = new FormData();
         formData.append('project_id', data.selectedProject);
         formData.append('projectType', data.projectType);
@@ -396,7 +412,7 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('projectLocation', selectedProjectData?.location || '');
         formData.append('title', data.galleryName || 'Untitled Gallery');
         formData.append('text', data.description || 'No description');
-        
+
         // Convert base64 images to files and append
         if (data.images && data.images.length > 0) {
             data.images.forEach((imageDataUrl, index) => {
@@ -409,12 +425,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const xhr = new XMLHttpRequest();
         xhr.open('POST', '/admin/gallery/addgallery', true);
-        
-        xhr.onreadystatechange = function() {
+
+        xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
                 if (xhr.status === 200) {
                     const response = JSON.parse(xhr.responseText);
-                    if(response.success){
+                    if (response.success) {
                         const item = {
                             id: Date.now(),
                             project_id: data.selectedProject,
@@ -433,29 +449,29 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         };
-        
+
         xhr.send(formData);
     }
-    
+
     function dataURLtoBlob(dataURL) {
         try {
             if (!dataURL || !dataURL.includes(',')) {
                 console.warn('Invalid data URL:', dataURL);
                 return null;
             }
-            
+
             const arr = dataURL.split(',');
             if (arr.length < 2) {
                 console.warn('Invalid data URL format:', dataURL);
                 return null;
             }
-            
+
             const mimeMatch = arr[0].match(/:(.*?);/);
             if (!mimeMatch) {
                 console.warn('Could not extract MIME type from:', dataURL);
                 return null;
             }
-            
+
             const mime = mimeMatch[1];
             const bstr = atob(arr[1]);
             let n = bstr.length;
@@ -480,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const selectProjectSelect = form.querySelector('#selectProject, [id^="selectProject"]');
         const nameInput = form.querySelector('input[placeholder*="Plaza Images Collection"]');
         const descInput = form.querySelector('textarea[placeholder*="Describe the content"]');
-        
+
         if (projectTypeSelect) projectTypeSelect.value = '';
         if (selectProjectSelect) {
             const projectGroup = selectProjectSelect.closest('.form-group');
@@ -498,34 +514,30 @@ document.addEventListener('DOMContentLoaded', function() {
         const imageGrid = form.querySelector('.image-grid');
         const uploadSlot = form.querySelector('.image-slot.empty');
         const filledSlots = form.querySelectorAll('.image-slot.filled');
-        
+
         filledSlots.forEach(slot => slot.remove());
         if (uploadSlot) uploadSlot.style.display = 'block';
-        
+
         const fileInput = form.querySelector('.image-upload');
         if (fileInput) fileInput.value = '';
     }
 
     function updateAddedItemsDisplay() {
         addedItemsList.innerHTML = '';
-        
+
         galleryArr.forEach(item => {
             const addedItem = document.createElement('div');
             addedItem.className = 'added-item';
             addedItem.dataset.id = item.id;
-            
-            const imagePreview = item.images && item.images.length > 0 
-                ? `<img src="${item.images[0]}" alt="Gallery preview">` 
-                : '<div class="no-image">No Image</div>';
-            
+
             const imageCount = item.images ? item.images.length : 0;
-            const imageCountText = imageCount > 1 ? `+${imageCount - 1} more` : '';
-            
+            const imageCountText = imageCount > 1 ? `+${imageCount - 1}` : '';
+
             addedItem.innerHTML = `
                 <div class="item-preview">
-                    <div class="item-image">
-                        ${imagePreview}
-                        ${imageCount > 1 ? `<span class="image-count">${imageCountText}</span>` : ''}
+                    <div class="item-image" ${item.images && item.images.length > 0 ? `style="background-image: url('${item.images[0]}')"` : ''}>
+                        ${item.images && item.images.length > 0 ? '' : '<div class="no-image">No Image</div>'}
+                        ${imageCount > 1 ? `<span class="image-count" style="position: absolute; bottom: 4px; right: 4px; background: rgba(0,0,0,0.6); color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600;">${imageCountText}</span>` : ''}
                     </div>
                     <div class="item-details">
                         <h4 class="item-name">${item.galleryName}</h4>
@@ -543,10 +555,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     </button>
                 </div>
             `;
-            
+
             addedItemsList.appendChild(addedItem);
         });
-        
+
         if (galleryArr.length === 0) {
             hideAddedItemsSection();
         } else {
@@ -554,21 +566,21 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    window.deleteItem = function(id) {
+    window.deleteItem = function (id) {
         galleryArr = galleryArr.filter(item => item.id !== id);
         updateAddedItemsDisplay();
     };
 
-    window.editItem = function(id) {
+    window.editItem = function (id) {
         const item = galleryArr.find(i => i.id === id);
         if (!item) return;
-        
+
         const currentForm = document.querySelector('.content-card:last-of-type');
         const projectTypeSelect = currentForm.querySelector('#projectType');
         const selectProjectSelect = currentForm.querySelector('#selectProject');
         const nameInput = currentForm.querySelector('input[placeholder*="Plaza Images Collection"]');
         const descInput = currentForm.querySelector('textarea[placeholder*="Describe the content"]');
-        
+
         if (projectTypeSelect) projectTypeSelect.value = item.projectType;
         if (selectProjectSelect && item.projectType) {
             // Trigger change event to populate project dropdown
@@ -579,18 +591,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         nameInput.value = item.galleryName;
         descInput.value = item.description;
-        
+
         deleteItem(id);
     };
 
     function createNewForm() {
         formCount++;
-        
+
         // Remove submit button from all existing forms
         document.querySelectorAll('.content-card .submit-section').forEach(section => {
             section.style.display = 'none';
         });
-        
+
         const newForm = document.createElement('div');
         newForm.className = 'content-card';
         newForm.setAttribute('data-form-index', formCount.toString());
@@ -643,52 +655,52 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
             
-            <div class="submit-section">
-                <button class="submit-btn">Submit</button>
-            </div>
-            
             <div class="navigation-buttons">
                 <button class="nav-btn prev-btn" onclick="previousForm()">Previous</button>
                 <button class="nav-btn next-btn" onclick="nextForm()">Next</button>
             </div>
+            
+            <div class="submit-section">
+                <button class="submit-btn">Submit</button>
+            </div>
         `;
-        
+
         // Hide all forms
         document.querySelectorAll('.content-card').forEach(card => {
             card.style.display = 'none';
         });
-        
+
         // Show new form
         newForm.style.display = 'block';
         formContainer.appendChild(newForm);
-        
+
         // Add dropdown functionality to new form
         const newProjectTypeSelect = newForm.querySelector(`#projectType${formCount}`);
         const newSelectProjectSelect = newForm.querySelector(`#selectProject${formCount}`);
-        
+
         setupDropdownHandlers(newProjectTypeSelect, newSelectProjectSelect);
-        
+
         // Setup image upload for new form
         setupImageUpload(newForm);
         addRequiredFieldValidation(newForm);
-        
+
         // Update current form index to the new form (forms are 0-indexed)
         window.currentFormIndex = formCount;
-        
+
         // Add direct event listeners to navigation buttons
         const prevBtn = newForm.querySelector('.prev-btn');
         const nextBtn = newForm.querySelector('.next-btn');
-        
+
         if (prevBtn) {
-            prevBtn.addEventListener('click', function(e) {
+            prevBtn.addEventListener('click', function (e) {
                 e.preventDefault();
                 // console.log('Previous clicked');
                 window.previousForm();
             });
         }
-        
+
         if (nextBtn) {
-            nextBtn.addEventListener('click', function(e) {
+            nextBtn.addEventListener('click', function (e) {
                 e.preventDefault();
                 // console.log('Next clicked');
                 window.nextForm();
@@ -701,13 +713,13 @@ document.addEventListener('DOMContentLoaded', function() {
     function hideAddedItemsSection() {
         addedItemsSection.style.display = 'none';
     }
-    
-    window.previousForm = function() {
+
+    window.previousForm = function () {
         const forms = document.querySelectorAll('.content-card');
         // console.log('Previous - Current index:', window.currentFormIndex, 'Total forms:', forms.length);
-        
+
         if (forms.length <= 1) return;
-        
+
         // Check if we can go to previous form
         if (window.currentFormIndex > 0) {
             // Hide current form
@@ -724,13 +736,13 @@ document.addEventListener('DOMContentLoaded', function() {
             updateSubmitButtonVisibility();
         }
     };
-    
-    window.nextForm = function() {
+
+    window.nextForm = function () {
         const forms = document.querySelectorAll('.content-card');
         // console.log('Next - Current index:', window.currentFormIndex, 'Total forms:', forms.length);
-        
+
         if (forms.length <= 1) return;
-        
+
         // Check if we can go to next form
         if (window.currentFormIndex < forms.length - 1) {
             // Hide current form
@@ -747,11 +759,11 @@ document.addEventListener('DOMContentLoaded', function() {
             updateSubmitButtonVisibility();
         }
     };
-    
+
     function updateSubmitButtonVisibility() {
         const forms = document.querySelectorAll('.content-card');
         const lastFormIndex = forms.length - 1;
-        
+
         forms.forEach((form, index) => {
             const submitSection = form.querySelector('.submit-section');
             if (submitSection) {
