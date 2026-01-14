@@ -86,7 +86,6 @@ app.use('/admin/upcoming', upcomingRoutes);
 app.use('/admin/completed', completedRoutes);
 app.use('/admin/gallery', galleryRoutes);
 app.use('/admin/blogDiscover', blogDiscoverRoutes);
-
 app.use((req, res, next) => {
   res.setHeader(
     "Strict-Transport-Security",
@@ -143,7 +142,7 @@ app.get("/:cat/:slug", (req, res, next) => {
 app.get("/:slug", async (req, res, next) => {
   res.setHeader(
     "Content-Security-Policy",
-"default-src 'self' data: https://cdnjs.cloudflare.com; script-src 'self' https://code.jquery.com; style-src  'self' 'unsafe-inline'  https://cdnjs.cloudflare.com; img-src 'self' data: ;"  );
+    "default-src 'self' data: https://cdnjs.cloudflare.com; script-src 'self' https://code.jquery.com; style-src  'self' 'unsafe-inline'  https://cdnjs.cloudflare.com; img-src 'self' data: ;");
 
   res.setHeader(
     "Strict-Transport-Security",
@@ -154,7 +153,7 @@ app.get("/:slug", async (req, res, next) => {
 
   const fileName = path.basename(slug);
 
-  if (slug === "login" || slug === "upload" || slug === "assetsale_upload" || slug === "OnGoingPage" || slug  === "admin") {
+  if (slug === "login" || slug === "upload" || slug === "assetsale_upload" || slug === "OnGoingPage" || slug === "admin") {
     return next();
   }
 
@@ -190,7 +189,7 @@ app.use((err, req, res, next) => {
 //Start the server
 // const PORT = process.env.PORT || 3000;
 // app.listen(PORT, () => {
-    //console.log(`Server is running on http://localhost:${PORT}`);
+//console.log(`Server is running on http://localhost:${PORT}`);
 // });
 
 module.exports = app;

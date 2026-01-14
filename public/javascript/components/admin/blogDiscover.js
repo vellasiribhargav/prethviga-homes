@@ -1,37 +1,39 @@
-document.addEventListener('DOMContentLoaded', function() {
+import Swal from 'sweetalert2';
+
+document.addEventListener('DOMContentLoaded', function () {
     const addMoreBtn = document.querySelector('.add-more-btn');
     const formContainer = document.querySelector('.form-container');
     const addedItemsSection = document.querySelector('.added-items-section');
     const addedItemsList = document.querySelector('.added-items-list');
-    
+
     let formCount = 0;
     let blogArr = [];
 
     setupImageUpload(document.querySelector('.content-card'));
     loadExistingBlogs();
 
-    addMoreBtn.addEventListener('click', function() {
+    addMoreBtn.addEventListener('click', function () {
         const currentForm = document.querySelector('.content-card:last-of-type');
         const formData = getFormData(currentForm);
-        
+
         if (formData.blogTag || formData.blogTitle || formData.blogDescription) {
             addToBlogList(formData);
             clearCurrentForm(currentForm);
             showAddedItemsSection();
         }
-        
+
         createNewForm();
     });
 
     function setupImageUpload(formCard) {
         const uploadBtn = formCard.querySelector('.upload-btn');
         const fileInput = formCard.querySelector('.image-upload');
-        
+
         if (uploadBtn && fileInput) {
             uploadBtn.addEventListener('click', () => {
                 fileInput.click();
             });
-            
+
             fileInput.addEventListener('change', (e) => {
                 const file = e.target.files[0];
                 if (file) {
@@ -40,13 +42,13 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     }
-    
+
     function handleImageUpload(file, uploadBtn) {
         if (file.size > 2 * 1024 * 1024) {
             alert(`${file.name} is too large. Max size is 2MB.`);
             return;
         }
-        
+
         const reader = new FileReader();
         reader.onload = (e) => {
             uploadBtn.innerHTML = `
@@ -61,8 +63,8 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         reader.readAsDataURL(file);
     }
-    
-    window.removeImage = function(button) {
+
+    window.removeImage = function (button) {
         const uploadBtn = button.closest('.upload-btn');
         uploadBtn.innerHTML = `
             <div class="upload-icon">
@@ -80,54 +82,141 @@ document.addEventListener('DOMContentLoaded', function() {
         setupImageUpload(uploadBtn.closest('.content-card'));
     };
 
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
         if (e.target.classList.contains('submit-btn')) {
             e.preventDefault();
-            
+
             const allForms = document.querySelectorAll('.content-card');
             const allFormData = [];
-            
-            allForms.forEach(form => {
-                const formData = getFormData(form);
-                if (formData.blogTag || formData.blogTitle || formData.blogDescription) {
-                    allFormData.push(formData);
+
+            let allValid = true;
+
+            for (let i = 0; i < allForms.length; i++) {
+                const form = allForms[i];
+
+                // Validate text inputs (inline messages)
+                if (!validateForm(form)) {
+                    allValid = false;
+                    continue; // Keep validating other forms to show all inline errors
                 }
-            });
-            
+
+                const tempFormData = getFormData(form);
+
+                // Check if image is missing - ONLY show popup for image if text fields are valid
+                const uploadedImage = form.querySelector('.uploaded-image img');
+                if (!uploadedImage) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Missing Image',
+                        text: `Please upload a cover image for form ${i + 1}.`,
+                        confirmButtonColor: '#BC5322'
+                    });
+                    allValid = false;
+                    continue;
+                }
+
+                allFormData.push(tempFormData);
+            }
+
+            if (!allValid) return;
+
             if (allFormData.length > 0) {
                 submitAllBlogs(allFormData);
             }
         }
     });
-    
+
     function getFormData(form) {
         const blogTag = form.querySelector('input[placeholder*="About Us"]').value;
         const publicationDate = form.querySelector('input[name="publication-date"]').value;
         const blogTitle = form.querySelector('input[placeholder*="Discover Our Story"]').value;
         const blogDescription = form.querySelector('textarea[placeholder*="discover us blog content"]').value;
-        
+
         const uploadedImage = form.querySelector('.uploaded-image img');
         const coverImage = uploadedImage ? uploadedImage.src : null;
-        
+        const fileInput = form.querySelector('.image-upload');
+        const file = fileInput && fileInput.files[0] ? fileInput.files[0] : null;
+
         return {
             blogTag,
             publicationDate,
             blogTitle,
             blogDescription,
-            coverImage
+            coverImage,
+            file
         };
+    }
+
+    function addRequiredFieldValidation(form) {
+        const inputs = [
+            { selector: 'input[placeholder*="About Us"]', message: '* Blog tag is required' },
+            { selector: 'input[name="publication-date"]', message: '* Publication date is required' },
+            { selector: 'input[placeholder*="Discover Our Story"]', message: '* Blog title is required' },
+            { selector: 'textarea[placeholder*="discover us blog content"]', message: '* Blog description is required' }
+        ];
+
+        inputs.forEach(({ selector, message }) => {
+            const input = form.querySelector(selector);
+            if (!input) return;
+
+            const msg = document.createElement('div');
+            msg.className = 'required-message';
+            msg.textContent = message;
+            msg.style.cssText = 'font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic';
+
+            input.parentNode.appendChild(msg);
+
+            input.addEventListener('input', () => {
+                msg.style.display = 'none';
+            });
+            input.addEventListener('change', () => {
+                msg.style.display = 'none';
+            });
+        });
+    }
+
+    function validateForm(form) {
+        let isValid = true;
+
+        const inputs = [
+            { selector: 'input[placeholder*="About Us"]' },
+            { selector: 'input[name="publication-date"]' },
+            { selector: 'input[placeholder*="Discover Our Story"]' },
+            { selector: 'textarea[placeholder*="discover us blog content"]' }
+        ];
+
+        inputs.forEach(({ selector }) => {
+            const input = form.querySelector(selector);
+            if (!input) return;
+
+            const msg = input.parentNode.querySelector('.required-message');
+            if (input.value.trim() === '') {
+                if (msg) msg.style.display = 'block';
+                isValid = false;
+            } else {
+                if (msg) msg.style.display = 'none';
+            }
+        });
+
+        return isValid;
     }
 
     async function submitAllBlogs(allFormData) {
         try {
             const formData = new FormData();
-            formData.append('blogArr', JSON.stringify(allFormData));
 
-            const allForms = document.querySelectorAll('.content-card');
-            allForms.forEach((form, index) => {
-                const fileInput = form.querySelector('.image-upload');
-                if (fileInput && fileInput.files[0]) {
-                    formData.append(`file_${index}`, fileInput.files[0]);
+            // Remove file objects from JSON data to avoid circular reference issues or unnecessary data transfer
+            const blogsData = allFormData.map(data => {
+                const { file, ...rest } = data;
+                return rest;
+            });
+
+            formData.append('blogArr', JSON.stringify(blogsData));
+
+            // Append files with correct indexing ensuring 1:1 mapping
+            allFormData.forEach((data, index) => {
+                if (data.file) {
+                    formData.append(`file_${index}`, data.file);
                 }
             });
 
@@ -137,20 +226,26 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             const result = await response.json();
-            
+
             if (result.success) {
-                alert(result.message);
-                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: result.message,
+                    confirmButtonColor: '#BC5322'
+                });
+
                 allFormData.forEach(data => {
                     addToBlogList(data);
                 });
-                
+
+                const allForms = document.querySelectorAll('.content-card');
                 allForms.forEach(form => {
                     clearCurrentForm(form);
                 });
-                
+
                 showAddedItemsSection();
-                
+
                 allForms.forEach((form, index) => {
                     if (index === 0) {
                         form.style.display = 'block';
@@ -158,17 +253,27 @@ document.addEventListener('DOMContentLoaded', function() {
                         form.remove();
                     }
                 });
-                
+
                 formCount = 0;
                 window.currentFormIndex = 0;
-                
+
                 loadExistingBlogs();
             } else {
-                alert('Error: ' + result.message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: result.message,
+                    confirmButtonColor: '#BC5322'
+                });
             }
         } catch (error) {
             console.error('Error submitting blogs:', error);
-            alert('Error submitting blogs. Please try again.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error submitting blogs. Please try again.',
+                confirmButtonColor: '#BC5322'
+            });
         }
     }
 
@@ -192,12 +297,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const titleInput = form.querySelector('input[placeholder*="Discover Our Story"]');
         const descInput = form.querySelector('textarea[placeholder*="discover us blog content"]');
         const uploadBtn = form.querySelector('.upload-btn');
-        
+
         if (tagInput) tagInput.value = '';
         if (dateInput) dateInput.value = '';
         if (titleInput) titleInput.value = '';
         if (descInput) descInput.value = '';
-        
+
         if (uploadBtn && uploadBtn.classList.contains('has-image')) {
             window.removeImage(uploadBtn.querySelector('.remove-image'));
         }
@@ -207,7 +312,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const response = await fetch('/admin/blogDiscover/getblogdiscover');
             const result = await response.json();
-            
+
             if (result.success && result.data.length > 0) {
                 blogArr = result.data.map((blog, index) => ({
                     id: blog.blog_id || index,
@@ -227,16 +332,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateAddedItemsDisplay() {
         addedItemsList.innerHTML = '';
-        
+
         blogArr.forEach(item => {
             const addedItem = document.createElement('div');
             addedItem.className = 'added-item';
             addedItem.dataset.id = item.id;
-            
-            const imagePreview = item.coverImage 
-                ? `<img src="${item.coverImage}" alt="Blog cover">` 
+
+            const imagePreview = item.coverImage
+                ? `<img src="${item.coverImage}" alt="Blog cover">`
                 : '<div class="no-image">No Image</div>';
-            
+
             addedItem.innerHTML = `
                 <div class="item-preview">
                     <div class="item-image">
@@ -258,10 +363,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     </button>
                 </div>
             `;
-            
+
             addedItemsList.appendChild(addedItem);
         });
-        
+
         if (blogArr.length === 0) {
             hideAddedItemsSection();
         } else {
@@ -269,14 +374,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    window.deleteItem = async function(id, index) {
+    window.deleteItem = async function (id, index) {
         if (index >= 0) {
             try {
                 const response = await fetch(`/admin/blogDiscover/deleteblogdiscover/${index}`, {
                     method: 'DELETE'
                 });
                 const result = await response.json();
-                
+
                 if (result.success) {
                     alert(result.message);
                     loadExistingBlogs();
@@ -293,21 +398,21 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    window.editItem = function(id) {
+    window.editItem = function (id) {
         const item = blogArr.find(i => i.id === id);
         if (!item) return;
-        
+
         const currentForm = document.querySelector('.content-card:last-of-type');
         const tagInput = currentForm.querySelector('input[placeholder*="About Us"]');
         const dateInput = currentForm.querySelector('input[name="publication-date"]');
         const titleInput = currentForm.querySelector('input[placeholder*="Discover Our Story"]');
         const descInput = currentForm.querySelector('textarea[placeholder*="discover us blog content"]');
-        
+
         tagInput.value = item.blogTag;
         dateInput.value = item.publicationDate;
         titleInput.value = item.blogTitle;
         descInput.value = item.blogDescription;
-        
+
         if (item.coverImage) {
             const uploadBtn = currentForm.querySelector('.upload-btn');
             uploadBtn.innerHTML = `
@@ -320,17 +425,17 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
             uploadBtn.classList.add('has-image');
         }
-        
+
         deleteItem(id, item.index || -1);
     };
 
     function createNewForm() {
         formCount++;
-        
+
         document.querySelectorAll('.content-card .submit-section').forEach(section => {
             section.style.display = 'none';
         });
-        
+
         const newForm = document.createElement('div');
         newForm.className = 'content-card';
         newForm.setAttribute('data-form-index', formCount.toString());
@@ -385,16 +490,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 <button class="nav-btn next-btn" onclick="nextForm()">Next</button>
             </div>
         `;
-        
+
         document.querySelectorAll('.content-card').forEach(card => {
             card.style.display = 'none';
         });
-        
+
         newForm.style.display = 'block';
         formContainer.appendChild(newForm);
-        
+
         setupImageUpload(newForm);
-        
+        addRequiredFieldValidation(newForm);
+
         window.currentFormIndex = formCount;
     }
 
@@ -405,10 +511,10 @@ document.addEventListener('DOMContentLoaded', function() {
     function hideAddedItemsSection() {
         addedItemsSection.style.display = 'none';
     }
-    
+
     window.currentFormIndex = 0;
-    
-    window.previousForm = function() {
+
+    window.previousForm = function () {
         const forms = document.querySelectorAll('.content-card');
         if (window.currentFormIndex > 0) {
             forms[window.currentFormIndex].style.display = 'none';
@@ -416,8 +522,8 @@ document.addEventListener('DOMContentLoaded', function() {
             forms[window.currentFormIndex].style.display = 'block';
         }
     };
-    
-    window.nextForm = function() {
+
+    window.nextForm = function () {
         const forms = document.querySelectorAll('.content-card');
         if (window.currentFormIndex < forms.length - 1) {
             forms[window.currentFormIndex].style.display = 'none';

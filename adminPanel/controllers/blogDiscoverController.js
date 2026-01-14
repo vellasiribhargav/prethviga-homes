@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const {ObjectId} = require("mongodb");
+const { ObjectId } = require("mongodb");
 
 // const renderBlogDiscoverPage = async (req, res) => {
 //     try {
@@ -13,10 +13,10 @@ const {ObjectId} = require("mongodb");
 
 const getBlogDiscover = async (req, res) => {
     try {
-        const collection = mongoose.connection.db.collection("BlogPage");
+        const collection = mongoose.connection.db.collection("discoverUs");
         const data = await collection.findOne({
-            page_slug: "BlogPage",
-            page_section: "discover-blog"
+            page_slug: "discoverUs",
+            page_section: "blogs-card"
         });
         res.json({ success: true, data: data?.page_content || [] });
     } catch (error) {
@@ -27,22 +27,21 @@ const getBlogDiscover = async (req, res) => {
 const addBlogDiscoverItem = async (req, res) => {
     try {
         const blogArr = JSON.parse(req.body.blogArr || '[]');
-        
+
         if (!blogArr.length) {
-            return res.status(422).json({success: false, message: "No blog data provided"});
+            return res.status(422).json({ success: false, message: "No blog data provided" });
         }
 
-        const collection = mongoose.connection.db.collection("BlogPage");
+        const collection = mongoose.connection.db.collection("discoverUs");
         const blogsToAdd = [];
 
         for (let i = 0; i < blogArr.length; i++) {
             const file = req.files.find(f => f.fieldname === `file_${i}`);
             if (!file) {
-                return res.status(422).json({success: false, message: `Cover image required for blog ${i + 1}`});
+                return res.status(422).json({ success: false, message: `Cover image required for blog ${i + 1}` });
             }
 
             blogsToAdd.push({
-                ...blogArr[i],
                 inner_img: `${process.env.PROJECT_URL}uploads/blogDiscover/${file.filename}`,
                 badge_text: blogArr[i].blogTag,
                 blog_date: blogArr[i].publicationDate,
@@ -53,7 +52,7 @@ const addBlogDiscoverItem = async (req, res) => {
         }
 
         await collection.updateOne(
-            { page_slug: "BlogPage", page_section: "discover-blog" },
+            { page_slug: "discoverUs", page_section: "blogs-card" },
             { $push: { page_content: { $each: blogsToAdd } } },
             { upsert: true }
         );
@@ -68,10 +67,9 @@ const addBlogDiscoverItem = async (req, res) => {
 const updateBlogDiscoverItem = async (req, res) => {
     try {
         const { index } = req.params;
-        const collection = mongoose.connection.db.collection("BlogPage");
-        
+        const collection = mongoose.connection.db.collection("discoverUs");
+
         const updateData = {
-            ...req.body,
             inner_img: req.file ? `${process.env.PROJECT_URL}uploads/blogDiscover/${req.file.filename}` : req.body.inner_img,
             badge_text: req.body.blogTag,
             blog_date: req.body.publicationDate,
@@ -81,7 +79,7 @@ const updateBlogDiscoverItem = async (req, res) => {
         };
 
         await collection.updateOne(
-            { page_slug: "BlogPage", page_section: "discover-blog" },
+            { page_slug: "discoverUs", page_section: "blogs-card" },
             { $set: { [`page_content.${index}`]: updateData } }
         );
         res.json({ success: true, message: 'Blog post updated successfully!' });
@@ -93,16 +91,16 @@ const updateBlogDiscoverItem = async (req, res) => {
 const deleteBlogDiscoverItem = async (req, res) => {
     try {
         const { index } = req.params;
-        const collection = mongoose.connection.db.collection("BlogPage");
+        const collection = mongoose.connection.db.collection("discoverUs");
         const data = await collection.findOne({
-            page_slug: "BlogPage",
-            page_section: "discover-blog"
+            page_slug: "discoverUs",
+            page_section: "blogs-card"
         });
-        
+
         if (data?.page_content) {
             data.page_content.splice(parseInt(index), 1);
             await collection.updateOne(
-                { page_slug: "BlogPage", page_section: "discover-blog" },
+                { page_slug: "discoverUs", page_section: "blogs-card" },
                 { $set: { page_content: data.page_content } }
             );
         }
