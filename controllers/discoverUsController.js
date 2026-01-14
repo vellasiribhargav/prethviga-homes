@@ -13,8 +13,6 @@ const getdiscoverUsData = async (req, res) => {
       ourvaluesData,
       blogData,
       bannerData
-      ourvaluesData,
-      blogData
     });
   } catch (error) {
     console.error('Error fetching discoverUs data:', error);

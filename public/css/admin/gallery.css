@@ -695,12 +695,8 @@ main {
   justify-content: center;
   align-items: center;
   padding: 24px 0;
-<<<<<<< HEAD
   width: 100%;
   text-align: center;
-=======
-  align-items: center;
->>>>>>> a1cba77 (Banner pages and other updates)
 }
 
 .submit-btn {
