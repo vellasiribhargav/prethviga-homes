@@ -18,12 +18,8 @@ const contactRoutes = require('./routes/contactRoutes');
 const upcomingRoutes = require('./adminPanel/routes/upcomingRoutes');
 const completedRoutes = require('./adminPanel/routes/completedRoutes');
 const galleryRoutes = require('./adminPanel/routes/galleryRoutes');
-<<<<<<< HEAD
 const blogDiscoverRoutes = require('./adminPanel/routes/blogDiscoverRoutes');
-=======
-const blogRoutes = require('./adminPanel/routes/blogRoutes');
 const bannerRoutes = require('./adminPanel/routes/bannerRoutes');
->>>>>>> a1cba77 (Banner pages and other updates)
 
 (utils = require("./utils/index")), (env = process.env.NODE_ENV);
 
@@ -91,13 +87,8 @@ app.use('/', contactRoutes);
 app.use('/admin/upcoming', upcomingRoutes);
 app.use('/admin/completed', completedRoutes);
 app.use('/admin/gallery', galleryRoutes);
-<<<<<<< HEAD
 app.use('/admin/blogDiscover', blogDiscoverRoutes);
-=======
-app.use('/admin/blog', blogRoutes);
 app.use('/admin/banners', bannerRoutes);
-
->>>>>>> a1cba77 (Banner pages and other updates)
 app.use((req, res, next) => {
   res.setHeader(
     "Strict-Transport-Security",
@@ -154,7 +145,8 @@ app.get("/:cat/:slug", (req, res, next) => {
 app.get("/:slug", async (req, res, next) => {
   res.setHeader(
     "Content-Security-Policy",
-    "default-src 'self' data: https://cdnjs.cloudflare.com; script-src 'self' https://code.jquery.com; style-src  'self' 'unsafe-inline'  https://cdnjs.cloudflare.com; img-src 'self' data: ;");
+    "default-src 'self' data: https://cdnjs.cloudflare.com; script-src 'self' https://code.jquery.com; style-src  'self' 'unsafe-inline'  https://cdnjs.cloudflare.com; img-src 'self' data: ;"
+  );
 
   res.setHeader(
     "Strict-Transport-Security",
@@ -201,6 +193,7 @@ app.use((err, req, res, next) => {
 //Start the server
 // const PORT = process.env.PORT || 3000;
 // app.listen(PORT, () => {
+//console.log(`Server is running on http://localhost:${PORT}`);
 //console.log(`Server is running on http://localhost:${PORT}`);
 // });
 
