@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const {ObjectId} = require('mongodb');
+const { ObjectId } = require('mongodb');
 
 const getonGoingPageData = async (req, res) => {
   try {
@@ -13,14 +13,18 @@ const getonGoingPageData = async (req, res) => {
     const locationData = onGoingPageData.find(item => item.page_section === 'location-container')?.page_content || [];
 
     const allGallery = onGoingPageData.find(item => item.page_section === 'gallery-wrapper')?.page_content || [];
-    
-    const filterteredGalleryData = allGallery.filter(item => 
-      item.project_id && item.project_id.toString() === new ObjectId(id).toString()
-    );
 
-    const galleryData = filterteredGalleryData.length > 0 ? filterteredGalleryData : allGallery;
-    
-    const frequencyData = onGoingPageData.find(item => item.page_section === 'faq-items-container')?.page_content || [];    
+    let galleryData = allGallery;
+    if (id && ObjectId.isValid(id)) {
+      const filteredGalleryData = allGallery.filter(item =>
+        item.project_id && item.project_id.toString() === new ObjectId(id).toString()
+      );
+      if (filteredGalleryData.length > 0) {
+        galleryData = filteredGalleryData;
+      }
+    }
+
+    const frequencyData = onGoingPageData.find(item => item.page_section === 'faq-items-container')?.page_content || [];
     res.render('OnGoingPage', {
       projectData,
       floorData,

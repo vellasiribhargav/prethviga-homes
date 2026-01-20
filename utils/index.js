@@ -8,10 +8,17 @@ exports.assetPath = path => {
 
 exports.getFiles = (req) => {
 	return new Promise((resolve) => {
-			var form = new multiparty.Form();
+		var form = new multiparty.Form();
 
-			form.parse(req, (err, fields, files) => {
-					resolve([fields, files]);
-			});
+		form.parse(req, (err, fields, files) => {
+			resolve([fields, files]);
+		});
 	});
+};
+
+exports.formatDate = (dateString) => {
+	if (!dateString) return '';
+	const date = new Date(dateString);
+	if (isNaN(date.getTime())) return dateString;
+	return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 };

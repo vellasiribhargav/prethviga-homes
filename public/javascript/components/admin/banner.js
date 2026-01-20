@@ -64,6 +64,10 @@ document.addEventListener('DOMContentLoaded', function () {
     function handleImageProcess(file, slot) {
         if (!file) return;
 
+        // Hide required message if it exists
+        const msg = document.getElementById('banner-required-msg');
+        if (msg) msg.style.display = 'none';
+
         // Find if this slot already has a selected image being replaced
         const index = Array.from(imageGrid.children).indexOf(slot);
         const selectedIndex = index - existingBanners.length;
@@ -242,8 +246,21 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     submitBtn && submitBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        if (selectedImages.length > 0) uploadBanners();
-        else alert('Please select at least one image to upload.');
+        const msg = document.getElementById('banner-required-msg');
+        if (selectedImages.length > 0) {
+            if (msg) msg.style.display = 'none';
+            uploadBanners();
+        } else {
+            if (msg) {
+                msg.style.display = 'block';
+            } else {
+                const newMsg = document.createElement('div');
+                newMsg.id = 'banner-required-msg';
+                newMsg.textContent = '* Please select at least one image to upload';
+                newMsg.style.cssText = 'font-size:14px;color:#e74c3c;margin-top:10px;text-align:center;font-style:italic';
+                submitBtn.parentNode.insertBefore(newMsg, submitBtn);
+            }
+        }
     });
 
     // Initial Load

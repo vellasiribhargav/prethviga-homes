@@ -7,7 +7,7 @@ const upload = createImageUpload("gallery");
 
 router.get('/getgallery', galleryController.getGallery);
 router.get('/getgallery/:projectId', galleryController.getGalleryByProject);
-router.post('/addgallery', upload.array('file', 10), galleryController.addGalleryItem);
+router.post('/addgallery', upload.any(), galleryController.addGalleryItem);
 router.put('/updategallery/:id', galleryController.updateGalleryItem);
 router.delete('/deletegallery/:id', galleryController.deleteGalleryItem);
 

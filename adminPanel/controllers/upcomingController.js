@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
-const {ObjectId} = require("mongodb");
+const { ObjectId } = require("mongodb");
 
 const renderUpcomingPage = async (req, res) => {
     try {
         // console.log('Rendering admin/upcoming page');
         res.render('admin/upcoming');
-    }catch (error) {
+    } catch (error) {
         console.error('Error fetching upcoming data:', error);
         res.render('upcoming');
     }
@@ -18,13 +18,14 @@ const getupcomingGallery = async (req, res) => {
             page_slug: "ProjectPage",
             page_section: "ongoing-gallery"
         });
-        
-        // Ensure each project has proper ID mapping
+
+        // Ensure each project has proper ID mapping and convert ObjectId to string
         const projects = data?.page_content?.map(project => ({
             ...project,
-            id: project.project_id || project._id
+            id: (project.project_id || project._id)?.toString(),
+            project_id: project.project_id?.toString()
         })) || [];
-        
+
         res.json({ success: true, data: projects });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
@@ -35,11 +36,11 @@ const addupcomingItem = async (req, res) => {
     try {
         // console.log('Request body:', req.body);
         // console.log('Request files:', req.files);
-        
+
         const upcomingArr = JSON.parse(req.body.upcomingArr || '[]');
-        
+
         if (!upcomingArr.length) {
-            return res.status(422).json({success: false, message: "No projects data provided"});
+            return res.status(422).json({ success: false, message: "No projects data provided" });
         }
 
         const collection = mongoose.connection.db.collection("ProjectPage");
@@ -48,7 +49,7 @@ const addupcomingItem = async (req, res) => {
         for (let i = 0; i < upcomingArr.length; i++) {
             const file = req.files.find(f => f.fieldname === `file_${i}`);
             if (!file) {
-                return res.status(422).json({success: false, message: `File required for project ${i + 1}`});
+                return res.status(422).json({ success: false, message: `File required for project ${i + 1}` });
             }
 
             projectsToAdd.push({
@@ -57,14 +58,32 @@ const addupcomingItem = async (req, res) => {
                 project_id: new ObjectId(),
             });
         }
+        const pageSlug = "ProjectPage";
+        const pageSection = "ongoing-gallery";
 
-        await collection.updateOne(
-            { page_slug: "ProjectPage", page_section: "ongoing-gallery" },
-            { $push: { page_content: { $each: projectsToAdd } } },
-            { upsert: true }
-        );
+        // checking page & section
+        const page = await collection.findOne({ page_slug: pageSlug, page_section: pageSection });
 
-        res.json({ success: true, message: `${projectsToAdd.length} projects added successfully!` });
+        if (!page) {
+            await collection.insertOne({
+                page_slug: pageSlug,
+                page_section: pageSection,
+                page_content: projectsToAdd
+            });
+
+            return res.json({ success: true, message: "New page and new section created with project" });
+        } else {
+            await collection.updateOne(
+                { page_slug: pageSlug, page_section: pageSection },
+                {
+                    $push: {
+                        page_content: { $each: projectsToAdd }
+                    }
+                }
+            );
+
+            return res.json({ success: true, message: "New section created in existing page and project added" });
+        }
     } catch (error) {
         console.error('Error in addupcomingItem:', error);
         res.status(500).json({ success: false, message: error.message });
@@ -74,16 +93,16 @@ const addupcomingItem = async (req, res) => {
 const updateupcomingItem = async (req, res) => {
     try {
         const file = req.file || req.files;
-        console.log('file',file)
-        if(!file){
-            return res.status(422).json({success:false, message:"file is not uploaded or file is required"});
+        console.log('file', file)
+        if (!file) {
+            return res.status(422).json({ success: false, message: "file is not uploaded or file is required" });
         }
         const upcomingArr = req.body.upcomingArr;
 
         const { index } = req.params;
-        console.log('index',index)
+        console.log('index', index)
         const collection = mongoose.connection.db.collection("ProjectPage");
-        
+
         const updateData = {
             ...req.body,
             image: req.file ? `/uploads/gallery/${req.file.filename}` : null
@@ -107,7 +126,7 @@ const deleteupcomingItem = async (req, res) => {
             page_slug: "ProjectPage",
             page_section: "ongoing-gallery"
         });
-        
+
         if (data?.page_content) {
             data.page_content.splice(parseInt(index), 1);
             await collection.updateOne(

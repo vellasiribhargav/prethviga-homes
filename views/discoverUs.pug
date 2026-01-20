@@ -290,7 +290,8 @@ head
                     svg(width='14' height='15' viewbox='0 0 14 15' fill='none' xmlns='http://www.w3.org/2000/svg')
                       path(d='M3.99996 0.666687V3.33335M9.33329 0.666687V3.33335M0.666626 6.00002H12.6666M1.99996 2.00002H11.3333C12.0697 2.00002 12.6666 2.59697 12.6666 3.33335V12.6667C12.6666 13.4031 12.0697 14 11.3333 14H1.99996C1.26358 14 0.666626 13.4031 0.666626 12.6667V3.33335C0.666626 2.59697 1.26358 2.00002 1.99996 2.00002Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
                 .cards-titles
-                  p.cards-textses #{card.blog_date}
+                  - var d = new Date(card.blog_date)
+                  p.cards-textses #{!isNaN(d.getTime()) ? d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : card.blog_date}
               .cards-time
                 p.cards-times #{card.blog_time}
             .blogs-headings

@@ -5,28 +5,28 @@ const BANNER_CONFIG = {
     collection: "home",
     slug: "home",
     section: "home_banner",
-    path: "uploads/homebanner/",
+    path: `${process.env.PROJECT_URL}uploads/homebanner/`,
     imageField: "projimage"
   },
   project: {
     collection: "ProjectPage",
     slug: "ProjectPage",
     section: "project-banner",
-    path: "uploads/projectbanner/",
+    path: `${process.env.PROJECT_URL}uploads/projectbanner/`,
     imageField: "image"
   },
   discoverUs: {
     collection: "discoverUs",
     slug: "discoverUs",
     section: "discover-banner",
-    path: "uploads/discoverUsbanner/",
+    path: `${process.env.PROJECT_URL}uploads/discoverUsbanner/`,
     imageField: "image"
   },
   ongoing: {
     collection: "OnGoingPage",
     slug: "OnGoingPage",
     section: "hero-section",
-    path: "uploads/ongoingbanner/",
+    path: `${process.env.PROJECT_URL}uploads/ongoingbanner/`,
     imageField: "pimage"
   }
 };
@@ -89,22 +89,47 @@ const addBanners = async (req, res) => {
 
     const collection = mongoose.connection.db.collection(config.collection);
 
-    const banners = req.files.map((file) => ({
-      [config.imageField]: `/${config.path}${file.filename}`,
+    const bannersToAdd = req.files.map((file) => ({
+      [config.imageField]: `${config.path}${file.filename}`,
     }));
 
-    await collection.updateOne(
-      { page_slug: config.slug, page_section: config.section },
-      { $push: { page_content: { $each: banners } } },
-      { upsert: true }
-    );
+    const pageSlug = config.slug;
+    const pageSection = config.section;
 
-    res.json({
-      success: true,
-      message: `${banners.length} banner images added successfully`,
+    // checking page & section
+    const page = await collection.findOne({
+      page_slug: pageSlug,
+      page_section: pageSection,
     });
+
+    if (!page) {
+      await collection.insertOne({
+        page_slug: pageSlug,
+        page_section: pageSection,
+        page_content: bannersToAdd,
+      });
+
+      return res.json({
+        success: true,
+        message: "New page and new banner section created with banners",
+      });
+    } else {
+      await collection.updateOne(
+        { page_slug: pageSlug, page_section: pageSection },
+        {
+          $push: {
+            page_content: { $each: bannersToAdd },
+          },
+        }
+      );
+
+      return res.json({
+        success: true,
+        message: "Banner images added to existing section",
+      });
+    }
   } catch (error) {
-    console.error(error);
+    console.error("Error in addBanners:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };

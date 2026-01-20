@@ -87,7 +87,7 @@ app.use('/', contactRoutes);
 app.use('/admin/upcoming', upcomingRoutes);
 app.use('/admin/completed', completedRoutes);
 app.use('/admin/gallery', galleryRoutes);
-app.use('/admin/blogDiscover', blogDiscoverRoutes);
+app.use('/admin/blogdiscover', blogDiscoverRoutes);
 app.use('/admin/banners', bannerRoutes);
 app.use((req, res, next) => {
   res.setHeader(

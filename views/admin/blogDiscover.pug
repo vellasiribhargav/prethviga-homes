@@ -3,11 +3,23 @@ html(lang='en')
   head
     meta(charset='utf-8')
     meta(name='viewport' content='width=device-width, initial-scale=1.0')
-    title Discover Us Blog Management
+    - var pageSlug = query?.slug || 'home'
+    - var pageSection = query?.section || 'blogs-card'
+    
+    - 
+       const titleMap = {
+         'home': 'Home',
+         'project': 'Project',
+         'discoverUs': 'Discover Us',
+         'ongoing': 'On Going'
+       }
+       const displayTitle = titleMap[pageSlug] || (pageSlug.charAt(0).toUpperCase() + pageSlug.slice(1))
+
+    title #{displayTitle} Blog Management
     link(rel='stylesheet' href=utils.assetPath("/bundle/blogDiscover.css"))
 
   body
-    - var activeLink = 'blog-discover'
+    - var activeLink = pageSlug + '-blog'
     include ../layout/sidebar.pug
 
     // Main Page Content
@@ -17,7 +29,7 @@ html(lang='en')
         .header-left
           button.menu-btn
             span.material-symbols-outlined menu
-          h1.page-title Discover Us Blog Management
+          h1.page-title #{displayTitle} Blog Management
         button.notification-btn
           span.material-symbols-outlined notifications
 
@@ -25,15 +37,27 @@ html(lang='en')
       .breadcrumbs
         p.breadcrumb-text
           span.breadcrumb-item Prethviga Homes
-          span.material-symbols-outlined >
+          span.material-symbols-outlined
+            svg.icon(xmlns='http://www.w3.org/2000/svg' height='12' viewBox='0 -960 960 960' width='12' fill='#000')
+              path(d='M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z')
           span.breadcrumb-item Content Management
-          span.material-symbols-outlined >
-          span.breadcrumb-item.active Discover Us Blog Management
+          span.material-symbols-outlined
+            svg.icon(xmlns='http://www.w3.org/2000/svg' height='12' viewBox='0 -960 960 960' width='12' fill='#000')
+              path(d='M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z')
+          span.breadcrumb-item.active #{displayTitle} Blog Management
 
       main.main-content
         // Content Header
-        .content-header
-          h2.content-title Discover Us Blog Management
+        .content-header(style="display: flex; flex-direction: column; align-items: flex-start; gap: 15px;")
+          h2.content-title #{displayTitle} Blog Management
+          
+          .selectors-container(style="display: flex; gap: 15px; width: 100%;")
+            select#blog-slug-selector.form-select(style="flex: 1;")
+               option(value="home" selected=pageSlug === 'home') Home
+               option(value="project" selected=pageSlug === 'project') Project
+               option(value="discoverUs" selected=pageSlug === 'discoverUs') Discover Us
+               option(value="ongoing" selected=pageSlug === 'ongoing') On Going
+          
           button.add-more-btn Add More
         
         // Form Container
@@ -80,12 +104,14 @@ html(lang='en')
             
             // Navigation buttons
             .navigation-buttons
-              button.nav-btn.prev-btn(onclick="previousForm()" disabled) Previous
-              button.nav-btn.next-btn(onclick="nextForm()") Next
+              button.nav-btn.prev-btn(disabled) Previous
+              button.nav-btn.next-btn Next
         
         // Added Items Section
         .added-items-section(style='display: none;')
           h3.section-title Added Blog Posts
           .added-items-list
 
+    input#page_slug(type='hidden' value=pageSlug)
+    input#page_section(type='hidden' value=pageSection)
     script(src=utils.assetPath("/bundle/blogDiscover.js"))

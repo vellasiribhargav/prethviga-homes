@@ -9,24 +9,6 @@ module.exports = env => {
 		mode: env && env.build === 'true' ? "production" : "development",
 		entry: {
 			home: "./public/javascript/home.js",
-<<<<<<< HEAD
-			enqueryform:"./public/javascript/enqueryform.js",
-			admin:"./public/javascript/admin.js",
-			about: "./public/javascript/about.js",
-			assetsalesupload :"./public/javascript/assetsalesupload.js",
-			assetsForSale:"./public/javascript/assetsForSale.js",
-			connect:"./public/javascript/connect.js",
-			grievance: "./public/javascript/grievance.js",
-			login:"./public/javascript/login.js",
-			policyupload: "./public/javascript/policyupload.js",
-			policy: "./public/javascript/policy.js",
-			ourbusiness: "./public/javascript/ourbusiness.js",
-			upcoming: "./public/javascript/admin/upcoming.js",
-			completed: "./public/javascript/admin/completed.js",
-			gallery: "./public/javascript/admin/gallery.js",
-			blogDiscover: "./public/javascript/admin/blogDiscover.js"
-		  
-=======
 			OnGoingPage: "./public/javascript/OnGoingPage.js",
 			ProjectPage: "./public/javascript/ProjectPage.js",
 			discoverUs: "./public/javascript/discoverUs.js",
@@ -34,8 +16,8 @@ module.exports = env => {
 			upcoming: "./public/javascript/admin/upcoming.js",
 			gallery: "./public/javascript/admin/gallery.js",
 			completed: "./public/javascript/admin/completed.js",
-			banner: "./public/javascript/admin/banner.js"
->>>>>>> a1cba77 (Banner pages and other updates)
+			banner: "./public/javascript/admin/banner.js",
+			blogDiscover: "./public/javascript/admin/blogDiscover.js"
 		},
 		output: {
 			path: path.resolve(__dirname, "public/bundle"),

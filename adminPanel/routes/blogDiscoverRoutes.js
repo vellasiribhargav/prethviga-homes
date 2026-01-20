@@ -1,14 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const blogDiscoverController = require('../controllers/blogDiscoverController');
-const { createImageUpload } = require("../utils/commonFileupload");
+const controller = require('../controllers/blogDiscoverController');
+const { createImageUpload } = require('../utils/commonFileupload');
 
-const upload = createImageUpload("blogDiscover");
+const upload = createImageUpload('blogDiscover');
 
-// router.get('/', blogDiscoverController.renderBlogDiscoverPage);
-router.get('/getblogdiscover', blogDiscoverController.getBlogDiscover);
-router.post('/addblogdiscover', upload.any(), blogDiscoverController.addBlogDiscoverItem);
-router.put('/updateblogdiscover/:index', upload.single('file'), blogDiscoverController.updateBlogDiscoverItem);
-router.delete('/deleteblogdiscover/:index', blogDiscoverController.deleteBlogDiscoverItem);
+router.get('/:slug/:section/get', controller.getBlogs);
+router.post('/:slug/:section/add', upload.any(), controller.addBlogs);
+router.delete('/:slug/:section/delete/:index', controller.deleteBlog);
 
 module.exports = router;
