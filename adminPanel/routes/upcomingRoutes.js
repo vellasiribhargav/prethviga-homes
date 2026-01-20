@@ -6,7 +6,7 @@ const { createImageUpload } = require("../utils/commonFileupload");
 const upload = createImageUpload("gallery");
 
 
-// router.get('/', upcomingController.renderUpcomingPage);
+// router.get('/admin', upcomingController.getupcomingGallery);
 router.get('/getupcoming', upcomingController.getupcomingGallery);
 router.post('/addupcoming', upload.any(), upcomingController.addupcomingItem);
 router.put('/updateupcoming/:index', upload.single('file'), upcomingController.updateupcomingItem);

@@ -27,44 +27,88 @@ const getGalleryByProject = async (req, res) => {
 
 const addGalleryItem = async (req, res) => {
     try {
-        // console.log('Request body:', req.body);
-        // console.log('Files received:', req.files);
-        
+
+        const galleryArr = JSON.parse(req.body.galleryArr || '[]');
         const files = req.files || [];
-        if(!files || files.length === 0){
-            // console.log('No files received');
-            return res.status(422).json({success:false, message:"files are required"});
+
+        if (!galleryArr.length) {
+            return res.status(422).json({ success: false, message: "No gallery data provided" });
         }
 
         const db = mongoose.connection.db;
         if (!db) {
             throw new Error('Database connection not established');
         }
-        
+
         const collection = db.collection("OnGoingPage");
-        const file = files.map(file => `${process.env.PROJECT_URL}uploads/gallery/${file.filename}`)
-        const imgPath = file[0];
-        const galleryData = {
-            project_id: new ObjectId(req.body.project_id),
-            projectType: req.body.projectType,
-            projectName: req.body.projectName,
-            projectLocation: req.body.projectLocation,
-            title: req.body.title,
-            text: req.body.text,
-            coverImage: imgPath,
-            created_at: new Date()
-        };
-        
-        // console.log('Gallery data to insert:', galleryData);
-        
-        await collection.updateOne(
-            { page_slug: "OnGoingPage", page_section: "gallery-wrapper" },
-            { $push: { page_content: galleryData } },
-            { upsert: true }
-        );
-        
-        // console.log('Gallery item added to ProjectPage collection');
-        res.json({ success: true, message: 'Gallery item added successfully!' });
+        const galleriesToAdd = [];
+
+        for (let i = 0; i < galleryArr.length; i++) {
+            const item = galleryArr[i];
+            const itemImages = [];
+
+            // Find all files belonging to this gallery item
+            for (let j = 0; j < item.imageCount; j++) {
+                const fieldname = `gallery_${i}_file_${j}`;
+                const file = files.find(f => f.fieldname === fieldname);
+
+                if (file) {
+                    itemImages.push(`${process.env.PROJECT_URL}uploads/gallery/${file.filename}`);
+                }
+            }
+
+            if (itemImages.length === 0) {
+                return res.status(422).json({
+                    success: false,
+                    message: `At least one image is required for gallery ${i + 1}`,
+                    debug: {
+                        expectedFieldname: `gallery_${i}_file_0`,
+                        receivedFiles: files.map(f => f.fieldname)
+                    }
+                });
+            }
+
+            // Validate project_id
+            const projectIdValid = item.project_id && ObjectId.isValid(item.project_id);
+
+            galleriesToAdd.push({
+                project_id: projectIdValid ? new ObjectId(item.project_id) : null,
+                projectType: item.projectType,
+                projectName: item.projectName,
+                projectLocation: item.projectLocation,
+                title: item.title,
+                text: item.text,
+                coverImage: itemImages[0],
+                images: itemImages,
+                created_at: new Date()
+            });
+        }
+        const pageSlug = "OnGoingPage";
+        const pageSection = "gallery-wrapper";
+
+        // checking page & section
+        const page = await collection.findOne({ page_slug: pageSlug, page_section: pageSection });
+
+        if (!page) {
+            await collection.insertOne({
+                page_slug: pageSlug,
+                page_section: pageSection,
+                page_content: galleriesToAdd
+            });
+
+            return res.json({ success: true, message: "New page and new section created with gallery" });
+        } else {
+            await collection.updateOne(
+                { page_slug: pageSlug, page_section: pageSection },
+                {
+                    $push: {
+                        page_content: { $each: galleriesToAdd }
+                    }
+                }
+            );
+
+            return res.json({ success: true, message: "New section created in existing page and gallery added" });
+        }
     } catch (error) {
         console.error('Error in addGalleryItem:', error);
         res.status(500).json({ success: false, message: error.message });

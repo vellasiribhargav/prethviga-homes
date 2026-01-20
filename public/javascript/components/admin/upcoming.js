@@ -1,16 +1,16 @@
 import Swal from 'sweetalert2';
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const addMoreBtn = document.querySelector('.add-more-btn');
     const formContainer = document.querySelector('.form-container');
     const addedItemsSection = document.querySelector('.added-items-section');
     const addedItemsList = document.querySelector('.added-items-list');
-    
+
     if (!addMoreBtn || !formContainer || !addedItemsSection || !addedItemsList) {
         console.error('Required DOM elements not found');
         return;
     }
-    
+
     let formCount = 0;
     let formsCache = [];
 
@@ -19,7 +19,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const inputs = [
             { selector: 'input[name="project-name"]', message: '* Project name is required' },
             { selector: 'input[name="project-location"]', message: '* Project location is required' },
-            { selector: 'input[name="timeline-date"]', message: '* Timeline date is required' }
+            { selector: 'input[name="timeline-date"]', message: '* Timeline date is required' },
+            { selector: 'input[name="project-description"]', message: '* Project description is required' }
         ];
 
         inputs.forEach(({ selector, message }) => {
@@ -37,20 +38,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 msg.style.display = 'none';
             });
         });
+
+        // Image validation message
+        const uploadBtn = form.querySelector('.upload-btn');
+        if (uploadBtn) {
+            const msg = document.createElement('div');
+            msg.className = 'required-message-file';
+            msg.textContent = '* Project image is required';
+            msg.style.cssText = 'font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic';
+            uploadBtn.parentNode.appendChild(msg);
+        }
     }
 
     function validateForm(form) {
         let isValid = true;
         const inputs = [
-            { selector: 'input[name="project-name"]', message: '* Project name is required' },
-            { selector: 'input[name="project-location"]', message: '* Project location is required' },
-            { selector: 'input[name="timeline-date"]', message: '* Timeline date is required' }
+            { selector: 'input[name="project-name"]' },
+            { selector: 'input[name="project-location"]' },
+            { selector: 'input[name="timeline-date"]' },
+            { selector: 'input[name="project-description"]' }
         ];
 
         inputs.forEach(({ selector }) => {
             const input = form.querySelector(selector);
             if (!input) return;
-            
+
             const msg = input.parentNode.querySelector('.required-message');
             if (input.value.trim() === '') {
                 msg.style.display = 'block';
@@ -60,28 +72,44 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
+        // Image validation
+        const fileInput = form.querySelector('input[type="file"]');
+        const uploadBtn = form.querySelector('.upload-btn');
+        const fileMsg = uploadBtn.parentNode.querySelector('.required-message-file');
+
+        if (!fileInput || !fileInput.files.length) {
+            if (!uploadBtn.classList.contains('has-image')) {
+                if (fileMsg) fileMsg.style.display = 'block';
+                isValid = false;
+            } else {
+                if (fileMsg) fileMsg.style.display = 'none';
+            }
+        } else {
+            if (fileMsg) fileMsg.style.display = 'none';
+        }
+
         return isValid;
     }
 
     // Event delegation for upload buttons and navigation
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
         if (e.target.closest('.upload-btn')) {
             const button = e.target.closest('.upload-btn');
             const fileInput = button.nextElementSibling;
             if (fileInput) fileInput.click();
         }
-        
+
         if (e.target.classList.contains('prev-btn')) {
             window.previousForm();
         }
-        
+
         if (e.target.classList.contains('next-btn')) {
             window.nextForm();
         }
     });
 
     // Event delegation for file inputs
-    document.addEventListener('change', function(e) {
+    document.addEventListener('change', function (e) {
         if (e.target.type === 'file' && e.target.accept === 'image/*') {
             window.handleProjectImageUpload(e.target);
         }
@@ -95,17 +123,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Handle Add More button click
-    addMoreBtn.addEventListener('click', function() {
+    addMoreBtn.addEventListener('click', function () {
         const currentForm = document.querySelector('.content-card:last-of-type');
         if (!currentForm) return;
-        
+
         const formData = getFormData(currentForm);
-        
+
         if (formData.projectName || formData.projectLocation) {
             addToProjectsList(formData);
             showAddedItemsSection();
         }
-        
+
         createNewForm();
     });
 
@@ -114,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const projectLocationEl = form.querySelector('input[name="project-location"]');
         const timelineDateEl = form.querySelector('input[name="timeline-date"]');
         const projectDescriptionEl = form.querySelector('input[name="project-description"]');
-        
+
         return {
             projectName: projectNameEl ? projectNameEl.value : '',
             projectLocation: projectLocationEl ? projectLocationEl.value : '',
@@ -126,24 +154,24 @@ document.addEventListener('DOMContentLoaded', function() {
     function addToProjectsList(data) {
         const addedItem = document.createElement('div');
         addedItem.className = 'added-item';
-        
-        const formattedDate = data.timelineDate ? 
-            `Timeline: ${new Date(data.timelineDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}` : 
+
+        const formattedDate = data.timelineDate ?
+            `Timeline: ${new Date(data.timelineDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}` :
             'Timeline not set';
-        
+
         // Use textContent for user data to prevent XSS
         const itemName = document.createElement('h4');
         itemName.className = 'item-name';
         itemName.textContent = data.projectName || 'Untitled Project';
-        
+
         const itemLocation = document.createElement('p');
         itemLocation.className = 'item-location';
         itemLocation.textContent = data.projectLocation || 'Location not set';
-        
+
         const itemDate = document.createElement('p');
         itemDate.className = 'item-date';
         itemDate.textContent = formattedDate;
-        
+
         addedItem.innerHTML = `
             <div class="item-preview">
                 <div class="item-image" style="background-color: var(--stone-200);"></div>
@@ -158,30 +186,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 </button>
             </div>
         `;
-        
+
         // Safely append sanitized content
         const itemDetails = addedItem.querySelector('.item-details');
         itemDetails.appendChild(itemName);
         itemDetails.appendChild(itemLocation);
         itemDetails.appendChild(itemDate);
-        
+
         addedItemsList.appendChild(addedItem);
-        
+
         // Add event listeners
         const deleteBtn = addedItem.querySelector('.delete-btn');
         const editBtn = addedItem.querySelector('.edit-btn');
-        
+
         if (deleteBtn) {
-            deleteBtn.addEventListener('click', function() {
+            deleteBtn.addEventListener('click', function () {
                 addedItem.remove();
                 if (addedItemsList.children.length === 0) {
                     hideAddedItemsSection();
                 }
             });
         }
-        
+
         if (editBtn) {
-            editBtn.addEventListener('click', function() {
+            editBtn.addEventListener('click', function () {
                 // Populate form with existing data
                 const currentForm = document.querySelector('.content-card[style*="block"], .content-card:not([style*="none"])');
                 if (currentForm) {
@@ -189,26 +217,26 @@ document.addEventListener('DOMContentLoaded', function() {
                     const locationInput = currentForm.querySelector('input[name="project-location"]');
                     const dateInput = currentForm.querySelector('input[name="timeline-date"]');
                     const descInput = currentForm.querySelector('input[name="project-description"]');
-                    
+
                     if (nameInput) nameInput.value = data.projectName || '';
                     if (locationInput) locationInput.value = data.projectLocation || '';
                     if (dateInput) dateInput.value = data.timelineDate || '';
                     if (descInput) descInput.value = data.projectDescription || '';
-                    
+
                     // Hide form number and navigation, show save button
                     const formHeader = currentForm.querySelector('.form-header');
                     const navButtons = currentForm.querySelector('.navigation-buttons');
                     const submitSection = currentForm.querySelector('.submit-section');
                     const submitBtn = currentForm.querySelector('.submit-btn');
                     const addMoreBtn = document.querySelector('.add-more-btn');
-                    
+
                     if (formHeader) formHeader.style.display = 'none';
                     if (navButtons) navButtons.style.display = 'none';
                     if (submitSection) submitSection.style.display = 'block';
                     if (submitBtn) submitBtn.textContent = 'Save';
                     if (addMoreBtn) addMoreBtn.style.display = 'none';
                 }
-                
+
                 // Remove from added items
                 addedItem.remove();
                 if (addedItemsList.children.length === 0) {
@@ -220,7 +248,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function createNewForm() {
         formCount++;
-        
+
         const newForm = document.createElement('div');
         newForm.className = 'content-card';
         newForm.dataset.formIndex = formCount;
@@ -277,13 +305,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 <button class="nav-btn next-btn">Next</button>
             </div>
         `;
-        
+
         // Hide all forms and show new one
         updateFormsCache();
         formsCache.forEach(card => card.style.display = 'none');
         newForm.style.display = 'block';
         formContainer.appendChild(newForm);
-        
+
         window.currentFormIndex = formCount;
         updateFormsCache(); // Update cache after adding new form
         updateSubmitButtons();
@@ -306,10 +334,10 @@ document.addEventListener('DOMContentLoaded', function() {
             addedItemsSection.style.display = 'none';
         }
     }
-    
+
     // Initialize current form index to match the first form
     window.currentFormIndex = 0;
-    
+
     // Update navigation buttons on page load
     setTimeout(() => {
         updateNavigationButtons();
@@ -320,106 +348,96 @@ document.addEventListener('DOMContentLoaded', function() {
             addRequiredFieldValidation(initialForm);
         }
     }, 100);
-    
+
     // Add submit button handlers
     function addSubmitHandlers() {
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             if (e.target.classList.contains('submit-btn')) {
                 e.preventDefault();
                 handleSubmit(e.target);
             }
         });
     }
-    
-async function handleSubmit(submitBtn) {
-    updateFormsCache();
-    
-    const upcomingArr = [];
-    const formData = new FormData();
-    
-    for (let i = 0; i < formsCache.length; i++) {
-        const form = formsCache[i];
-        
-        if (!validateForm(form)) {
-            return;
+
+    async function handleSubmit(submitBtn) {
+        updateFormsCache();
+
+        const upcomingArr = [];
+        const formData = new FormData();
+
+        for (let i = 0; i < formsCache.length; i++) {
+            const form = formsCache[i];
+
+            if (!validateForm(form)) {
+                return;
+            }
+
+            const data = getFormData(form);
+            const fileInput = form.querySelector('input[type="file"]');
+
+            if (!data.projectName && !data.projectLocation) continue;
+
+            upcomingArr.push({
+                project_name: data.projectName,
+                project_location: data.projectLocation,
+                project_date: data.timelineDate ? new Date(data.timelineDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '',
+                card_footer_text: data.projectDescription
+            });
+
+            formData.append(`file_${i}`, fileInput.files[0]);
         }
-        
-        const data = getFormData(form);
-        const fileInput = form.querySelector('input[type="file"]');
-        
-        if (!data.projectName && !data.projectLocation) continue;
-        
-        if (!fileInput || !fileInput.files.length) {
+
+        if (!upcomingArr.length) {
             Swal.fire({
                 icon: 'warning',
-                title: 'Missing Image!',
-                text: `Project image required for form ${i + 1}`,
+                title: 'No Data!',
+                text: 'Please fill at least one project',
                 confirmButtonColor: '#BC5322'
             });
             return;
         }
-        
-        upcomingArr.push({
-            project_name: data.projectName,
-            project_location: data.projectLocation,
-            project_date: data.timelineDate ? new Date(data.timelineDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '',
-            card_footer_text: data.projectDescription
-        });
-        
-        formData.append(`file_${i}`, fileInput.files[0]);
-    }
-    
-    if (!upcomingArr.length) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'No Data!',
-            text: 'Please fill at least one project',
-            confirmButtonColor: '#BC5322'
-        });
-        return;
-    }
-    
-    formData.append('upcomingArr', JSON.stringify(upcomingArr));
-    
-    try {
-        const res = await fetch('/admin/upcoming/addupcoming', {
-            method: 'POST',
-            body: formData
-        });
 
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        
-        const result = await res.json();
-        
-        if (!result.success) {
-            alert(result.message);
-            return;
+        formData.append('upcomingArr', JSON.stringify(upcomingArr));
+
+        try {
+            const res = await fetch('/admin/upcoming/addupcoming', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+            const result = await res.json();
+
+            if (!result.success) {
+                alert(result.message);
+                return;
+            }
+
+            formsCache.forEach(form => clearForm(form));
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: `${upcomingArr.length} project(s) saved successfully!`,
+                confirmButtonColor: '#BC5322'
+            });
+
+        } catch (err) {
+            console.error(err);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Server error occurred',
+                confirmButtonColor: '#BC5322'
+            });
         }
-
-        formsCache.forEach(form => clearForm(form));
-        
-        Swal.fire({
-            icon: 'success',
-            title: 'Success!',
-            text: `${upcomingArr.length} project(s) saved successfully!`,
-            confirmButtonColor: '#BC5322'
-        });
-        
-    } catch (err) {
-        console.error(err);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error!',
-            text: 'Server error occurred',
-            confirmButtonColor: '#BC5322'
-        });
     }
-}
-    
+
     function clearForm(form) {
         const inputs = form.querySelectorAll('input[type="text"], input[type="date"]');
         inputs.forEach(input => input.value = '');
-        
+
         // Reset upload button if image was uploaded
         const uploadBtn = form.querySelector('.upload-btn');
         if (uploadBtn && uploadBtn.style.backgroundImage) {
@@ -435,7 +453,7 @@ async function handleSubmit(submitBtn) {
             `;
         }
     }
-    
+
     function showSuccessMessage(message) {
         // Create temporary success message
         const successDiv = document.createElement('div');
@@ -452,7 +470,7 @@ async function handleSubmit(submitBtn) {
         `;
         successDiv.textContent = message;
         document.body.appendChild(successDiv);
-        
+
         // Remove after 3 seconds
         setTimeout(() => {
             if (successDiv.parentNode) {
@@ -462,7 +480,7 @@ async function handleSubmit(submitBtn) {
     }
 
     // Navigation functions
-    window.previousForm = function() {
+    window.previousForm = function () {
         updateFormsCache();
         if (window.currentFormIndex > 0) {
             formsCache[window.currentFormIndex].style.display = 'none';
@@ -473,7 +491,7 @@ async function handleSubmit(submitBtn) {
         }
     };
 
-    window.nextForm = function() {
+    window.nextForm = function () {
         updateFormsCache();
         if (window.currentFormIndex < formsCache.length - 1) {
             formsCache[window.currentFormIndex].style.display = 'none';
@@ -483,13 +501,13 @@ async function handleSubmit(submitBtn) {
             updateNavigationButtons();
         }
     };
-    
+
     function updateNavigationButtons() {
         updateFormsCache();
         formsCache.forEach((form, index) => {
             const prevBtn = form.querySelector('.prev-btn');
             const nextBtn = form.querySelector('.next-btn');
-            
+
             if (prevBtn) {
                 prevBtn.disabled = (window.currentFormIndex === 0);
             }
@@ -498,7 +516,7 @@ async function handleSubmit(submitBtn) {
             }
         });
     }
-    
+
     function updateSubmitButtons() {
         updateFormsCache();
         formsCache.forEach((form, index) => {
@@ -511,7 +529,7 @@ async function handleSubmit(submitBtn) {
 });
 
 // Handle project image selection
-window.selectProjectImage = function(button) {
+window.selectProjectImage = function (button) {
     const fileInput = button.nextElementSibling;
     if (fileInput) {
         fileInput.click();
@@ -519,84 +537,72 @@ window.selectProjectImage = function(button) {
 };
 
 // Handle project image upload with validation and error handling
-window.handleProjectImageUpload = function(input) {
+window.handleProjectImageUpload = function (input) {
     const file = input.files[0];
     if (!file) return;
-    
+
     // Validate file size (5MB limit)
     if (file.size > 5 * 1024 * 1024) {
         alert('File size must be less than 5MB');
         input.value = '';
         return;
     }
-    
+
     // Validate file type
     if (!file.type.startsWith('image/')) {
         alert('Please select a valid image file');
         input.value = '';
         return;
     }
-    
+
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = function (e) {
         const uploadBtn = input.previousElementSibling;
         if (uploadBtn && e.target.result) {
-            // Validate that result is a data URL
-            if (e.target.result.startsWith('data:image/')) {
-                uploadBtn.style.backgroundImage = `url(${e.target.result})`;
-                uploadBtn.style.backgroundSize = 'cover';
-                uploadBtn.style.backgroundPosition = 'center';
-                uploadBtn.innerHTML = `
-                    <div style="position: absolute; top: 8px; right: 8px; display: flex; gap: 4px;">
-                        <button class="image-action-btn edit-image-btn" onclick="editProjectImage(this)" style="width: 32px; height: 32px; border-radius: 50%; border: none; background: rgba(59, 130, 246, 0.9); color: white; cursor: pointer;">
-                            <svg class="icon" xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16" fill="currentColor">
-                                <path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/>
-                            </svg>
-                        </button>
-                        <button class="image-action-btn delete-image-btn" onclick="deleteProjectImage(this)" style="width: 32px; height: 32px; border-radius: 50%; border: none; background: rgba(239, 68, 68, 0.9); color: white; cursor: pointer;">
-                            <svg class="icon" xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 -960 960 960" width="16" fill="currentColor">
-                                <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
-                            </svg>
-                        </button>
-                    </div>
-                `;
-            }
+            uploadBtn.innerHTML = `
+                <div class="uploaded-image">
+                    <img src="${e.target.result}" alt="Uploaded project image">
+                    <button class="remove-image" onclick="deleteProjectImage(this); event.stopPropagation();">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+            `;
+            uploadBtn.classList.add('has-image');
         }
     };
-    reader.onerror = function() {
+    reader.onerror = function () {
         alert('Error reading file');
         input.value = '';
     };
     reader.readAsDataURL(file);
 };
 
-// Edit project image
-window.editProjectImage = function(button) {
-    const formGroup = button.closest('.form-group');
-    if (formGroup) {
-        const fileInput = formGroup.querySelector('input[type="file"]');
-        if (fileInput) {
-            fileInput.click();
-        }
+// Delete project image
+window.deleteProjectImage = function (button) {
+    const uploadBtn = button.closest('.upload-btn');
+    if (uploadBtn) {
+        uploadBtn.classList.remove('has-image');
+        uploadBtn.innerHTML = `
+            <div class="upload-icon">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
+                    <path d="M480-260q75 0 127.5-52.5T660-440q0-75-52.5-127.5T480-620q-75 0-127.5 52.5T300-440q0 75 52.5 127.5T480-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM160-120q-33 0-56.5-23.5T80-200v-480q0-33 23.5-56.5T160-760h126l74-80h240l74 80h126q33 0 56.5 23.5T880-680v480q0 33-23.5 56.5T800-120H160Zm0-80h640v-480H638l-73-80H395l-73 80H160v480Zm320-240Z"/>
+                </svg>
+            </div>
+            <p class="upload-text">Tap to upload</p>
+            <p class="upload-subtext">SVG, PNG, JPG (max. 5MB)</p>
+        `;
+        const fileInput = uploadBtn.nextElementSibling;
+        if (fileInput) fileInput.value = '';
     }
 };
 
-// Delete project image
-window.deleteProjectImage = function(button) {
-    const formGroup = button.closest('.form-group');
-    if (formGroup) {
-        const uploadBtn = formGroup.querySelector('.upload-btn');
-        if (uploadBtn) {
-            uploadBtn.style.backgroundImage = '';
-            uploadBtn.innerHTML = `
-                <div class="upload-icon">
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
-                        <path d="M480-260q75 0 127.5-52.5T660-440q0-75-52.5-127.5T480-620q-75 0-127.5 52.5T300-440q0 75 52.5 127.5T480-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM160-120q-33 0-56.5-23.5T80-200v-480q0-33 23.5-56.5T160-760h126l74-80h240l74 80h126q33 0 56.5 23.5T880-680v480q0 33-23.5 56.5T800-120H160Zm0-80h640v-480H638l-73-80H395l-73 80H160v480Zm320-240Z"/>
-                    </svg>
-                </div>
-                <p class="upload-text">Tap to upload</p>
-                <p class="upload-subtext">SVG, PNG, JPG (max. 5MB)</p>
-            `;
-        }
+function clearForm(form) {
+    const inputs = form.querySelectorAll('input[type="text"], input[type="date"]');
+    inputs.forEach(input => input.value = '');
+
+    // Reset upload button
+    const uploadBtn = form.querySelector('.upload-btn');
+    if (uploadBtn && uploadBtn.classList.contains('has-image')) {
+        window.deleteProjectImage(uploadBtn.querySelector('.remove-image'));
     }
-};
+}

@@ -6,19 +6,45 @@ document.addEventListener('DOMContentLoaded', function () {
     const addedItemsSection = document.querySelector('.added-items-section');
     const addedItemsList = document.querySelector('.added-items-list');
 
+    const pageSlugEl = document.getElementById('page_slug');
+    const pageSectionEl = document.getElementById('page_section');
+    const slugSelector = document.getElementById('blog-slug-selector');
+
+    const slug = pageSlugEl ? pageSlugEl.value : 'home';
+    const section = pageSectionEl ? pageSectionEl.value : 'blogs-card';
+
+    if (slugSelector) {
+        slugSelector.value = slug;
+        slugSelector.addEventListener('change', () => {
+            window.location.href = `?slug=${slugSelector.value}`;
+        });
+    }
+
     let formCount = 0;
     let blogArr = [];
 
-    setupImageUpload(document.querySelector('.content-card'));
+    const firstForm = document.querySelector('.content-card');
+    if (firstForm) {
+        setupImageUpload(firstForm);
+        addRequiredFieldValidation(firstForm);
+        updateSubmitButtonsVisibility();
+        updateNavigationButtons();
+    }
     loadExistingBlogs();
 
     addMoreBtn.addEventListener('click', function () {
-        const currentForm = document.querySelector('.content-card:last-of-type');
-        const formData = getFormData(currentForm);
+        const allForms = document.querySelectorAll('.content-card');
+        const currentForm = allForms[allForms.length - 1];
 
-        if (formData.blogTag || formData.blogTitle || formData.blogDescription) {
+        const formData = getFormData(currentForm);
+        const hasData = formData.blogTag || formData.blogTitle || formData.blogDescription || (currentForm.querySelector('.uploaded-image img') !== null);
+
+        if (hasData) {
+            // Hide current form submit section
+            const submitSection = currentForm.querySelector('.submit-section');
+            if (submitSection) submitSection.style.display = 'none';
+
             addToBlogList(formData);
-            clearCurrentForm(currentForm);
             showAddedItemsSection();
         }
 
@@ -29,18 +55,29 @@ document.addEventListener('DOMContentLoaded', function () {
         const uploadBtn = formCard.querySelector('.upload-btn');
         const fileInput = formCard.querySelector('.image-upload');
 
-        if (uploadBtn && fileInput) {
-            uploadBtn.addEventListener('click', () => {
-                fileInput.click();
-            });
+        if (!uploadBtn || !fileInput) return;
 
-            fileInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    handleImageUpload(file, uploadBtn);
-                }
-            });
+        // Create required message for file
+        let msg = uploadBtn.parentNode.querySelector('.required-message-file');
+        if (!msg) {
+            msg = document.createElement('div');
+            msg.className = 'required-message-file';
+            msg.textContent = '* Cover image is required';
+            msg.style.cssText = 'font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic';
+            uploadBtn.parentNode.appendChild(msg);
         }
+
+        uploadBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                msg.style.display = 'none';   // hide error when file selected
+                handleImageUpload(file, uploadBtn);
+            }
+        });
     }
 
     function handleImageUpload(file, uploadBtn) {
@@ -93,36 +130,61 @@ document.addEventListener('DOMContentLoaded', function () {
 
             for (let i = 0; i < allForms.length; i++) {
                 const form = allForms[i];
-
-                // Validate text inputs (inline messages)
-                if (!validateForm(form)) {
-                    allValid = false;
-                    continue; // Keep validating other forms to show all inline errors
-                }
-
                 const tempFormData = getFormData(form);
 
-                // Check if image is missing - ONLY show popup for image if text fields are valid
-                const uploadedImage = form.querySelector('.uploaded-image img');
-                if (!uploadedImage) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Missing Image',
-                        text: `Please upload a cover image for form ${i + 1}.`,
-                        confirmButtonColor: '#BC5322'
-                    });
-                    allValid = false;
+                // Skip if entire form is empty AND it's not the only form
+                const isEmpty = !tempFormData.blogTag && !tempFormData.publicationDate && !tempFormData.blogTitle && !tempFormData.blogDescription && !tempFormData.file;
+
+                if (isEmpty && allForms.length > 1) {
                     continue;
                 }
 
-                allFormData.push(tempFormData);
+                // Validate text inputs (inline messages)
+                const isFormValid = validateForm(form);
+                if (!isFormValid) {
+                    allValid = false;
+                }
+
+                // Check if image is missing
+                const uploadedImage = form.querySelector('.uploaded-image img');
+                const fileMsg = form.querySelector('.required-message-file');
+                if (!uploadedImage) {
+                    if (fileMsg) fileMsg.style.display = 'block';
+                    allValid = false;
+                } else {
+                    if (fileMsg) fileMsg.style.display = 'none';
+                }
+
+                if (isFormValid && uploadedImage && allValid) {
+                    allFormData.push(tempFormData);
+                }
             }
 
-            if (!allValid) return;
+            if (!allValid || allFormData.length === 0) {
+                if (allFormData.length === 0 && allValid) {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Empty Forms',
+                        text: 'Please fill in at least one blog form.',
+                        confirmButtonColor: '#BC5322'
+                    });
+                }
+                return;
+            }
 
             if (allFormData.length > 0) {
                 submitAllBlogs(allFormData);
             }
+        }
+
+        if (e.target.classList.contains('prev-btn')) {
+            e.preventDefault();
+            window.previousForm();
+        }
+
+        if (e.target.classList.contains('next-btn')) {
+            e.preventDefault();
+            window.nextForm();
         }
     });
 
@@ -220,7 +282,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
 
-            const response = await fetch('/admin/blogDiscover/addblogdiscover', {
+            const response = await fetch(`/admin/blogdiscover/${slug}/${section}/add`, {
                 method: 'POST',
                 body: formData
             });
@@ -228,6 +290,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const result = await response.json();
 
             if (result.success) {
+                const allForms = document.querySelectorAll('.content-card');
+
+                // Show success message
                 Swal.fire({
                     icon: 'success',
                     title: 'Success!',
@@ -235,19 +300,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     confirmButtonColor: '#BC5322'
                 });
 
-                allFormData.forEach(data => {
-                    addToBlogList(data);
-                });
-
-                const allForms = document.querySelectorAll('.content-card');
-                allForms.forEach(form => {
-                    clearCurrentForm(form);
-                });
-
-                showAddedItemsSection();
-
+                // Clear and reset forms
                 allForms.forEach((form, index) => {
                     if (index === 0) {
+                        clearCurrentForm(form);
                         form.style.display = 'block';
                     } else {
                         form.remove();
@@ -257,6 +313,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 formCount = 0;
                 window.currentFormIndex = 0;
 
+                // Reload from database to get official items
                 loadExistingBlogs();
             } else {
                 Swal.fire({
@@ -281,7 +338,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const item = {
             id: Date.now(),
             blogTag: data.blogTag || 'No tag',
-            publicationDate: data.publicationDate ? new Date(data.publicationDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+            publicationDate: new Date(data.publicationDate || Date.now()).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+
             blogTitle: data.blogTitle || 'Untitled Blog',
             blogDescription: data.blogDescription || 'No description',
             coverImage: data.coverImage || null
@@ -310,14 +368,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function loadExistingBlogs() {
         try {
-            const response = await fetch('/admin/blogDiscover/getblogdiscover');
+            const response = await fetch(`/admin/blogdiscover/${slug}/${section}/get`);
             const result = await response.json();
 
             if (result.success && result.data.length > 0) {
                 blogArr = result.data.map((blog, index) => ({
                     id: blog.blog_id || index,
                     blogTag: blog.badge_text || 'No tag',
-                    publicationDate: blog.blog_date ? new Date(blog.blog_date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : 'No date',
+                    publicationDate: blog.blog_date ? new Date(blog.blog_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'No date',
                     blogTitle: blog.blog_text || 'Untitled Blog',
                     blogDescription: blog.blog_description || 'No description',
                     coverImage: blog.inner_img || null,
@@ -354,14 +412,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         <p class="item-date"><strong>Publication Date:</strong> ${item.publicationDate}</p>
                     </div>
                 </div>
-                <div class="item-actions">
-                    <button class="edit-btn" onclick="editItem(${item.id})">
-                        <span class="material-symbols-outlined">edit</span>
-                    </button>
-                    <button class="delete-btn" onclick="deleteItem(${item.id}, ${item.index || -1})">
-                        <span class="material-symbols-outlined">delete</span>
-                    </button>
-                </div>
             `;
 
             addedItemsList.appendChild(addedItem);
@@ -377,7 +427,7 @@ document.addEventListener('DOMContentLoaded', function () {
     window.deleteItem = async function (id, index) {
         if (index >= 0) {
             try {
-                const response = await fetch(`/admin/blogDiscover/deleteblogdiscover/${index}`, {
+                const response = await fetch(`/admin/blogdiscover/${slug}/${section}/delete/${index}`, {
                     method: 'DELETE'
                 });
                 const result = await response.json();
@@ -486,8 +536,8 @@ document.addEventListener('DOMContentLoaded', function () {
             </div>
             
             <div class="navigation-buttons">
-                <button class="nav-btn prev-btn" onclick="previousForm()">Previous</button>
-                <button class="nav-btn next-btn" onclick="nextForm()">Next</button>
+                <button class="nav-btn prev-btn">Previous</button>
+                <button class="nav-btn next-btn">Next</button>
             </div>
         `;
 
@@ -502,6 +552,21 @@ document.addEventListener('DOMContentLoaded', function () {
         addRequiredFieldValidation(newForm);
 
         window.currentFormIndex = formCount;
+        updateSubmitButtonsVisibility();
+        updateNavigationButtons();
+    }
+
+    function updateSubmitButtonsVisibility() {
+        const forms = document.querySelectorAll('.content-card');
+        const lastFormIndex = forms.length - 1;
+
+        forms.forEach((form, index) => {
+            const submitSection = form.querySelector('.submit-section');
+            if (submitSection) {
+                submitSection.style.display = index === lastFormIndex ? 'flex' : 'none';
+                submitSection.style.justifyContent = 'center';
+            }
+        });
     }
 
     function showAddedItemsSection() {
@@ -520,6 +585,8 @@ document.addEventListener('DOMContentLoaded', function () {
             forms[window.currentFormIndex].style.display = 'none';
             window.currentFormIndex--;
             forms[window.currentFormIndex].style.display = 'block';
+            updateSubmitButtonsVisibility();
+            updateNavigationButtons();
         }
     };
 
@@ -529,6 +596,18 @@ document.addEventListener('DOMContentLoaded', function () {
             forms[window.currentFormIndex].style.display = 'none';
             window.currentFormIndex++;
             forms[window.currentFormIndex].style.display = 'block';
+            updateSubmitButtonsVisibility();
+            updateNavigationButtons();
         }
     };
+
+    function updateNavigationButtons() {
+        const forms = document.querySelectorAll('.content-card');
+        forms.forEach((form, index) => {
+            const prevBtn = form.querySelector('.prev-btn');
+            const nextBtn = form.querySelector('.next-btn');
+            if (prevBtn) prevBtn.disabled = window.currentFormIndex === 0;
+            if (nextBtn) nextBtn.disabled = window.currentFormIndex === forms.length - 1;
+        });
+    }
 });
