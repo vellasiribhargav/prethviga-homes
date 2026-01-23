@@ -5,9 +5,9 @@ const { createImageUpload } = require("../utils/commonFileupload");
 
 const upload = createImageUpload("gallery");
 
-
-// router.get('/admin', upcomingController.getupcomingGallery);
-router.get('/getupcoming', upcomingController.getupcomingGallery);
+router.get('/', upcomingController.renderUpcomingPage);
+router.get('/list', upcomingController.getupcomingGallery);
+router.get('/getupcoming', upcomingController.getUpcomingProjectsJSON);
 router.post('/addupcoming', upload.any(), upcomingController.addupcomingItem);
 router.put('/updateupcoming/:index', upload.single('file'), upcomingController.updateupcomingItem);
 router.delete('/deleteupcoming/:index', upcomingController.deleteupcomingItem);

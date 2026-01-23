@@ -384,6 +384,9 @@ header {
   color: var(--stone-800);
   cursor: pointer;
   transition: background-color 0.2s;
+  font-size: 24px;
+  position: relative;
+  z-index: 1002;
 }
 
 .dark .menu-btn {
@@ -898,25 +901,36 @@ main {
 }
 
 /* Add More Button */
-.add-more-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--primary);
-  color: white;
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.header-actions button {
+  background: #a8712a;
+  color: #fff;
   border: none;
-  padding: 12px 20px;
+  padding: 10px 18px;
   border-radius: 8px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: bold;
   cursor: pointer;
-  transition: all 0.2s;
-  margin-bottom: 20px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .add-more-btn:hover {
   background: rgba(207, 130, 23, 0.9);
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(207, 130, 23, 0.4);
+}
+
+.back-btn:hover {
+  background: rgba(207, 130, 23, 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(207, 130, 23, 0.4);
 }
 
 /* Content Header */
@@ -1240,4 +1254,11 @@ main {
   justify-content: center;
   font-size: 12px;
   font-weight: 600;
+}
+
+/* Responsive Design */
+@media (min-width: 769px) {
+  .menu-btn {
+    display: none;
+  }
 }

@@ -18,7 +18,7 @@ const contactRoutes = require('./routes/contactRoutes');
 const upcomingRoutes = require('./adminPanel/routes/upcomingRoutes');
 const completedRoutes = require('./adminPanel/routes/completedRoutes');
 const galleryRoutes = require('./adminPanel/routes/galleryRoutes');
-const blogDiscoverRoutes = require('./adminPanel/routes/blogDiscoverRoutes');
+const blogRoutes = require('./adminPanel/routes/blogRoutes');
 const bannerRoutes = require('./adminPanel/routes/bannerRoutes');
 
 (utils = require("./utils/index")), (env = process.env.NODE_ENV);
@@ -84,11 +84,18 @@ app.use("/ProjectPage", projectsRoutes);
 app.use("/OnGoingPage", onGoingPageRoutes);
 app.use("/discoverUs", discoverUsRoutes);
 app.use('/', contactRoutes);
+app.use('/admin', upcomingRoutes);
 app.use('/admin/upcoming', upcomingRoutes);
 app.use('/admin/completed', completedRoutes);
 app.use('/admin/gallery', galleryRoutes);
-app.use('/admin/blogdiscover', blogDiscoverRoutes);
-app.use('/admin/banners', bannerRoutes);
+app.use('/admin/blog', blogRoutes);
+app.use('/admin/banner', bannerRoutes);
+app.use('/admin/upcoming_projects', upcomingRoutes);
+
+app.get('/admin', (req, res) => {
+  res.redirect('/admin/upcoming');
+});
+
 app.use((req, res, next) => {
   res.setHeader(
     "Strict-Transport-Security",

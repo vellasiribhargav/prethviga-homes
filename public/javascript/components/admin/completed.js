@@ -27,14 +27,24 @@ document.addEventListener('DOMContentLoaded', function () {
             const input = form.querySelector(selector);
             if (!input) return;
 
+            const name = selector.match(/name="([^"]+)"/)?.[1] || 'field';
+
+            // Remove existing if any
+            const existingMsg = input.parentNode.querySelector(`.required-message[data-for="${name}"]`);
+            if (existingMsg) existingMsg.remove();
+
             const msg = document.createElement('div');
             msg.className = 'required-message';
+            msg.dataset.for = name;
             msg.textContent = message;
             msg.style.cssText = 'font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic';
 
-            input.parentNode.appendChild(msg);
+            input.after(msg);
 
             input.addEventListener('input', () => {
+                msg.style.display = 'none';
+            });
+            input.addEventListener('change', () => {
                 msg.style.display = 'none';
             });
         });
@@ -52,23 +62,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function validateForm(form) {
         let isValid = true;
-        const inputs = [
-            { selector: 'input[name="project-name"]' },
-            { selector: 'input[name="project-location"]' },
-            { selector: 'input[name="completion-date"]' },
-            { selector: 'input[name="project-summary"]' }
+        const conf = [
+            { selector: 'input[name="project-name"]', name: 'project-name' },
+            { selector: 'input[name="project-location"]', name: 'project-location' },
+            { selector: 'input[name="completion-date"]', name: 'completion-date' },
+            { selector: 'input[name="project-summary"]', name: 'project-summary' }
         ];
 
-        inputs.forEach(({ selector }) => {
+        conf.forEach(({ selector, name }) => {
             const input = form.querySelector(selector);
             if (!input) return;
 
-            const msg = input.parentNode.querySelector('.required-message');
+            const msg = input.parentNode.querySelector(`.required-message[data-for="${name}"]`);
             if (input.value.trim() === '') {
-                msg.style.display = 'block';
+                if (msg) msg.style.display = 'block';
                 isValid = false;
             } else {
-                msg.style.display = 'none';
+                if (msg) msg.style.display = 'none';
             }
         });
 
@@ -115,16 +125,38 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    // Helper to check if a form is empty
+    function isFormEmpty(form) {
+        const data = getFormData(form);
+        const fileInput = form.querySelector('input[type="file"]');
+        const uploadBtn = form.querySelector('.upload-btn');
+        const hasImage = uploadBtn && uploadBtn.classList.contains('has-image');
+
+        return !data.projectName.trim() &&
+            !data.projectLocation.trim() &&
+            !data.completionDate &&
+            !data.projectSummary.trim() &&
+            !hasImage &&
+            (!fileInput || !fileInput.files.length);
+    }
+
     // Handle Add More button click
     addMoreBtn.addEventListener('click', function () {
-        const currentForm = document.querySelector('.content-card:last-of-type');
-        if (!currentForm) return;
+        const currentForm = document.querySelector('.content-card[style*="block"], .content-card:not([style*="none"])');
 
-        const formData = getFormData(currentForm);
+        if (currentForm) {
+            // Ensure current form has an ID
+            if (!currentForm.dataset.formId) {
+                currentForm.dataset.formId = 'form-' + Date.now();
+            }
 
-        if (formData.projectName || formData.projectLocation) {
-            addToProjectsList(formData);
-            showAddedItemsSection();
+            const formData = getFormData(currentForm);
+
+            // Only add to list if it has some data
+            if (formData.projectName || formData.projectLocation) {
+                addToProjectsList(formData, currentForm.dataset.formId);
+                showAddedItemsSection();
+            }
         }
 
         createNewForm();
@@ -144,9 +176,12 @@ document.addEventListener('DOMContentLoaded', function () {
         };
     }
 
-    function addToProjectsList(data) {
+    function addToProjectsList(data, formId) {
         const addedItem = document.createElement('div');
         addedItem.className = 'added-item';
+        if (formId) {
+            addedItem.dataset.linkedFormId = formId;
+        }
 
         const formattedDate = data.completionDate ?
             `Completed: ${new Date(data.completionDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}` :
@@ -194,6 +229,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (deleteBtn) {
             deleteBtn.addEventListener('click', function () {
+                // Remove linked form from DOM
+                if (addedItem.dataset.linkedFormId) {
+                    const linkedForm = document.querySelector(`.content-card[data-form-id="${addedItem.dataset.linkedFormId}"]`);
+                    if (linkedForm) {
+                        linkedForm.remove();
+                        updateFormsCache();
+                    }
+                }
+
                 addedItem.remove();
                 if (addedItemsList.children.length === 0) {
                     hideAddedItemsSection();
@@ -203,34 +247,51 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (editBtn) {
             editBtn.addEventListener('click', function () {
-                // Populate form with existing data
-                const currentForm = document.querySelector('.content-card[style*="block"], .content-card:not([style*="none"])');
-                if (currentForm) {
-                    const nameInput = currentForm.querySelector('input[name="project-name"]');
-                    const locationInput = currentForm.querySelector('input[name="project-location"]');
-                    const dateInput = currentForm.querySelector('input[name="completion-date"]');
-                    const summaryInput = currentForm.querySelector('input[name="project-summary"]');
+                // Find linked form
+                let linkedForm = null;
+                if (addedItem.dataset.linkedFormId) {
+                    linkedForm = document.querySelector(`.content-card[data-form-id="${addedItem.dataset.linkedFormId}"]`);
+                }
+
+                // Populate current visible form with data
+                const currentVisibleForm = document.querySelector('.content-card[style*="block"], .content-card:not([style*="none"])');
+
+                if (currentVisibleForm && linkedForm) {
+                    // Method 1: Copy values
+                    const data = getFormData(linkedForm);
+
+                    const nameInput = currentVisibleForm.querySelector('input[name="project-name"]');
+                    const locationInput = currentVisibleForm.querySelector('input[name="project-location"]');
+                    const dateInput = currentVisibleForm.querySelector('input[name="completion-date"]');
+                    const summaryInput = currentVisibleForm.querySelector('input[name="project-summary"]');
 
                     if (nameInput) nameInput.value = data.projectName || '';
                     if (locationInput) locationInput.value = data.projectLocation || '';
                     if (dateInput) dateInput.value = data.completionDate || '';
                     if (summaryInput) summaryInput.value = data.projectSummary || '';
 
-                    // Hide form number and navigation, show save button
-                    const formHeader = currentForm.querySelector('.form-header');
-                    const navButtons = currentForm.querySelector('.navigation-buttons');
-                    const submitSection = currentForm.querySelector('.submit-section');
-                    const submitBtn = currentForm.querySelector('.submit-btn');
-                    const addMoreBtn = document.querySelector('.add-more-btn');
+                    // Handle Image Transfer
+                    const linkedUploadBtn = linkedForm.querySelector('.upload-btn');
+                    const currentUploadBtn = currentVisibleForm.querySelector('.upload-btn');
 
-                    if (formHeader) formHeader.style.display = 'none';
-                    if (navButtons) navButtons.style.display = 'none';
-                    if (submitSection) submitSection.style.display = 'block';
-                    if (submitBtn) submitBtn.textContent = 'Save';
-                    if (addMoreBtn) addMoreBtn.style.display = 'none';
+                    if (linkedUploadBtn && linkedUploadBtn.classList.contains('has-image') && currentUploadBtn) {
+                        const img = linkedUploadBtn.querySelector('img');
+                        if (img) {
+                            currentUploadBtn.innerHTML = `
+                                <div class="uploaded-image">
+                                    <img src="${img.src}" alt="Uploaded project image">
+                                    <button class="remove-image" onclick="deleteProjectImage(this); event.stopPropagation();">
+                                        <span class="material-symbols-outlined">close</span>
+                                    </button>
+                                </div>
+                            `;
+                            currentUploadBtn.classList.add('has-image');
+                        }
+                    }
 
-                    // Mark form as in edit mode
-                    currentForm.setAttribute('data-edit-mode', 'true');
+                    // Remove the linked form from DOM since we "pulled" it back
+                    linkedForm.remove();
+                    updateFormsCache();
                 }
 
                 // Remove from added items
@@ -248,6 +309,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const newForm = document.createElement('div');
         newForm.className = 'content-card';
         newForm.dataset.formIndex = formCount;
+        newForm.dataset.formId = 'form-' + Date.now() + Math.random().toString(36).substr(2, 9); // Unique ID
+
         newForm.innerHTML = `
             <div class="form-header">
                 <span class="form-number">${formCount + 1}</span>
@@ -289,7 +352,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 
                 <div class="form-group">
                     <label class="form-label">Project Summary</label>
-                    <input class="form-input" type="text" name="project-summary" placeholder="Enter project summary or notes...">
+                    <input class="form-input" type="text" name="project-summary" placeholder="Text area...">
                 </div>
             </div>
             
@@ -341,6 +404,9 @@ document.addEventListener('DOMContentLoaded', function () {
         // Add validation to initial form
         const initialForm = document.querySelector('.content-card');
         if (initialForm) {
+            if (!initialForm.dataset.formId) {
+                initialForm.dataset.formId = 'form-' + Date.now();
+            }
             addRequiredFieldValidation(initialForm);
         }
     }, 100);
@@ -360,28 +426,57 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const completedArr = [];
         const formData = new FormData();
+        let validFormsCount = 0;
 
         for (let i = 0; i < formsCache.length; i++) {
             const form = formsCache[i];
 
-            if (!validateForm(form)) {
-                return;
+            // Skip empty forms, UNLESS it is the only form and it's completely empty
+            // If it's the only form, we want to show validation errors appropriately if user tries to submit.
+            // But if we have multiple forms, we can ignore the empty tail forms.
+            if (isFormEmpty(form)) {
+                if (formsCache.length === 1) {
+                    // If it's the only form, validate it to show errors
+                    if (!validateForm(form)) return;
+                } else {
+                    // Start of ignoring empty form in multi-form context
+                    continue;
+                }
+            } else {
+                // Form has some data, so it MUST be valid
+                if (!validateForm(form)) {
+                    // If any non-empty form is invalid, stop everything
+                    // We should probably switch view to this form so user can see error
+                    formsCache.forEach(f => f.style.display = 'none');
+                    form.style.display = 'block';
+                    window.currentFormIndex = i;
+                    updateNavigationButtons();
+                    updateSubmitButtons();
+                    return;
+                }
             }
 
             const data = getFormData(form);
             const fileInput = form.querySelector('input[type="file"]');
 
+            // Double check (redundant with validateForm but good for safety)
             if (!data.projectName && !data.projectLocation) continue;
 
             completedArr.push({
                 project_name: data.projectName,
                 project_location: data.projectLocation,
-                project_date: data.completionDate ? new Date(data.completionDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '',
-                card_footer_text: data.projectSummary
+                completion_date: data.completionDate ? new Date(data.completionDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '',
+                project_summary: data.projectSummary
             });
 
-            formData.append(`file_${i}`, fileInput.files[0]);
+            if (fileInput && fileInput.files[0]) {
+                formData.append(`file_${validFormsCount}`, fileInput.files[0]);
+            }
+
+            validFormsCount++;
         }
+
+        console.log('Submitting completedArr:', completedArr);
 
         if (!completedArr.length) {
             Swal.fire({
@@ -410,7 +505,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            formsCache.forEach(form => clearForm(form));
+            // Success cleanup
+            formsCache.forEach(form => form.remove());
+            formsCache = [];
+            formCount = 0;
+            hideAddedItemsSection();
+            addedItemsList.innerHTML = '';
+            createNewForm(); // Start fresh
 
             Swal.fire({
                 icon: 'success',
@@ -433,20 +534,12 @@ document.addEventListener('DOMContentLoaded', function () {
     function clearForm(form) {
         const inputs = form.querySelectorAll('input[type="text"], input[type="date"]');
         inputs.forEach(input => input.value = '');
+        if (form.querySelector('textarea')) form.querySelector('textarea').value = '';
 
-        // Reset upload button if image was uploaded
+        // Reset upload button
         const uploadBtn = form.querySelector('.upload-btn');
-        if (uploadBtn && uploadBtn.style.backgroundImage) {
-            uploadBtn.style.backgroundImage = '';
-            uploadBtn.innerHTML = `
-                <div class="upload-icon">
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
-                        <path d="M480-260q75 0 127.5-52.5T660-440q0-75-52.5-127.5T480-620q-75 0-127.5 52.5T300-440q0 75 52.5 127.5T480-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM160-120q-33 0-56.5-23.5T80-200v-480q0-33 23.5-56.5T160-760h126l74-80h240l74 80h126q33 0 56.5 23.5T880-680v480q0 33-23.5 56.5T800-120H160Zm0-80h640v-480H638l-73-80H395l-73 80H160v480Zm320-240Z"/>
-                    </svg>
-                </div>
-                <p class="upload-text">Tap to upload</p>
-                <p class="upload-subtext">SVG, PNG, JPG (max. 5MB)</p>
-            `;
+        if (uploadBtn && uploadBtn.classList.contains('has-image')) {
+            window.deleteProjectImage(uploadBtn.querySelector('.remove-image'));
         }
     }
 
@@ -556,6 +649,10 @@ window.handleProjectImageUpload = function (input) {
     reader.onload = function (e) {
         const uploadBtn = input.previousElementSibling;
         if (uploadBtn && e.target.result) {
+            // Hide required message if it exists
+            const msg = uploadBtn.parentNode.querySelector('.required-message-file');
+            if (msg) msg.style.display = 'none';
+
             uploadBtn.innerHTML = `
                 <div class="uploaded-image">
                     <img src="${e.target.result}" alt="Uploaded project image">

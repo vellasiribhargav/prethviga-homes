@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import Swal from 'sweetalert2';
 window.jQuery = window.$ = $;
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -20,10 +21,15 @@ document.addEventListener('DOMContentLoaded', function () {
         slugSelector.addEventListener('change', () => window.location.href = `?slug=${slugSelector.value}`);
     }
 
+    // Handle all add buttons (header and grid)
+    document.querySelectorAll('.add-image-btn').forEach(btn => {
+        btn.addEventListener('click', addImageSlot);
+    });
+
     const api = {
-        get: `/admin/banners/${slug}/get`,
-        add: `/admin/banners/${slug}/add`,
-        del: (i) => `/admin/banners/${slug}/delete/${i}`
+        get: `/admin/banner/${slug}/get`,
+        add: `/admin/banner/${slug}/add`,
+        del: (i) => `/admin/banner/${slug}/delete/${i}`
     };
 
     // --- EVENT DELEGATION ---
@@ -104,15 +110,37 @@ document.addEventListener('DOMContentLoaded', function () {
         reader.readAsDataURL(file);
     }
 
-    function deleteImageSlot(slot, index) {
+    async function deleteImageSlot(slot, index) {
         if (index < existingBanners.length) {
-            if (confirm('Delete this banner permanently from the website?')) {
+            const result = await Swal.fire({
+                title: 'Are you sure?',
+                text: "Delete this banner permanently from the website?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#BC5322',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!'
+            });
+
+            if (result.isConfirmed) {
                 $.ajax({ url: api.del(index), method: 'DELETE' })
                     .done(data => {
                         if (data.success) {
-                            alert(data.message);
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: data.message,
+                                confirmButtonColor: '#BC5322'
+                            });
                             loadExistingBanners();
-                        } else alert('Error: ' + data.message);
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error!',
+                                text: data.message,
+                                confirmButtonColor: '#BC5322'
+                            });
+                        }
                     });
             }
         } else {
@@ -227,20 +255,42 @@ document.addEventListener('DOMContentLoaded', function () {
             submitBtn.innerText = originalBtnText;
             submitBtn.disabled = false;
             if (data.success) {
-                alert(data.message);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: data.message,
+                    confirmButtonColor: '#BC5322'
+                });
                 selectedImages = [];
                 loadExistingBanners();
-            } else alert('Upload failed: ' + data.message);
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Failed!',
+                    text: data.message,
+                    confirmButtonColor: '#BC5322'
+                });
+            }
         }).fail(() => {
             submitBtn.innerText = originalBtnText;
             submitBtn.disabled = false;
-            alert('Server error during upload');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Server error during upload',
+                confirmButtonColor: '#BC5322'
+            });
         });
     }
 
     addMoreBtn && addMoreBtn.addEventListener('click', () => {
         if (slug === 'discoverUs' && (existingBanners.length + selectedImages.length) >= 1) {
-            return alert('Discover Us page only supports a single banner image.');
+            return Swal.fire({
+                icon: 'warning',
+                title: 'Restriction',
+                text: 'Discover Us page only supports a single banner image.',
+                confirmButtonColor: '#BC5322'
+            });
         }
         addImageSlot();
     });
@@ -254,11 +304,18 @@ document.addEventListener('DOMContentLoaded', function () {
             if (msg) {
                 msg.style.display = 'block';
             } else {
-                const newMsg = document.createElement('div');
-                newMsg.id = 'banner-required-msg';
-                newMsg.textContent = '* Please select at least one image to upload';
-                newMsg.style.cssText = 'font-size:14px;color:#e74c3c;margin-top:10px;text-align:center;font-style:italic';
-                submitBtn.parentNode.insertBefore(newMsg, submitBtn);
+                // const newMsg = document.createElement('div');
+                // newMsg.id = 'banner-required-msg';
+                // newMsg.textContent = '* Please select at least one image to upload';
+                // newMsg.style.cssText = 'font-size:14px;color:#e74c3c;margin-top:10px;text-align:center;font-style:italic';
+                // submitBtn.parentNode.insertBefore(newMsg, submitBtn);
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Warning!',
+                    text: 'Please select at least one image to upload',
+                    showConfirmButton: true,
+                    confirmButtonColor: '#BC5322'
+                });
             }
         }
     });

@@ -5,9 +5,11 @@ const { createImageUpload } = require("../utils/commonFileupload");
 
 const upload = createImageUpload("gallery");
 
-router.get('/getcompleted', completedController.getcompletedGallery);
+router.get('/', completedController.renderCompletedPage);
+router.get('/list', completedController.getcompletedGallery);
+router.get('/getcompleted', completedController.getCompletedProjectsJSON);
 router.post('/addcompleted', upload.any(), completedController.addcompletedItem);
-router.put('/updatecompleted/:id', completedController.updatecompletedItem);
-router.delete('/deletecompleted/:id', completedController.deletecompletedItem);
+router.put('/updatecompleted/:index', upload.single('file'), completedController.updatecompletedItem);
+router.delete('/deletecompleted/:index', completedController.deletecompletedItem);
 
 module.exports = router;

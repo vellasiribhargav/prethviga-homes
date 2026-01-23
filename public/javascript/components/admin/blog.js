@@ -189,10 +189,15 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     function getFormData(form) {
-        const blogTag = form.querySelector('input[placeholder*="About Us"]').value;
-        const publicationDate = form.querySelector('input[name="publication-date"]').value;
-        const blogTitle = form.querySelector('input[placeholder*="Discover Our Story"]').value;
-        const blogDescription = form.querySelector('textarea[placeholder*="discover us blog content"]').value;
+        const blogTagEl = form.querySelector('input[name="blog_tag"]');
+        const publicationDateEl = form.querySelector('input[name="publication-date"]');
+        const blogTitleEl = form.querySelector('input[name="blog_title"]');
+        const blogDescriptionEl = form.querySelector('textarea[name="blog_description"]');
+
+        const blogTag = blogTagEl ? blogTagEl.value : '';
+        const publicationDate = publicationDateEl ? publicationDateEl.value : '';
+        const blogTitle = blogTitleEl ? blogTitleEl.value : '';
+        const blogDescription = blogDescriptionEl ? blogDescriptionEl.value : '';
 
         const uploadedImage = form.querySelector('.uploaded-image img');
         const coverImage = uploadedImage ? uploadedImage.src : null;
@@ -210,23 +215,28 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function addRequiredFieldValidation(form) {
-        const inputs = [
-            { selector: 'input[placeholder*="About Us"]', message: '* Blog tag is required' },
-            { selector: 'input[name="publication-date"]', message: '* Publication date is required' },
-            { selector: 'input[placeholder*="Discover Our Story"]', message: '* Blog title is required' },
-            { selector: 'textarea[placeholder*="discover us blog content"]', message: '* Blog description is required' }
+        const conf = [
+            { selector: 'input[name="blog_tag"]', name: 'blog_tag', message: '* Blog tag is required' },
+            { selector: 'input[name="publication-date"]', name: 'publication-date', message: '* Publication date is required' },
+            { selector: 'input[name="blog_title"]', name: 'blog_title', message: '* Blog title is required' },
+            { selector: 'textarea[name="blog_description"]', name: 'blog_description', message: '* Blog description is required' }
         ];
 
-        inputs.forEach(({ selector, message }) => {
+        conf.forEach(({ selector, name, message }) => {
             const input = form.querySelector(selector);
             if (!input) return;
 
+            // Remove existing if any
+            const existingMsg = input.parentNode.querySelector(`.required-message[data-for="${name}"]`);
+            if (existingMsg) existingMsg.remove();
+
             const msg = document.createElement('div');
             msg.className = 'required-message';
+            msg.dataset.for = name;
             msg.textContent = message;
             msg.style.cssText = 'font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic';
 
-            input.parentNode.appendChild(msg);
+            input.after(msg);
 
             input.addEventListener('input', () => {
                 msg.style.display = 'none';
@@ -240,18 +250,18 @@ document.addEventListener('DOMContentLoaded', function () {
     function validateForm(form) {
         let isValid = true;
 
-        const inputs = [
-            { selector: 'input[placeholder*="About Us"]' },
-            { selector: 'input[name="publication-date"]' },
-            { selector: 'input[placeholder*="Discover Our Story"]' },
-            { selector: 'textarea[placeholder*="discover us blog content"]' }
+        const conf = [
+            { selector: 'input[name="blog_tag"]', name: 'blog_tag' },
+            { selector: 'input[name="publication-date"]', name: 'publication-date' },
+            { selector: 'input[name="blog_title"]', name: 'blog_title' },
+            { selector: 'textarea[name="blog_description"]', name: 'blog_description' }
         ];
 
-        inputs.forEach(({ selector }) => {
+        conf.forEach(({ selector, name }) => {
             const input = form.querySelector(selector);
             if (!input) return;
 
-            const msg = input.parentNode.querySelector('.required-message');
+            const msg = input.parentNode.querySelector(`.required-message[data-for="${name}"]`);
             if (input.value.trim() === '') {
                 if (msg) msg.style.display = 'block';
                 isValid = false;
@@ -273,6 +283,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return rest;
             });
 
+            console.log('Submitting blogsData:', blogsData);
             formData.append('blogArr', JSON.stringify(blogsData));
 
             // Append files with correct indexing ensuring 1:1 mapping
@@ -282,7 +293,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
 
-            const response = await fetch(`/admin/blogdiscover/${slug}/${section}/add`, {
+            const response = await fetch(`/admin/blog/${slug}/${section}/add`, {
                 method: 'POST',
                 body: formData
             });
@@ -368,7 +379,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function loadExistingBlogs() {
         try {
-            const response = await fetch(`/admin/blogdiscover/${slug}/${section}/get`);
+            const response = await fetch(`/admin/blog/${slug}/${section}/get`);
             const result = await response.json();
 
             if (result.success && result.data.length > 0) {
@@ -427,7 +438,7 @@ document.addEventListener('DOMContentLoaded', function () {
     window.deleteItem = async function (id, index) {
         if (index >= 0) {
             try {
-                const response = await fetch(`/admin/blogdiscover/${slug}/${section}/delete/${index}`, {
+                const response = await fetch(`/admin/blog/${slug}/${section}/delete/${index}`, {
                     method: 'DELETE'
                 });
                 const result = await response.json();
@@ -496,7 +507,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <div class="form-section">
                 <div class="form-group">
                     <label class="form-label">Blog Tag</label>
-                    <input class="form-input" type="text" placeholder="e.g. About Us, Company, Team">
+                    <input class="form-input" type="text" name="blog_tag" placeholder="e.g. About Us, Company, Team">
                 </div>
                 
                 <div class="form-group">
@@ -522,12 +533,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 
                 <div class="form-group">
                     <label class="form-label">Blog Title</label>
-                    <input class="form-input" type="text" placeholder="e.g. Discover Our Story and Mission">
+                    <input class="form-input" type="text" name="blog_title" placeholder="e.g. Discover Our Story and Mission">
                 </div>
                 
                 <div class="form-group">
                     <label class="form-label">Blog Description</label>
-                    <textarea class="form-textarea" placeholder="Write your discover us blog content here..."></textarea>
+                    <textarea class="form-textarea" name="blog_description" placeholder="Text area..."></textarea>
                 </div>
             </div>
             

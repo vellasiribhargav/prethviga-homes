@@ -31,6 +31,50 @@ const BANNER_CONFIG = {
   }
 };
 
+const renderBannerMainPage = async (req, res) => {
+  try {
+    res.render('admin/banner');
+  } catch (error) {
+    console.error('Error rendering banner page:', error);
+    res.render('admin/banner');
+  }
+};
+
+const getBannersList = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const config = BANNER_CONFIG[slug] || BANNER_CONFIG.home;
+    const collection = mongoose.connection.db.collection(config.collection);
+
+    const data = await collection.findOne({
+      page_slug: config.slug,
+      page_section: config.section
+    });
+
+    const banners = data?.page_content?.map((item, index) => ({
+      image: item[config.imageField] || item.image,
+      index: index,
+      id: index.toString()
+    })) || [];
+
+    res.render('admin/banner_list', {
+      title: 'Banner Management',
+      banners,
+      slug,
+      activeLink: 'banner'
+    });
+  } catch (error) {
+    console.error('Error fetching banners:', error);
+    res.render('admin/banner_list', {
+      title: 'Banner Management',
+      banners: [],
+      slug: req.params.slug,
+      activeLink: 'banner',
+      error: error.message
+    });
+  }
+};
+
 /**
  * GET banner images
  */
@@ -91,6 +135,7 @@ const addBanners = async (req, res) => {
 
     const bannersToAdd = req.files.map((file) => ({
       [config.imageField]: `${config.path}${file.filename}`,
+      createdAt: new Date()
     }));
 
     const pageSlug = config.slug;
@@ -130,6 +175,41 @@ const addBanners = async (req, res) => {
     }
   } catch (error) {
     console.error("Error in addBanners:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/**
+ * UPDATE banner image
+ */
+const updateBanner = async (req, res) => {
+  try {
+    const { slug, index } = req.params;
+    const config = BANNER_CONFIG[slug];
+
+    if (!config) {
+      return res.status(404).json({ success: false, message: "Invalid banner type" });
+    }
+
+    if (!req.file) {
+      return res.status(422).json({ success: false, message: "No image provided" });
+    }
+
+    const collection = mongoose.connection.db.collection(config.collection);
+    const updateField = `page_content.${index}.${config.imageField}`;
+
+    const result = await collection.updateOne(
+      { page_slug: config.slug, page_section: config.section },
+      { $set: { [updateField]: `${config.path}${req.file.filename}` } }
+    );
+
+    if (result.modifiedCount === 0) {
+      return res.status(404).json({ success: false, message: 'No changes made or banner not found' });
+    }
+
+    res.json({ success: true, message: 'Banner updated successfully!' });
+  } catch (error) {
+    console.error('Update Error:', error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -178,7 +258,11 @@ const deleteBanner = async (req, res) => {
 
 
 module.exports = {
+  renderBannerMainPage,
+  getBannersList,
   getBanners,
   addBanners,
+  updateBanner,
   deleteBanner,
 };
+
