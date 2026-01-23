@@ -105,14 +105,14 @@ html(lang='en')
                 button.close-modal
                   i.fas.fa-times
 
-              form#itemForm(enctype="multipart/form-data")
+              form#itemForm(enctype="multipart/form-data" novalidate)
                 input(type="hidden", name="index")
                 
                 .form-grid
                   .form-group.full-width
                     label Replace Banner Image
                     .file-input-wrapper
-                      input(type="file", name="file", accept="image/*", required)
+                      input(type="file", name="file", accept="image/*")
                       button(type="button" style="display:none").view-current-image-btn
                         i.fas.fa-image
                         |  View Current Image

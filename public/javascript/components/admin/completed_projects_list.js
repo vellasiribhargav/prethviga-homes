@@ -1,5 +1,21 @@
 import Swal from 'sweetalert2';
 
+let originalFormData = {};
+
+function formatToDB(dateStr) {
+    if (!dateStr) return '';
+    const [year, month, day] = dateStr.split('-');
+    return `${day}-${month}-${year}`;
+}
+
+function parseFromDB(dbDateStr) {
+    if (!dbDateStr) return '';
+    const parts = dbDateStr.split('-');
+    if (parts.length !== 3) return dbDateStr;
+    const [day, month, year] = parts;
+    return `${year}-${month}-${day}`;
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const itemModal = document.getElementById('itemModal');
     const previewModal = document.getElementById('previewModal');
@@ -45,11 +61,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Format date for input[type="date"]
             if (projectData.project_date) {
-                const date = new Date(projectData.project_date);
-                if (!isNaN(date)) {
-                    inputs.project_date.value = date.toISOString().split('T')[0];
+                const parsedDate = parseFromDB(projectData.project_date);
+                if (parsedDate && parsedDate.includes('-')) {
+                    inputs.project_date.value = parsedDate;
                 } else {
-                    inputs.project_date.value = '';
+                    const date = new Date(projectData.project_date);
+                    if (!isNaN(date)) {
+                        const yyyy = date.getFullYear();
+                        const mm = String(date.getMonth() + 1).padStart(2, '0');
+                        const dd = String(date.getDate()).padStart(2, '0');
+                        inputs.project_date.value = `${yyyy}-${mm}-${dd}`;
+                    } else {
+                        inputs.project_date.value = '';
+                    }
                 }
             } else {
                 inputs.project_date.value = '';
@@ -71,6 +95,16 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             openModal(itemModal);
+
+            // Save original values for change detection - Captured AFTER modal opens and values are set
+            setTimeout(() => {
+                originalFormData = {
+                    project_name: inputs.project_name.value.trim(),
+                    project_location: inputs.project_location.value.trim(),
+                    project_date: inputs.project_date.value,
+                    card_footer_text: inputs.card_footer_text.value.trim()
+                };
+            }, 0);
         });
     });
 
@@ -133,7 +167,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Validation Functions
     function addRequiredFieldValidation(form) {
-        if (!form) return;
         const conf = [
             { name: 'project_name', message: '* Project name is required' },
             { name: 'project_location', message: '* Project location is required' },
@@ -145,24 +178,19 @@ document.addEventListener('DOMContentLoaded', function () {
             const input = form.querySelector(`[name="${name}"]`);
             if (!input) return;
 
-            // Remove existing if any
-            const existingMsg = input.parentNode.querySelector(`.required-message[data-for="${name}"]`);
-            if (existingMsg) existingMsg.remove();
+            // remove old message
+            if (input.nextElementSibling?.classList.contains('required-message')) {
+                input.nextElementSibling.remove();
+            }
 
             const msg = document.createElement('div');
             msg.className = 'required-message';
-            msg.dataset.for = name;
             msg.textContent = message;
-            msg.style.cssText = 'font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic';
+            msg.style.display = 'none';
 
             input.after(msg);
 
-            input.addEventListener('input', () => {
-                msg.style.display = 'none';
-            });
-            input.addEventListener('change', () => {
-                msg.style.display = 'none';
-            });
+            input.addEventListener('input', () => msg.style.display = 'none');
         });
     }
 
@@ -174,7 +202,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const input = form.querySelector(`[name="${name}"]`);
             if (!input) return;
 
-            const msg = input.parentNode.querySelector(`.required-message[data-for="${name}"]`);
+            const msg = input.nextElementSibling;
+
             if (input.value.trim() === '') {
                 if (msg) msg.style.display = 'block';
                 isValid = false;
@@ -184,6 +213,16 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         return isValid;
+    }
+
+    function isFormChanged(form) {
+        return (
+            form.project_name.value.trim() !== originalFormData.project_name ||
+            form.project_location.value.trim() !== originalFormData.project_location ||
+            form.project_date.value !== originalFormData.project_date ||
+            form.card_footer_text.value.trim() !== originalFormData.card_footer_text ||
+            (form.file && form.file.files.length > 0)
+        );
     }
 
     function resetValidation(form) {
@@ -205,7 +244,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
+            if (!isFormChanged(this)) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'No Changes Detected',
+                    text: 'You have not modified anything.'
+                });
+                return;
+            }
+
             const formData = new FormData(this);
+            if (formData.has('project_date')) {
+                formData.set('project_date', formatToDB(formData.get('project_date')));
+            }
             const index = formData.get('index');
 
             const submitBtn = this.querySelector('button[type="submit"]');

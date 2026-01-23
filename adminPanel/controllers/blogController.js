@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { ObjectId } = require('mongodb');
+const { formatDateForDisplay } = require('../../utils/index');
 
 const BLOG_CONFIG = {
   home: {
@@ -19,6 +20,7 @@ const BLOG_CONFIG = {
     collection: "OnGoingPage"
   }
 };
+
 
 const renderBlogMainPage = async (req, res) => {
   try {
@@ -45,7 +47,7 @@ const getBlogsList = async (req, res) => {
       ...b,
       id: (b.blog_id || index).toString(),
       title: b.blog_text,
-      date: b.blog_date,
+      date: formatDateForDisplay(b.blog_date, true),
       tag: b.badge_text,
       image: b.inner_img,
       description: b.blog_description,

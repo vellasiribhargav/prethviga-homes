@@ -110,21 +110,21 @@ html(lang='en')
           button.close-modal
             i.fas.fa-times
 
-        form#itemForm(enctype="multipart/form-data")
+        form#itemForm(enctype="multipart/form-data" novalidate)
           input(type="hidden", name="index")
           
           .form-grid
             .form-group.full-width
               label Project Name
-              input.form-input(type="text", name="project_name", required)
+              input.form-input(type="text", name="project_name")
 
             .form-group
               label Project Location
-              input.form-input(type="text", name="project_location", required)
+              input.form-input(type="text", name="project_location")
 
             .form-group
               label Completion Date
-              input.form-input(type="date", name="project_date", required)
+              input.form-input(type="date", name="project_date")
 
             .form-group.full-width
               label Project Summary

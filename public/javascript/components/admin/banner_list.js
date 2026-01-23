@@ -1,5 +1,7 @@
 import Swal from 'sweetalert2';
 
+let originalFormData = {};
+
 document.addEventListener('DOMContentLoaded', function () {
     const itemModal = document.getElementById('itemModal');
     const previewModal = document.getElementById('previewModal');
@@ -40,6 +42,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const inputs = itemForm.elements;
             inputs.index.value = index;
+
+            // Save original values for change detection
+            originalFormData = {
+                file: '' // Files are always empty initially
+            };
 
             const imageBtn = itemForm.querySelector('.view-current-image-btn');
             if (imageBtn) {
@@ -117,43 +124,37 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Validation Functions
     function addRequiredFieldValidation(form) {
-        if (!form) return;
-        const uploadBtn = form.querySelector('.view-current-image-btn');
-        if (uploadBtn) {
-            const msg = document.createElement('div');
-            msg.className = 'required-message-file';
-            msg.textContent = '* Please select an image to upload';
-            msg.style.cssText = 'font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic';
-            uploadBtn.parentNode.appendChild(msg);
+        const fileInput = form.querySelector('input[type="file"]');
+        if (!fileInput) return;
+
+        // remove old message
+        if (fileInput.nextElementSibling?.classList.contains('required-message')) {
+            fileInput.nextElementSibling.remove();
         }
 
-        const fileInput = form.querySelector('input[type="file"]');
-        if (fileInput) {
-            fileInput.addEventListener('change', () => {
-                const msg = form.querySelector('.required-message-file');
-                if (msg) msg.style.display = 'none';
-            });
-        }
+        const msg = document.createElement('div');
+        msg.className = 'required-message';
+        msg.textContent = '* Please select an image to upload';
+        msg.style.display = 'none';
+
+        fileInput.after(msg);
+
+        fileInput.addEventListener('change', () => msg.style.display = 'none');
     }
 
     function validateForm(form) {
-        let isValid = true;
-        const fileInput = form.querySelector('input[type="file"]');
-        const fileMsg = form.querySelector('.required-message-file');
+        // For banner edits, selecting a new file is handled by isFormChanged
+        return true;
+    }
 
-        if (fileInput && !fileInput.files.length) {
-            if (fileMsg) fileMsg.style.display = 'block';
-            isValid = false;
-        } else {
-            if (fileMsg) fileMsg.style.display = 'none';
-        }
-
-        return isValid;
+    function isFormChanged(form) {
+        // For banners, we only check if a new file is selected
+        return form.querySelector('input[type="file"]').files.length > 0;
     }
 
     function resetValidation(form) {
         if (!form) return;
-        form.querySelectorAll('.required-message-file').forEach(msg => msg.style.display = 'none');
+        form.querySelectorAll('.required-message').forEach(msg => msg.style.display = 'none');
     }
 
     // Initialize validation
@@ -166,6 +167,15 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
 
             if (!validateForm(this)) {
+                return;
+            }
+
+            if (!isFormChanged(this)) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'No Changes Detected',
+                    text: 'You have not modified anything.'
+                });
                 return;
             }
 

@@ -1,5 +1,7 @@
 import Swal from 'sweetalert2';
 
+let originalFormData = {};
+
 document.addEventListener('DOMContentLoaded', function () {
     const itemModal = document.getElementById('itemModal');
     const previewModal = document.getElementById('previewModal');
@@ -44,6 +46,21 @@ document.addEventListener('DOMContentLoaded', function () {
             inputs.projectType.value = galleryData.projectType || '';
             inputs.title.value = galleryData.title || '';
             inputs.text.value = galleryData.text || '';
+
+            // Reset validation states
+            resetValidation(itemForm);
+
+            openModal(itemModal);
+
+            // Save original values for change detection - Captured AFTER modal opens and values are set
+            setTimeout(() => {
+                originalFormData = {
+                    projectName: inputs.projectName.value,
+                    projectType: inputs.projectType.value,
+                    title: inputs.title.value.trim(),
+                    text: inputs.text.value.trim()
+                };
+            }, 0);
 
             const imageBtn = itemForm.querySelector('.view-current-image-btn');
             if (imageBtn) {
@@ -121,7 +138,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Validation Functions
     function addRequiredFieldValidation(form) {
-        if (!form) return;
         const conf = [
             { name: 'projectType', message: '* Project type is required' },
             { name: 'projectName', message: '* Project selection is required' },
@@ -133,24 +149,19 @@ document.addEventListener('DOMContentLoaded', function () {
             const input = form.querySelector(`[name="${name}"]`);
             if (!input) return;
 
-            // Remove existing if any
-            const existingMsg = input.parentNode.querySelector(`.required-message[data-for="${name}"]`);
-            if (existingMsg) existingMsg.remove();
+            // remove old message
+            if (input.nextElementSibling?.classList.contains('required-message')) {
+                input.nextElementSibling.remove();
+            }
 
             const msg = document.createElement('div');
             msg.className = 'required-message';
-            msg.dataset.for = name;
             msg.textContent = message;
-            msg.style.cssText = 'font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic';
+            msg.style.display = 'none';
 
             input.after(msg);
 
-            input.addEventListener('input', () => {
-                msg.style.display = 'none';
-            });
-            input.addEventListener('change', () => {
-                msg.style.display = 'none';
-            });
+            input.addEventListener('input', () => msg.style.display = 'none');
         });
     }
 
@@ -162,7 +173,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const input = form.querySelector(`[name="${name}"]`);
             if (!input) return;
 
-            const msg = input.parentNode.querySelector(`.required-message[data-for="${name}"]`);
+            const msg = input.nextElementSibling;
             if (input.value.trim() === '') {
                 if (msg) msg.style.display = 'block';
                 isValid = false;
@@ -172,6 +183,16 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         return isValid;
+    }
+
+    function isFormChanged(form) {
+        return (
+            form.projectName.value !== originalFormData.projectName ||
+            form.projectType.value !== originalFormData.projectType ||
+            form.title.value.trim() !== originalFormData.title ||
+            form.text.value.trim() !== originalFormData.text ||
+            (form.file && form.file.files.length > 0)
+        );
     }
 
     function resetValidation(form) {
@@ -189,6 +210,15 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
 
             if (!validateForm(this)) {
+                return;
+            }
+
+            if (!isFormChanged(this)) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'No Changes Detected',
+                    text: 'You have not modified anything.'
+                });
                 return;
             }
 

@@ -71,6 +71,10 @@ app.use((req, res, next) => {
   next();
 });
 
+app.get('/admin', (req, res) => {
+  res.redirect('/admin/list');
+});
+
 // Routes-way
 // app.use("/admin", authRoutes);
 // app.use("/customerquerys", customerQueriesRoutes);
@@ -91,10 +95,6 @@ app.use('/admin/gallery', galleryRoutes);
 app.use('/admin/blog', blogRoutes);
 app.use('/admin/banner', bannerRoutes);
 app.use('/admin/upcoming_projects', upcomingRoutes);
-
-app.get('/admin', (req, res) => {
-  res.redirect('/admin/upcoming');
-});
 
 app.use((req, res, next) => {
   res.setHeader(

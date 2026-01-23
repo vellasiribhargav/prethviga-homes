@@ -115,23 +115,23 @@ html(lang='en')
                 button.close-modal
                   i.fas.fa-times
 
-              form#itemForm(enctype="multipart/form-data")
+              form#itemForm(enctype="multipart/form-data" novalidate)
                 input(type="hidden", name="index")
                 
                 .form-grid
                   .form-group.full-width
                     label Type of Project
-                    select.form-select(name="projectType", required)
+                    select.form-select(name="projectType")
                       option(value="upcoming") Upcoming Projects
                       option(value="completed") Completed Projects
 
                   .form-group.full-width
                     label Project Name
-                    input.form-input(type="text", name="projectName", required)
+                    input.form-input(type="text", name="projectName")
 
                   .form-group
                     label Gallery Name
-                    input.form-input(type="text", name="title", required)
+                    input.form-input(type="text", name="title")
 
                   .form-group.full-width
                     label Image Description

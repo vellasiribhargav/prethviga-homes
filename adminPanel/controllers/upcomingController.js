@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { ObjectId } = require("mongodb");
+const { formatDateForDisplay } = require('../../utils/index');
 
 const renderUpcomingPage = async (req, res) => {
     try {
@@ -24,7 +25,7 @@ const getupcomingGallery = async (req, res) => {
             id: (project.project_id || project._id)?.toString() || index,
             name: project.project_name, // Map for table
             location: project.project_location, // Map for table
-            timeline: project.project_date, // Map for table
+            timeline: formatDateForDisplay(project.project_date), // Map for table
             coverImage: project.card_image, // Map for table preview
             description: project.card_footer_text, // Map for edit form
             index: index // Important for edit/delete
@@ -68,7 +69,7 @@ const addupcomingItem = async (req, res) => {
                 project_location: upcomingArr[i].project_location,
                 project_date: upcomingArr[i].project_date,
                 card_footer_text: upcomingArr[i].card_footer_text,
-                card_image: `/uploads/gallery/${file.filename}`, // Use relative path
+                card_image: `${process.env.PROJECT_URL}uploads/gallery/${file.filename}`, // Use relative path
                 project_id: new ObjectId(),
                 createdAt: new Date()
             });
@@ -118,7 +119,7 @@ const updateupcomingItem = async (req, res) => {
         if (req.body.card_footer_text) updateFields[`page_content.${index}.card_footer_text`] = req.body.card_footer_text;
 
         if (req.file) {
-            updateFields[`page_content.${index}.card_image`] = `/uploads/gallery/${req.file.filename}`;
+            updateFields[`page_content.${index}.card_image`] = `${process.env.PROJECT_URL}uploads/gallery/${req.file.filename}`;
         }
 
         const result = await collection.updateOne(
