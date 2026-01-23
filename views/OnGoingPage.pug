@@ -9,8 +9,8 @@ include layout/header.pug
 
 .sunset-ridge-wrapper
   .hero-section
-    - var bgImage = (projectData && projectData.length > 0 && projectData[0].pimage) ? projectData[0].pimage : '/assets/images/onGoingBG.webp'
-    - var hero = projectData && projectData.length > 0 ? projectData[0] : {}
+    - var bgImage = (projectDetails && projectDetails.pimage) ? projectDetails.pimage : ((projectData && projectData.length > 0 && projectData[0].pimage) ? projectData[0].pimage : '/assets/images/onGoingBG.webp')
+    - var hero = (projectDetails && projectDetails.title) ? projectDetails : ((projectData && projectData.length > 0) ? projectData[0] : {})
     img.hero-bg-image(src=bgImage alt="Project background")
     .hero-overlay
     .hero-content

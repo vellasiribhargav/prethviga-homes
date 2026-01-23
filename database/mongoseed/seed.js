@@ -67,25 +67,25 @@ const seedMongoDB = async () => {
                 "page_section": "recent_projects",
                 "page_content": [
                     {
-                        "card-image": `/assets/images/projecthome1.webp`,
-                        "project-name": "Pinnacle View Condominiums",
-                        "project-area": "East Side",
-                        "project-date": "November 2024",
-                        "card-footer-text": "24 Premium Apartments",
+                        "card_image": `/assets/images/projecthome1.webp`,
+                        "project_name": "Pinnacle View Condominiums",
+                        "project_area": "East Side",
+                        "project_date": "November 2024",
+                        "card_footer_text": "24 Premium Apartments",
                     },
                     {
-                        "card-image": `/assets/images/projecthome2.webp`,
-                        "project-name": "Pinnacle View Condominiums",
-                        "project-area": "East Side",
-                        "project-date": "November 2024",
-                        "card-footer-text": "24 Premium Apartments",
+                        "card_image": `/assets/images/projecthome2.webp`,
+                        "project_name": "Pinnacle View Condominiums",
+                        "project_area": "East Side",
+                        "project_date": "November 2024",
+                        "card_footer_text": "24 Premium Apartments",
                     },
                     {
-                        "card-image": `/assets/images/projecthome3.webp`,
-                        "project-name": "Pinnacle View Condominiums",
-                        "project-area": "East Side",
-                        "project-date": "November 2024",
-                        "card-footer-text": "24 Premium Apartments",
+                        "card_image": `/assets/images/projecthome3.webp`,
+                        "project_name": "Pinnacle View Condominiums",
+                        "project_area": "East Side",
+                        "project_date": "November 2024",
+                        "card_footer_text": "24 Premium Apartments",
                     },
                 ]
             },
@@ -169,25 +169,25 @@ const seedMongoDB = async () => {
                         "card_footer_text": "24 Premium Apartments",
                     },
                     {
-                        "card-image": `${process.env.PROJECT_URL}/assets/images/card4.webp`,
-                        "project-name": "Pinnacle View Condominiums",
-                        "project-location": "East Side",
-                        "project-date": "November 2024",
-                        "card-footer-text": "24 Premium Apartments"
+                        "card_image": `${process.env.PROJECT_URL}/assets/images/card4.webp`,
+                        "project_name": "Pinnacle View Condominiums",
+                        "project_location": "East Side",
+                        "project_date": "November 2024",
+                        "card_footer_text": "24 Premium Apartments"
                     },
                     {
-                        "card-image": `${process.env.PROJECT_URL}/assets/images/card1.webp`,
-                        "project-name": "Pinnacle View Condominiums",
-                        "project-location": "East Side",
-                        "project-date": "November 2024",
-                        "card-footer-text": "24 Premium Apartments"
+                        "card_image": `${process.env.PROJECT_URL}/assets/images/card1.webp`,
+                        "project_name": "Pinnacle View Condominiums",
+                        "project_location": "East Side",
+                        "project_date": "November 2024",
+                        "card_footer_text": "24 Premium Apartments"
                     },
                     {
-                        "card-image": `${process.env.PROJECT_URL}/assets/images/card4.webp`,
-                        "project-name": "Pinnacle View Condominiums",
-                        "project-location": "East Side",
-                        "project-date": "November 2024",
-                        "card-footer-text": "24 Premium Apartments"
+                        "card_image": `${process.env.PROJECT_URL}/assets/images/card4.webp`,
+                        "project_name": "Pinnacle View Condominiums",
+                        "project_location": "East Side",
+                        "project_date": "November 2024",
+                        "card_footer_text": "24 Premium Apartments"
                     }
                 ]
             },
@@ -196,18 +196,18 @@ const seedMongoDB = async () => {
                 "page_section": "completed-gallery",
                 "page_content": [
                     {
-                        "card-image": `${process.env.PROJECT_URL}/assets/images/card2.webp`,
-                        "project-name": "Pinnacle View Condominiums",
-                        "project-location": "West side",
-                        "project-date": "November 2024",
-                        "card-footer-text": "24 Premium Apartments"
+                        "card_image": `${process.env.PROJECT_URL}/assets/images/card2.webp`,
+                        "project_name": "Pinnacle View Condominiums",
+                        "project_location": "West side",
+                        "project_date": "November 2024",
+                        "card_footer_text": "24 Premium Apartments"
                     },
                     {
-                        "card-image": `${process.env.PROJECT_URL}/assets/images/card3.webp`,
-                        "project-name": "Serenity Heights Estate",
-                        "project-location": "West side",
-                        "project-date": "August 2024",
-                        "card-footer-text": "24 Premium Apartments"
+                        "card_image": `${process.env.PROJECT_URL}/assets/images/card3.webp`,
+                        "project_name": "Serenity Heights Estate",
+                        "project_location": "West side",
+                        "project_date": "August 2024",
+                        "card_footer_text": "24 Premium Apartments"
                     },
                     {
                         "card_image": `${process.env.PROJECT_URL}/assets/images/card4.webp`,

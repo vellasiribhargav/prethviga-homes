@@ -14,7 +14,7 @@
 }
 
 .hero-container {
-  background-image: url("../assets/images/blog1.webp");
+  /* background-image: url("../assets/images/blog1.webp"); */
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;

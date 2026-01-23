@@ -1,0 +1,137 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    title Banner Inventory
+    link(rel='stylesheet' href=utils.assetPath("/bundle/banner_list.css"))
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css")
+
+  body
+    - var activeLink = 'banner'
+    include ../layout/list_sidebar.pug
+    
+    // Main Page Content
+    .main-container.with-sidebar
+      // Top App Bar
+      header.app-header
+        .header-left
+          button.menu-btn
+            i.fas.fa-bars
+          h1.page-title Banner List
+        //- .header-right
+        //-   button.icon-action-btn
+        //-     i.fas.fa-bell
+        //-   button.icon-action-btn(style="background: var(--primary); color: white;")
+        //-     | V
+
+      // Breadcrumbs
+      .breadcrumbs
+        p.breadcrumb-text
+          span.breadcrumb-item Prethviga Homes
+          span.breadcrumb-separator 
+            i.fas.fa-chevron-right
+          span.breadcrumb-item Content Management
+          span.breadcrumb-separator 
+            i.fas.fa-chevron-right
+          span.breadcrumb-item.active Banner List
+
+      main.main-content
+        .content-header
+          h2.content-title Banner Inventory
+          button#addBtn.add-more-btn(onclick=`window.location.href='/admin/banner?slug=${slug}'`)
+            i.fas.fa-plus
+            |  Add New Banner
+
+        // Section Selector Row
+        .search-filter-row
+          select#banner-slug-selector.filter-select
+            option(value="home" selected=slug === 'home') Home
+            option(value="project" selected=slug === 'project') Project
+            option(value="ongoing" selected=slug === 'ongoing') Ongoing
+            option(value="discoverUs" selected=slug === 'discoverUs') Discover Us
+
+        .table-card
+          .table-wrapper
+            table.data-table
+              thead
+                tr
+                  th S.NO.
+                  th SECTION
+                  th PREVIEW
+                  th ACTIONS
+              tbody
+                if banners && banners.length > 0
+                  each b, idx in banners
+                     tr(data-id=b.id data-index=b.index) 
+                       td #{String(idx + 1).padStart(2, '0')}
+                       td
+                         span.status-badge.badge-upcoming #{slug}
+                       td
+                         if b.image
+                           button.btn-preview(data-image=b.image)
+                             i.fas.fa-eye
+                             span Preview
+                         else
+                           span No Image
+                       td
+                         .action-buttons
+                           button.icon-action-btn.edit-btn(title="Edit" data-index=b.index data-banner=JSON.stringify(b))
+                             i.fas.fa-pen
+                           button.icon-action-btn.delete-btn.delete(title="Delete" data-index=b.index)
+                             i.fas.fa-trash-alt
+                else
+                   tr
+                     td(colspan="4" style="text-align:center; padding: 2rem;") No banners found.
+          
+          // Table Footer / Pagination
+          .table-footer
+            .footer-info
+              span Showing 1 to #{banners ? banners.length : 0} of #{banners ? banners.length : 0} banners
+            .pagination
+              button.page-btn(disabled)
+                i.fas.fa-chevron-left
+              button.page-btn.active 1
+              button.page-btn 2
+              button.page-btn 3
+              button.page-btn
+                i.fas.fa-chevron-right
+
+    // Modal for Editing
+    #itemModal.modal
+            .modal-content
+              .modal-header
+                h3#modalTitle Edit Banner
+                button.close-modal
+                  i.fas.fa-times
+
+              form#itemForm(enctype="multipart/form-data")
+                input(type="hidden", name="index")
+                
+                .form-grid
+                  .form-group.full-width
+                    label Replace Banner Image
+                    .file-input-wrapper
+                      input(type="file", name="file", accept="image/*", required)
+                      button(type="button" style="display:none").view-current-image-btn
+                        i.fas.fa-image
+                        |  View Current Image
+
+                .modal-footer
+                  button(type="button").btn.btn-secondary.close-modal Cancel
+                  button(type="submit").btn.btn-primary Save Changes
+
+    // Modal for Preview
+    #previewModal.modal
+      .modal-content.preview-modal-content
+        .modal-header
+          h3 Banner Preview
+          button.close-modal
+            i.fas.fa-times
+        .preview-container
+          img#previewImage(src="", alt="Preview")
+
+    script.
+      const PAGE_TYPE = 'banner-list';
+      const CURRENT_SLUG = '#{slug}';
+    script(src=utils.assetPath("/bundle/banner_list.js"))

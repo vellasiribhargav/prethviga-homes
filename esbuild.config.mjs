@@ -9,16 +9,23 @@ const isProduction = args.includes("--production");
 
 
 const entryPoints = {
+  // client side
   home: "./public/javascript/home.js",
   discoverUs: "./public/javascript/discoverUs.js",
   OnGoingPage: "./public/javascript/OnGoingPage.js",
   ProjectPage: "./public/javascript/ProjectPage.js",
 
+  // admin side
   upcoming: "./public/javascript/admin/upcoming.js",
-  blogDiscover: "./public/javascript/admin/blogDiscover.js",
+  upcoming_projects: "./public/javascript/admin/upcoming_projects.js",
+  blog: "./public/javascript/admin/blog.js",
+  blog_list: "./public/javascript/admin/blog_list.js",
   gallery: "./public/javascript/admin/gallery.js",
+  gallery_list: "./public/javascript/admin/gallery_list.js",
   completed: "./public/javascript/admin/completed.js",
-  banner: './public/javascript/admin/banner.js'
+  completed_projects: "./public/javascript/admin/completed_projects.js",
+  banner: './public/javascript/admin/banner.js',
+  banner_list: './public/javascript/admin/banner_list.js'
 };
 
 

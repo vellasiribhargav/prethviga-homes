@@ -1,0 +1,157 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    title Upcoming Inventory
+    link(rel='stylesheet' href=utils.assetPath("/bundle/upcoming_projects.css"))
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css")
+
+  body
+    - var activeLink = 'upcoming'
+    include ../layout/list_sidebar.pug
+    
+    // Main Page Content
+    .main-container.with-sidebar
+      // Top App Bar
+      header.app-header
+        .header-left
+          button.menu-btn
+            i.fas.fa-bars
+          h1.page-title Upcoming Inventory
+        //- .header-right
+        //-   button.icon-action-btn
+        //-     i.fas.fa-bell
+        //-   button.icon-action-btn(style="background: var(--primary); color: white;")
+        //-     | V
+
+      // Breadcrumbs
+      .breadcrumbs
+        p.breadcrumb-text
+          span.breadcrumb-item Prethviga Homes
+          span.breadcrumb-separator 
+            i.fas.fa-chevron-right
+          span.breadcrumb-item Content Management
+          span.breadcrumb-separator 
+            i.fas.fa-chevron-right
+          span.breadcrumb-item.active Upcoming Projects
+
+      main.main-content
+        .content-header
+          h2.content-title Upcoming Projects
+          button#addBtn.add-more-btn(onclick="window.location.href='/admin/upcoming'")
+            i.fas.fa-plus
+            |  Add New Project
+
+        //- // Search and Filter Row
+        //- .search-filter-row
+        //-   .search-container
+        //-     i.fas.fa-search.search-icon
+        //-     input.search-input(type="text" placeholder="Search projects by name, location...")
+        //-   button.action-icon-btn
+        //-     i.fas.fa-sliders-h
+
+        .table-card
+          .table-wrapper
+            table.data-table
+              thead
+                tr
+                  th S.NO.
+                  th PREVIEW
+                  th PROJECT NAME
+                  th LOCATION
+                  th TIMELINE
+                  th DESCRIPTION
+                  th ACTIONS
+              tbody
+                if projects && projects.length > 0
+                  each project, idx in projects
+                     tr(data-id=project.id data-index=project.index) 
+                       td #{String(idx + 1).padStart(2, '0')}
+                       td
+                         if project.coverImage
+                           button.btn-preview(data-image=project.coverImage)
+                             i.fas.fa-eye
+                             span Preview
+                         else
+                           span No Image
+                       td.item-name-cell #{project.name}
+                       td #{project.location}
+                       td #{project.timeline}
+                       td #{project.description || 'No description available...'}
+                       td
+                         .action-buttons
+                           button.icon-action-btn.edit-btn(title="Edit" data-index=project.index data-project=JSON.stringify(project))
+                             i.fas.fa-pen
+                           button.icon-action-btn.delete-btn.delete(title="Delete" data-index=project.index)
+                             i.fas.fa-trash-alt
+                else
+                   tr
+                     td(colspan="7" style="text-align:center; padding: 2rem;") No projects found.
+          
+          // Table Footer / Pagination
+          .table-footer
+            .footer-info
+              span Showing 1 to #{projects ? projects.length : 0} of #{projects ? projects.length : 0} projects
+            .pagination
+              button.page-btn(disabled)
+                i.fas.fa-chevron-left
+              button.page-btn.active 1
+              button.page-btn 2
+              button.page-btn 3
+              button.page-btn
+                i.fas.fa-chevron-right
+
+    // Modal for Editing
+    #itemModal.modal
+            .modal-content
+              .modal-header
+                h3#modalTitle Edit Project
+                button.close-modal
+                  i.fas.fa-times
+
+              form#itemForm(enctype="multipart/form-data")
+                input(type="hidden", name="index")
+                
+                .form-grid
+                  .form-group.full-width
+                    label Project Name
+                    input.form-input(type="text", name="project_name", required)
+
+                  .form-group
+                    label Project Location
+                    input.form-input(type="text", name="project_location", required)
+
+                  .form-group
+                    label Project Timeline
+                    input.form-input(type="date", name="project_date", required)
+
+                  .form-group.full-width
+                    label Project Description
+                    textarea.form-textarea(name="card_footer_text", rows="3")
+
+                  .form-group.full-width
+                    label Project Image
+                    .file-input-wrapper
+                      input(type="file", name="file", accept="image/*")
+                      button(type="button" style="display:none").view-current-image-btn
+                        i.fas.fa-image
+                        |  View Current Image
+
+                .modal-footer
+                  button(type="button").btn.btn-secondary.close-modal Cancel
+                  button(type="submit").btn.btn-primary Save Changes
+
+    // Modal for Preview
+    #previewModal.modal
+      .modal-content.preview-modal-content
+        .modal-header
+          h3 Project Preview
+          button.close-modal
+            i.fas.fa-times
+        .preview-container
+          img#previewImage(src="", alt="Preview")
+
+    script.
+      const PAGE_TYPE = 'upcoming-projects';
+    script(src=utils.assetPath("/bundle/upcoming_projects.js"))

@@ -8,16 +8,19 @@ module.exports = env => {
 	return {
 		mode: env && env.build === 'true' ? "production" : "development",
 		entry: {
+			// client entries
 			home: "./public/javascript/home.js",
 			OnGoingPage: "./public/javascript/OnGoingPage.js",
 			ProjectPage: "./public/javascript/ProjectPage.js",
 			discoverUs: "./public/javascript/discoverUs.js",
+
 			// Admin entries
 			upcoming: "./public/javascript/admin/upcoming.js",
+			upcoming_projects: "./public/javascript/admin/upcoming_projects.js",
 			gallery: "./public/javascript/admin/gallery.js",
 			completed: "./public/javascript/admin/completed.js",
 			banner: "./public/javascript/admin/banner.js",
-			blogDiscover: "./public/javascript/admin/blogDiscover.js"
+			blog: "./public/javascript/admin/blog.js"
 		},
 		output: {
 			path: path.resolve(__dirname, "public/bundle"),
