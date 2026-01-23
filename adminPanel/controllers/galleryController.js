@@ -82,7 +82,7 @@ const addGalleryItem = async (req, res) => {
                 const fieldname = `gallery_${i}_file_${j}`;
                 const file = files.find(f => f.fieldname === fieldname);
                 if (file) {
-                    itemImages.push(`/uploads/gallery/${file.filename}`);
+                    itemImages.push(`${process.env.PROJECT_URL}uploads/gallery/${file.filename}`);
                 }
             }
 
@@ -140,7 +140,7 @@ const updateGalleryItem = async (req, res) => {
         if (req.body.text) updateFields[`page_content.${index}.text`] = req.body.text;
 
         if (req.file) {
-            updateFields[`page_content.${index}.coverImage`] = `/uploads/gallery/${req.file.filename}`;
+            updateFields[`page_content.${index}.coverImage`] = `${process.env.PROJECT_URL}uploads/gallery/${req.file.filename}`;
         }
 
         const result = await collection.updateOne(

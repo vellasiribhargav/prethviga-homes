@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { ObjectId } = require("mongodb");
+const { formatDateForDisplay } = require('../../utils/index');
 
 const renderCompletedPage = async (req, res) => {
     try {
@@ -24,7 +25,7 @@ const getcompletedGallery = async (req, res) => {
             id: (project.project_id || project._id)?.toString() || index,
             name: project.project_name, // Map for table
             location: project.project_location, // Map for table
-            timeline: project.project_date, // Map for table
+            timeline: formatDateForDisplay(project.project_date), // Map for table
             coverImage: project.card_image, // Map for table preview
             description: project.card_footer_text, // Map for edit form
             index: index // Important for edit/delete

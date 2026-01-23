@@ -1,5 +1,21 @@
 import Swal from 'sweetalert2';
 
+let originalFormData = {};
+
+function formatToDB(dateStr) {
+    if (!dateStr) return '';
+    const [year, month, day] = dateStr.split('-');
+    return `${day}-${month}-${year}`;
+}
+
+function parseFromDB(dbDateStr) {
+    if (!dbDateStr) return '';
+    const parts = dbDateStr.split('-');
+    if (parts.length !== 3) return dbDateStr; // Return as is if not expected format
+    const [day, month, year] = parts;
+    return `${year}-${month}-${day}`;
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const itemModal = document.getElementById('itemModal');
     const previewModal = document.getElementById('previewModal');
@@ -45,17 +61,42 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Format date for input[type="date"]
             if (blogData.date) {
-                const date = new Date(blogData.date);
-                if (!isNaN(date)) {
-                    inputs.date.value = date.toISOString().split('T')[0];
+                // Try parsing as DD-MM-YYYY first
+                const parsedDate = parseFromDB(blogData.date);
+                if (parsedDate && parsedDate.includes('-')) {
+                    inputs.date.value = parsedDate;
                 } else {
-                    inputs.date.value = '';
+                    // Fallback for legacy data/other formats
+                    const date = new Date(blogData.date);
+                    if (!isNaN(date)) {
+                        const yyyy = date.getFullYear();
+                        const mm = String(date.getMonth() + 1).padStart(2, '0');
+                        const dd = String(date.getDate()).padStart(2, '0');
+                        inputs.date.value = `${yyyy}-${mm}-${dd}`;
+                    } else {
+                        inputs.date.value = '';
+                    }
                 }
             } else {
                 inputs.date.value = '';
             }
 
             inputs.description.value = blogData.description || '';
+
+            // Reset validation states
+            resetValidation(itemForm);
+
+            openModal(itemModal);
+
+            // Save original values for change detection - Captured AFTER modal opens and values are set
+            setTimeout(() => {
+                originalFormData = {
+                    title: inputs.title.value.trim(),
+                    tag: inputs.tag.value.trim(),
+                    date: inputs.date.value,
+                    description: inputs.description.value.trim()
+                };
+            }, 0);
 
             const imageBtn = itemForm.querySelector('.view-current-image-btn');
             if (imageBtn) {
@@ -137,7 +178,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Validation Functions
     function addRequiredFieldValidation(form) {
-        if (!form) return;
         const conf = [
             { name: 'title', message: '* Blog title is required' },
             { name: 'tag', message: '* Blog tag is required' },
@@ -149,24 +189,19 @@ document.addEventListener('DOMContentLoaded', function () {
             const input = form.querySelector(`[name="${name}"]`);
             if (!input) return;
 
-            // Remove existing if any
-            const existingMsg = input.parentNode.querySelector(`.required-message[data-for="${name}"]`);
-            if (existingMsg) existingMsg.remove();
+            // remove old message
+            if (input.nextElementSibling?.classList.contains('required-message')) {
+                input.nextElementSibling.remove();
+            }
 
             const msg = document.createElement('div');
             msg.className = 'required-message';
-            msg.dataset.for = name;
             msg.textContent = message;
-            msg.style.cssText = 'font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic';
+            msg.style.display = 'none';
 
             input.after(msg);
 
-            input.addEventListener('input', () => {
-                msg.style.display = 'none';
-            });
-            input.addEventListener('change', () => {
-                msg.style.display = 'none';
-            });
+            input.addEventListener('input', () => msg.style.display = 'none');
         });
     }
 
@@ -178,7 +213,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const input = form.querySelector(`[name="${name}"]`);
             if (!input) return;
 
-            const msg = input.parentNode.querySelector(`.required-message[data-for="${name}"]`);
+            const msg = input.nextElementSibling;
             if (input.value.trim() === '') {
                 if (msg) msg.style.display = 'block';
                 isValid = false;
@@ -188,6 +223,16 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         return isValid;
+    }
+
+    function isFormChanged(form) {
+        return (
+            form.title.value.trim() !== originalFormData.title ||
+            form.tag.value.trim() !== originalFormData.tag ||
+            form.date.value !== originalFormData.date ||
+            form.description.value.trim() !== originalFormData.description ||
+            (form.file && form.file.files.length > 0)
+        );
     }
 
     function resetValidation(form) {
@@ -208,7 +253,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
+            if (!isFormChanged(this)) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'No Changes Detected',
+                    text: 'You have not modified anything.'
+                });
+                return;
+            }
+
             const formData = new FormData(this);
+            // Convert date to DB format
+            if (formData.has('date')) {
+                formData.set('date', formatToDB(formData.get('date')));
+            }
             const index = formData.get('index');
 
             const submitBtn = this.querySelector('button[type="submit"]');

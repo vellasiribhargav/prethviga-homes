@@ -1051,7 +1051,6 @@
 .projectContainer .projectWrapper .CardContainer .projectCard {
   display: flex;
   flex-direction: column;
-  gap: 24px;
   border-radius: 14px;
   background-color: #f9fafb;
   border: 1px solid rgba(193, 131, 78, 0.2);
@@ -1140,6 +1139,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  font-weight: bold;
 }
 
 .projectContainer .projectWrapper .CardContainer .projectCard .projectDetails .projectCardFooter .cardFooterText {

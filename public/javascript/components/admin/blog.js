@@ -1,5 +1,11 @@
 import Swal from 'sweetalert2';
 
+function formatToDB(dateStr) {
+    if (!dateStr) return '';
+    const [year, month, day] = dateStr.split('-');
+    return `${day}-${month}-${year}`;
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const addMoreBtn = document.querySelector('.add-more-btn');
     const formContainer = document.querySelector('.form-container');
@@ -284,7 +290,11 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             console.log('Submitting blogsData:', blogsData);
-            formData.append('blogArr', JSON.stringify(blogsData));
+            const blogsToSubmit = blogsData.map(blog => ({
+                ...blog,
+                publicationDate: formatToDB(blog.publicationDate)
+            }));
+            formData.append('blogArr', JSON.stringify(blogsToSubmit));
 
             // Append files with correct indexing ensuring 1:1 mapping
             allFormData.forEach((data, index) => {
@@ -345,11 +355,19 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    function formatDateForPreview(dateStr) {
+        if (!dateStr) return 'No date';
+        const [year, month, day] = dateStr.split('-');
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        const monthName = months[parseInt(month) - 1];
+        return `${monthName} ${day}, ${year}`;
+    }
+
     function addToBlogList(data) {
         const item = {
             id: Date.now(),
             blogTag: data.blogTag || 'No tag',
-            publicationDate: new Date(data.publicationDate || Date.now()).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+            publicationDate: formatDateForPreview(data.publicationDate),
 
             blogTitle: data.blogTitle || 'Untitled Blog',
             blogDescription: data.blogDescription || 'No description',

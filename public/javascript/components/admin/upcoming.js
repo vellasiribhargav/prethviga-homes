@@ -1,5 +1,11 @@
 import Swal from 'sweetalert2';
 
+function formatToDB(dateStr) {
+    if (!dateStr) return '';
+    const [year, month, day] = dateStr.split('-');
+    return `${day}-${month}-${year}`;
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const addMoreBtn = document.querySelector('.add-more-btn');
     const formContainer = document.querySelector('.form-container');
@@ -174,15 +180,21 @@ document.addEventListener('DOMContentLoaded', function () {
         };
     }
 
+    function formatDateForPreview(dateStr) {
+        if (!dateStr) return 'Timeline not set';
+        const [year, month, day] = dateStr.split('-');
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        const monthName = months[parseInt(month) - 1];
+        return `Timeline: ${monthName} ${year}`;
+    }
+
     function addToProjectsList(data, formId) {
         const addedItem = document.createElement('div');
         addedItem.className = 'added-item';
         // Store the linked form ID
         addedItem.dataset.linkedFormId = formId;
 
-        const formattedDate = data.timelineDate ?
-            `Timeline: ${new Date(data.timelineDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}` :
-            'Timeline not set';
+        const formattedDate = formatDateForPreview(data.timelineDate);
 
         const itemName = document.createElement('h4');
         itemName.className = 'item-name';
@@ -411,53 +423,66 @@ document.addEventListener('DOMContentLoaded', function () {
     async function handleSubmit(submitBtn) {
         updateFormsCache();
 
-        const upcomingArr = [];
-        const formData = new FormData();
-        let validFormsCount = 0;
+        // STEP 1: Validate ALL forms first before processing
+        let firstInvalidFormIndex = -1;
+        const nonEmptyForms = [];
 
         for (let i = 0; i < formsCache.length; i++) {
             const form = formsCache[i];
 
-            // Skip empty forms, unless it's the only form
+            // Skip completely empty forms (unless it's the only form)
             if (isFormEmpty(form)) {
                 if (formsCache.length > 1) {
                     continue;
                 }
             }
 
-            if (!validateForm(form)) {
-                // Determine index
-                const realIndex = formsCache.indexOf(form);
-                // Switch view to this form
-                formsCache.forEach(f => f.style.display = 'none');
-                form.style.display = 'block';
-                window.currentFormIndex = realIndex;
-                updateNavigationButtons();
-                updateSubmitButtons();
-                return;
-            }
+            nonEmptyForms.push({ form, index: i });
 
+            // Validate this form
+            if (!validateForm(form)) {
+                if (firstInvalidFormIndex === -1) {
+                    firstInvalidFormIndex = i;
+                }
+            }
+        }
+
+        // If any form failed validation, navigate to the first invalid form and stop
+        if (firstInvalidFormIndex !== -1) {
+            formsCache.forEach(f => f.style.display = 'none');
+            formsCache[firstInvalidFormIndex].style.display = 'block';
+            window.currentFormIndex = firstInvalidFormIndex;
+            updateNavigationButtons();
+            updateSubmitButtons();
+
+            Swal.fire({
+                icon: 'warning',
+                title: 'Validation Error',
+                text: 'Please fill all required fields in all forms before submitting',
+                confirmButtonColor: '#BC5322'
+            });
+            return;
+        }
+
+        // STEP 2: All forms are valid, now collect data
+        const upcomingArr = [];
+        const formData = new FormData();
+        let validFormsCount = 0;
+
+        for (let i = 0; i < nonEmptyForms.length; i++) {
+            const { form } = nonEmptyForms[i];
             const data = getFormData(form);
             const fileInput = form.querySelector('input[type="file"]');
 
             upcomingArr.push({
                 project_name: data.projectName,
                 project_location: data.projectLocation,
-                project_date: data.timelineDate ? new Date(data.timelineDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '',
+                project_date: formatToDB(data.timelineDate),
                 card_footer_text: data.projectDescription
             });
 
             if (fileInput.files[0]) {
                 formData.append(`file_${validFormsCount}`, fileInput.files[0]);
-            } else {
-                // If we are editing, we might not have a database file here.
-                // But this mimics the original logic: it expects a file. 
-                // If no file in input, maybe we should check if there is an image preview?
-                // But the backend `addupcomingItem` REQUIRES a file: `if (!file) { return res.status(422)... }`
-                // So strictly speaking, every form must handle a file upload.
-                // If it's an edit of an existing item, ideally we shouldn't need to re-upload.
-                // But `addupcomingItem` is for ADDING.
-                // So yes, file is required. `validateForm` checks this.
             }
             validFormsCount++;
         }

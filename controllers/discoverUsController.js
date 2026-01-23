@@ -1,13 +1,18 @@
 const mongoose = require('mongoose');
+const { formatDateForDisplay } = require('../utils/index');
 
 const getdiscoverUsData = async (req, res) => {
   try {
     const discoverUsData = await mongoose.connection.db.collection('discoverUs').find({ page_slug: 'discoverUs' }).toArray();
 
     const ourvaluesData = discoverUsData.find(item => item.page_section === 'value-container')?.page_content || [];
-    const blogData = discoverUsData.find(item => item.page_section === 'blogs-card')?.page_content || [];
+    const blogDataRaw = discoverUsData.find(item => item.page_section === 'blogs-card')?.page_content || [];
     const bannerData = discoverUsData.find(item => item.page_section === 'discover-banner')?.page_content || [];
 
+    const blogData = blogDataRaw.map(blog => ({
+      ...blog,
+      blog_date: formatDateForDisplay(blog.blog_date, true)
+    }));
 
     res.render('discoverUs', {
       ourvaluesData,

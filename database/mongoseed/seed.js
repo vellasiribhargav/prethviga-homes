@@ -17,16 +17,16 @@ const seedMongoDB = async () => {
                 "page_section": "home_banner",
                 "page_content": [
                     {
-                        "projimage": `/assets/images/homeani1.webp`
+                        "projimage": `${process.env.PROJECT_URL}assets/images/homeani1.webp`
                     },
                     {
-                        "projimage": `/assets/images/homeani2.webp`
+                        "projimage": `${process.env.PROJECT_URL}assets/images/homeani2.webp`
                     },
                     {
-                        "projimage": `/assets/images/homeani3.webp`
+                        "projimage": `${process.env.PROJECT_URL}assets/images/homeani3.webp`
                     },
                     {
-                        "projimage": `/assets/images/homeani4.webp`
+                        "projimage": `${process.env.PROJECT_URL}assets/images/homeani4.webp`
 
                     }
                 ]
@@ -36,7 +36,7 @@ const seedMongoDB = async () => {
                 "page_section": "home_reviews",
                 "page_content": [
                     {
-                        "profile_image": `/assets/images/home-profile.webp`,
+                        "profile_image": `${process.env.PROJECT_URL}assets/images/home-profile.webp`,
                         "reviewer": `Outstanding work!
                         They completed out commercial building ahead of schedule and
                         the quality exceeded our expectations. Highly professional team.`,
@@ -44,7 +44,7 @@ const seedMongoDB = async () => {
                         "user_role": "CEO, Davidson Enterprices"
                     },
                     {
-                        "profile_image": `/assets/images/home-profile.webp`,
+                        "profile_image": `${process.env.PROJECT_URL}assets/images/home-profile.webp`,
                         "reviewer": `Outstanding work!
                         They completed out commercial building ahead of schedule and
                         the quality exceeded our expectations. Highly professional team.`,
@@ -52,7 +52,7 @@ const seedMongoDB = async () => {
                         "user_role": "CEO, Davidson Enterprices"
                     },
                     {
-                        "profile_image": `/assets/images/home-profile.webp`,
+                        "profile_image": `${process.env.PROJECT_URL}assets/images/home-profile.webp`,
                         "reviewer": `Excellent  work!
                         They completed our commercial building ahead of schedule and
                         the quality exceeded our excpectations. Highly professional team.`,
@@ -67,21 +67,21 @@ const seedMongoDB = async () => {
                 "page_section": "recent_projects",
                 "page_content": [
                     {
-                        "card_image": `/assets/images/projecthome1.webp`,
+                        "card_image": `${process.env.PROJECT_URL}assets/images/projecthome1.webp`,
                         "project_name": "Pinnacle View Condominiums",
                         "project_area": "East Side",
                         "project_date": "November 2024",
                         "card_footer_text": "24 Premium Apartments",
                     },
                     {
-                        "card_image": `/assets/images/projecthome2.webp`,
+                        "card_image": `${process.env.PROJECT_URL}assets/images/projecthome2.webp`,
                         "project_name": "Pinnacle View Condominiums",
                         "project_area": "East Side",
                         "project_date": "November 2024",
                         "card_footer_text": "24 Premium Apartments",
                     },
                     {
-                        "card_image": `/assets/images/projecthome3.webp`,
+                        "card_image": `${process.env.PROJECT_URL}assets/images/projecthome3.webp`,
                         "project_name": "Pinnacle View Condominiums",
                         "project_area": "East Side",
                         "project_date": "November 2024",
@@ -94,7 +94,7 @@ const seedMongoDB = async () => {
                 "page_section": "home_tech",
                 "page_content": [
                     {
-                        "technologies-image": `/assets/images/window.svg`,
+                        "technologies-image": `${process.env.PROJECT_URL}assets/images/window.svg`,
                         "technologies-title": "Technologies",
                     },
                     {
@@ -272,7 +272,7 @@ const seedMongoDB = async () => {
                 "page_section": "hero-section",
                 "page_content": [
                     {
-                        "pimage": `/assets/images/onGoingBG.webp`,
+                        "pimage": `${process.env.PROJECT_URL}assets/images/onGoingBG.webp`,
                         "title": "Sunset Ridge Residence",
                         "buiding_name": "24 Premium Apartments",
                         "date": "November 15, 2025",
@@ -286,7 +286,7 @@ const seedMongoDB = async () => {
                 "page_content": [
                     {
                         "title": "Floor Layout",
-                        "floor_image": `/assets/images/Rectangle 42.webp`
+                        "floor_image": `${process.env.PROJECT_URL}assets/images/Rectangle 42.webp`
                     }
                 ]
             },

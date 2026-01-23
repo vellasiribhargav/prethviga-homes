@@ -1,5 +1,11 @@
 import Swal from 'sweetalert2';
 
+function formatToDB(dateStr) {
+    if (!dateStr) return '';
+    const [year, month, day] = dateStr.split('-');
+    return `${day}-${month}-${year}`;
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const addMoreBtn = document.querySelector('.add-more-btn');
     const formContainer = document.querySelector('.form-container');
@@ -176,6 +182,14 @@ document.addEventListener('DOMContentLoaded', function () {
         };
     }
 
+    function formatDateForPreview(dateStr) {
+        if (!dateStr) return 'Completion date not set';
+        const [year, month, day] = dateStr.split('-');
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        const monthName = months[parseInt(month) - 1];
+        return `Completed: ${monthName} ${year}`;
+    }
+
     function addToProjectsList(data, formId) {
         const addedItem = document.createElement('div');
         addedItem.className = 'added-item';
@@ -183,9 +197,7 @@ document.addEventListener('DOMContentLoaded', function () {
             addedItem.dataset.linkedFormId = formId;
         }
 
-        const formattedDate = data.completionDate ?
-            `Completed: ${new Date(data.completionDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}` :
-            'Completion date not set';
+        const formattedDate = formatDateForPreview(data.completionDate);
 
         // Use textContent for user data to prevent XSS
         const itemName = document.createElement('h4');
@@ -465,7 +477,7 @@ document.addEventListener('DOMContentLoaded', function () {
             completedArr.push({
                 project_name: data.projectName,
                 project_location: data.projectLocation,
-                completion_date: data.completionDate ? new Date(data.completionDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '',
+                completion_date: formatToDB(data.completionDate),
                 project_summary: data.projectSummary
             });
 

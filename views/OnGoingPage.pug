@@ -116,7 +116,7 @@ include layout/header.pug
     //-     img(src='../../assets/images/Rectangle 42.webp' alt='Floor layout image')
   .location-section
     .location-header
-      h1.location-title Project Features
+      h1.location-title Location Details
       p.location-description
         | Discover the exceptional amenities and features that make Sunset Ridge Residence stand out.
     .location-container   
@@ -126,8 +126,7 @@ include layout/header.pug
           alt = "Location Image"
         )
       .location-details 
-        if(locationData.length > 0)
-          - console.log('locationData.length',locationData)  
+        if locationData && locationData.details && locationData.details.length > 0
           each item in locationData.details
             .detail-item 
               span.detail-icon

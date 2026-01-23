@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { ObjectId } = require('mongodb');
+const { formatDateForDisplay } = require('../utils/index');
 
 const getonGoingPageData = async (req, res) => {
   try {
@@ -19,7 +20,7 @@ const getonGoingPageData = async (req, res) => {
         projectDetails = {
           title: foundProject.project_name,
           buiding_name: foundProject.project_name, // Using project_name as building_name for now
-          date: foundProject.project_date,
+          date: formatDateForDisplay(foundProject.project_date),
           location: foundProject.project_location,
           pimage: foundProject.card_image
         };
@@ -30,7 +31,8 @@ const getonGoingPageData = async (req, res) => {
     const floorData = onGoingPageData.find(item => item.page_section === 'floor-image')?.page_content || [];
     const featureData = onGoingPageData.find(item => item.page_section === 'features-grid')?.page_content || [];
     const amenityData = onGoingPageData.find(item => item.page_section === 'amenities-list')?.page_content || [];
-    const locationData = onGoingPageData.find(item => item.page_section === 'location-container')?.page_content || [];
+    const locationContainer = onGoingPageData.find(item => item.page_section === 'location-container')?.page_content;
+    const locationData = Array.isArray(locationContainer) ? (locationContainer[0] || {}) : (locationContainer || {});
 
     const allGallery = onGoingPageData.find(item => item.page_section === 'gallery-wrapper')?.page_content || [];
 

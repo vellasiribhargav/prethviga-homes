@@ -46,12 +46,13 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 24px;
-    background: var(--surface-light);
-    border-bottom: 1px solid var(--border-light);
+    padding: 12px 16px;
+    background: rgba(248, 247, 246, 0.8);
+    backdrop-filter: blur(16px);
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 30;
+    border-bottom: 1px solid rgba(156, 163, 175, 0.1);
 }
 
 .header-left {
@@ -564,4 +565,12 @@ body {
     max-height: 100%;
     border-radius: 12px;
     border: 1px solid var(--border-light);
+}
+
+/* Required field validation message */
+.required-message {
+    font-size: 12px;
+    color: #e74c3c;
+    margin-top: 4px;
+    font-style: italic;
 }
