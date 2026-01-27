@@ -122,7 +122,7 @@ body {
 /* Main Content Wrapper */
 .main-content {
     padding: 0 32px 40px;
-    max-width: 1400px;
+    max-width: 1000px;
     margin: 0 auto;
 }
 
@@ -275,6 +275,35 @@ body {
     font-size: 14px;
 }
 
+/* Specific Column Widths */
+.data-table th:nth-child(1),
+.data-table td:nth-child(1) {
+    /* S.NO */
+    width: 80px;
+    text-align: center;
+}
+
+.data-table th:nth-child(2),
+.data-table td:nth-child(2) {
+    /* SECTION */
+    width: 150px;
+    text-align: center;
+}
+
+.data-table th:nth-child(3),
+.data-table td:nth-child(3) {
+    /* PREVIEW */
+    width: 150px;
+    text-align: center;
+}
+
+.data-table th:last-child,
+.data-table td:last-child {
+    /* ACTIONS */
+    width: 120px;
+    text-align: center;
+}
+
 .data-table tr:hover {
     background-color: rgba(158, 101, 32, 0.02);
 }
@@ -326,24 +355,45 @@ body {
 }
 
 /* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: center;
+}
+
 .icon-action-btn {
     padding: 8px;
     border-radius: 8px;
-    background: none;
+}
+
+.icon-action-btn.edit-btn {
+    background: transparent;
     border: none;
-    color: var(--stone-400);
+    padding: 8px;
     cursor: pointer;
-    transition: all 0.2s;
+    color: #A9A29C;
+    transition: color 0.2s ease, transform 0.2s ease;
 }
 
-.icon-action-btn:hover {
-    background: var(--stone-200);
-    color: var(--text-primary);
+.icon-action-btn.edit-btn:hover {
+    background-color: var(--stone-200);
+    color: black;
+    transform: scale(1.1);
 }
 
-.icon-action-btn.delete:hover {
-    background: #fee2e2;
-    color: #ef4444;
+.icon-action-btn.delete-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #A9A29C;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.icon-action-btn.delete-btn:hover {
+    background-color: var(--stone-200);
+    color: #e53935;
+    transform: scale(1.1);
 }
 
 /* Table Footer / Pagination */
@@ -384,8 +434,9 @@ body {
     transition: all 0.2s;
 }
 
-.page-btn:hover:not(:disabled) {
-    background: var(--background-light);
+.page-btn:hover {
+    background: #e7e5e4;
+    color: #1b150e;
 }
 
 .page-btn.active {

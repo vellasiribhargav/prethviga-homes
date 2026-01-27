@@ -327,24 +327,44 @@ body {
 }
 
 /* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+
 .icon-action-btn {
     padding: 8px;
     border-radius: 8px;
-    background: none;
+}
+
+.icon-action-btn.edit-btn {
+    background: transparent;
     border: none;
-    color: var(--stone-400);
+    padding: 8px;
     cursor: pointer;
-    transition: all 0.2s;
+    color: #A9A29C;
+    transition: color 0.2s ease, transform 0.2s ease;
 }
 
-.icon-action-btn:hover {
-    background: var(--stone-200);
-    color: var(--text-primary);
+.icon-action-btn.edit-btn:hover {
+    background-color: var(--stone-200);
+    color: black;
+    transform: scale(1.1);
 }
 
-.icon-action-btn.delete:hover {
-    background: #fee2e2;
-    color: #ef4444;
+.icon-action-btn.delete-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #A9A29C;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.icon-action-btn.delete-btn:hover {
+    background-color: var(--stone-200);
+    color: #e53935;
+    transform: scale(1.1);
 }
 
 /* Table Footer / Pagination */
@@ -385,8 +405,9 @@ body {
     transition: all 0.2s;
 }
 
-.page-btn:hover:not(:disabled) {
-    background: var(--background-light);
+.page-btn:hover {
+    background: #e7e5e4;
+    color: #1b150e;
 }
 
 .page-btn.active {

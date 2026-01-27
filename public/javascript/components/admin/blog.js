@@ -27,14 +27,21 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     let formCount = 0;
+
+    // Initialize
+    updateDeleteButtonsVisibility();
     let blogArr = [];
 
     const firstForm = document.querySelector('.content-card');
     if (firstForm) {
+        if (!firstForm.dataset.formId) {
+            firstForm.dataset.formId = 'form-' + Date.now();
+        }
         setupImageUpload(firstForm);
         addRequiredFieldValidation(firstForm);
         updateSubmitButtonsVisibility();
         updateNavigationButtons();
+        updateDeleteButtonsVisibility();
     }
     loadExistingBlogs();
 
@@ -50,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const submitSection = currentForm.querySelector('.submit-section');
             if (submitSection) submitSection.style.display = 'none';
 
-            addToBlogList(formData);
+            addToBlogList(formData, currentForm.dataset.formId);
             showAddedItemsSection();
         }
 
@@ -138,12 +145,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const form = allForms[i];
                 const tempFormData = getFormData(form);
 
-                // Skip if entire form is empty AND it's not the only form
-                const isEmpty = !tempFormData.blogTag && !tempFormData.publicationDate && !tempFormData.blogTitle && !tempFormData.blogDescription && !tempFormData.file;
 
-                if (isEmpty && allForms.length > 1) {
-                    continue;
-                }
 
                 // Validate text inputs (inline messages)
                 const isFormValid = validateForm(form);
@@ -191,6 +193,55 @@ document.addEventListener('DOMContentLoaded', function () {
         if (e.target.classList.contains('next-btn')) {
             e.preventDefault();
             window.nextForm();
+        }
+
+        const deleteBtn = e.target.closest('.delete-form-btn');
+        if (deleteBtn) {
+            e.preventDefault();
+            const allForms = document.querySelectorAll('.content-card');
+
+            if (allForms.length <= 1) {
+                Swal.fire({
+                    icon: 'warning',
+                    text: 'You cannot delete the only form.',
+                    confirmButtonColor: '#BC5322'
+                });
+                return;
+            }
+
+            const formCard = deleteBtn.closest('.content-card');
+            if (formCard) {
+                const formId = formCard.dataset.formId;
+                if (formId) {
+                    const indexInArr = blogArr.findIndex(i => i.formId === formId);
+                    if (indexInArr !== -1) {
+                        blogArr.splice(indexInArr, 1);
+                        updateAddedItemsDisplay();
+                    }
+                }
+
+                formCard.remove();
+
+                // Renumber and updating
+                const forms = document.querySelectorAll('.content-card');
+                forms.forEach((f, i) => {
+                    f.querySelector('.form-number').textContent = i + 1;
+                    f.setAttribute('data-form-index', i.toString());
+                });
+
+                if (window.currentFormIndex >= forms.length) {
+                    window.currentFormIndex = forms.length - 1;
+                }
+
+                forms.forEach(f => f.style.display = 'none');
+                if (forms[window.currentFormIndex]) {
+                    forms[window.currentFormIndex].style.display = 'block';
+                }
+
+                updateSubmitButtonsVisibility();
+                updateNavigationButtons();
+                updateDeleteButtonsVisibility();
+            }
         }
     });
 
@@ -363,9 +414,10 @@ document.addEventListener('DOMContentLoaded', function () {
         return `${monthName} ${day}, ${year}`;
     }
 
-    function addToBlogList(data) {
+    function addToBlogList(data, formId) {
         const item = {
             id: Date.now(),
+            formId: formId,
             blogTag: data.blogTag || 'No tag',
             publicationDate: formatDateForPreview(data.publicationDate),
 
@@ -472,6 +524,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 alert('Error deleting blog. Please try again.');
             }
         } else {
+            const itemToDelete = blogArr.find(item => item.id === id);
+            if (itemToDelete && itemToDelete.formId) {
+                const formCard = document.querySelector(`.content-card[data-form-id="${itemToDelete.formId}"]`);
+                if (formCard) formCard.remove();
+            }
             blogArr = blogArr.filter(item => item.id !== id);
             updateAddedItemsDisplay();
         }
@@ -509,7 +566,9 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     function createNewForm() {
-        formCount++;
+        // Reset formCount based on current number of forms to ensure sequential numbering
+        const currentForms = document.querySelectorAll('.content-card');
+        formCount = currentForms.length;
 
         document.querySelectorAll('.content-card .submit-section').forEach(section => {
             section.style.display = 'none';
@@ -518,9 +577,17 @@ document.addEventListener('DOMContentLoaded', function () {
         const newForm = document.createElement('div');
         newForm.className = 'content-card';
         newForm.setAttribute('data-form-index', formCount.toString());
+        newForm.dataset.formId = 'form-' + Date.now();
         newForm.innerHTML = `
             <div class="form-header">
                 <span class="form-number">${formCount + 1}</span>
+                <button class="delete-form-btn" type="button" title="Delete this form">
+                    <span class="material-symbols-outlined">
+                        <svg width='17' height='17' viewbox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='currentColor'>
+                            <path d='M8 3H16C16.55 3 17 3.45 17 4V5H19C19.55 5 20 5.45 20 6C20 6.55 19.55 7 19 7H5C4.45 7 4 6.55 4 6C4 5.45 4.45 5 5 5H7V4C7 3.45 7.45 3 8 3ZM6 9V19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V9H6ZM9 11C9.55 11 10 11.45 10 12V18C10 18.55 9.55 19 9 19C8.45 19 8 18.55 8 18V12C8 11.45 8.45 11 9 11ZM12 11C12.55 11 13 11.45 13 12V18C13 18.55 12.55 19 12 19C11.45 19 11 18.55 11 18V12C11 11.45 11.45 11 12 11ZM15 11C15.55 11 16 11.45 16 12V18C16 18.55 15.55 19 15 19C14.45 19 14 18.55 14 18V12C14 11.45 14.45 11 15 11Z'/>
+                        </svg>
+                    </span>
+                </button>
             </div>
             <div class="form-section">
                 <div class="form-group">
@@ -583,6 +650,17 @@ document.addEventListener('DOMContentLoaded', function () {
         window.currentFormIndex = formCount;
         updateSubmitButtonsVisibility();
         updateNavigationButtons();
+        updateDeleteButtonsVisibility();
+    }
+
+    function updateDeleteButtonsVisibility() {
+        const forms = document.querySelectorAll('.content-card');
+        const deleteBtns = document.querySelectorAll('.delete-form-btn');
+        if (forms.length <= 1) {
+            deleteBtns.forEach(btn => btn.style.display = 'none');
+        } else {
+            deleteBtns.forEach(btn => btn.style.display = 'flex');
+        }
     }
 
     function updateSubmitButtonsVisibility() {

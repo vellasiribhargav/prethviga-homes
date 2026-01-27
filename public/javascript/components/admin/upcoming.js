@@ -20,6 +20,10 @@ document.addEventListener('DOMContentLoaded', function () {
     let formCount = 0;
     let formsCache = [];
 
+    // Initialize
+    updateFormsCache();
+    updateDeleteButtonsVisibility();
+
     // Add required field validation
     function addRequiredFieldValidation(form) {
         const conf = [
@@ -135,6 +139,50 @@ document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('change', function (e) {
         if (e.target.type === 'file' && e.target.accept === 'image/*') {
             window.handleProjectImageUpload(e.target);
+        }
+    });
+
+    // Handle Form Deletion
+    document.addEventListener('click', function (e) {
+        const deleteBtn = e.target.closest('.delete-form-btn');
+        if (deleteBtn) {
+            e.preventDefault();
+            const formCard = deleteBtn.closest('.content-card');
+
+            updateFormsCache();
+            if (formsCache.length <= 1) {
+                Swal.fire({
+                    icon: 'warning',
+                    text: 'You cannot delete the only form.',
+                    confirmButtonColor: '#BC5322'
+                });
+                return;
+            }
+
+            if (formCard) {
+                formCard.remove();
+                updateFormsCache();
+
+                formsCache.forEach((form, index) => {
+                    const numberSpan = form.querySelector('.form-number');
+                    if (numberSpan) numberSpan.textContent = index + 1;
+                });
+
+                let newIndex = window.currentFormIndex;
+                if (newIndex >= formsCache.length) {
+                    newIndex = formsCache.length - 1;
+                }
+
+                window.currentFormIndex = newIndex;
+                formsCache.forEach(f => f.style.display = 'none');
+                if (formsCache[newIndex]) {
+                    formsCache[newIndex].style.display = 'block';
+                }
+
+                updateNavigationButtons();
+                updateSubmitButtons();
+                updateDeleteButtonsVisibility();
+            }
         }
     });
 
@@ -256,55 +304,43 @@ document.addEventListener('DOMContentLoaded', function () {
         const editBtn = addedItem.querySelector('.edit-btn');
         if (editBtn) {
             editBtn.addEventListener('click', function () {
+                updateFormsCache();
                 // Find the linked form
                 const linkedForm = document.querySelector(`.content-card[data-form-id="${formId}"]`);
-                // Find the currently active (visible) form to populate into
+                // Find the currently active (visible) form to hide it
                 const currentVisibleForm = document.querySelector('.content-card[style*="block"], .content-card:not([style*="none"])');
 
-                if (linkedForm && currentVisibleForm) {
-                    // Copy data from linked form to current visible form
-                    const lData = getFormData(linkedForm);
-
-                    const nameInput = currentVisibleForm.querySelector('input[name="project-name"]');
-                    const locationInput = currentVisibleForm.querySelector('input[name="project-location"]');
-                    const dateInput = currentVisibleForm.querySelector('input[name="timeline-date"]');
-                    const descInput = currentVisibleForm.querySelector('input[name="project-description"]');
-
-                    if (nameInput) nameInput.value = lData.projectName;
-                    if (locationInput) locationInput.value = lData.projectLocation;
-                    if (dateInput) dateInput.value = lData.timelineDate;
-                    if (descInput) descInput.value = lData.projectDescription;
-
-                    // Copy image state if possible
-                    const linkedUploadBtn = linkedForm.querySelector('.upload-btn');
-                    const currentUploadBtn = currentVisibleForm.querySelector('.upload-btn');
-
-                    if (linkedUploadBtn && linkedUploadBtn.classList.contains('has-image') && currentUploadBtn) {
-                        currentUploadBtn.innerHTML = linkedUploadBtn.innerHTML;
-                        currentUploadBtn.classList.add('has-image');
-                        // Note: we can't easily transfer file input 'files' property due to security
-                        // But if it was a preview, we copied the HTML.
-                        // If there was a file selected, the user will need to re-select it since we can't move FileList.
-                        // OR: we could just swap the form elements in DOM? 
-                        // Swapping is complex. Copying values is safer.
+                if (linkedForm) {
+                    // Hide current form
+                    if (currentVisibleForm) {
+                        currentVisibleForm.style.display = 'none';
                     }
 
-                    // Remove the linked form from DOM since it's now "loaded" into the active form
-                    linkedForm.remove();
-                    updateFormsCache();
-                }
+                    // Show linked form
+                    linkedForm.style.display = 'block';
 
-                // Remove from added items list
-                addedItem.remove();
-                if (addedItemsList.children.length === 0) {
-                    hideAddedItemsSection();
+                    // Update current index
+                    window.currentFormIndex = formsCache.indexOf(linkedForm);
+
+                    // Update buttons
+                    updateNavigationButtons();
+                    updateSubmitButtons();
+
+                    // Remove from added items list as it is now "active"
+                    addedItem.remove();
+                    if (addedItemsList.children.length === 0) {
+                        hideAddedItemsSection();
+                    }
                 }
             });
         }
     }
 
     function createNewForm() {
-        formCount++;
+        // Reset formCount based on current number of forms to ensure sequential numbering
+        const currentForms = document.querySelectorAll('.content-card');
+        formCount = currentForms.length;
+
         const uniqueId = 'form_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
         // Hide existing forms
@@ -318,6 +354,13 @@ document.addEventListener('DOMContentLoaded', function () {
         newForm.innerHTML = `
             <div class="form-header">
                 <span class="form-number">${formCount + 1}</span>
+                <button class="delete-form-btn" type="button" title="Delete this form">
+                    <span class="material-symbols-outlined">
+                        <svg width='17' height='17' viewbox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='currentColor'>
+                            <path d='M8 3H16C16.55 3 17 3.45 17 4V5H19C19.55 5 20 5.45 20 6C20 6.55 19.55 7 19 7H5C4.45 7 4 6.55 4 6C4 5.45 4.45 5 5 5H7V4C7 3.45 7.45 3 8 3ZM6 9V19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V9H6ZM9 11C9.55 11 10 11.45 10 12V18C10 18.55 9.55 19 9 19C8.45 19 8 18.55 8 18V12C8 11.45 8.45 11 9 11ZM12 11C12.55 11 13 11.45 13 12V18C13 18.55 12.55 19 12 19C11.45 19 11 18.55 11 18V12C11 11.45 11.45 11 12 11ZM15 11C15.55 11 16 11.45 16 12V18C16 18.55 15.55 19 15 19C14.45 19 14 18.55 14 18V12C14 11.45 14.45 11 15 11Z'/>
+                        </svg>
+                    </span>
+                </button>
             </div>
             <div class="form-section">
                 <div class="form-group">
@@ -376,6 +419,7 @@ document.addEventListener('DOMContentLoaded', function () {
         updateFormsCache();
         updateSubmitButtons();
         updateNavigationButtons();
+        updateDeleteButtonsVisibility();
         addRequiredFieldValidation(newForm);
     }
 
@@ -427,20 +471,18 @@ document.addEventListener('DOMContentLoaded', function () {
         let firstInvalidFormIndex = -1;
         const nonEmptyForms = [];
 
+        const invalidFormIndices = [];
+
         for (let i = 0; i < formsCache.length; i++) {
             const form = formsCache[i];
 
-            // Skip completely empty forms (unless it's the only form)
-            if (isFormEmpty(form)) {
-                if (formsCache.length > 1) {
-                    continue;
-                }
-            }
+
 
             nonEmptyForms.push({ form, index: i });
 
             // Validate this form
             if (!validateForm(form)) {
+                invalidFormIndices.push(i);
                 if (firstInvalidFormIndex === -1) {
                     firstInvalidFormIndex = i;
                 }
@@ -455,10 +497,11 @@ document.addEventListener('DOMContentLoaded', function () {
             updateNavigationButtons();
             updateSubmitButtons();
 
+            const invalidNumbers = invalidFormIndices.map(i => i + 1).join(', ');
             Swal.fire({
                 icon: 'warning',
                 title: 'Validation Error',
-                text: 'Please fill all required fields in all forms before submitting',
+                text: `Please check the following forms for missing fields: ${invalidNumbers}`,
                 confirmButtonColor: '#BC5322'
             });
             return;
@@ -549,6 +592,16 @@ document.addEventListener('DOMContentLoaded', function () {
         const uploadBtn = form.querySelector('.upload-btn');
         if (uploadBtn && uploadBtn.classList.contains('has-image')) {
             window.deleteProjectImage(uploadBtn.querySelector('.remove-image'));
+        }
+    }
+
+    function updateDeleteButtonsVisibility() {
+        updateFormsCache();
+        const deleteBtns = document.querySelectorAll('.delete-form-btn');
+        if (formsCache.length <= 1) {
+            deleteBtns.forEach(btn => btn.style.display = 'none');
+        } else {
+            deleteBtns.forEach(btn => btn.style.display = 'flex');
         }
     }
 

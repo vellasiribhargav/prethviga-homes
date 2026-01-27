@@ -252,6 +252,7 @@ main {
 .dark .content-title {
   color: white;
 }
+
 .header-actions {
   display: flex;
   gap: 12px;
@@ -633,8 +634,27 @@ main {
 /* Form Header */
 .form-header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 16px;
+}
+
+.delete-form-btn {
+  background: none;
+  border: none;
+  color: var(--stone-400);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-form-btn:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
 }
 
 .form-number {
@@ -652,11 +672,11 @@ main {
 
 /* Navigation Buttons */
 .navigation-buttons {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
   display: flex;
-  justify-content: space-between;
-  margin-top: 24px;
-  padding: 16px 0 0;
-  border-top: 1px solid var(--border-light);
+  gap: 12px;
 }
 
 .dark .navigation-buttons {
@@ -1593,4 +1613,37 @@ main {
   .menu-btn {
     display: none;
   }
+}
+
+/* Form header and number */
+.form-header {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.delete-form-btn {
+  background: none;
+  border: none;
+  color: var(--stone-400);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  margin-left: 12px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+}
+
+.delete-form-btn:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.delete-form-btn span {
+  font-size: 20px;
 }
