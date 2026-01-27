@@ -1,5 +1,7 @@
 import Swal from 'sweetalert2';
 
+
+
 document.addEventListener('DOMContentLoaded', function () {
     const addMoreBtn = document.querySelector('.add-more-btn');
     const formContainer = document.querySelector('.form-container');
@@ -8,8 +10,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const projectTypeSelect = document.getElementById('projectType');
     const selectProjectSelect = document.getElementById('selectProject');
 
-    let formCount = 0;
     let formsCache = [];
+    let formCount = 0;
+
+    // Initialize
+    updateFormsCache();
+    updateDeleteButtonsVisibility();
 
     // Add required field validation
     function addRequiredFieldValidation(form) {
@@ -354,24 +360,36 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function createNewForm() {
-        formCount++;
         updateFormsCache();
+        const formNumber = formsCache.length + 1;
+        // Updating formCount just in case, but relying on local variables
+        formCount = formsCache.length;
+
         const uniqueId = 'form_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        const typeId = `projectType_${uniqueId}`;
+        const selectId = `selectProject_${uniqueId}`;
 
         formsCache.forEach(f => f.style.display = 'none');
 
         const newForm = document.createElement('div');
         newForm.className = 'content-card';
-        newForm.dataset.formIndex = formCount;
+        newForm.dataset.formIndex = formNumber;
         newForm.dataset.formId = uniqueId;
         newForm.innerHTML = `
             <div class="form-header">
-                <span class="form-number">${formCount + 1}</span>
+                <span class="form-number">${formNumber}</span>
+                <button class="delete-form-btn" type="button" title="Delete this form">
+                    <span class="material-symbols-outlined">
+                        <svg width='17' height='17' viewbox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='currentColor'>
+                            <path d='M8 3H16C16.55 3 17 3.45 17 4V5H19C19.55 5 20 5.45 20 6C20 6.55 19.55 7 19 7H5C4.45 7 4 6.55 4 6C4 5.45 4.45 5 5 5H7V4C7 3.45 7.45 3 8 3ZM6 9V19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V9H6ZM9 11C9.55 11 10 11.45 10 12V18C10 18.55 9.55 19 9 19C8.45 19 8 18.55 8 18V12C8 11.45 8.45 11 9 11ZM12 11C12.55 11 13 11.45 13 12V18C13 18.55 12.55 19 12 19C11.45 19 11 18.55 11 18V12C11 11.45 11.45 11 12 11ZM15 11C15.55 11 16 11.45 16 12V18C16 18.55 15.55 19 15 19C14.45 19 14 18.55 14 18V12C14 11.45 14.45 11 15 11Z'/>
+                        </svg>
+                    </span>
+                </button>
             </div>
             <div class="form-section">
                 <div class="form-group">
                     <label class="form-label">Type of Project</label>
-                    <select class="form-select" id="projectType${formCount}">
+                    <select class="form-select" id="${typeId}">
                         <option value="">Select project type</option>
                         <option value="upcoming">Upcoming Projects</option>
                         <option value="completed">Completed Projects</option>
@@ -379,7 +397,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
                 <div class="form-group">
                     <label class="form-label">Select Project</label>
-                    <select class="form-select" id="selectProject${formCount}" disabled>
+                    <select class="form-select" id="${selectId}" disabled>
                         <option value="">Select a project</option>
                     </select>
                 </div>
@@ -427,6 +445,17 @@ document.addEventListener('DOMContentLoaded', function () {
         updateFormsCache();
         updateSubmitButtons();
         updateNavigationButtons();
+        updateDeleteButtonsVisibility();
+    }
+
+    function updateDeleteButtonsVisibility() {
+        updateFormsCache();
+        const deleteBtns = document.querySelectorAll('.delete-form-btn');
+        if (formsCache.length <= 1) {
+            deleteBtns.forEach(btn => btn.style.display = 'none');
+        } else {
+            deleteBtns.forEach(btn => btn.style.display = 'flex');
+        }
     }
 
     function updateFormsCache() {
@@ -480,6 +509,72 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Consolidated Submit Handler
     document.addEventListener('click', function (e) {
+        const deleteBtn = e.target.closest('.delete-form-btn');
+        if (deleteBtn) {
+            e.preventDefault();
+
+            const contentCards = document.querySelectorAll('.content-card');
+            if (contentCards.length <= 1) {
+                Swal.fire({
+                    icon: 'warning',
+                    text: 'You cannot delete the only form.',
+                    confirmButtonColor: '#BC5322'
+                });
+                return;
+            }
+
+            const formCard = deleteBtn.closest('.content-card');
+
+            updateFormsCache();
+            if (formsCache.length <= 1) {
+                Swal.fire({
+                    icon: 'warning',
+                    text: 'You cannot delete the only form.',
+                    confirmButtonColor: '#BC5322'
+                });
+                return;
+            }
+
+            if (formCard) {
+                // Remove linked list item if exists
+                const formId = formCard.dataset.formId;
+                if (formId) {
+                    const listItem = document.querySelector(`.added-item[data-linked-form-id="${formId}"]`);
+                    if (listItem) {
+                        listItem.remove();
+                        const addedItemsList = document.querySelector('.added-items-list');
+                        const addedItemsSection = document.querySelector('.added-items-section');
+                        if (addedItemsList && addedItemsList.children.length === 0 && addedItemsSection) {
+                            addedItemsSection.style.display = 'none';
+                        }
+                    }
+                }
+
+                formCard.remove();
+                updateFormsCache();
+
+                formsCache.forEach((form, index) => {
+                    const numberSpan = form.querySelector('.form-number');
+                    if (numberSpan) numberSpan.textContent = index + 1;
+                });
+
+                let newIndex = window.currentFormIndex;
+                if (newIndex >= formsCache.length) {
+                    newIndex = formsCache.length - 1;
+                }
+
+                window.currentFormIndex = newIndex;
+                formsCache.forEach(f => f.style.display = 'none');
+                if (formsCache[newIndex]) {
+                    formsCache[newIndex].style.display = 'block';
+                }
+
+                updateNavigationButtons();
+                updateSubmitButtons();
+                updateDeleteButtonsVisibility();
+            }
+        }
+
         if (e.target.classList.contains('submit-btn')) {
             e.preventDefault();
             handleSubmit();
@@ -503,12 +598,7 @@ document.addEventListener('DOMContentLoaded', function () {
         for (let i = 0; i < formsCache.length; i++) {
             const form = formsCache[i];
 
-            // Skip empty forms, unless it's the only form
-            if (isFormEmpty(form)) {
-                if (formsCache.length > 1) {
-                    continue;
-                }
-            }
+
 
             if (!validateForm(form)) {
                 // Determine index
@@ -602,6 +692,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+
+
     // Initial setup calls
     fetchProjects();
 
@@ -620,6 +712,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
         window.currentFormIndex = 0;
+        updateDeleteButtonsVisibility();
     }, 100);
 
     // Helper utilities

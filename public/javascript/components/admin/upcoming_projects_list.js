@@ -1,4 +1,5 @@
 import Swal from 'sweetalert2';
+import { PaginationManager } from '../../utils/pagination.js';
 
 let originalFormData = {};
 
@@ -23,6 +24,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const itemForm = document.getElementById('itemForm');
     const previewImage = document.getElementById('previewImage');
     const closeModalBtns = document.querySelectorAll('.close-modal');
+
+    // Initialize Pagination
+    new PaginationManager({
+        tableBodySelector: '.data-table tbody',
+        paginationContainerSelector: '.pagination',
+        footerInfoSelector: '.footer-info span',
+        rowsPerPage: 5
+    });
 
     // Modal Functions
     function openModal(modal) {

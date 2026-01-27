@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('[BannerJS] Initializing...');
 
     const imageGrid = document.querySelector('.image-upload-grid');
-    const addMoreBtn = document.querySelector('.add-image-btn');
     const submitBtn = document.querySelector('.submit-btn');
     const pageSlugEl = document.getElementById('page_slug');
     const slugSelector = document.getElementById('banner-slug-selector');
@@ -21,10 +20,6 @@ document.addEventListener('DOMContentLoaded', function () {
         slugSelector.addEventListener('change', () => window.location.href = `?slug=${slugSelector.value}`);
     }
 
-    // Handle all add buttons (header and grid)
-    document.querySelectorAll('.add-image-btn').forEach(btn => {
-        btn.addEventListener('click', addImageSlot);
-    });
 
     const api = {
         get: `/admin/banner/${slug}/get`,
@@ -283,16 +278,19 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    addMoreBtn && addMoreBtn.addEventListener('click', () => {
-        if (slug === 'discoverUs' && (existingBanners.length + selectedImages.length) >= 1) {
-            return Swal.fire({
-                icon: 'warning',
-                title: 'Restriction',
-                text: 'Discover Us page only supports a single banner image.',
-                confirmButtonColor: '#BC5322'
-            });
-        }
-        addImageSlot();
+    // Unified 'Add More' button handling
+    document.querySelectorAll('.add-image-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (slug === 'discoverUs' && (existingBanners.length + selectedImages.length) >= 1) {
+                return Swal.fire({
+                    icon: 'warning',
+                    title: 'Restriction',
+                    text: 'Discover Us page only supports a single banner image.',
+                    confirmButtonColor: '#BC5322'
+                });
+            }
+            addImageSlot();
+        });
     });
     submitBtn && submitBtn.addEventListener('click', (e) => {
         e.preventDefault();

@@ -436,6 +436,7 @@ header {
   padding: 16px 20px;
   overflow-x: auto;
   white-space: nowrap;
+  align-items: center;
 }
 
 .breadcrumb-text {
@@ -1209,7 +1210,7 @@ main {
   box-shadow: 0 4px 12px rgba(207, 130, 23, 0.4);
 }
 
-/* Navigation buttons */
+/* Navigation Buttons */
 .navigation-buttons {
   position: absolute;
   bottom: 16px;
@@ -1218,17 +1219,41 @@ main {
   gap: 12px;
 }
 
-.nav-btn {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  font-size: 12px;
-  cursor: pointer;
-  transition: color 0.2s;
+.dark .navigation-buttons {
+  border-top: 1px solid var(--stone-800);
 }
 
-.nav-btn:hover {
-  color: var(--primary);
+.nav-btn {
+  background: var(--surface-light);
+  border: 1px solid var(--border-light);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dark .nav-btn {
+  background: var(--surface-dark);
+  border: 1px solid var(--stone-800);
+  color: #a8a29e;
+}
+
+.nav-btn:hover:not(:disabled) {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.nav-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .content-card {
@@ -1240,6 +1265,8 @@ main {
 .form-header {
   display: flex;
   justify-content: flex-end;
+  gap: 12px;
+  align-items: center;
   margin-bottom: 16px;
 }
 
@@ -1261,4 +1288,31 @@ main {
   .menu-btn {
     display: none;
   }
+}
+
+.form-header {
+  align-items: center;
+}
+
+.delete-form-btn {
+  background: none;
+  border: none;
+  color: var(--stone-400);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  margin-left: 12px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-form-btn:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.delete-form-btn span {
+  font-size: 20px;
 }

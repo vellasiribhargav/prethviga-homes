@@ -25,7 +25,8 @@ const entryPoints = {
   completed: "./public/javascript/admin/completed.js",
   completed_projects: "./public/javascript/admin/completed_projects.js",
   banner: './public/javascript/admin/banner.js',
-  banner_list: './public/javascript/admin/banner_list.js'
+  banner_list: './public/javascript/admin/banner_list.js',
+  contacts_list: './public/javascript/admin/contacts_list.js'
 };
 
 

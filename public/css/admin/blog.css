@@ -1391,7 +1391,27 @@ main {
 .form-header {
   display: flex;
   justify-content: flex-end;
+  gap: 12px;
+  align-items: center;
   margin-bottom: 16px;
+}
+
+.delete-form-btn {
+  background: none;
+  border: none;
+  color: var(--stone-400);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-form-btn:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
 }
 
 .form-number {
@@ -1407,7 +1427,7 @@ main {
   font-weight: 600;
 }
 
-/* Navigation buttons - exact match from upcoming.css */
+/* Navigation Buttons */
 .navigation-buttons {
   position: absolute;
   bottom: 16px;
@@ -1416,17 +1436,36 @@ main {
   gap: 12px;
 }
 
+.dark .navigation-buttons {
+  border-top: 1px solid var(--stone-800);
+}
+
 .nav-btn {
-  background: none;
-  border: none;
+  background: var(--surface-light);
+  border: 1px solid var(--border-light);
   color: var(--text-secondary);
-  font-size: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: color 0.2s;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dark .nav-btn {
+  background: var(--surface-dark);
+  border: 1px solid var(--stone-800);
+  color: #a8a29e;
 }
 
 .nav-btn:hover:not(:disabled) {
-  color: var(--primary);
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  transform: translateY(-1px);
 }
 
 .nav-btn:disabled {

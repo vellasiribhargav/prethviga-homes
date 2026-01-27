@@ -20,6 +20,7 @@ const completedRoutes = require('./adminPanel/routes/completedRoutes');
 const galleryRoutes = require('./adminPanel/routes/galleryRoutes');
 const blogRoutes = require('./adminPanel/routes/blogRoutes');
 const bannerRoutes = require('./adminPanel/routes/bannerRoutes');
+const contactsRoutes = require('./adminPanel/routes/contactsRoutes');
 
 (utils = require("./utils/index")), (env = process.env.NODE_ENV);
 
@@ -94,6 +95,7 @@ app.use('/admin/completed', completedRoutes);
 app.use('/admin/gallery', galleryRoutes);
 app.use('/admin/blog', blogRoutes);
 app.use('/admin/banner', bannerRoutes);
+app.use('/admin/contacts', contactsRoutes);
 app.use('/admin/upcoming_projects', upcomingRoutes);
 
 app.use((req, res, next) => {
