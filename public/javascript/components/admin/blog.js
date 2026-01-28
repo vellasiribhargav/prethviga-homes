@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function () {
         updateNavigationButtons();
         updateDeleteButtonsVisibility();
     }
-    loadExistingBlogs();
+    // loadExistingBlogs();
 
     addMoreBtn.addEventListener('click', function () {
         const allForms = document.querySelectorAll('.content-card');
@@ -340,7 +340,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return rest;
             });
 
-            console.log('Submitting blogsData:', blogsData);
+            // console.log('Submitting blogsData:', blogsData);
             const blogsToSubmit = blogsData.map(blog => ({
                 ...blog,
                 publicationDate: formatToDB(blog.publicationDate)
@@ -384,9 +384,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 formCount = 0;
                 window.currentFormIndex = 0;
+                blogArr = [];
+                updateAddedItemsDisplay();
 
                 // Reload from database to get official items
-                loadExistingBlogs();
+                // loadExistingBlogs();
             } else {
                 Swal.fire({
                     icon: 'error',

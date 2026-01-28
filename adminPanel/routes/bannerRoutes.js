@@ -14,7 +14,7 @@ const dynamicUpload = createImageUpload((req) => {
   return path.join('uploads', slug + 'banner');
 });
 
-router.get("/", bannerController.renderBannerMainPage);
+router.get("/",  bannerController.renderBannerMainPage);
 router.get("/:slug/list", bannerController.getBannersList);
 router.get("/:slug/get", bannerController.getBanners);
 

@@ -51,6 +51,7 @@ html(lang='en')
               .form-group
                 label.form-label Type of Project
                 select.form-select#projectType
+                  option(disabled selected value='') Select Type of Project
                   option(value='upcoming') Upcoming Projects
                   option(value='completed') Completed Projects
               
@@ -58,6 +59,7 @@ html(lang='en')
               .form-group
                 label.form-label Select Project
                 select.form-select#selectProject(disabled)
+                  option(disabled selected value='') Select Project
               
               // Gallery Name
               .form-group

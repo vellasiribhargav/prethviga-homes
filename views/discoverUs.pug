@@ -25,31 +25,32 @@ head
             | residential and commercial construction, we&apos;ve built a
             | reputation for excellence, innovation, and reliability.
   // Our values
-  section.our-values
-    .value-head
-      h1.value-heading Our Core Values
-    .value-container
-      each values, index in ourvaluesData
-        .value-card
-          .card-header
-            .card-icon
-              if index === 0
-                svg(width="18" height="22" viewBox="0 0 18 22" fill="none" xmlns="http://www.w3.org/2000/svg")
-                  path(d='M17 12.0004C17 17.0004 13.5 19.5005 9.34 20.9505C9.12216 21.0243 8.88554 21.0207 8.67 20.9405C4.5 19.5005 1 17.0004 1 12.0004V5.00045C1 4.73523 1.10536 4.48088 1.29289 4.29334C1.48043 4.10581 1.73478 4.00045 2 4.00045C4 4.00045 6.5 2.80045 8.24 1.28045C8.45185 1.09945 8.72135 1 9 1C9.27865 1 9.54815 1.09945 9.76 1.28045C11.51 2.81045 14 4.00045 16 4.00045C16.2652 4.00045 16.5196 4.10581 16.7071 4.29334C16.8946 4.48088 17 4.73523 17 5.00045V12.0004Z', stroke="#C1834E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
+  if ourvaluesData && ourvaluesData.length > 0
+    section.our-values
+      .value-head
+        h1.value-heading Our Core Values
+      .value-container
+        each values, index in ourvaluesData
+          .value-card
+            .card-header
+              .card-icon
+                if index === 0
+                  svg(width="18" height="22" viewBox="0 0 18 22" fill="none" xmlns="http://www.w3.org/2000/svg")
+                    path(d='M17 12.0004C17 17.0004 13.5 19.5005 9.34 20.9505C9.12216 21.0243 8.88554 21.0207 8.67 20.9405C4.5 19.5005 1 17.0004 1 12.0004V5.00045C1 4.73523 1.10536 4.48088 1.29289 4.29334C1.48043 4.10581 1.73478 4.00045 2 4.00045C4 4.00045 6.5 2.80045 8.24 1.28045C8.45185 1.09945 8.72135 1 9 1C9.27865 1 9.54815 1.09945 9.76 1.28045C11.51 2.81045 14 4.00045 16 4.00045C16.2652 4.00045 16.5196 4.10581 16.7071 4.29334C16.8946 4.48088 17 4.73523 17 5.00045V12.0004Z', stroke="#C1834E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
 
-              else if index === 1
-                svg(width='24' height='24' viewbox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg')
-                  path(d='M15.477 12.8916L16.992 21.4176C17.009 21.518 16.9949 21.6211 16.9516 21.7133C16.9084 21.8055 16.838 21.8823 16.7499 21.9334C16.6619 21.9845 16.5603 22.0074 16.4588 21.9993C16.3573 21.9911 16.2607 21.9521 16.182 21.8876L12.602 19.2006C12.4292 19.0714 12.2192 19.0017 12.0035 19.0017C11.7878 19.0017 11.5778 19.0714 11.405 19.2006L7.819 21.8866C7.74032 21.951 7.64386 21.9899 7.5425 21.9981C7.44113 22.0063 7.33967 21.9834 7.25166 21.9324C7.16365 21.8815 7.09328 21.8049 7.04992 21.7129C7.00656 21.6209 6.99229 21.5179 7.009 21.4176L8.523 12.8916M18 8.00156C18 11.3153 15.3137 14.0016 12 14.0016C8.68629 14.0016 6 11.3153 6 8.00156C6 4.68785 8.68629 2.00156 12 2.00156C15.3137 2.00156 18 4.68785 18 8.00156Z' stroke='#C1834E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+                else if index === 1
+                  svg(width='24' height='24' viewbox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg')
+                    path(d='M15.477 12.8916L16.992 21.4176C17.009 21.518 16.9949 21.6211 16.9516 21.7133C16.9084 21.8055 16.838 21.8823 16.7499 21.9334C16.6619 21.9845 16.5603 22.0074 16.4588 21.9993C16.3573 21.9911 16.2607 21.9521 16.182 21.8876L12.602 19.2006C12.4292 19.0714 12.2192 19.0017 12.0035 19.0017C11.7878 19.0017 11.5778 19.0714 11.405 19.2006L7.819 21.8866C7.74032 21.951 7.64386 21.9899 7.5425 21.9981C7.44113 22.0063 7.33967 21.9834 7.25166 21.9324C7.16365 21.8815 7.09328 21.8049 7.04992 21.7129C7.00656 21.6209 6.99229 21.5179 7.009 21.4176L8.523 12.8916M18 8.00156C18 11.3153 15.3137 14.0016 12 14.0016C8.68629 14.0016 6 11.3153 6 8.00156C6 4.68785 8.68629 2.00156 12 2.00156C15.3137 2.00156 18 4.68785 18 8.00156Z' stroke='#C1834E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
 
-              else if index === 2
-                svg(width='22' height='20' viewbox='0 0 22 20' fill='none' xmlns='http://www.w3.org/2000/svg')
-                  path(d='M18 12C19.49 10.54 21 8.79 21 6.5C21 5.04131 20.4205 3.64236 19.3891 2.61091C18.3576 1.57946 16.9587 1 15.5 1C13.74 1 12.5 1.5 11 3C9.5 1.5 8.26 1 6.5 1C5.04131 1 3.64236 1.57946 2.61091 2.61091C1.57946 3.64236 1 5.04131 1 6.5C1 8.8 2.5 10.55 4 12L11 19L18 12Z' stroke='#C1834E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
-              
-            .card-title
-              h1.card-head #{values.card_head}
-          .card-description
-            p.description-text
-              | #{values.description_text} 
+                else if index === 2
+                  svg(width='22' height='20' viewbox='0 0 22 20' fill='none' xmlns='http://www.w3.org/2000/svg')
+                    path(d='M18 12C19.49 10.54 21 8.79 21 6.5C21 5.04131 20.4205 3.64236 19.3891 2.61091C18.3576 1.57946 16.9587 1 15.5 1C13.74 1 12.5 1.5 11 3C9.5 1.5 8.26 1 6.5 1C5.04131 1 3.64236 1.57946 2.61091 2.61091C1.57946 3.64236 1 5.04131 1 6.5C1 8.8 2.5 10.55 4 12L11 19L18 12Z' stroke='#C1834E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+                
+              .card-title
+                h1.card-head #{values.card_head}
+            .card-description
+              p.description-text
+                | #{values.description_text} 
   // buyers value
   section.buyer-container
     .head-container
@@ -266,46 +267,47 @@ head
           .reviewFooter
             | Project: Green Valley Apartments
   // blog section
-  section.blogs-section
-    .blogs-container
-      .blogs-title
-        h1.blogs-text Latest Insights &amp; Updates
-      .blogs-description
-        p.blogs-descrip
-          | Stay informed with our latest articles on construction trends,
-          | tips, and industry insights from our expert team.
-    .blogses
-      each card in blogData
-        .blogs-card
-          .blogs-img
-            .blogs-img-inner
-              img(src=card.inner_img alt=card.h_texts)
-            .blogs-badge
-              p.badge-text #{card.badge_text}
-          .blogs-header
-            .cards-sections
-              .cards-containers
-                .cards-images
-                  span
-                    svg(width='14' height='15' viewbox='0 0 14 15' fill='none' xmlns='http://www.w3.org/2000/svg')
-                      path(d='M3.99996 0.666687V3.33335M9.33329 0.666687V3.33335M0.666626 6.00002H12.6666M1.99996 2.00002H11.3333C12.0697 2.00002 12.6666 2.59697 12.6666 3.33335V12.6667C12.6666 13.4031 12.0697 14 11.3333 14H1.99996C1.26358 14 0.666626 13.4031 0.666626 12.6667V3.33335C0.666626 2.59697 1.26358 2.00002 1.99996 2.00002Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
-                .cards-titles
-                  p.cards-textses #{card.blog_date}
-              .cards-time
-                p.cards-times #{card.blog_time}
-            .blogs-headings
-              h1.headings-texts
-                | #{card.blog_text}
-          .cardses-title
-            .cardses-description
-              p.cardses-text
-                | #{card.blog_description}
-            .cardblog-sec
-              a(href="#" target="_blank")
-                p.cardblog-text Read More
-              svg(width='16' height='16' viewbox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg')
-                path(d='M3.33301 8H12.6663' stroke='#C1834E' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
-                path(d='M8 3.33325L12.6667 7.99992L8 12.6666' stroke='#C1834E' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+  if blogData && blogData.length > 0
+    section.blogs-section
+      .blogs-container
+        .blogs-title
+          h1.blogs-text Latest Insights &amp; Updates
+        .blogs-description
+          p.blogs-descrip
+            | Stay informed with our latest articles on construction trends,
+            | tips, and industry insights from our expert team.
+      .blogses
+        each card in blogData
+          .blogs-card
+            .blogs-img
+              .blogs-img-inner
+                img(src=card.inner_img alt=card.h_texts)
+              .blogs-badge
+                p.badge-text #{card.badge_text}
+            .blogs-header
+              .cards-sections
+                .cards-containers
+                  .cards-images
+                    span
+                      svg(width='14' height='15' viewbox='0 0 14 15' fill='none' xmlns='http://www.w3.org/2000/svg')
+                        path(d='M3.99996 0.666687V3.33335M9.33329 0.666687V3.33335M0.666626 6.00002H12.6666M1.99996 2.00002H11.3333C12.0697 2.00002 12.6666 2.59697 12.6666 3.33335V12.6667C12.6666 13.4031 12.0697 14 11.3333 14H1.99996C1.26358 14 0.666626 13.4031 0.666626 12.6667V3.33335C0.666626 2.59697 1.26358 2.00002 1.99996 2.00002Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                  .cards-titles
+                    p.cards-textses #{card.blog_date}
+                .cards-time
+                  p.cards-times #{card.blog_time}
+              .blogs-headings
+                h1.headings-texts
+                  | #{card.blog_text}
+            .cardses-title
+              .cardses-description
+                p.cardses-text
+                  | #{card.blog_description}
+              .cardblog-sec
+                a(href="#" target="_blank")
+                  p.cardblog-text Read More
+                svg(width='16' height='16' viewbox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg')
+                  path(d='M3.33301 8H12.6663' stroke='#C1834E' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                  path(d='M8 3.33325L12.6667 7.99992L8 12.6666' stroke='#C1834E' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
 
   // Contact-section
   section#contact-section.contact-container

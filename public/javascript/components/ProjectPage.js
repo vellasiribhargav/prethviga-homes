@@ -1,14 +1,12 @@
 
-// Move the tab wrapper outside to keep it always visible above both content sections
+// Tab switching functionality
 const completedContainer = document.getElementById('completed-title');
 const ongoingContainer = document.getElementById('ongoing-title');
-const tabWrapper = completedContainer.querySelector('.tab-wrapper');
 
-// Insert tabWrapper before the completedContainer so it's a sibling above both
-completedContainer.parentNode.insertBefore(tabWrapper, completedContainer);
-
-// Initially hide the ongoing container
-ongoingContainer.style.display = 'none';
+// Initial state handling: hide ongoing if both exist
+if (completedContainer && ongoingContainer) {
+    ongoingContainer.style.display = 'none';
+}
 
 // Get all tab buttons
 const tabButtons = document.querySelectorAll('.tab-btn');
@@ -18,21 +16,21 @@ tabButtons.forEach(button => {
     button.addEventListener('click', () => {
         // Remove active class from all tabs
         tabButtons.forEach(btn => btn.classList.remove('active-tab'));
-        
+
         // Add active class to the clicked tab
         button.classList.add('active-tab');
-        
+
         // Get the data attribute to determine which tab was clicked
         const projectType = button.dataset.project;
-        
+
         if (projectType === 'Completed Project') {
             // Show completed content, hide ongoing
-            completedContainer.style.display = 'block';
-            ongoingContainer.style.display = 'none';
+            if (completedContainer) completedContainer.style.display = 'block';
+            if (ongoingContainer) ongoingContainer.style.display = 'none';
         } else if (projectType === 'Ongoing Project') {
             // Hide completed content, show ongoing
-            completedContainer.style.display = 'none';
-            ongoingContainer.style.display = 'block';
+            if (completedContainer) completedContainer.style.display = 'none';
+            if (ongoingContainer) ongoingContainer.style.display = 'block';
         }
     });
 });

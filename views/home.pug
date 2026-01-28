@@ -9,9 +9,10 @@ include layout/header.pug
 section.headerContainer
   .animationContainer
     .animationList
-      each image in bannerData
-        .container1
-          img(src=image.projimage alt='image1')
+      if bannerData && bannerData.length > 0
+        each image in bannerData
+          .container1
+            img(src=image.projimage alt='image1')
   .heroContainer
     .heroContent
       h1.heroHeading EXCELLENCE IN EVERY BUILD
@@ -34,21 +35,22 @@ section.headerContainer
                 h1.numberText +1 (555) 123-4567
     
     .heroReview
-      each review in bannerReview
-        .heroCard
-          .heroApp
-            .appImage
-              img(src=review.profile_image alt='profile')
-            .appContent
-              p.appText1 #{review.reviewer}
-              p.appText2 #{review.user_name}
-              p.appText3 #{review.user_role}
+      if bannerReview && bannerReview.length > 0
+        each review in bannerReview
+          .heroCard
+            .heroApp
+              .appImage
+                img(src=review.profile_image alt='profile')
+              .appContent
+                p.appText1 #{review.reviewer}
+                p.appText2 #{review.user_name}
+                p.appText3 #{review.user_role}
 
-section.projectContainer
-  .projectWrapper
-    h3.sectionHeading Recent Projects
-    .CardContainer
-      if(projectsData.length > 0)
+if projectsData && projectsData.length > 0
+  section.projectContainer
+    .projectWrapper
+      h3.sectionHeading Recent Projects
+      .CardContainer
         each project in projectsData
           .projectCard
             .cardImage
@@ -65,14 +67,14 @@ section.projectContainer
                 .projectDate
                   span
                     svg(width='14' height='15' viewbox='0 0 14 15' fill='none' xmlns='http://www.w3.org/2000/svg')
-                      path(d='M3.99996 0.666687V3.33335M9.33329 0.666687V3.33335M0.666626 6.00002H12.6666M1.99996 2.00002H11.3333C12.0697 2.00002 12.6666 2.59697 12.6666 3.33335V12.6667C12.6666 13.4031 12.0697 14 11.3333 14H1.99996C1.26358 14 0.666626 13.4031 0.666626 12.6667V3.33335C0.666626 2.59697 1.26358 2.00002 1.99996 2.00002Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
+                      path(d='M3.99996 0.666687V3.33335M9.33329 0.666687V3.33335M0.666626 6.00002H12.6666M1.99996 2.00002H11.3333C12.0697 2.00002 12.6666 2.59697 12.6666 3.33335V12.6667C12.6666 13.4031 12.0697 14 11.3333 14H1.99996C1.26358 14 0.666626 13.403 0.666626 12.6667V3.33335C0.666626 2.59697 1.26358 2.00002 1.99996 2.00002Z' stroke='#99A1AF' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
                   |  #{project['project_date']}
               .projectCardFooter
                 span.cardFooterText= project['card_footer_text']
                 button.cardFooterBtn 
                   a(href=`/OnGoingPage/${project['project_id']}`) View
-    button.projectBtn 
-      a(href="/ProjectPage") View More
+      button.projectBtn 
+        a(href="/ProjectPage") View More
 
 section.chooseContainer
   .titleContainer
@@ -150,28 +152,29 @@ section.aboutWorksContainer
           svg(width="29" height="25" viewBox="0 0 29 25" fill="none" xmlns="http://www.w3.org/2000/svg")
             path(d='M29 12.5C29 12.9144 28.8303 13.3119 28.5281 13.6049L17.2503 24.5424C16.6212 25.1525 15.601 25.1525 14.9719 24.5424C14.3428 23.9322 14.3428 22.9428 14.9719 22.3327L23.4993 14.0625H1.61111C0.721294 14.0625 -9.53674e-07 13.363 -9.53674e-07 12.5C-9.53674e-07 11.637 0.721294 10.9375 1.61111 10.9375H23.4993L14.9719 2.66736C14.3428 2.05716 14.3428 1.06785 14.9719 0.457641C15.601 -0.152547 16.6212 -0.152547 17.2503 0.457641L28.5281 11.3952C28.8303 11.6881 29 12.0856 29 12.5Z' fill="#BC5322")
 
-section.technologiesContainer
-  .technologiesImage
-    h1 Technologies
-  
-  .technologiesCards
-    each tech, index in techData.slice(1)
-      .technologiesCard
-        span.technologiesIcon
-          if index === 0
-            svg(width='43' height='43' viewbox='0 0 43 43' fill='none')
-              path(d='M1.5 11.5H41.5M41.5 21.5H1.5M1.5 31.5H41.5M14 1.5V11.5M26.5 11.5V21.5M11.5 21.5V31.5M31.5 21.5V31.5M19 31.5V41.5M1.5 6.5C1.5 5.17392 2.02678 3.90215 2.96447 2.96447C3.90215 2.02678 5.17392 1.5 6.5 1.5H36.5C37.8261 1.5 39.0979 2.02678 40.0355 2.96447C40.9732 3.90215 41.5 5.17392 41.5 6.5V36.5C41.5 37.8261 40.9732 39.0979 40.0355 40.0355C39.0979 40.9732 37.8261 41.5 36.5 41.5H6.5C5.17392 41.5 3.90215 40.9732 2.96447 40.0355C2.02678 39.0979 1.5 37.8261 1.5 36.5V6.5Z' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round')
-          
-          else if index === 1
-            svg(width='43' height='43' viewbox='0 0 43 43' fill='none')
-              path(d='M14.8333 41.5V28.1667C14.8333 26.9879 15.3016 25.8575 16.1351 25.024C16.9686 24.1905 18.099 23.7222 19.2778 23.7222H23.7222C24.901 23.7222 26.0314 24.1905 26.8649 25.024C27.6984 25.8575 28.1667 26.9879 28.1667 28.1667V41.5M5.94444 21.5H1.5L21.5 1.5L41.5 21.5H37.0556V37.0556C37.0556 38.2343 36.5873 39.3648 35.7538 40.1983C34.9203 41.0317 33.7899 41.5 32.6111 41.5H10.3889C9.21015 41.5 8.07969 41.0317 7.24619 40.1983C6.4127 39.3648 5.94444 38.2343 5.94444 37.0556V21.5Z' stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" )
-          
-          else if index === 2
-            svg(width='43' height='43' viewbox='0 0 43 43' fill='none')
-              path(d='M21 3.51748V38.5009M1 21.0092H41M35.5 40.9998L5.5 37.2515C3 37.0017 1 35.0026 1 32.5038V9.51472C1 7.01591 3 5.01686 5.5 4.76697L35.5 1.01875C38.5 0.768873 41 3.01781 41 5.7665V36.0021C41 39.0007 38.25 41.2496 35.5 40.7499V40.9998Z' stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
+if techData && techData.length > 0
+  section.technologiesContainer
+    .technologiesImage
+      h1 Technologies
+    
+    .technologiesCards
+      each tech, index in techData.slice(1)
+        .technologiesCard
+          span.technologiesIcon
+            if index === 0
+              svg(width='43' height='43' viewbox='0 0 43 43' fill='none')
+                path(d='M1.5 11.5H41.5M41.5 21.5H1.5M1.5 31.5H41.5M14 1.5V11.5M26.5 11.5V21.5M11.5 21.5V31.5M31.5 21.5V31.5M19 31.5V41.5M1.5 6.5C1.5 5.17392 2.02678 3.90215 2.96447 2.96447C3.90215 2.02678 5.17392 1.5 6.5 1.5H36.5C37.8261 1.5 39.0979 2.02678 40.0355 2.96447C40.9732 3.90215 41.5 5.17392 41.5 6.5V36.5C41.5 37.8261 40.9732 39.0979 40.0355 40.0355C39.0979 40.9732 37.8261 41.5 36.5 41.5H6.5C5.17392 41.5 3.90215 40.9732 2.96447 40.0355C2.02678 39.0979 1.5 37.8261 1.5 36.5V6.5Z' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round')
+            
+            else if index === 1
+              svg(width='43' height='43' viewbox='0 0 43 43' fill='none')
+                path(d='M14.8333 41.5V28.1667C14.8333 26.9879 15.3016 25.8575 16.1351 25.024C16.9686 24.1905 18.099 23.7222 19.2778 23.7222H23.7222C24.901 23.7222 26.0314 24.1905 26.8649 25.024C27.6984 25.8575 28.1667 26.9879 28.1667 28.1667V41.5M5.94444 21.5H1.5L21.5 1.5L41.5 21.5H37.0556V37.0556C37.0556 38.2343 36.5873 39.3648 35.7538 40.1983C34.9203 41.0317 33.7899 41.5 32.6111 41.5H10.3889C9.21015 41.5 8.07969 41.0317 7.24619 40.1983C6.4127 39.3648 5.94444 38.2343 5.94444 37.0556V21.5Z' stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" )
+            
+            else if index === 2
+              svg(width='43' height='43' viewbox='0 0 43 43' fill='none')
+                path(d='M21 3.51748V38.5009M1 21.0092H41M35.5 40.9998L5.5 37.2515C3 37.0017 1 35.0026 1 32.5038V9.51472C1 7.01591 3 5.01686 5.5 4.76697L35.5 1.01875C38.5 0.768873 41 3.01781 41 5.7665V36.0021C41 39.0007 38.25 41.2496 35.5 40.7499V40.9998Z' stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
 
-        h3= tech['tech-name']
-        p= tech['tech-text']
+          h3= tech['tech-name']
+          p= tech['tech-text']
 
 section.aboutContainer
   .aboutWrapper
@@ -204,26 +207,27 @@ section.aboutContainer
           | Crafting exquisite living spaces in desirable locales demands a philosophy that transcends standard construction.
         button.aboutBtn Explore More
 
-section.reviewContainer
-  h2.sectionHeading Loved by our clients
-  .reviewCardsWrapper
-    .reviewCards
-      each i in [1, 2]
-        each review in reviewsData.slice(1)
-          .reviewCard
-            .reviewIcon
-              span
-                svg(width='34' height='34' viewbox='0 0 34 34' fill='none')
-                  path(d='M23.3333 1.66675C22.4492 1.66675 21.6014 2.01794 20.9763 2.64306C20.3511 3.26818 20 4.11603 20 5.00008V15.0001C20 15.8841 20.3511 16.732 20.9763 17.3571C21.6014 17.9822 22.4492 18.3334 23.3333 18.3334C23.7753 18.3334 24.1992 18.509 24.5118 18.8216C24.8244 19.1341 25 19.5581 25 20.0001V21.6667C25 22.5508 24.6488 23.3986 24.0236 24.0238C23.3985 24.6489 22.5507 25.0001 21.6666 25.0001C21.2246 25.0001 20.8007 25.1757 20.4881 25.4882C20.1756 25.8008 20 26.2247 20 26.6667V30.0001C20 30.4421 20.1756 30.866 20.4881 31.1786C20.8007 31.4912 21.2246 31.6667 21.6666 31.6667C24.3188 31.6667 26.8623 30.6132 28.7377 28.7378C30.6131 26.8625 31.6666 24.3189 31.6666 21.6667V5.00008C31.6666 4.11603 31.3154 3.26818 30.6903 2.64306C30.0652 2.01794 29.2173 1.66675 28.3333 1.66675H23.3333Z' stroke='#C1834E' stroke-opacity='0.2' stroke-width='3.33333' stroke-linecap='round' stroke-linejoin='round')
-            .reviewText
-              p= review['review-text']
-            .clientDetail
-              .clientImage
-                span= review['client-name'].charAt(0)
-              .clientInfo
-                h3.clientName= review['client-name']
-                p.clientRole= review['client-role']
-            .reviewFooter= review['review-footer']
+if reviewsData && reviewsData.length > 0
+  section.reviewContainer
+    h2.sectionHeading Loved by our clients
+    .reviewCardsWrapper
+      .reviewCards
+        each i in [1, 2]
+          each review in reviewsData.slice(1)
+            .reviewCard
+              .reviewIcon
+                span
+                  svg(width='34' height='34' viewbox='0 0 34 34' fill='none')
+                    path(d='M23.3333 1.66675C22.4492 1.66675 21.6014 2.01794 20.9763 2.64306C20.3511 3.26818 20 4.11603 20 5.00008V15.0001C20 15.8841 20.3511 16.732 20.9763 17.3571C21.6014 17.9822 22.4492 18.3334 23.3333 18.3334C23.7753 18.3334 24.1992 18.509 24.5118 18.8216C24.8244 19.1341 25 19.5581 25 20.0001V21.6667C25 22.5508 24.6488 23.3986 24.0236 24.0238C23.3985 24.6489 22.5507 25.0001 21.6666 25.0001C21.2246 25.0001 20.8007 25.1757 20.4881 25.4882C20.1756 25.8008 20 26.2247 20 26.6667V30.0001C20 30.4421 20.1756 30.866 20.4881 31.1786C20.8007 31.4912 21.2246 31.6667 21.6666 31.6667C24.3188 31.6667 26.8623 30.6132 28.7377 28.7378C30.6131 26.8625 31.6666 24.3189 31.6666 21.6667V5.00008C31.6666 4.11603 31.3154 3.26818 30.6903 2.64306C30.0652 2.01794 29.2173 1.66675 28.3333 1.66675H23.3333Z' stroke='#C1834E' stroke-opacity='0.2' stroke-width='3.33333' stroke-linecap='round' stroke-linejoin='round')
+              .reviewText
+                p= review['review-text']
+              .clientDetail
+                .clientImage
+                  span= review['client-name'].charAt(0)
+                .clientInfo
+                  h3.clientName= review['client-name']
+                  p.clientRole= review['client-role']
+              .reviewFooter= review['review-footer']
 section#contact-section.contact-container
   .contact-section
     .contact-card

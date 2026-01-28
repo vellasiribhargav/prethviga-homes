@@ -1,46 +1,50 @@
-// Desktop Sidebar Menu
+//- Unified Sidebar for all Admin Pages
 .sidebar-menu
   .sidebar-header
     h2.sidebar-title Content Management
 
   nav.sidebar-nav
     // Upcoming Projects
-    a.sidebar-link(href='/admin/upcoming' class=activeLink === 'upcoming' ? 'active' : '')
+    a.sidebar-link(href='/admin/upcoming/list' class=(activeLink === 'upcoming') ? 'active' : '')
       svg.icon(xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24' fill='white')
         path(d='M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Zm280 240q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-360Zm-160 0q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-360Zm320 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-360ZM480-200q-17 0-28.5-11.5T440-240q0-17 11.5-28.5T480-280q17 0 28.5 11.5T520-240q0 17-11.5 28.5T480-200Zm-160 0q-17 0-28.5-11.5T280-240q0-17 11.5-28.5T320-280q17 0 28.5 11.5T360-240q0 17-11.5 28.5T320-200Zm320 0q-17 0-28.5-11.5T600-240q0-17 11.5-28.5T640-280q17 0 28.5 11.5T680-240q0 17-11.5 28.5T640-200Z')
       span Upcoming Projects
 
     // Completed Projects
-    a.sidebar-link(href='/admin/completed' class=activeLink === 'completed' ? 'active' : '')
+    a.sidebar-link(href='/admin/completed/list' class=(activeLink === 'completed') ? 'active' : '')
       svg.icon(xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24' fill='white')
         path(d='m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z')
       span Completed Projects
 
     // Gallery
-    a.sidebar-link(href='/admin/gallery' class=activeLink === 'gallery' ? 'active' : '')
+    a.sidebar-link(href='/admin/gallery/list' class=(activeLink === 'gallery') ? 'active' : '')
       svg.icon(xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24' fill='white')
         path(d='M360-400h400L622-580l-92 120-62-80-108 140Zm-40 160q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z')
       span Gallery
 
     // Blogs
-    a.sidebar-link(
-      href='/admin/blog'
-      class=(activeLink && activeLink.includes('blog')) ? 'active' : ''
-    )
+    a.sidebar-link(href='/admin/blog/discoverUs/blogs-card/list' class=(activeLink === 'blog') ? 'active' : '')
       svg.icon(xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24' fill='white')
         path(d='M280-280h280v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm-80 480q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z')
       span  Blogs
 
     // Banners
-    a.sidebar-link(
-      href='/admin/banner'
-      class=(activeLink && activeLink.includes('banner')) ? 'active' : ''
-    )
+    a.sidebar-link(href='/admin/banner/home/list' class=(activeLink === 'banner') ? 'active' : '')
       svg.icon(xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24' fill='white')
         path(d='M720-440v-80q0-17 11.5-28.5T760-560q17 0 28.5 11.5T800-520v80q0 17-11.5 28.5T760-400q-17 0-28.5-11.5T720-440ZM160-160v-200q0-33 23.5-56.5T240-440h120q33 0 56.5 23.5T440-360v200q0 33-23.5 56.5T360-80H240q-33 0-56.5-23.5T160-160Zm80-80h120v-120H240v120Zm200-280v-280q0-17 11.5-28.5T480-840q17 0 28.5 11.5T520-800v280q0 17-11.5 28.5T480-480q-17 0-28.5-11.5T440-520Zm160 80v-160q0-17 11.5-28.5T640-640q17 0 28.5 11.5T680-600v160q0 17-11.5 28.5T640-400q-17 0-28.5-11.5T600-440Z')
       span Banners
 
-
+    // Contacts
+    a.sidebar-link(href='/admin/contacts/list' class=(activeLink === 'contacts') ? 'active' : '')
+      svg.icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 19 19" height="19" width="19")
+        path(stroke-linejoin="round" stroke-linecap="round" stroke-width="1.66667" stroke="white" d="M10.6934 12.9733C10.8655 13.0524 11.0594 13.0704 11.2431 13.0245C11.4269 12.9786 11.5895 12.8715 11.7042 12.7208L12 12.3333C12.1553 12.1263 12.3566 11.9583 12.588 11.8426C12.8194 11.7269 13.0746 11.6666 13.3334 11.6666H15.8334C16.2754 11.6666 16.6993 11.8422 17.0119 12.1548C17.3244 12.4674 17.5 12.8913 17.5 13.3333V15.8333C17.5 16.2753 17.3244 16.6993 17.0119 17.0118C16.6993 17.3244 16.2754 17.5 15.8334 17.5C11.8551 17.5 8.03982 15.9196 5.22677 13.1066C2.41373 10.2935 0.833374 6.47823 0.833374 2.49998C0.833374 2.05795 1.00897 1.63403 1.32153 1.32147C1.63409 1.00891 2.05801 0.833313 2.50004 0.833313H5.00004C5.44207 0.833313 5.86599 1.00891 6.17855 1.32147C6.49111 1.63403 6.66671 2.05795 6.66671 2.49998V4.99998C6.66671 5.25872 6.60647 5.51391 6.49075 5.74534C6.37504 5.97676 6.20703 6.17807 6.00004 6.33331L5.61004 6.62581C5.45705 6.74263 5.34922 6.9088 5.30487 7.0961C5.26051 7.28341 5.28236 7.48029 5.36671 7.65331C6.50561 9.96653 8.37873 11.8373 10.6934 12.9733Z")
+      span Contacts
+    
+    // Logout
+    a.sidebar-link.logout(href='/admin/logout')
+      svg.icon(xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24' fill='white')
+        path(d='M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-56-56 103-104H400v-80h287L584-624l56-56 200 200-200 200Z')
+      span Logout
 
 // Mobile Navigation Drawer
 #nav-drawer
@@ -51,27 +55,26 @@
   .nav-divider
 
   nav.nav-menu
-    a.nav-link(href='upcoming' class=activeLink === 'upcoming' ? 'active' : '')
+    a.nav-link(href='/admin/upcoming/list' class=(activeLink === 'upcoming') ? 'active' : '')
       span Upcoming Projects
 
-    a.nav-link(href='completed' class=activeLink === 'completed' ? 'active' : '')
+    a.nav-link(href='/admin/completed/list' class=(activeLink === 'completed') ? 'active' : '')
       span Completed Projects
 
-    a.nav-link(href='gallery' class=activeLink === 'gallery' ? 'active' : '')
+    a.nav-link(href='/admin/gallery/list' class=(activeLink === 'gallery') ? 'active' : '')
       span Gallery
 
-    // ===== BLOGS (MOBILE – SINGLE LINK) =====
-    a.nav-link(
-      href='/admin/blog?slug=home'
-      class=(activeLink && activeLink.includes('blog')) ? 'active' : ''
-    )
+    a.nav-link(href='/admin/blog/discoverUs/blogs-card/list' class=(activeLink === 'blog') ? 'active' : '')
       span Blogs
 
-    a.nav-link(
-      href='/admin/banner?slug=home'
-      class=(activeLink && activeLink.includes('banner')) ? 'active' : ''
-    )
+    a.nav-link(href='/admin/banner/home/list' class=(activeLink === 'banner') ? 'active' : '')
       span Banners
+
+    a.nav-link(href='/admin/contacts/list' class=(activeLink === 'contacts') ? 'active' : '')
+      span Contacts
+
+    a.nav-link.logout(href='/admin/logout')
+      span Logout
 
 // Overlay for drawer
 #drawer-overlay

@@ -390,7 +390,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="form-group">
                     <label class="form-label">Type of Project</label>
                     <select class="form-select" id="${typeId}">
-                        <option value="">Select project type</option>
+                        <option disabled selected value=''>Select project type</option>
                         <option value="upcoming">Upcoming Projects</option>
                         <option value="completed">Completed Projects</option>
                     </select>
@@ -398,7 +398,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="form-group">
                     <label class="form-label">Select Project</label>
                     <select class="form-select" id="${selectId}" disabled>
-                        <option value="">Select a project</option>
+                        <option disabled selected value=''>Select a project</option>
                     </select>
                 </div>
                 <div class="form-group">
