@@ -9,7 +9,7 @@ html(lang='en')
 
   body
     - var activeLink = 'upcoming'
-    include ../layout/list_sidebar.pug
+    include ../layout/sidebar.pug
     
     // Main Page Content
     .main-container.with-sidebar
@@ -46,17 +46,21 @@ html(lang='en')
               thead
                 tr
                   th S.NO.
-                  th PREVIEW
                   th PROJECT NAME
+                  th DESCRIPTION
                   th LOCATION
                   th TIMELINE
-                  th DESCRIPTION
+                  th PREVIEW
                   th ACTIONS
               tbody
                 if projects && projects.length > 0
-                  each project, idx in projects
+                   each project, idx in projects
                      tr(data-id=project.id data-index=project.index) 
                        td #{String(idx + 1).padStart(2, '0')}
+                       td.item-name-cell #{project.name}
+                       td #{project.description || 'No description available...'}
+                       td #{project.location}
+                       td #{project.timeline}
                        td
                          if project.coverImage
                            button.btn-preview(data-image=project.coverImage)
@@ -66,10 +70,6 @@ html(lang='en')
                              span Preview
                          else
                            span No Image
-                       td.item-name-cell #{project.name}
-                       td #{project.location}
-                       td #{project.timeline}
-                       td #{project.description || 'No description available...'}
                        td
                          .action-buttons
                             button.icon-action-btn.edit-btn(title="Edit" data-index=project.index data-project=JSON.stringify(project))

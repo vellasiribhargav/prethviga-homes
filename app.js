@@ -21,6 +21,9 @@ const galleryRoutes = require('./adminPanel/routes/galleryRoutes');
 const blogRoutes = require('./adminPanel/routes/blogRoutes');
 const bannerRoutes = require('./adminPanel/routes/bannerRoutes');
 const contactsRoutes = require('./adminPanel/routes/contactsRoutes');
+const adminAuthRoutes = require('./adminPanel/routes/authRoutes');
+const { protectAdmin } = require('./middleware/authMiddleware');
+const { errorHandler, notFoundHandler } = require('./middleware/errorMiddleware');
 
 (utils = require("./utils/index")), (env = process.env.NODE_ENV);
 
@@ -89,14 +92,19 @@ app.use("/ProjectPage", projectsRoutes);
 app.use("/OnGoingPage", onGoingPageRoutes);
 app.use("/discoverUs", discoverUsRoutes);
 app.use('/', contactRoutes);
-app.use('/admin', upcomingRoutes);
-app.use('/admin/upcoming', upcomingRoutes);
-app.use('/admin/completed', completedRoutes);
-app.use('/admin/gallery', galleryRoutes);
-app.use('/admin/blog', blogRoutes);
-app.use('/admin/banner', bannerRoutes);
-app.use('/admin/contacts', contactsRoutes);
-app.use('/admin/upcoming_projects', upcomingRoutes);
+
+// Admin Auth Routes (unprotected)
+app.use('/admin', adminAuthRoutes);
+
+// Protected Admin Routes
+app.use('/admin', protectAdmin, upcomingRoutes);
+app.use('/admin/upcoming', protectAdmin, upcomingRoutes);
+app.use('/admin/completed', protectAdmin, completedRoutes);
+app.use('/admin/gallery', protectAdmin, galleryRoutes);
+app.use('/admin/blog', protectAdmin, blogRoutes);
+app.use('/admin/banner', protectAdmin, bannerRoutes);
+app.use('/admin/contacts', protectAdmin, contactsRoutes);
+app.use('/admin/upcoming_projects', protectAdmin, upcomingRoutes);
 
 app.use((req, res, next) => {
   res.setHeader(
@@ -180,29 +188,15 @@ app.get("/:slug", async (req, res, next) => {
   }
 });
 
-app.use((req, res, next) => {
-  next(createError(404));
-});
+// 404 Handler - must be after all routes
+app.use(notFoundHandler);
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  res.setHeader(
-    "Content-Security-Policy",
-    "default-src 'self'; script-src 'self' https://code.jquery.com; style-src  'self' 'unsafe-inline'"
-  );
-
-  res.setHeader(
-    "Strict-Transport-Security",
-    "max-age=31536000; includeSubDomains"
-  );
-  // //console.log("404 error",err)
-  res.status(404).render("404", { message: "Page not found!" }); // Render 404 pag
-});
+// Global Error Handler - must be last
+app.use(errorHandler);
 
 //Start the server
 // const PORT = process.env.PORT || 3000;
 // app.listen(PORT, () => {
-//console.log(`Server is running on http://localhost:${PORT}`);
 //console.log(`Server is running on http://localhost:${PORT}`);
 // });
 

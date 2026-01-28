@@ -566,7 +566,7 @@ document.addEventListener('DOMContentLoaded', function () {
             validFormsCount++;
         }
 
-        console.log('Submitting completedArr:', completedArr);
+        // console.log('Submitting completedArr:', completedArr);
 
         if (!completedArr.length) {
             Swal.fire({

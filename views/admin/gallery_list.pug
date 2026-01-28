@@ -9,7 +9,7 @@ html(lang='en')
 
   body
     - var activeLink = 'gallery'
-    include ../layout/list_sidebar.pug
+    include ../layout/sidebar.pug
     
     // Main Page Content
     .main-container.with-sidebar
@@ -47,18 +47,21 @@ html(lang='en')
                 tr
                   th S.NO.
                   th TYPE
-                  th PREVIEW
                   th PROJECT NAME
                   th TITLE
                   th DESCRIPTION
+                  th PREVIEW
                   th ACTIONS
               tbody
                 if galleryItems && galleryItems.length > 0
-                  each item, idx in galleryItems
+                   each item, idx in galleryItems
                      tr(data-id=item.id data-index=item.index) 
                        td #{String(idx + 1).padStart(2, '0')}
                        td
                          span.status-badge.badge-upcoming #{item.type}
+                       td.item-name-cell #{item.projectName}
+                       td #{item.title}
+                       td #{item.text || 'No description available...'}
                        td
                          if item.coverImage
                            button.btn-preview(data-image=item.coverImage)
@@ -68,9 +71,6 @@ html(lang='en')
                              span Preview
                          else
                            span No Image
-                       td.item-name-cell #{item.projectName}
-                       td #{item.title}
-                       td #{item.text || 'No description available...'}
                        td
                          .action-buttons
                            button.icon-action-btn.edit-btn(title="Edit" data-index=item.index data-gallery=JSON.stringify(item))

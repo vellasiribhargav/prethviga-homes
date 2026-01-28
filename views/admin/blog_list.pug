@@ -9,7 +9,7 @@ html(lang='en')
 
   body
     - var activeLink = 'blog'
-    include ../layout/list_sidebar.pug
+    include ../layout/sidebar.pug
     
     // Main Page Content
     .main-container.with-sidebar
@@ -55,18 +55,21 @@ html(lang='en')
                 tr
                   th S.NO.
                   th TAG
-                  th PREVIEW
                   th BLOG TITLE
-                  th DATE
                   th DESCRIPTION
+                  th DATE
+                  th PREVIEW
                   th ACTIONS
               tbody
                 if blogs && blogs.length > 0
-                  each b, idx in blogs
+                   each b, idx in blogs
                      tr(data-id=b.id data-index=b.index) 
                        td #{String(idx + 1).padStart(2, '0')}
                        td
                          span.status-badge.badge-upcoming #{b.tag}
+                       td.item-name-cell #{b.title}
+                       td #{b.description || 'No description available...'}
+                       td #{b.date}
                        td
                          if b.image
                            button.btn-preview(data-image=b.image)
@@ -76,9 +79,6 @@ html(lang='en')
                              span Preview
                          else
                            span No Image
-                       td.item-name-cell #{b.title}
-                       td #{b.date}
-                       td #{b.description || 'No description available...'}
                        td
                          .action-buttons
                            button.icon-action-btn.edit-btn(title="Edit" data-index=b.index data-blog=JSON.stringify(b))

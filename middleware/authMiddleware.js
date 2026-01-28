@@ -1,23 +1,39 @@
 const jwt = require('jsonwebtoken');
+const { asyncHandler, UnauthorizedError } = require('../utils/errorHandler');
+const AdminUser = require('../models/AdminUser');
 
-module.exports.isAuthenticated = (req, res, next) => {
-  // Retrieve JWT token from cookies
-  const token = req.cookies.token;
+const protectAdmin = asyncHandler(async (req, res, next) => {
+  const token = req.cookies.admin_token;
 
   if (!token) {
-    return res.redirect('/'); // Redirect to login if no token is found
+    // For HTML requests, redirect to login
+    if (!req.xhr && req.accepts('html')) {
+      return res.redirect('/admin/login');
+    }
+    throw new UnauthorizedError('Not authorized - Please login');
   }
 
-  // Verify the token
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) {
-      return res.redirect('/'); // Redirect to login if token is invalid or expired
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Verify user exists in database
+    const user = await AdminUser.findOne({ username: decoded.username });
+    if (!user) {
+      throw new Error('User no longer exists');
     }
 
-    // Attach user information from token to the request
-    req.user = decoded;
-    next(); // Proceed to the next middleware or route handler
-  });
-};
+    req.admin = decoded;
+    next();
+  } catch (error) {
+    res.clearCookie('admin_token');
 
-  
+    // For HTML requests, redirect to login
+    if (!req.xhr && req.accepts('html')) {
+      return res.redirect('/admin/login');
+    }
+
+    throw new UnauthorizedError('Session invalid or expired - Please login again');
+  }
+});
+
+module.exports = { protectAdmin };

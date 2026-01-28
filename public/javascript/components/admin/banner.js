@@ -3,7 +3,7 @@ import Swal from 'sweetalert2';
 window.jQuery = window.$ = $;
 
 document.addEventListener('DOMContentLoaded', function () {
-    console.log('[BannerJS] Initializing...');
+    // console.log('[BannerJS] Initializing...');
 
     const imageGrid = document.querySelector('.image-upload-grid');
     const submitBtn = document.querySelector('.submit-btn');
@@ -179,9 +179,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function loadExistingBanners() {
-        console.log('[BannerJS] Fetching banners from:', api.get);
+        // console.log('[BannerJS] Fetching banners from:', api.get);
         $.get(api.get).done(data => {
-            console.log('[BannerJS] Fetch response:', data);
+            // console.log('[BannerJS] Fetch response:', data);
             if (data.success) {
                 existingBanners = data.data;
                 displayExistingBanners();
@@ -257,7 +257,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     confirmButtonColor: '#BC5322'
                 });
                 selectedImages = [];
-                loadExistingBanners();
+                // loadExistingBanners();
+                displayExistingBanners(); // Reset UI to empty slots
             } else {
                 Swal.fire({
                     icon: 'error',
@@ -319,5 +320,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Initial Load
-    loadExistingBanners();
+    // loadExistingBanners();
+    displayExistingBanners();
 });

@@ -672,11 +672,12 @@ main {
 
 /* Navigation Buttons */
 .navigation-buttons {
-  position: absolute;
-  bottom: 16px;
-  right: 16px;
   display: flex;
+  justify-content: flex-end;
   gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-light);
+  margin-bottom: 10px;
 }
 
 .dark .navigation-buttons {
@@ -718,7 +719,7 @@ main {
 
 .content-card {
   position: relative;
-  padding-bottom: 24px;
+  padding-bottom: 0;
 }
 
 /* Submit Section */

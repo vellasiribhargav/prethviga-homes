@@ -20,7 +20,9 @@ module.exports = env => {
 			gallery: "./public/javascript/admin/gallery.js",
 			completed: "./public/javascript/admin/completed.js",
 			banner: "./public/javascript/admin/banner.js",
-			blog: "./public/javascript/admin/blog.js"
+			blog: "./public/javascript/admin/blog.js",
+			contacts_list: './public/javascript/admin/contacts_list.js',
+			login: './public/javascript/admin/login.js'
 		},
 		output: {
 			path: path.resolve(__dirname, "public/bundle"),

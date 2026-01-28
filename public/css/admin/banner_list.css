@@ -415,6 +415,41 @@ body {
 
 .pagination {
     display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    justify-content: flex-end;
+}
+
+.rows-per-page-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.rows-select {
+    padding: 4px 8px;
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
+    background: var(--input-bg);
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.rows-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+.pagination-buttons {
+    display: flex;
     gap: 8px;
 }
 
