@@ -8,7 +8,7 @@ const AdminUser = {
      * @returns {Promise<Object>}
      */
     findOne: async function ({ username }) {
-        const user = await knex('admin_users').where({ username }).first();
+        const user = await knex('admin_users').where({ email: username }).first();
         if (user) {
             // Add comparePassword method to the user object
             user.comparePassword = async function (candidatePassword) {
@@ -26,7 +26,7 @@ const AdminUser = {
     create: async function (userData) {
         const passwordHash = await bcrypt.hash(userData.password, 10);
         const [id] = await knex('admin_users').insert({
-            username: userData.username,
+            email: userData.username,
             password: passwordHash
         });
         return { id, ...userData };

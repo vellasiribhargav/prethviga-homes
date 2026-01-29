@@ -25,6 +25,8 @@ const adminAuthRoutes = require('./adminPanel/routes/authRoutes');
 const { protectAdmin } = require('./middleware/authMiddleware');
 const { errorHandler, notFoundHandler } = require('./middleware/errorMiddleware');
 
+const { initRedis } = require('./config/redis.js');
+
 (utils = require("./utils/index")), (env = process.env.NODE_ENV);
 
 //routes
@@ -54,6 +56,14 @@ app.use(cookieParser());
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+(async () => {
+  try {
+    await initRedis();
+  } catch (err) {
+    console.error('Redis init failed:', err.message);
+  }
+})();
 
 app.locals.PROJECT_URL = process.env.PROJECT_URL;
 
