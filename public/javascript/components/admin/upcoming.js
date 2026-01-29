@@ -261,14 +261,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="item-image" style="background-color: var(--stone-200);"></div>
                 <div class="item-details"></div>
             </div>
-            <div class="item-actions">
-                <button class="edit-btn">
-                    <span class="material-symbols-outlined">edit</span>
-                </button>
-                <button class="delete-btn">
-                    <span class="material-symbols-outlined">delete</span>
-                </button>
-            </div>
         `;
 
         const itemDetails = addedItem.querySelector('.item-details');
