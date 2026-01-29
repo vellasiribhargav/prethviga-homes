@@ -6,7 +6,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const fields = [
         { id: 'username', message: '* username is required', pattern: /^[a-zA-Z0-9._%+-]+@(gmail)\.com$/, patternMessage: '* Invalid username format' },
-        { id: 'password', message: '* Password is required' }
+        { id: 'password', message: '* Password is required' },
+        { id: 'captcha', message: '* Captcha is required' }
     ];
 
     // Cookie helper functions
@@ -30,21 +31,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         return null;
     }
-
-    /*
-    // Autofill username from cookie ONLY if it looks like a valid email
-    const rememberedUsername = getCookie('remembered_admin_username');
-    if (rememberedUsername) {
-        // Simple regex to check if it's an email (doesn't have to be gmail specifically for the check)
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (emailPattern.test(rememberedUsername)) {
-            const usernameInput = document.getElementById('username');
-            if (usernameInput) {
-                usernameInput.value = rememberedUsername;
-            }
-        }
-    }
-    */
 
     // Create and append message elements
     fields.forEach(({ id, message }) => {
@@ -86,13 +72,53 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // Captcha Logic
+    const refreshBtn = document.getElementById('refresh-captcha');
+    const captchaDisplay = document.getElementById('captcha-display');
+    const captchaInput = document.getElementById('captcha');
+
+    let currentCaptcha = '';
+    let captchaInterval;
+
+    function generateCaptcha() {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let result = '';
+        const length = 6;
+        for (let i = 0; i < length; i++) {
+            result += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
+        currentCaptcha = result;
+        if (captchaDisplay) {
+            captchaDisplay.textContent = currentCaptcha;
+        }
+    }
+
+    function resetCaptchaInterval() {
+        clearInterval(captchaInterval);
+        // Change captcha every 30 seconds
+        captchaInterval = setInterval(generateCaptcha, 30000);
+    }
+
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', () => {
+            generateCaptcha();
+            resetCaptchaInterval();
+        });
+    }
+
+    // Initialize
+    generateCaptcha();
+    resetCaptchaInterval();
+
+
     loginForm.addEventListener('submit', async function (e) {
         e.preventDefault();
         let isValid = true;
 
         const formData = {
             username: '',
-            password: ''
+            password: '',
+            captcha: ''
         };
 
         fields.forEach(({ id, message, pattern, patternMessage }) => {
@@ -116,6 +142,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (!isValid) return;
 
+        // Client-side Captcha Validation
+        if (formData.captcha !== currentCaptcha) {
+            const msg = captchaInput.closest('.form-group').querySelector('.required-message');
+            if (msg) {
+                msg.textContent = '* Invalid Captcha';
+                msg.style.display = 'block';
+            }
+            return; // Stop submission
+        }
+
+        // Remove captcha from formData sent to server (server doesn't check it anymore)
+        const { captcha, ...loginData } = formData;
+
         // Show loading state
         const submitBtn = loginForm.querySelector('.login-btn');
         const originalText = submitBtn.textContent;
@@ -130,7 +169,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     'Accept': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest'
                 },
-                body: JSON.stringify(formData)
+                body: JSON.stringify(loginData)
             });
 
             // Log status for debugging

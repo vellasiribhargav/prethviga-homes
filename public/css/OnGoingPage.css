@@ -725,7 +725,8 @@
 }
 
 .project-details-section .project-planning-container .amenities-list .amenity-card {
-  height: 117px;
+  min-height: 117px;
+  height: auto;
   width: 200px;
   border-radius: 12px;
   border: 1px solid rgba(193, 131, 78, 0.15);
@@ -734,7 +735,7 @@
   flex-direction: column;
   align-items: center;
   padding: 21px;
-  gap: 23px;
+  gap: 10px;
   text-align: center;
   font-size: 15px;
   color: #101828;
@@ -759,21 +760,34 @@
 }
 
 .project-details-section .project-planning-container .floor-layout .floor-layout-title {
-  font-size: 24px;
-  line-height: 55.5px;
+  font-size: 20px;
+  line-height: normal;
   font-weight: 600;
   color: #000;
+  text-align: center;
 }
 
-.project-details-section .project-planning-container .floor-layout .floor-image {
-  max-width: 370px;
+.floor-image {
+  max-width: 300px;
   width: 100%;
 }
 
-.project-details-section .project-planning-container .floor-layout .floor-image img {
+.floor-image img {
   object-fit: cover;
   width: 100%;
   height: 100%;
+}
+
+.floor-layout {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 28px;
+}
+
+.floor-layout-title {
+  font-size: 24px;
 }
 
 @media (max-width: 768px) {

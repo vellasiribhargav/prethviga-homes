@@ -97,7 +97,7 @@ include layout/header.pug
                 else if index === 5
                   svg(width='21' height='21' viewbox='0 0 21 21' fill='none' xmlns='http://www.w3.org/2000/svg')
                     path(d='M7 19V13C7 12.4696 7.21071 11.9609 7.58579 11.5858C7.96086 11.2107 8.46957 11 9 11H10.341M17.682 8.682L10 1L1 10H3V17C3 17.5304 3.21071 18.0391 3.58579 18.4142C3.96086 18.7893 4.46957 19 5 19H10M20 14C20 18 17.5 20 16.5 20C15.5 20 13 18 13 14C14 14 15.5 13.5 16.5 12.5C17.5 13.5 19 14 20 14Z' stroke='#C1834E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
-            span #{amenity.feature}
+              span #{amenity.feature}
 
     if floorData && floorData.length > 0
       .floor-layout
@@ -105,6 +105,7 @@ include layout/header.pug
           h1.floor-layout-title #{img.title}
           .floor-image
             img(src=img.floor_image alt='Floor layout image')
+            
   if locationData && locationData.details && locationData.details.length > 0
     .location-section
       .location-header

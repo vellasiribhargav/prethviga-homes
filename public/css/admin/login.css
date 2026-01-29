@@ -99,6 +99,19 @@ body {
   color: #495057;
 }
 
+.form-group .captcha {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+
+.captcha-container {
+  display: flex; 
+  gap: 5px; 
+  align-items: center; 
+  margin-bottom: 10px
+}
+
 .input-with-icon {
   position: relative;
   display: flex;
