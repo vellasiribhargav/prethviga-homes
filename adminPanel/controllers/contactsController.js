@@ -13,7 +13,9 @@ const renderContactsPage = async (req, res) => {
         res.render('admin/contacts_list', {
             title: 'Contacts List',
             contacts: contactsWithIndex,
-            activeLink: 'contacts'
+            activeLink: 'contacts',
+            rowsPerPage: 5,
+            rowsPerPageOptions: [5, 10]
         });
     } catch (error) {
         console.error('Error fetching contacts:', error);

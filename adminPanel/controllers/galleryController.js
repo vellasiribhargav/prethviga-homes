@@ -32,7 +32,9 @@ const getGallery = async (req, res) => {
         res.render('admin/gallery_list', {
             title: 'Gallery Management',
             galleryItems,
-            activeLink: 'gallery'
+            activeLink: 'gallery',
+            rowsPerPage: 5,
+            rowsPerPageOptions: [5, 10]
         });
     } catch (error) {
         console.error('Error fetching gallery details:', error);
