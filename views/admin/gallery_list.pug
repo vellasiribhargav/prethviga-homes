@@ -129,7 +129,8 @@ html(lang='en')
 
                   .form-group.full-width
                     label Image Description
-                    textarea.form-textarea(name="text", rows="3")
+                    textarea.form-textarea(name="text", rows="3" maxlength="200")
+                    .char-limit-msg(style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic") * Characters are more than 200
 
                   .form-group.full-width
                     label Upload Images

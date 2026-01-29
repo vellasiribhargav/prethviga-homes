@@ -18,7 +18,21 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     let formCount = 0;
-    let formsCache = [];
+
+    // Character limit message handler
+    document.addEventListener('input', (e) => {
+        if (e.target.classList.contains('form-textarea') && e.target.maxLength === 200) {
+            const msg = e.target.parentNode.querySelector('.char-limit-msg');
+            if (msg) {
+                if (e.target.value.length >= 200) {
+                    msg.style.display = 'block';
+                    msg.textContent = '* Characters are more than 200';
+                } else {
+                    msg.style.display = 'none';
+                }
+            }
+        }
+    });
 
     // Initialize
     updateFormsCache();
@@ -30,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
             { selector: 'input[name="project-name"]', name: 'project-name', message: '* Project name is required' },
             { selector: 'input[name="project-location"]', name: 'project-location', message: '* Project location is required' },
             { selector: 'input[name="timeline-date"]', name: 'timeline-date', message: '* Timeline date is required' },
-            { selector: 'input[name="project-description"]', name: 'project-description', message: '* Project description is required' }
+            { selector: '.form-textarea[name="project-description"]', name: 'project-description', message: '* Project description is required' }
         ];
 
         conf.forEach(({ selector, name, message }) => {
@@ -83,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
             { selector: 'input[name="project-name"]', name: 'project-name' },
             { selector: 'input[name="project-location"]', name: 'project-location' },
             { selector: 'input[name="timeline-date"]', name: 'timeline-date' },
-            { selector: 'input[name="project-description"]', name: 'project-description' }
+            { selector: '.form-textarea[name="project-description"]', name: 'project-description' }
         ];
 
         conf.forEach(({ selector, name }) => {
@@ -218,7 +232,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const projectNameEl = form.querySelector('input[name="project-name"]');
         const projectLocationEl = form.querySelector('input[name="project-location"]');
         const timelineDateEl = form.querySelector('input[name="timeline-date"]');
-        const projectDescriptionEl = form.querySelector('input[name="project-description"]');
+        const projectDescriptionEl = form.querySelector('.form-textarea[name="project-description"]');
 
         return {
             projectName: projectNameEl ? projectNameEl.value : '',
@@ -391,7 +405,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 
                 <div class="form-group">
                     <label class="form-label">Project Description</label>
-                    <input class="form-input" type="text" name="project-description" placeholder="Text area...">
+                    <textarea class="form-textarea" name="project-description" placeholder="project description..." rows="3" maxlength="200"></textarea>
+                    <div class="char-limit-msg" style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic">* Characters are more than 200</div>
                 </div>
             </div>
             
@@ -578,7 +593,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function clearForm(form) {
-        const inputs = form.querySelectorAll('input[type="text"], input[type="date"]');
+        const inputs = form.querySelectorAll('input[type="text"], input[type="date"], textarea');
         inputs.forEach(input => input.value = '');
 
         const uploadBtn = form.querySelector('.upload-btn');

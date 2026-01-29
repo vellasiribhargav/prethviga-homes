@@ -18,7 +18,21 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     let formCount = 0;
-    let formsCache = [];
+
+    // Character limit message handler
+    document.addEventListener('input', (e) => {
+        if (e.target.classList.contains('form-textarea') && e.target.maxLength === 200) {
+            const msg = e.target.parentNode.querySelector('.char-limit-msg');
+            if (msg) {
+                if (e.target.value.length >= 200) {
+                    msg.style.display = 'block';
+                    msg.textContent = '* Characters are more than 200';
+                } else {
+                    msg.style.display = 'none';
+                }
+            }
+        }
+    });
 
     // Initialize
     updateFormsCache();
@@ -30,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
             { selector: 'input[name="project-name"]', message: '* Project name is required' },
             { selector: 'input[name="project-location"]', message: '* Project location is required' },
             { selector: 'input[name="completion-date"]', message: '* Completion date is required' },
-            { selector: 'input[name="project-summary"]', message: '* Project summary is required' }
+            { selector: '.form-textarea[name="project-summary"]', message: '* Project summary is required' }
         ];
 
         inputs.forEach(({ selector, message }) => {
@@ -76,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function () {
             { selector: 'input[name="project-name"]', name: 'project-name' },
             { selector: 'input[name="project-location"]', name: 'project-location' },
             { selector: 'input[name="completion-date"]', name: 'completion-date' },
-            { selector: 'input[name="project-summary"]', name: 'project-summary' }
+            { selector: '.form-textarea[name="project-summary"]', name: 'project-summary' }
         ];
 
         conf.forEach(({ selector, name }) => {
@@ -222,7 +236,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const projectNameEl = form.querySelector('input[name="project-name"]');
         const projectLocationEl = form.querySelector('input[name="project-location"]');
         const completionDateEl = form.querySelector('input[name="completion-date"]');
-        const projectSummaryEl = form.querySelector('input[name="project-summary"]');
+        const projectSummaryEl = form.querySelector('.form-textarea[name="project-summary"]');
 
         return {
             projectName: projectNameEl ? projectNameEl.value : '',
@@ -317,7 +331,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const nameInput = currentVisibleForm.querySelector('input[name="project-name"]');
                     const locationInput = currentVisibleForm.querySelector('input[name="project-location"]');
                     const dateInput = currentVisibleForm.querySelector('input[name="completion-date"]');
-                    const summaryInput = currentVisibleForm.querySelector('input[name="project-summary"]');
+                    const summaryInput = currentVisibleForm.querySelector('.form-textarea[name="project-summary"]');
 
                     if (nameInput) nameInput.value = data.projectName || '';
                     if (locationInput) locationInput.value = data.projectLocation || '';
@@ -415,7 +429,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 
                 <div class="form-group">
                     <label class="form-label">Project Summary</label>
-                    <input class="form-input" type="text" name="project-summary" placeholder="Text area...">
+                    <textarea class="form-textarea" name="project-summary" placeholder="project summary..." rows="3" maxlength="200"></textarea>
+                    <div class="char-limit-msg" style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic">* Characters are more than 200</div>
                 </div>
             </div>
             

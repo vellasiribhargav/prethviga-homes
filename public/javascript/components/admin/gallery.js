@@ -11,6 +11,21 @@ document.addEventListener('DOMContentLoaded', function () {
     const selectProjectSelect = document.getElementById('selectProject');
 
     let formsCache = [];
+    // Character limit message handler
+    document.addEventListener('input', (e) => {
+        if (e.target.classList.contains('form-textarea') && e.target.maxLength === 200) {
+            const msg = e.target.parentNode.querySelector('.char-limit-msg');
+            if (msg) {
+                if (e.target.value.length >= 200) {
+                    msg.style.display = 'block';
+                    msg.textContent = '* Characters are more than 200';
+                } else {
+                    msg.style.display = 'none';
+                }
+            }
+        }
+    });
+
     let formCount = 0;
 
     // Initialize
@@ -402,7 +417,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
                 <div class="form-group">
                     <label class="form-label">Image Description</label>
-                    <textarea class="form-textarea" name="text" placeholder="Text area..."></textarea>
+                    <textarea class="form-textarea" name="text" placeholder="gallery description..." rows="3" maxlength="200"></textarea>
+                    <div class="char-limit-msg" style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic">* Characters are more than 200</div>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Upload Images</label>
