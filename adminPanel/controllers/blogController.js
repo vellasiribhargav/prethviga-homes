@@ -35,8 +35,9 @@ const getBlogsList = async (req, res) => {
   try {
     const slug = req.params.slug || "discoverUs";
     const section = req.params.section || "blogs-card";
-    const config = BLOG_CONFIG[slug] || { collection: collection, slug: slug };
-    const collection = mongoose.connection.db.collection(config.collection);
+    const collectionName = BLOG_CONFIG[slug]?.collection || slug;
+    const collection = mongoose.connection.db.collection(collectionName);
+    const config = BLOG_CONFIG[slug] || { collection: collectionName, slug: slug };
 
     const data = await collection.findOne({
       page_slug: config.slug,
@@ -79,8 +80,9 @@ const getBlogsList = async (req, res) => {
 const getBlogs = async (req, res) => {
   try {
     const { slug, section } = req.params;
-    const config = BLOG_CONFIG[slug] || { collection: collection, slug: slug };
-    const collection = mongoose.connection.db.collection(config.collection);
+    const collectionName = BLOG_CONFIG[slug]?.collection || slug;
+    const collection = mongoose.connection.db.collection(collectionName);
+    const config = BLOG_CONFIG[slug] || { collection: collectionName, slug: slug };
 
     const data = await collection.findOne({
       page_slug: config.slug,
@@ -97,8 +99,9 @@ const addBlogs = async (req, res) => {
   try {
     const { slug, section } = req.params;
     const blogArr = JSON.parse(req.body.blogArr || '[]');
-    const config = BLOG_CONFIG[slug] || { collection: collection, slug: slug };
-    const collection = mongoose.connection.db.collection(config.collection);
+    const collectionName = BLOG_CONFIG[slug]?.collection || slug;
+    const collection = mongoose.connection.db.collection(collectionName);
+    const config = BLOG_CONFIG[slug] || { collection: collectionName, slug: slug };
 
     const blogs = blogArr.map((b, i) => {
       const file = req.files.find(f => f.fieldname === `file_${i}`);
@@ -128,8 +131,9 @@ const addBlogs = async (req, res) => {
 const updateBlog = async (req, res) => {
   try {
     const { slug, section, index } = req.params;
-    const config = BLOG_CONFIG[slug] || { collection: collection, slug: slug };
-    const collection = mongoose.connection.db.collection(config.collection);
+    const collectionName = BLOG_CONFIG[slug]?.collection || slug;
+    const collection = mongoose.connection.db.collection(collectionName);
+    const config = BLOG_CONFIG[slug] || { collection: collectionName, slug: slug };
 
     const updateFields = {};
     if (req.body.title) updateFields[`page_content.${index}.blog_text`] = req.body.title;
@@ -160,8 +164,9 @@ const updateBlog = async (req, res) => {
 const deleteBlog = async (req, res) => {
   try {
     const { slug, section, index } = req.params;
-    const config = BLOG_CONFIG[slug] || { collection: 'discoverUs', slug: slug };
-    const collection = mongoose.connection.db.collection(config.collection);
+    const collectionName = BLOG_CONFIG[slug]?.collection || slug;
+    const collection = mongoose.connection.db.collection(collectionName);
+    const config = BLOG_CONFIG[slug] || { collection: collectionName, slug: slug };
 
     const page = await collection.findOne({
       page_slug: config.slug,

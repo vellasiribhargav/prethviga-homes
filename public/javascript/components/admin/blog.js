@@ -87,11 +87,26 @@ document.addEventListener('DOMContentLoaded', function () {
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
-                msg.style.display = 'none';   // hide error when file selected
+                if (msg) msg.style.display = 'none';   // hide error when file selected
                 handleImageUpload(file, uploadBtn);
             }
         });
     }
+
+    // Character limit message handler
+    document.addEventListener('input', (e) => {
+        if (e.target.classList.contains('form-textarea') && e.target.maxLength === 200) {
+            const msg = e.target.parentNode.querySelector('.char-limit-msg');
+            if (msg) {
+                if (e.target.value.length >= 200) {
+                    msg.style.display = 'block';
+                    msg.textContent = '* Characters are more than 200';
+                } else {
+                    msg.style.display = 'none';
+                }
+            }
+        }
+    });
 
     function handleImageUpload(file, uploadBtn) {
         if (file.size > 2 * 1024 * 1024) {
@@ -137,47 +152,36 @@ document.addEventListener('DOMContentLoaded', function () {
             e.preventDefault();
 
             const allForms = document.querySelectorAll('.content-card');
-            const allFormData = [];
+            const invalidFormIndices = [];
+            for (let i = 0; i < allForms.length; i++) {
+                const form = allForms[i];
+                if (!validateForm(form)) {
+                    invalidFormIndices.push(i);
+                }
+            }
 
-            let allValid = true;
+            if (invalidFormIndices.length > 0) {
+                const firstInvalid = invalidFormIndices[0];
+                window.currentFormIndex = firstInvalid;
+                allForms.forEach(f => f.style.display = 'none');
+                allForms[firstInvalid].style.display = 'block';
+                updateSubmitButtonsVisibility();
+                updateNavigationButtons();
+
+                const invalidNumbers = invalidFormIndices.map(i => i + 1).join(', ');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Validation Error',
+                    text: `Please check the following forms for missing fields: ${invalidNumbers}`,
+                    confirmButtonColor: '#BC5322'
+                });
+                return;
+            }
 
             for (let i = 0; i < allForms.length; i++) {
                 const form = allForms[i];
                 const tempFormData = getFormData(form);
-
-
-
-                // Validate text inputs (inline messages)
-                const isFormValid = validateForm(form);
-                if (!isFormValid) {
-                    allValid = false;
-                }
-
-                // Check if image is missing
-                const uploadedImage = form.querySelector('.uploaded-image img');
-                const fileMsg = form.querySelector('.required-message-file');
-                if (!uploadedImage) {
-                    if (fileMsg) fileMsg.style.display = 'block';
-                    allValid = false;
-                } else {
-                    if (fileMsg) fileMsg.style.display = 'none';
-                }
-
-                if (isFormValid && uploadedImage && allValid) {
-                    allFormData.push(tempFormData);
-                }
-            }
-
-            if (!allValid || allFormData.length === 0) {
-                if (allFormData.length === 0 && allValid) {
-                    Swal.fire({
-                        icon: 'info',
-                        title: 'Empty Forms',
-                        text: 'Please fill in at least one blog form.',
-                        confirmButtonColor: '#BC5322'
-                    });
-                }
-                return;
+                allFormData.push(tempFormData);
             }
 
             if (allFormData.length > 0) {
@@ -625,7 +629,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 
                 <div class="form-group">
                     <label class="form-label">Blog Description</label>
-                    <textarea class="form-textarea" name="blog_description" placeholder="Text area..."></textarea>
+                    <textarea name="blog_description" class="form-textarea" placeholder="blog description..." rows="3" maxlength="200"></textarea>
+                    <div class="char-limit-msg" style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic">* Characters are more than 200</div>
                 </div>
             </div>
             

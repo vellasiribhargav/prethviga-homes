@@ -80,7 +80,8 @@ html(lang='en')
               // Project Summary
               .form-group
                 label.form-label Project Summary
-                input.form-input(type='text' name='project-summary' placeholder='Text area....')
+                textarea.form-textarea(name="project-summary", placeholder='project summary...', rows="3" maxlength="200")
+                .char-limit-msg(style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic") * Characters are more than 200
             
             // Submit Button
             .submit-section
