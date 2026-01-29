@@ -328,11 +328,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     <p class="item-project"><strong>Project:</strong> ${projectName} - ${projectLoc}</p>
                 </div>
             </div>
-            <div class="item-actions">
-                 <button class="delete-btn" style="background: none; border: none; cursor: pointer; color: #dc3545;">
-                    <span class="material-symbols-outlined">delete</span>
-                </button>
-            </div>
         `;
 
         addedItemsList.appendChild(div);
@@ -595,19 +590,33 @@ document.addEventListener('DOMContentLoaded', function () {
         const finalGalleryArr = [];
         let validFormsCount = 0;
 
+        // 1. Validate all forms first
+        const invalidFormIndices = [];
+        for (let i = 0; i < formsCache.length; i++) {
+            if (!validateForm(formsCache[i])) {
+                invalidFormIndices.push(i);
+            }
+        }
+
+        // 2. If any are invalid, show alert and navigate to the first one
+        if (invalidFormIndices.length > 0) {
+            const firstInvalid = invalidFormIndices[0];
+            showForm(firstInvalid);
+            window.currentFormIndex = firstInvalid;
+
+            const invalidNumbers = invalidFormIndices.map(i => i + 1).join(', ');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Validation Error',
+                text: `Please check the following forms for missing fields: ${invalidNumbers}`,
+                confirmButtonColor: '#BC5322'
+            });
+            return;
+        }
+
+        // 3. Collect data if all are valid
         for (let i = 0; i < formsCache.length; i++) {
             const form = formsCache[i];
-
-
-
-            if (!validateForm(form)) {
-                // Determine index
-                const realIndex = formsCache.indexOf(form);
-                showForm(realIndex);
-                window.currentFormIndex = realIndex;
-                return;
-            }
-
             const data = getFormData(form);
             const selectedProjectData = getSelectedProjectData(data.projectType, data.selectedProject);
 

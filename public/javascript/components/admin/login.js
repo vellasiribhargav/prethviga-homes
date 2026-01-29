@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!loginForm) return;
 
     const fields = [
-        { id: 'username', message: '* username is required', pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, patternMessage: '* Invalid username format' },
+        { id: 'username', message: '* username is required', pattern: /^[a-zA-Z0-9._%+-]+@(gmail)\.com$/, patternMessage: '* Invalid username format' },
         { id: 'password', message: '* Password is required' }
     ];
 
@@ -31,14 +31,20 @@ document.addEventListener('DOMContentLoaded', function () {
         return null;
     }
 
-    // Autofill username from cookie
+    /*
+    // Autofill username from cookie ONLY if it looks like a valid email
     const rememberedUsername = getCookie('remembered_admin_username');
     if (rememberedUsername) {
-        const usernameInput = document.getElementById('username');
-        if (usernameInput) {
-            usernameInput.value = rememberedUsername;
+        // Simple regex to check if it's an email (doesn't have to be gmail specifically for the check)
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (emailPattern.test(rememberedUsername)) {
+            const usernameInput = document.getElementById('username');
+            if (usernameInput) {
+                usernameInput.value = rememberedUsername;
+            }
         }
     }
+    */
 
     // Create and append message elements
     fields.forEach(({ id, message }) => {
