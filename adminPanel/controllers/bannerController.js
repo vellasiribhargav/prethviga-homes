@@ -61,7 +61,9 @@ const getBannersList = async (req, res) => {
       title: 'Banner Management',
       banners,
       slug,
-      activeLink: 'banner'
+      activeLink: 'banner',
+      rowsPerPage: 5,
+      rowsPerPageOptions: [5, 10]
     });
   } catch (error) {
     console.error('Error fetching banners:', error);

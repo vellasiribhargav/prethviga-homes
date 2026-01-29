@@ -59,7 +59,9 @@ const getBlogsList = async (req, res) => {
       blogs,
       slug,
       section,
-      activeLink: 'blog'
+      activeLink: 'blog',
+      rowsPerPage: 5,
+      rowsPerPageOptions: [5, 10]
     });
   } catch (error) {
     console.error('Error fetching blogs:', error);

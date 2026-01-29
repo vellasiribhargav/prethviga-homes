@@ -34,7 +34,9 @@ const getcompletedGallery = async (req, res) => {
         res.render('admin/completed_projects', {
             title: 'Completed Projects',
             projects,
-            activeLink: 'completed'
+            activeLink: 'completed',
+            rowsPerPage: 5,
+            rowsPerPageOptions: [5, 10]
         });
     } catch (error) {
         console.error('Error fetching details:', error);

@@ -29,7 +29,9 @@ const getupcomingGallery = asyncHandler(async (req, res) => {
     res.render('admin/upcoming_projects', {
         title: 'Upcoming Projects',
         projects,
-        activeLink: 'upcoming'
+        activeLink: 'upcoming',
+        rowsPerPage: 5,
+        rowsPerPageOptions: [5, 10]
     });
 });
 
