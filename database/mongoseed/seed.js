@@ -37,27 +37,21 @@ const seedMongoDB = async () => {
                 "page_content": [
                     {
                         "profile_image": `${process.env.PROJECT_URL}assets/images/home-profile.webp`,
-                        "reviewer": `Outstanding work!
-                        They completed out commercial building ahead of schedule and
-                        the quality exceeded our expectations. Highly professional team.`,
+                        "reviewer": `At Prethviga, we don’t just construct buildings—we create lasting value through quality, integrity, and innovation. Every project reflects our promise of excellence and timely delivery.`,
                         "user_name": "John Davidson",
-                        "user_role": "CEO, Davidson Enterprices"
+                        "user_role": "CEO, Prethviga"
                     },
                     {
                         "profile_image": `${process.env.PROJECT_URL}assets/images/home-profile.webp`,
-                        "reviewer": `Outstanding work!
-                        They completed out commercial building ahead of schedule and
-                        the quality exceeded our expectations. Highly professional team.`,
+                        "reviewer": `Prethviga was founded with a clear vision: to build spaces that stand strong, serve people, and shape the future. Our journey is driven by trust, craftsmanship, and commitment.`,
                         "user_name": "John Davidson",
-                        "user_role": "CEO, Davidson Enterprices"
+                        "user_role": "CEO, Prethviga"
                     },
                     {
                         "profile_image": `${process.env.PROJECT_URL}assets/images/home-profile.webp`,
-                        "reviewer": `Excellent  work!
-                        They completed our commercial building ahead of schedule and
-                        the quality exceeded our excpectations. Highly professional team.`,
+                        "reviewer": `Strong financial discipline and transparent practices are the backbone of Prethviga sustainable growth. We ensure every project delivers value, efficiency, and long-term returns.`,
                         "user_name": "John Davidson",
-                        "user_role": "CEO, Davidson Enterprises"
+                        "user_role": "CFO, Prethviga"
                     }
 
                 ]
@@ -245,23 +239,26 @@ const seedMongoDB = async () => {
                 "page_section": "faq-section-header",
                 "page_content": [
                     {
-                        "question": "How long does a typical construction project take?",
-                        "answer": `The duration varies based on project complexity and scale. Residential projects
-                        typically take 8-14 months, while commercial developments may require 12-24 months. We
-                        provide detailed timelines during project planning.`,
+                        "question": "1. What types of construction projects does Prethviga Homes undertake?",
+                        "answer": `Prethviga Homes specializes in residential construction, including individual houses, villas, apartments, and renovation projects.`,
                     },
                     {
-                        "question": "What types of projects do you specialize in?",
-                        "answer": `We specialize in residential condominiums, luxury estates, commercial buildings, and
-                        mixed-use developments. Our portfolio includes projects ranging from boutique apartments
-                        to large-scale residential complexes.`,
+                        "question":  "2. How does Prethviga Homes ensure construction quality?",
+                        "answer": `We follow strict quality standards, use premium materials, and conduct regular inspections at every stage of construction.`,
                     },
                     {
-                        "question": "Do you offer warranties on completed projects?",
-                        "answer": `Yes, all our projects come with comprehensive warranties covering structural integrity,
-                        workmanship, and materials. We offer 10-year structural warranties and 2-year warranties
-                        on finishes and fittings.`,
+                        "question": "3. Does Prethviga Homes deliver projects on time?",
+                        "answer": `Yes, timely delivery is a core commitment. We use structured planning and efficient project management to meet agreed timelines.`,
+                    },
+                     {
+                        "question": "4. Are pricing and agreements transparent?",
+                        "answer": `Absolutely. We provide clear cost estimates, detailed agreements, and regular updates to ensure complete transparency.`,
+                    },
+                     {
+                        "question": "5. Can I customize my home design with Prethviga Homes?",
+                        "answer": `Yes, we offer design flexibility and customization options to match your lifestyle, preferences, and budget.`,
                     }
+
                 ]
             },
         ]
