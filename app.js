@@ -96,6 +96,22 @@ app.get('/admin', (req, res) => {
 // app.use("/policy", policyfileRoutes);
 // app.use("/assetsForSale", assetsForSaleRoutes);
 // app.use("/file", fileRoutes);
+
+app.use(helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:", "blob:"],
+        connectSrc: ["'self'"],
+        fontSrc: ["'self'", "data:"],
+      },
+    },
+    crossOriginEmbedderPolicy: false,
+  })
+);
+
 app.use("/", homeRoutes);
 app.use('/home', homeRoutes);
 app.use("/ProjectPage", projectsRoutes);
