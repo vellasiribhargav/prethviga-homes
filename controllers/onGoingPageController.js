@@ -47,6 +47,11 @@ const getonGoingPageData = async (req, res) => {
     }
 
     const frequencyData = onGoingPageData.find(item => item.page_section === 'faq-items-container')?.page_content || [];
+
+    const blogDataRaw = onGoingPageData.find(item => item.page_section === 'blogs-card')?.page_content || [];
+
+    const blogData = blogDataRaw.map(blog => ({ ...blog, blog_date: formatDateForDisplay(blog.blog_date, true) }));
+
     res.render('OnGoingPage', {
       projectData,
       projectDetails, // Pass the found project details
@@ -55,7 +60,8 @@ const getonGoingPageData = async (req, res) => {
       amenityData,
       locationData,
       galleryData,
-      frequencyData
+      frequencyData,
+      blogData
     });
   } catch (error) {
     console.error('Error fetching OnGoingPage data:', error);
@@ -67,7 +73,8 @@ const getonGoingPageData = async (req, res) => {
       amenityData: [],
       locationData: [],
       galleryData: [],
-      frequencyData: []
+      frequencyData: [],
+      blogData: []
     });
   }
 };

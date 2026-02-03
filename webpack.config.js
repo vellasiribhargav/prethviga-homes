@@ -13,14 +13,19 @@ module.exports = env => {
 			OnGoingPage: "./public/javascript/OnGoingPage.js",
 			ProjectPage: "./public/javascript/ProjectPage.js",
 			discoverUs: "./public/javascript/discoverUs.js",
+			BlogPage: "./public/javascript/BlogPage.js",
 
 			// Admin entries
 			upcoming: "./public/javascript/admin/upcoming.js",
 			upcoming_projects: "./public/javascript/admin/upcoming_projects.js",
 			gallery: "./public/javascript/admin/gallery.js",
+			gallery_list: "./public/javascript/admin/gallery_list.js",
 			completed: "./public/javascript/admin/completed.js",
+			completed_projects: "./public/javascript/admin/completed_projects.js",
 			banner: "./public/javascript/admin/banner.js",
+			banner_list: "./public/javascript/admin/banner_list.js",
 			blog: "./public/javascript/admin/blog.js",
+			blog_list: "./public/javascript/admin/blog_list.js",
 			contacts_list: './public/javascript/admin/contacts_list.js',
 			login: './public/javascript/admin/login.js'
 		},

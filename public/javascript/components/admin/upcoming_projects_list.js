@@ -30,7 +30,8 @@ document.addEventListener('DOMContentLoaded', function () {
         tableBodySelector: '.data-table tbody',
         paginationContainerSelector: '.pagination',
         footerInfoSelector: '.footer-info span',
-        rowsPerPage: 5
+        rowsPerPage: 5,
+        storageKey: 'rowsPerPage_upcoming'
     });
 
     // Modal Functions

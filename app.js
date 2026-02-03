@@ -9,7 +9,7 @@ const cors = require("cors");
 const createError = require("http-errors");
 const helmet = require("helmet");
 const mongoose = require("mongoose");
-const config = require("./config/config");
+const config = require("./config/config.js");
 const homeRoutes = require("./routes/homeRoutes");
 const projectsRoutes = require("./routes/projectsRoutes");
 const onGoingPageRoutes = require("./routes/onGoingPageRoutes");
@@ -98,18 +98,19 @@ app.get('/admin', (req, res) => {
 // app.use("/file", fileRoutes);
 
 app.use(helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        imgSrc: ["'self'", "data:", "blob:"],
-        connectSrc: ["'self'"],
-        fontSrc: ["'self'", "data:"],
-      },
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.quilljs.com"],
+      scriptSrcAttr: ["'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.quilljs.com"],
+      imgSrc: ["'self'", "data:", "blob:"],
+      connectSrc: ["'self'"],
+      fontSrc: ["'self'", "data:"],
     },
-    crossOriginEmbedderPolicy: false,
-  })
+  },
+  crossOriginEmbedderPolicy: false,
+})
 );
 
 app.use("/", homeRoutes);
@@ -119,7 +120,7 @@ app.use("/OnGoingPage", onGoingPageRoutes);
 app.use("/discoverUs", discoverUsRoutes);
 app.use('/', contactRoutes);
 
-// Admin Auth Routes (unprotected)
+// Admin Auth Routes
 app.use('/admin', adminAuthRoutes);
 
 // Protected Admin Routes
@@ -150,7 +151,7 @@ app.use(
 app.get("/", (req, res) => {
   res.setHeader(
     "Content-Security-Policy",
-    "default-src 'self' data: https://cdnjs.cloudflare.com; script-src 'self' https://code.jquery.com; style-src  'self' 'unsafe-inline'  https://cdnjs.cloudflare.com; img-src 'self' data: ;"
+    "default-src 'self' data:; script-src 'self' 'unsafe-inline' https://cdn.quilljs.com; script-src-attr 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.quilljs.com; font-src 'self' data:; img-src 'self' data: blob:;"
   );
   res.setHeader(
     "Strict-Transport-Security",
@@ -162,7 +163,7 @@ app.get("/", (req, res) => {
 app.get("/:cat/:slug", (req, res, next) => {
   res.setHeader(
     "Content-Security-Policy",
-    "default-src 'self' data: https://cdnjs.cloudflare.com; script-src 'self' https://code.jquery.com; style-src  'self' 'unsafe-inline'  https://cdnjs.cloudflare.com; img-src 'self' data: ;"
+    "default-src 'self' data:; script-src 'self' 'unsafe-inline' https://cdn.quilljs.com; script-src-attr 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.quilljs.com; font-src 'self' data:; img-src 'self' data: blob:;"
   );
 
   res.setHeader(
@@ -188,7 +189,7 @@ app.get("/:cat/:slug", (req, res, next) => {
 app.get("/:slug", async (req, res, next) => {
   res.setHeader(
     "Content-Security-Policy",
-    "default-src 'self' data: https://cdnjs.cloudflare.com; script-src 'self' https://code.jquery.com; style-src  'self' 'unsafe-inline'  https://cdnjs.cloudflare.com; img-src 'self' data: ;"
+    "default-src 'self' data:; script-src 'self' 'unsafe-inline' https://cdn.quilljs.com; script-src-attr 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.quilljs.com; font-src 'self' data:; img-src 'self' data: blob:;"
   );
 
   res.setHeader(
@@ -200,7 +201,7 @@ app.get("/:slug", async (req, res, next) => {
 
   const fileName = path.basename(slug);
 
-  if (slug === "login" || slug === "upload" || slug === "assetsale_upload" || slug === "OnGoingPage" || slug === "admin") {
+  if (slug === "login" || slug === "upload" || slug === "assetsale_upload" || slug === "OnGoingPage" || slug === "admin" || slug === "BlogPage") {
     return next();
   }
 

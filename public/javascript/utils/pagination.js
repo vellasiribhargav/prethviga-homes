@@ -4,7 +4,8 @@ export class PaginationManager {
         this.paginationContainer = document.querySelector(options.paginationContainerSelector);
         this.footerInfo = document.querySelector(options.footerInfoSelector);
         this.rowsPerPageOptions = options.rowsPerPageOptions || [5, 10];
-        this.rowsPerPage = parseInt(localStorage.getItem('adminRowsPerPage')) || options.rowsPerPage || 5;
+        this.storageKey = options.storageKey || 'adminRowsPerPage';
+        this.rowsPerPage = parseInt(localStorage.getItem(this.storageKey)) || options.rowsPerPage || 5;
 
         // Ensure elements exist
         if (!this.tableBody || !this.paginationContainer) {
@@ -73,7 +74,7 @@ export class PaginationManager {
         const select = rowsSelectorWrapper.querySelector('select');
         select.onchange = (e) => {
             this.rowsPerPage = parseInt(e.target.value);
-            localStorage.setItem('adminRowsPerPage', this.rowsPerPage);
+            localStorage.setItem(this.storageKey, this.rowsPerPage);
             this.currentPage = 1;
             this.calculateTotalPages();
             this.render();

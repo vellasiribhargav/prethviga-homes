@@ -1,7 +1,5 @@
 import Swal from 'sweetalert2';
 
-
-
 document.addEventListener('DOMContentLoaded', function () {
     const addMoreBtn = document.querySelector('.add-more-btn');
     const formContainer = document.querySelector('.form-container');

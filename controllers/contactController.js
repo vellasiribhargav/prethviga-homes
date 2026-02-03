@@ -1,4 +1,4 @@
-const {knex:db} = require("../config/mysql");
+const { knex: db } = require("../config/mysql");
 
 class contactFunction {
     async createContact(req, res) {
@@ -9,12 +9,12 @@ class contactFunction {
             if (existContact) {
                 return res.json({ success: false, message: 'User already exists' });
             }
-            
+
             await db('contact').insert({ name, address, phone, email });
             
             res.json({ success: true, message: 'Contact saved successfully' });
         } catch (error) {
-            console.log(error,'error in contact insert');
+            console.log(error, 'error in contact insert');
             res.json({ success: false, message: 'Server error' });
         }
     }

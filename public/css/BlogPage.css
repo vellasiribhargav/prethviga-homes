@@ -1,0 +1,219 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: 'Inter', sans-serif;
+}
+
+.Blog-hero {
+	position: relative;
+	width: 100%;
+	min-height: 70vh;
+	display: flex;
+	align-items: center;
+	padding: 40px 10%;
+}
+
+.Blog-hero .Hero-content {
+	max-width: 1000px;
+	display: flex;
+	flex-direction: column;
+	gap: 30px;
+}
+
+.Blog-hero .Hero-content .Badge {
+	width: fit-content;
+	padding: 10px 20px;
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.2);
+	backdrop-filter: blur(10px);
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	color: #fff;
+	font-weight: 600;
+	text-transform: uppercase;
+	font-size: 12px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+
+.Blog-hero .Hero-content .Badge:hover {
+	background: rgba(255, 255, 255, 0.3);
+}
+
+.Blog-hero .Hero-content .Title {
+	font-size: clamp(32px, 6vw, 56px);
+	color: #fff;
+	line-height: 1.1;
+	font-weight: 800;
+}
+
+.Blog-hero .Hero-content .Meta-data {
+	display: flex;
+	align-items: center;
+	gap: 15px;
+	flex-wrap: wrap;
+	color: #fff;
+	font-size: 15px;
+	font-weight: 500;
+}
+
+.Blog-hero .Hero-content .Meta-data .dot {
+	width: 6px;
+	height: 6px;
+	background: #fff;
+	border-radius: 50%;
+	opacity: 0.6;
+}
+
+.Blog-container {
+	padding: 60px 20px;
+	display: flex;
+	justify-content: center;
+}
+
+.Blog-container .Blog-article {
+	max-width: 850px;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 28px;
+}
+
+.Blog-container .Blog-article .blog-rich-content {
+	font-size: 18px;
+	line-height: 1.8;
+	color: #364153;
+}
+
+.Blog-container .Blog-article .blog-rich-content p {
+	margin-bottom: 32px;
+}
+
+.Blog-container .Blog-article .blog-rich-content p:empty,
+.Blog-container .Blog-article .blog-rich-content p:has(> br:only-child) {
+	display: none;
+}
+
+.Blog-container .Blog-article .blog-rich-content h1,
+.Blog-container .Blog-article .blog-rich-content h2,
+.Blog-container .Blog-article .blog-rich-content h3 {
+	margin-top: 60px;
+	margin-bottom: 32px;
+	color: #0a0a0a;
+	font-weight: 700;
+	line-height: 1.3;
+}
+
+.Blog-container .Blog-article .blog-rich-content h1 {
+	font-size: clamp(28px, 5vw, 40px);
+}
+
+.Blog-container .Blog-article .blog-rich-content h2 {
+	font-size: clamp(24px, 4vw, 32px);
+}
+
+.Blog-container .Blog-article .blog-rich-content h3 {
+	font-size: clamp(20px, 3vw, 24px);
+}
+
+.Blog-container .Blog-article .blog-rich-content ul,
+.Blog-container .Blog-article .blog-rich-content ol {
+	margin-bottom: 24px;
+	padding-left: 20px;
+}
+
+.Blog-container .Blog-article .blog-rich-content li {
+	margin-bottom: 12px;
+}
+
+.Blog-container .Blog-article .Action-Area {
+	padding: 8px 0;
+	border-top: 1px solid #c1834e;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.Blog-container .Blog-article .Action-Area .backBtn {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+
+.Blog-container .Blog-article .Action-Area .backBtn:hover {
+	opacity: 0.7;
+}
+
+.Blog-container .Blog-article .Action-Area .backBtn button a {
+	font-size: 16px;
+	font-weight: 600;
+	color: #c1834e;
+	border: none;
+	background: transparent;
+	cursor: pointer;
+	text-decoration: none;
+}
+
+.Blog-container .Blog-article .Action-Area .ShareContainer {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.Blog-container .Blog-article .Action-Area .ShareContainer .shareText {
+	font-size: 16px;
+	font-weight: 600;
+	color: #4a5565;
+}
+
+.Blog-container .Blog-article .Action-Area .ShareContainer .Icon-container {
+	background-color: rgba(193, 131, 78, 0.1);
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+
+.Blog-container .Blog-article .Action-Area .ShareContainer .Icon-container:hover {
+	background-color: #c1834e;
+}
+
+.Blog-container .Blog-article .Action-Area .ShareContainer .Icon-container:hover svg path {
+	fill: #fff;
+}
+
+.Blog-container .Blog-article .Action-Area .ShareContainer .Icon-container span {
+	display: flex;
+}
+
+@media (max-width: 768px) {
+	.Blog-hero {
+		min-height: 450px;
+		padding: 40px 20px;
+	}
+
+	.Blog-container {
+		padding: 40px 20px;
+	}
+
+	.Blog-container .Blog-article {
+		gap: 30px;
+	}
+
+	.Blog-container .Blog-article .Action-Area {
+		flex-direction: column;
+		gap: 25px;
+		align-items: flex-start;
+	}
+
+	.Blog-container .Blog-article .Action-Area .ShareContainer {
+		width: 100%;
+		justify-content: space-between;
+	}
+}

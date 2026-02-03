@@ -1,0 +1,51 @@
+doctype html
+head
+  meta(charset='UTF-8')
+  meta(name='viewport' content='width=device-width, initial-scale=1.0')
+  title Innovative Materials | Prethviga Homes
+  link(rel='stylesheet' href=utils.assetPath("/bundle/BlogPage.css"))
+if blog
+  - var bannerUrl = blog.inner_img || (bannerData && bannerData.length > 0 ? bannerData[0].image : '/assets/images/blog1.webp')
+  - var bannerStyle = `background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('${bannerUrl}') center/cover no-repeat;`
+  header.Blog-hero(style=bannerStyle)
+    .Hero-content
+      button.Badge #{blog.badge_text || 'Innovation'}
+      h1.Title #{blog.blog_text || 'Innovative Materials Revolutionizing Modern Construction'}
+      .Meta-data
+        span.Author Prethviga Homes Team
+        span.dot
+        span.Date #{blog.blog_date ? new Date(blog.blog_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'January 28, 2026'}
+        span.dot
+        span.ReadTime #{blog.timeToRead || '5'} min read
+  main.Blog-container
+    article.Blog-article
+      .blog-rich-content!= blog.blog_content
+      .Action-Area
+        .backBtn
+          span
+            svg(width='7' height='12' viewbox='0 0 7 12' fill='none' xmlns='http://www.w3.org/2000/svg')
+              path(d='M6 11L1 6L6 1' stroke='#C1834E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+          button
+            a(href="/discoverUs") Back to Blog
+        .ShareContainer
+          span.shareText Share
+          .Icon-container
+              a(href="https://x.com/" target="_blank")
+                  span
+                      svg(width='20' height='17' viewbox='0 0 20 17' fill='none' xmlns='http://www.w3.org/2000/svg')
+                          path(d='M19.9608 1.93625C19.2121 2.26593 18.4188 2.48354 17.6067 2.58209C18.4618 2.06813 19.102 1.26213 19.4092 0.312921C18.6167 0.775421 17.7383 1.11209 16.8033 1.29959C16.1865 0.639946 15.3691 0.202439 14.478 0.0550055C13.587 -0.0924278 12.6722 0.058463 11.8758 0.484247C11.0793 0.91003 10.4457 1.58688 10.0734 2.40969C9.70104 3.2325 9.6108 4.15523 9.81667 5.03459C6.40833 4.87375 3.38917 3.23625 1.36667 0.762921C0.998995 1.38777 0.80722 2.10044 0.811667 2.82542C0.811667 4.25042 1.53667 5.50292 2.635 6.23875C1.98405 6.21803 1.34748 6.04203 0.778333 5.72542V5.77542C0.777964 6.72241 1.10522 7.64037 1.70459 8.37355C2.30395 9.10673 3.13851 9.60998 4.06667 9.79792C3.46525 9.95907 2.83534 9.98328 2.22333 9.86875C2.48677 10.6838 2.99805 11.3962 3.68585 11.9067C4.37364 12.4171 5.20363 12.7002 6.06 12.7163C4.60961 13.8545 2.81873 14.4723 0.975 14.4704C0.65 14.4704 0.325833 14.4513 0 14.4146C1.87976 15.6182 4.06543 16.2571 6.2975 16.2554C13.8417 16.2554 17.9625 10.0088 17.9625 4.60125C17.9625 4.42625 17.9625 4.25125 17.95 4.07625C18.755 3.49697 19.4494 2.77777 20 1.95292L19.9608 1.93625Z' fill='#C1834E')
+          .Icon-container
+              a(href="https://www.facebook.com/" target="_blank")
+                  span
+                      svg(width='20' height='20' viewbox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg')
+                          path(d='M20 10C20 4.4775 15.5225 0 10 0C4.4775 0 0 4.4775 0 10C0 14.9917 3.65667 19.1283 8.4375 19.8783V12.8908H5.89833V9.99917H8.4375V7.7975C8.4375 5.29167 9.93083 3.90667 12.215 3.90667C13.3083 3.90667 14.4533 4.1025 14.4533 4.1025V6.56333H13.1917C11.9492 6.56333 11.5617 7.33417 11.5617 8.125V10H14.335L13.8917 12.8917H11.5617V19.8792C16.3433 19.1283 20 14.9908 20 10Z' fill='#C1834E')
+          .Icon-container
+              a(href="https://www.linkedin.com/" target="_blank")
+                  span
+                      svg(width='20' height='20' viewbox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg')
+                          path(d='M17.0392 17.0433H14.0775V12.4025C14.0775 11.2958 14.055 9.87167 12.5342 9.87167C10.99 9.87167 10.7542 11.0758 10.7542 12.3208V17.0433H7.7925V7.5H10.6375V8.80083H10.6758C11.0733 8.05083 12.04 7.25917 13.4842 7.25917C16.485 7.25917 17.04 9.23417 17.04 11.805L17.0392 17.0433ZM4.4475 6.19417C3.49417 6.19417 2.72833 5.4225 2.72833 4.47333C2.72833 3.525 3.495 2.75417 4.4475 2.75417C5.3975 2.75417 6.1675 3.525 6.1675 4.47333C6.1675 5.4225 5.39667 6.19417 4.4475 6.19417ZM5.9325 17.0433H2.9625V7.5H5.9325V17.0433ZM18.5208 0H1.47583C0.66 0 0 0.645 0 1.44083V18.5592C0 19.3558 0.66 20 1.47583 20H18.5183C19.3333 20 20 19.3558 20 18.5592V1.44083C20 0.645 19.3333 0 18.5183 0H18.5208Z' fill='#C1834E')
+else
+  .Blog-container
+    h1 Blog not found
+    p The requested blog content is currently unavailable.
+    a(href="/discoverUs") Return to Blogs

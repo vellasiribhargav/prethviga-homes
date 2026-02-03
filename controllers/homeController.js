@@ -11,6 +11,13 @@ const getHomeData = async (req, res) => {
     const techData = homeData.find(item => item.page_section === 'home_tech')?.page_content || [];
     const reviewsData = homeData.find(item => item.page_section === 'reviews')?.page_content || [];
 
+    const blogDataRaw = homeData.find(item => item.page_section === 'blogs-card')?.page_content || [];
+
+    const blogData = blogDataRaw.map(blog => ({
+      ...blog,
+      blog_date: formatDateForDisplay(blog.blog_date, true)
+    }));
+
     // Fetch completed projects from ProjectPage collection
     const completedProjects = (ProjectsData.find(item => item.page_section === 'completed-gallery')?.page_content || []).map(p => ({
       ...p,
@@ -26,7 +33,8 @@ const getHomeData = async (req, res) => {
       bannerReview,
       projectsData: completedProjects,
       techData,
-      reviewsData
+      reviewsData,
+      blogData
     });
   } catch (error) {
     console.error('Error fetching home data:', error);
@@ -35,7 +43,8 @@ const getHomeData = async (req, res) => {
       bannerReview: [],
       projectsData: [],
       techData: [],
-      reviewsData: []
+      reviewsData: [],
+      blogData: []
     });
   }
 };
