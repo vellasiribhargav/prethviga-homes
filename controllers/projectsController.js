@@ -16,11 +16,19 @@ const getProjectsData = async (req, res) => {
     const faqSection = ProjectsData.find(item => item.page_section === 'faq-section-header')?.page_content || [];
     const bannerData = ProjectsData.find(item => item.page_section === 'project-banner')?.page_content || [];
 
+    const blogDataRaw = ProjectsData.find(item => item.page_section === 'blogs-card')?.page_content || [];
+
+    const blogData = blogDataRaw.map(blog => ({
+      ...blog,
+      blog_date: formatDateForDisplay(blog.blog_date, true)
+    }));
+
     res.render('ProjectPage', {
       ongoing,
       completed,
       frequencyData: faqSection,
-      bannerData
+      bannerData,
+      blogData
     });
   } catch (error) {
     console.error('Error fetching ProjectPage data:', error);
@@ -28,7 +36,8 @@ const getProjectsData = async (req, res) => {
       ongoing: [],
       completed: [],
       upcoming: [],
-      frequencyData: []
+      frequencyData: [],
+      blogData: []
     });
   }
 };

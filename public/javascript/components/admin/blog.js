@@ -38,10 +38,42 @@ document.addEventListener('DOMContentLoaded', function () {
             firstForm.dataset.formId = 'form-' + Date.now();
         }
         setupImageUpload(firstForm);
+        initQuill(firstForm);
         addRequiredFieldValidation(firstForm);
         updateSubmitButtonsVisibility();
         updateNavigationButtons();
         updateDeleteButtonsVisibility();
+    }
+
+    function initQuill(formCard) {
+        const editorContainer = formCard.querySelector('.quill-editor');
+        if (!editorContainer) return;
+
+        const quill = new Quill(editorContainer, {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                    ['clean']
+                ]
+            }
+        });
+
+        // Sync with hidden input
+        const contentInput = formCard.querySelector('.content-input');
+        quill.on('text-change', function () {
+            contentInput.value = quill.root.innerHTML;
+            // Hide validation message if content exists
+            const msg = formCard.querySelector('.required-message[data-for="blog_content"]');
+            if (msg && quill.getText().trim().length > 0) {
+                msg.style.display = 'none';
+            }
+        });
+
+        // Store quill instance on the form for easy access
+        formCard.quill = quill;
     }
     // loadExistingBlogs();
 
@@ -178,6 +210,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
+            const allFormData = [];
             for (let i = 0; i < allForms.length; i++) {
                 const form = allForms[i];
                 const tempFormData = getFormData(form);
@@ -254,11 +287,15 @@ document.addEventListener('DOMContentLoaded', function () {
         const publicationDateEl = form.querySelector('input[name="publication-date"]');
         const blogTitleEl = form.querySelector('input[name="blog_title"]');
         const blogDescriptionEl = form.querySelector('textarea[name="blog_description"]');
+        const readTimeEl = form.querySelector('select[name="read_time"]');
+        const linkEl = form.querySelector('input[name="link"]');
 
         const blogTag = blogTagEl ? blogTagEl.value : '';
         const publicationDate = publicationDateEl ? publicationDateEl.value : '';
         const blogTitle = blogTitleEl ? blogTitleEl.value : '';
         const blogDescription = blogDescriptionEl ? blogDescriptionEl.value : '';
+        const readTime = readTimeEl ? readTimeEl.value : '';
+        const blogContent = form.quill ? form.quill.root.innerHTML : '';
 
         const uploadedImage = form.querySelector('.uploaded-image img');
         const coverImage = uploadedImage ? uploadedImage.src : null;
@@ -270,6 +307,8 @@ document.addEventListener('DOMContentLoaded', function () {
             publicationDate,
             blogTitle,
             blogDescription,
+            readTime,
+            blogContent,
             coverImage,
             file
         };
@@ -280,15 +319,19 @@ document.addEventListener('DOMContentLoaded', function () {
             { selector: 'input[name="blog_tag"]', name: 'blog_tag', message: '* Blog tag is required' },
             { selector: 'input[name="publication-date"]', name: 'publication-date', message: '* Publication date is required' },
             { selector: 'input[name="blog_title"]', name: 'blog_title', message: '* Blog title is required' },
-            { selector: 'textarea[name="blog_description"]', name: 'blog_description', message: '* Blog description is required' }
+            { selector: 'textarea[name="blog_description"]', name: 'blog_description', message: '* Blog description is required' },
+            { selector: 'select[name="read_time"]', name: 'read_time', message: '* Read time is required' },
+            { selector: '.content-input', name: 'blog_content', message: '* Blog content is required' }
         ];
 
         conf.forEach(({ selector, name, message }) => {
             const input = form.querySelector(selector);
             if (!input) return;
 
+            const container = input.closest('.form-group') || input.parentNode;
+
             // Remove existing if any
-            const existingMsg = input.parentNode.querySelector(`.required-message[data-for="${name}"]`);
+            const existingMsg = container.querySelector(`.required-message[data-for="${name}"]`);
             if (existingMsg) existingMsg.remove();
 
             const msg = document.createElement('div');
@@ -297,7 +340,7 @@ document.addEventListener('DOMContentLoaded', function () {
             msg.textContent = message;
             msg.style.cssText = 'font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic';
 
-            input.after(msg);
+            container.appendChild(msg);
 
             input.addEventListener('input', () => {
                 msg.style.display = 'none';
@@ -315,15 +358,24 @@ document.addEventListener('DOMContentLoaded', function () {
             { selector: 'input[name="blog_tag"]', name: 'blog_tag' },
             { selector: 'input[name="publication-date"]', name: 'publication-date' },
             { selector: 'input[name="blog_title"]', name: 'blog_title' },
-            { selector: 'textarea[name="blog_description"]', name: 'blog_description' }
+            { selector: 'textarea[name="blog_description"]', name: 'blog_description' },
+            { selector: 'select[name="read_time"]', name: 'read_time' },
+            { selector: '.content-input', name: 'blog_content' }
         ];
 
         conf.forEach(({ selector, name }) => {
             const input = form.querySelector(selector);
             if (!input) return;
 
-            const msg = input.parentNode.querySelector(`.required-message[data-for="${name}"]`);
-            if (input.value.trim() === '') {
+            const container = input.closest('.form-group') || input.parentNode;
+            const msg = container.querySelector(`.required-message[data-for="${name}"]`);
+
+            let val = input.value.trim();
+            if (name === 'blog_content' && form.quill) {
+                val = form.quill.getText().trim();
+            }
+
+            if (val === '') {
                 if (msg) msg.style.display = 'block';
                 isValid = false;
             } else {
@@ -429,6 +481,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             blogTitle: data.blogTitle || 'Untitled Blog',
             blogDescription: data.blogDescription || 'No description',
+            readTime: data.readTime || '',
+            blogContent: data.blogContent || '',
             coverImage: data.coverImage || null
         };
 
@@ -441,12 +495,18 @@ document.addEventListener('DOMContentLoaded', function () {
         const dateInput = form.querySelector('input[name="publication-date"]');
         const titleInput = form.querySelector('input[placeholder*="Discover Our Story"]');
         const descInput = form.querySelector('textarea[placeholder*="discover us blog content"]');
+        const readTimeInput = form.querySelector('select[name="read_time"]');
+        const linkInput = form.querySelector('input[name="link"]');
         const uploadBtn = form.querySelector('.upload-btn');
 
         if (tagInput) tagInput.value = '';
         if (dateInput) dateInput.value = '';
         if (titleInput) titleInput.value = '';
         if (descInput) descInput.value = '';
+        if (readTimeInput) readTimeInput.value = '';
+        if (form.quill) {
+            form.quill.setContents([]);
+        }
 
         if (uploadBtn && uploadBtn.classList.contains('has-image')) {
             window.removeImage(uploadBtn.querySelector('.remove-image'));
@@ -497,6 +557,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <p class="item-description">${item.blogDescription}</p>
                         <p class="item-tag"><strong>Tag:</strong> ${item.blogTag}</p>
                         <p class="item-date"><strong>Publication Date:</strong> ${item.publicationDate}</p>
+                        <p class="item-read-time"><strong>Read Time:</strong> ${item.readTime || 'N/A'} min</p>
                     </div>
                 </div>
             `;
@@ -549,11 +610,17 @@ document.addEventListener('DOMContentLoaded', function () {
         const dateInput = currentForm.querySelector('input[name="publication-date"]');
         const titleInput = currentForm.querySelector('input[placeholder*="Discover Our Story"]');
         const descInput = currentForm.querySelector('textarea[placeholder*="discover us blog content"]');
+        const readTimeInput = currentForm.querySelector('select[name="read_time"]');
+        const linkInput = currentForm.querySelector('input[name="link"]');
 
         tagInput.value = item.blogTag;
         dateInput.value = item.publicationDate;
         titleInput.value = item.blogTitle;
         descInput.value = item.blogDescription;
+        if (readTimeInput) readTimeInput.value = item.readTime || '';
+        if (linkInput) {
+            linkInput.value = item.link || '';
+        }
 
         if (item.coverImage) {
             const uploadBtn = currentForm.querySelector('.upload-btn');
@@ -617,9 +684,24 @@ document.addEventListener('DOMContentLoaded', function () {
                     </button>
                 </div>
                 
-                <div class="form-group">
-                    <label class="form-label">Publication Date</label>
-                    <input class="form-input" type="date" name="publication-date">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Publication Date</label>
+                        <input class="form-input" type="date" name="publication-date">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Time to read</label>
+                        <select class="form-select" name="read_time">
+                            <option value="" disabled selected>Select time</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                        </select>
+                    </div>
                 </div>
                 
                 <div class="form-group">
@@ -629,8 +711,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 
                 <div class="form-group">
                     <label class="form-label">Blog Description</label>
-                    <textarea name="blog_description" class="form-textarea" placeholder="blog description..." rows="3" maxlength="200"></textarea>
-                    <div class="char-limit-msg" style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic">* Characters are more than 200</div>
+                    <textarea name="blog_description" class="form-textarea" placeholder="blog description..." rows="3" maxlength="500"></textarea>
+                    <div class="char-limit-msg" style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic">* Characters are more than 500</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Content</label>
+                    <div class="quill-editor" style="height: 300px;">
+                        <p></p>
+                    </div>
+                    <input class="content-input" type="hidden" name="blog_content">
                 </div>
             </div>
             
@@ -651,6 +741,7 @@ document.addEventListener('DOMContentLoaded', function () {
         newForm.style.display = 'block';
         formContainer.appendChild(newForm);
 
+        initQuill(newForm);
         setupImageUpload(newForm);
         addRequiredFieldValidation(newForm);
 
@@ -659,7 +750,6 @@ document.addEventListener('DOMContentLoaded', function () {
         updateNavigationButtons();
         updateDeleteButtonsVisibility();
     }
-
     function updateDeleteButtonsVisibility() {
         const forms = document.querySelectorAll('.content-card');
         const deleteBtns = document.querySelectorAll('.delete-form-btn');

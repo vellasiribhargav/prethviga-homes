@@ -17,12 +17,11 @@
   /* background-image: url("../assets/images/blog1.webp"); */
   background-size: cover;
   background-position: center center;
-  background-repeat: no-repeat;
   padding: 146px 368px;
-  animation: background-image-change 10s infinite;
   display: flex;
   justify-content: center;
   margin-top: 80px;
+  animation: background-image-change 10s infinite;
 }
 
 @media (max-width: 1200px) {
@@ -195,28 +194,6 @@
   }
 }
 
-/* Background image animation */
-@keyframes background-image-change {
-  0% {
-    background-image: url("../assets/images/blog1.webp");
-  }
-
-  25% {
-    background-image: url("../assets/images/blog3.webp");
-  }
-
-  50% {
-    background-image: url("../assets/images/blog1.webp");
-  }
-
-  75% {
-    background-image: url("../assets/images/blog3.webp");
-  }
-
-  100% {
-    background-image: url("../assets/images/blog1.webp");
-  }
-}
 
 /* =================================================================
 // 2. Main Project Content

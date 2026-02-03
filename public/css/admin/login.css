@@ -102,7 +102,7 @@ body {
 .form-group .captcha {
   display: flex;
   align-items: baseline;
-  gap: 5px;
+  gap: 10px;
 }
 
 .captcha-container {
@@ -110,6 +110,16 @@ body {
   gap: 5px; 
   align-items: center; 
   margin-bottom: 10px
+}
+
+#captcha-display {
+  background: #f0f0f0; 
+  border-radius: 4px; 
+  padding: 10px; 
+  font-weight: bold; 
+  letter-spacing: 2px; 
+  font-size: 18px; 
+  user-select: none;
 }
 
 .input-with-icon {

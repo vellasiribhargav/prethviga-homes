@@ -5,7 +5,8 @@ html(lang='en')
     meta(name='viewport', content='width=device-width, initial-scale=1.0')
     title Blog Inventory
     link(rel='stylesheet' href=utils.assetPath("/bundle/blog_list.css"))
-    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css")
+    link(href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet")
+    script(src="https://cdn.quilljs.com/1.3.6/quill.js")
 
   body
     - var activeLink = 'blog'
@@ -57,7 +58,9 @@ html(lang='en')
                   th TAG
                   th BLOG TITLE
                   th DESCRIPTION
+                  th DETAILS
                   th DATE
+                  th TIME TO READ
                   th PREVIEW
                   th ACTIONS
               tbody
@@ -68,8 +71,12 @@ html(lang='en')
                        td
                          span.status-badge.badge-upcoming #{b.tag}
                        td.item-name-cell #{b.title}
-                       td #{b.description || 'No description available...'}
+                       td.tooltip-cell(data-tooltip=b.description || 'No description available...')
+                         .cell-text #{b.description || 'No description available...'}
+                       td.tooltip-cell(data-tooltip=b.cleanContent)
+                         .cell-text #{b.contentSnippet}
                        td #{b.date}
+                       td #{b.timeToRead} min read
                        td
                          if b.image
                            button.btn-preview(data-image=b.image)
@@ -91,7 +98,7 @@ html(lang='en')
                                  path(d='M8 3H16C16.55 3 17 3.45 17 4V5H19C19.55 5 20 5.45 20 6C20 6.55 19.55 7 19 7H5C4.45 7 4 6.55 4 6C4 5.45 4.45 5 5 5H7V4C7 3.45 7.45 3 8 3ZM6 9V19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V9H6ZM9 11C9.55 11 10 11.45 10 12V18C10 18.55 9.55 19 9 19C8.45 19 8 18.55 8 18V12C8 11.45 8.45 11 9 11ZM12 11C12.55 11 13 11.45 13 12V18C13 18.55 12.55 19 12 19C11.45 19 11 18.55 11 18V12C11 11.45 11.45 11 12 11ZM15 11C15.55 11 16 11.45 16 12V18C16 18.55 15.55 19 15 19C14.45 19 14 18.55 14 18V12C14 11.45 14.45 11 15 11Z')
                 else
                    tr
-                     td(colspan="7" style="text-align:center; padding: 2rem;") No blogs found.
+                     td(colspan="10" style="text-align:center; padding: 2rem;") No blogs found.
           
           // Table Footer / Pagination
           .table-footer
@@ -105,7 +112,7 @@ html(lang='en')
               button.page-btn 2
               button.page-btn 3
               button.page-btn
-                svg(fill='#000000' height='800px' width='800px' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' xml:space='preserve')
+                svg(fill='#000000' height='24' width='24' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' xml:space='preserve')
                   path(d='M6.8 23.7 L5.4 22.3 L15.7 12 L5.4 1.7 L6.8 0.3 L18.5 12 Z')
     // Modal for Editing
     #itemModal.modal
@@ -132,10 +139,28 @@ html(lang='en')
                     label Publication Date
                     input.form-input(type="date", name="date")
 
+                  .form-group.time
+                    label.form-label Time to read
+                    select.form-select(name='read_time')
+                      option(value='' disabled selected) Select time
+                      option(value='1') 1
+                      option(value='2') 2
+                      option(value='3') 3
+                      option(value='4') 4
+                      option(value='5') 5
+                      option(value='6') 6
+
                   .form-group.full-width
                     label Blog Description
-                    textarea.form-textarea(name="description", rows="3" maxlength="200")
-                    .char-limit-msg(style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic") * Characters are more than 200
+                    textarea.form-textarea(name="description", rows="3" maxlength="500")
+                    .char-limit-msg(style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic") * Characters are more than 500
+
+                  .form-group.full-width
+                    label Blog Content
+                    .content
+                      .quill-editor#edit-quill-editor(style="height: 300px;")
+                        p
+                      input#edit-content-input(type='hidden' name='content')
 
                   .form-group.full-width
                     label Blog Image

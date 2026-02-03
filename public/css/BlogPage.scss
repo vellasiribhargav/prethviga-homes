@@ -1,0 +1,225 @@
+// Variables
+$primary-text: #0a0a0a;
+$secondary-text: #364153;
+$accent-gold: #c1834e;
+$accent-white: #ffffff;
+$bg-gold-light: rgba(193, 131, 78, 0.1); // #C1834E1A
+$max-content-width: 850px;
+$breakpoint-mobile: 768px;
+
+// Mixins
+@mixin flex-center {
+    display: flex;
+    align-items: center;
+}
+
+@mixin transition {
+    transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+// Hero Section
+.Blog-hero {
+    position: relative;
+    width: 100%;
+    min-height: 70vh;
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+        url('../assets/images/blog1.webp') center/cover no-repeat;
+    @include flex-center;
+    padding: 40px 10%;
+
+    .Hero-content {
+        max-width: 1000px;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+
+        .Badge {
+            width: fit-content;
+            padding: 10px 20px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: $accent-white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            cursor: pointer; // Added
+            @include transition;
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.3);
+            }
+        }
+
+        .Title {
+            font-size: clamp(32px, 6vw, 56px);
+            color: $accent-white;
+            line-height: 1.1;
+            font-weight: 800;
+        }
+
+        .Meta-data {
+            @include flex-center;
+            gap: 15px;
+            flex-wrap: wrap;
+            color: $accent-white;
+            font-size: 15px;
+            font-weight: 500;
+
+            .dot {
+                width: 6px;
+                height: 6px;
+                background: $accent-white;
+                border-radius: 50%;
+                opacity: 0.6;
+            }
+        }
+    }
+}
+
+// Blog Content Area
+.Blog-container {
+    padding: 60px 20px;
+    display: flex;
+    justify-content: center;
+
+    .Blog-article {
+        max-width: $max-content-width;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+
+        .Intro-text {
+            font-size: 18px;
+            line-height: 1.8;
+            color: $secondary-text;
+        }
+
+        .Content-section {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+
+            .Section-heading {
+                font-size: clamp(24px, 4vw, 32px);
+                line-height: 1.4;
+                font-weight: 700;
+                color: $primary-text;
+            }
+
+            .Text-block {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+
+                p {
+                    font-size: 18px;
+                    line-height: 1.8;
+                    color: $secondary-text;
+                }
+            }
+        }
+
+        // Footer / Share Area
+        .Action-Area {
+            // margin-top: 20px;
+            padding: 8px 0;
+            border-top: 1px solid $accent-gold;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .backBtn {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+                cursor: pointer; // Added
+                @include transition;
+
+                &:hover {
+                    opacity: 0.7;
+                }
+
+                button {
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: $accent-gold;
+                    border: none;
+                    background: transparent;
+                    cursor: pointer; // Added
+                }
+            }
+
+            .ShareContainer {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+
+                .shareText {
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: #4a5565;
+                }
+
+                .Icon-container {
+                    background-color: $bg-gold-light;
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    @include flex-center;
+                    justify-content: center;
+                    cursor: pointer; // Added
+                    @include transition;
+
+                    &:hover {
+                        background-color: $accent-gold;
+
+                        svg path {
+                            fill: $accent-white; // Icons turn white on hover
+                        }
+                    }
+
+                    span {
+                        display: flex;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Mobile Responsiveness
+@media (max-width: $breakpoint-mobile) {
+    .Blog-hero {
+        min-height: 450px;
+        padding: 40px 20px;
+    }
+
+    .Blog-container {
+        padding: 40px 20px;
+
+        .Blog-article {
+            gap: 30px;
+
+            .Action-Area {
+                flex-direction: column; // Stack button and share icons
+                gap: 25px;
+                align-items: flex-start;
+
+                .ShareContainer {
+                    width: 100%;
+                    justify-content: space-between; // Space out on mobile
+                }
+            }
+        }
+    }
+}

@@ -29,7 +29,31 @@ document.addEventListener('DOMContentLoaded', function () {
         tableBodySelector: '.data-table tbody',
         paginationContainerSelector: '.pagination',
         footerInfoSelector: '.footer-info span',
-        rowsPerPage: 5
+        rowsPerPage: 5,
+        storageKey: 'rowsPerPage_blog'
+    });
+
+    // Initialize Quill for Edit Modal
+    const quill = new Quill('#edit-quill-editor', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                [{ 'header': [1, 2, 3, false] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                ['clean']
+            ]
+        }
+    });
+
+    // Sync with hidden input
+    quill.on('text-change', function () {
+        document.getElementById('edit-content-input').value = quill.root.innerHTML;
+        // Hide validation message
+        const msg = document.querySelector('.required-message[data-for="content"]');
+        if (msg && quill.getText().trim().length > 0) {
+            msg.style.display = 'none';
+        }
     });
 
     function openModal(modal) {
@@ -67,6 +91,7 @@ document.addEventListener('DOMContentLoaded', function () {
             inputs.index.value = index;
             inputs.title.value = blogData.title || '';
             inputs.tag.value = blogData.tag || '';
+            inputs.description.value = blogData.description || '';
 
             // Format date for input[type="date"]
             if (blogData.date) {
@@ -90,7 +115,24 @@ document.addEventListener('DOMContentLoaded', function () {
                 inputs.date.value = '';
             }
 
-            inputs.description.value = blogData.description || '';
+            if (inputs.read_time) {
+                let timeVal = blogData.timeToRead || '';
+                // If it's a string like "4 min read", extract just the "4"
+                if (typeof timeVal === 'string' && timeVal.includes(' ')) {
+                    const match = timeVal.match(/\d+/);
+                    if (match) timeVal = match[0];
+                }
+                inputs.read_time.value = timeVal;
+            }
+
+            // Populate Quill content
+            if (blogData.content) {
+                quill.root.innerHTML = blogData.content;
+                document.getElementById('edit-content-input').value = blogData.content;
+            } else {
+                quill.setContents([]);
+                document.getElementById('edit-content-input').value = '';
+            }
 
             // Reset validation states
             resetValidation(itemForm);
@@ -103,7 +145,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     title: inputs.title.value.trim(),
                     tag: inputs.tag.value.trim(),
                     date: inputs.date.value,
-                    description: inputs.description.value.trim()
+                    description: inputs.description.value.trim(),
+                    read_time: inputs.read_time ? inputs.read_time.value : '',
+                    content: document.getElementById('edit-content-input').value
                 };
             }, 0);
 
@@ -191,39 +235,52 @@ document.addEventListener('DOMContentLoaded', function () {
             { name: 'title', message: '* Blog title is required' },
             { name: 'tag', message: '* Blog tag is required' },
             { name: 'date', message: '* Publication date is required' },
-            { name: 'description', message: '* Blog description is required' }
+            { name: 'description', message: '* Blog description is required' },
+            { name: 'read_time', message: '* Read time is required' },
+            { name: 'content', message: '* Blog content is required' }
         ];
 
         conf.forEach(({ name, message }) => {
             const input = form.querySelector(`[name="${name}"]`);
             if (!input) return;
 
+            const container = input.closest('.form-group') || input.parentNode;
+
             // remove old message
-            if (input.nextElementSibling?.classList.contains('required-message')) {
-                input.nextElementSibling.remove();
+            if (container.querySelector(`.required-message[data-for="${name}"]`)) {
+                container.querySelector(`.required-message[data-for="${name}"]`).remove();
             }
 
             const msg = document.createElement('div');
             msg.className = 'required-message';
+            msg.dataset.for = name;
             msg.textContent = message;
             msg.style.display = 'none';
 
-            input.after(msg);
+            container.appendChild(msg);
 
             input.addEventListener('input', () => msg.style.display = 'none');
+            input.addEventListener('change', () => msg.style.display = 'none');
         });
     }
 
     function validateForm(form) {
         let isValid = true;
-        const fieldNames = ['title', 'tag', 'date', 'description'];
+        const fieldNames = ['title', 'tag', 'date', 'description', 'read_time', 'content'];
 
         fieldNames.forEach(name => {
             const input = form.querySelector(`[name="${name}"]`);
             if (!input) return;
 
-            const msg = input.nextElementSibling;
-            if (input.value.trim() === '') {
+            const container = input.closest('.form-group') || input.parentNode;
+            const msg = container.querySelector(`.required-message[data-for="${name}"]`);
+
+            let val = input.value.trim();
+            if (name === 'content') {
+                val = quill.getText().trim();
+            }
+
+            if (val === '') {
                 if (msg) msg.style.display = 'block';
                 isValid = false;
             } else {
@@ -240,6 +297,8 @@ document.addEventListener('DOMContentLoaded', function () {
             form.tag.value.trim() !== originalFormData.tag ||
             form.date.value !== originalFormData.date ||
             form.description.value.trim() !== originalFormData.description ||
+            (form.read_time && form.read_time.value !== originalFormData.read_time) ||
+            (document.getElementById('edit-content-input').value !== originalFormData.content) ||
             (form.file && form.file.files.length > 0)
         );
     }
@@ -324,4 +383,36 @@ document.addEventListener('DOMContentLoaded', function () {
             window.location.href = `/admin/blog/${newSlug}/${section}/list`;
         });
     }
+
+    // Add copy functionality
+    document.addEventListener('click', async (e) => {
+        const copyBtn = e.target.closest('.paste-btn');
+        if (copyBtn) {
+            const link = copyBtn.dataset.link;
+
+            // If it has data-link, it's a copy button (table)
+            if (link) {
+                try {
+                    await navigator.clipboard.writeText(link);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Copied!',
+                        text: 'Link copied to clipboard',
+                        timer: 1000,
+                        showConfirmButton: false
+                    });
+                } catch (err) {
+                    console.error('Failed to copy:', err);
+                }
+                return;
+            }
+        }
+    });
+
+    // Update title on input change
+    document.addEventListener('input', (e) => {
+        if (e.target.name === 'link') {
+            // Simplified: no tooltip sync for forms as per user request
+        }
+    });
 });

@@ -10,6 +10,9 @@
     "drop-seed": "node database/mongoseed/dropSeed.js"
   },
   "dependencies": {
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/manrope": "^5.2.8",
+    "@fortawesome/fontawesome-free": "^7.1.0",
     "assert": "^2.1.0",
     "autoprefixer": "^10.4",
     "axios": "^1.7.4",

@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import progress from "esbuild-plugin-progress";
 import time from "esbuild-plugin-time";
-import sassPlugin from 'esbuild-plugin-sass';
+import { sassPlugin } from 'esbuild-sass-plugin';
 const args = process.argv.slice(2);
 const isProduction = args.includes("--production");
 
@@ -14,6 +14,7 @@ const entryPoints = {
   discoverUs: "./public/javascript/discoverUs.js",
   OnGoingPage: "./public/javascript/OnGoingPage.js",
   ProjectPage: "./public/javascript/ProjectPage.js",
+  BlogPage: "./public/javascript/BlogPage.js",
 
   // admin side
   upcoming: "./public/javascript/admin/upcoming.js",
@@ -52,6 +53,7 @@ const outdir_clear = {
   setup: (build) => {
     const options = build.initialOptions;
     build.onEnd(async (result) => {
+      if (!result.metafile) return;
       const safelist = new Set(Object.keys(result.metafile.outputs));
       const files = await fs.promises.readdir(options.outdir);
       await Promise.all(
@@ -74,6 +76,7 @@ const manifestGenerator = {
   name: "manifestGenerator",
   setup(build) {
     build.onEnd(async (result) => {
+      if (!result.metafile) return;
       const metafile = result.metafile;
       let manifest = {};
       for (const outputFile in metafile.outputs) {
@@ -120,6 +123,4 @@ await esbuild.build({
     '.ttf': "file"
   },
   metafile: true,
-
-
 });

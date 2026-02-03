@@ -52,6 +52,10 @@ const getBlogsList = async (req, res) => {
       tag: b.badge_text,
       image: b.inner_img,
       description: b.blog_description,
+      timeToRead: (b.blog_time && typeof b.blog_time === 'string') ? b.blog_time.replace(/\s*min\s*read\s*/i, '').trim() : b.blog_time,
+      content: b.blog_content,
+      contentSnippet: b.blog_content ? b.blog_content.replace(/<h1[^>]*>.*?<\/h1>/gi, '').replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ').replace(/"/g, '&quot;').substring(0, 30) + (b.blog_content.replace(/<h1[^>]*>.*?<\/h1>/gi, '').replace(/<[^>]*>?/gm, '').length > 30 ? '...' : '') : 'No content available...',
+      cleanContent: b.blog_content ? b.blog_content.replace(/<h1[^>]*>.*?<\/h1>/gi, '').replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ').replace(/"/g, '&quot;') : 'No content available...',
       index: index
     })) || [];
 
@@ -111,6 +115,8 @@ const addBlogs = async (req, res) => {
         blog_date: b.publicationDate,
         blog_text: b.blogTitle,
         blog_description: b.blogDescription,
+        blog_time: b.readTime,
+        blog_content: b.blogContent,
         blog_id: new ObjectId(),
         createdAt: new Date()
       };
@@ -140,6 +146,8 @@ const updateBlog = async (req, res) => {
     if (req.body.date) updateFields[`page_content.${index}.blog_date`] = req.body.date;
     if (req.body.tag) updateFields[`page_content.${index}.badge_text`] = req.body.tag;
     if (req.body.description) updateFields[`page_content.${index}.blog_description`] = req.body.description;
+    if (req.body.read_time) updateFields[`page_content.${index}.blog_time`] = req.body.read_time;
+    if (req.body.content) updateFields[`page_content.${index}.blog_content`] = req.body.content;
 
     if (req.file) {
       updateFields[`page_content.${index}.inner_img`] = `${process.env.PROJECT_URL}uploads/blog/${req.file.filename}`;

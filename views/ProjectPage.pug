@@ -8,8 +8,9 @@ head
 include layout/header.pug 
 
 div
-  - var bannerStyle = bannerData && bannerData.length > 0 ? `background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(${bannerData[0].image});` : 'url(../assets/images/blog1.webp)'
-  .hero-container(style=bannerStyle)
+  - var bannerImages = bannerData && bannerData.length > 0 ? bannerData.map(b => b.image) : ['/assets/images/blog1.webp']
+  - var bannerImagesJson = JSON.stringify(bannerImages)
+  .hero-container(data-banner-images=bannerImagesJson)
     .details-wrapper
       span.details-wrapper__header OUR PROJECTS
       p.details-wrapper__paragraph
