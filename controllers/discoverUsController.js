@@ -66,7 +66,8 @@ const getBlogById = async (req, res) => {
 
     res.render('BlogPage', {
       blog: formattedBlog,
-      bannerData
+      bannerData,
+      isBlogPage: true
     });
   } catch (error) {
     console.error('Error fetching blog by ID:', error);
