@@ -59,12 +59,19 @@ document.addEventListener('DOMContentLoaded', function () {
             };
 
             const imageBtn = itemForm.querySelector('.view-current-image-btn');
-            if (imageBtn) {
+            const removeBtn = itemForm.querySelector('.remove-current-image-btn');
+            const fileInput = itemForm.querySelector('input[type="file"]');
+
+            if (imageBtn && removeBtn && fileInput) {
                 if (bannerData.image) {
                     imageBtn.dataset.image = bannerData.image;
                     imageBtn.style.display = 'inline-flex';
+                    removeBtn.style.display = 'inline-flex';
+                    fileInput.style.display = 'none';
                 } else {
                     imageBtn.style.display = 'none';
+                    removeBtn.style.display = 'none';
+                    fileInput.style.display = 'block';
                 }
             }
 
@@ -83,6 +90,23 @@ document.addEventListener('DOMContentLoaded', function () {
             if (imageUrl) {
                 previewImage.src = imageUrl;
                 openModal(previewModal);
+            }
+        });
+    }
+
+    // Listener for Remove Current Image button
+    const removeCurrentImageBtn = document.querySelector('.remove-current-image-btn');
+    if (removeCurrentImageBtn) {
+        removeCurrentImageBtn.addEventListener('click', function () {
+            const form = this.closest('form');
+            const viewBtn = form.querySelector('.view-current-image-btn');
+            const fileInput = form.querySelector('input[type="file"]');
+
+            this.style.display = 'none';
+            if (viewBtn) viewBtn.style.display = 'none';
+            if (fileInput) {
+                fileInput.style.display = 'block';
+                fileInput.value = ''; // Reset file input
             }
         });
     }

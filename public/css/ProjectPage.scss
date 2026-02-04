@@ -22,12 +22,12 @@
 
 
 .hero-container {
-    background-image: url('../assets/images/blog1.webp');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), var(--banner-image-1, url('../assets/images/blog1.webp'));
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
     padding: 146px 368px;
-    animation: background-image-change 10s infinite;
+    animation: background-image-change 15s infinite ease-in-out;
     display: flex;
     justify-content: center;
     margin-top: 80px;
@@ -112,6 +112,7 @@
     font-weight: 400;
     line-height: 24px;
 }
+
 .heroContact {
     display: flex;
     align-items: center;
@@ -127,6 +128,7 @@
         padding: 10px 16px;
     }
 }
+
 .heroIcon {
     display: flex;
     width: 48px;
@@ -196,24 +198,22 @@
 
 /* Background image animation */
 @keyframes background-image-change {
-    0% {
-        background-image: url('../assets/images/blog1.webp');
+
+    0%,
+    100% {
+        background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), var(--banner-image-1, url('../assets/images/blog1.webp'));
     }
 
     25% {
-        background-image: url('../assets/images/blog3.webp');
+        background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), var(--banner-image-2, url('../assets/images/blog3.webp'));
     }
 
     50% {
-        background-image: url('../assets/images/blog1.webp');
+        background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), var(--banner-image-3, url('../assets/images/blog1.webp'));
     }
 
     75% {
-        background-image: url('../assets/images/blog3.webp');
-    }
-
-    100% {
-        background-image: url('../assets/images/blog1.webp');
+        background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), var(--banner-image-4, url('../assets/images/blog3.webp'));
     }
 }
 
@@ -388,7 +388,8 @@
     align-items: center;
     gap: 8px;
 }
-.card-info__timing{
+
+.card-info__timing {
     font-weight: 500;
 }
 
@@ -524,6 +525,10 @@
 .view-more-button-container .view-more-btn:hover {
     background-color: #a8723e;
 }
+
+// *******************************************************************
+// FAQ Container
+// ******************************************************************
 // *******************************************************************
 // FAQ Container
 // ******************************************************************
@@ -534,16 +539,17 @@
         display: flex;
         justify-content: center;
         flex-direction: column;
-        gap: 28px;
-        margin-bottom: 30px;
+        gap: 20px;
+        margin-top: 40px;
+        margin-bottom: 40px;
 
         .text {
             display: flex;
             justify-content: center;
 
             .section-title {
-                font-size: 42px;
-                line-height: 1.3;
+                font-size: 24px;
+                line-height: 55.5px;
                 font-weight: 600;
                 color: #0a0a0a;
                 text-align: center;
@@ -567,7 +573,7 @@
 
         &:hover {
             background-color: #ffffff;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
     }
 
@@ -579,7 +585,7 @@
     }
 
     .faq-question-text {
-        font-size: 18px;
+        font-size: clamp(14px, 1.8vw, 18px);
         color: #0a0a0a;
         font-weight: 500;
         flex: 1;
@@ -587,13 +593,16 @@
     }
 
     .faq-toggle-icon {
-        flex-shrink: 0;
+        font-size: 24px;
+        font-weight: bold;
+        color: #c1834e;
         transition: transform 0.3s ease;
-        width: 24px;
-        height: 24px;
+        flex-shrink: 0;
         display: flex;
         align-items: center;
         justify-content: center;
+        width: 24px;
+        height: 24px;
 
         &.expanded {
             transform: rotate(180deg);
@@ -607,120 +616,58 @@
 
         &.visible {
             max-height: 500px;
-            margin-top: 16px;
+            margin-top: 12px;
         }
     }
 
     .faq-answer-text {
-        font-size: 16px;
+        font-size: clamp(13px, 1.6vw, 16px);
         color: #6b7280;
         line-height: 1.6;
-        padding: 16px;
-        background-color: #f9fafb;
+        padding: 12px;
+        background-color: #fff;
         border-radius: 8px;
     }
 
-    // Tablet Styles
+    // Responsive Styles
     @media (max-width: 1024px) {
-        padding: 40px 60px;
+        padding: 30px 40px;
 
         .faq-section-header .text .section-title {
-            font-size: 36px;
+            font-size: 24px;
         }
     }
 
-    // Mobile Landscape & Small Tablets
     @media (max-width: 768px) {
-        padding: 30px 30px;
+        padding: 20px 24px;
 
         .faq-section-header {
-            gap: 20px;
-            margin-bottom: 24px;
-
-            .text .section-title {
-                font-size: 32px;
-            }
-        }
-
-        .faq-question-text {
-            font-size: 16px;
-        }
-
-        .faq-answer-text {
-            font-size: 15px;
-            padding: 14px;
-        }
-    }
-
-    // Mobile Portrait
-    @media (max-width: 600px) {
-        padding: 24px 20px;
-
-        .faq-section-header .text .section-title {
-            font-size: 28px;
-        }
-
-        .faq-item-card {
-            padding: 12px 18px;
-        }
-
-        .faq-question-text {
-            font-size: 15px;
-        }
-
-        .faq-answer-text {
-            font-size: 14px;
-            padding: 12px;
-        }
-    }
-
-    // Small Mobile
-    @media (max-width: 480px) {
-        padding: 20px 16px;
-
-        .faq-section-header {
-            gap: 16px;
+            margin-top: 20px;
             margin-bottom: 20px;
 
-            .text .section-title {
-                font-size: 24px;
+            .section-title {
+                font-size: 18px;
+                margin-bottom: 10px;
+            }
+        }
+    }
+
+    @media (max-width: 480px) {
+        padding: 0 4vw; // Matching .sunset-ridge-wrapper or similar container padding style on mobile
+
+        .faq-section-header {
+            gap: 10px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+
+            .section-title {
+                font-size: 16px;
+                line-height: 1.4;
             }
         }
 
         .faq-item-card {
-            padding: 12px 16px;
-        }
-
-        .faq-question-header {
-            gap: 12px;
-        }
-
-        .faq-question-text {
-            font-size: 14px;
-        }
-
-        .faq-toggle-icon {
-            width: 20px;
-            height: 20px;
-        }
-
-        .faq-answer-content.visible {
-            margin-top: 12px;
-        }
-
-        .faq-answer-text {
-            font-size: 13px;
-            padding: 10px;
-            line-height: 1.5;
-        }
-    }
-
-    // Extra Small Mobile
-    @media (max-width: 360px) {
-        padding: 16px 12px;
-
-        .faq-section-header .text .section-title {
-            font-size: 22px;
+            padding: 16px;
         }
     }
 }

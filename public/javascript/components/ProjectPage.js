@@ -1,32 +1,3 @@
-// Banner Image Carousel
-const heroContainer = document.querySelector('.hero-container');
-if (heroContainer) {
-    const bannerImagesAttr = heroContainer.getAttribute('data-banner-images');
-    if (bannerImagesAttr) {
-        try {
-            const bannerImages = JSON.parse(bannerImagesAttr);
-
-            if (bannerImages && bannerImages.length > 1) {
-                let currentIndex = 0;
-
-                // Set initial background
-                heroContainer.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('${bannerImages[0]}')`;
-
-                // Change background every 5 seconds
-                setInterval(() => {
-                    currentIndex = (currentIndex + 1) % bannerImages.length;
-                    heroContainer.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('${bannerImages[currentIndex]}')`;
-                }, 5000);
-            } else if (bannerImages && bannerImages.length === 1) {
-                // Single image - just set it once
-                heroContainer.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('${bannerImages[0]}')`;
-            }
-        } catch (error) {
-            console.error('Error parsing banner images:', error);
-        }
-    }
-}
-
 // Tab switching functionality
 const completedContainer = document.getElementById('completed-title');
 const ongoingContainer = document.getElementById('ongoing-title');

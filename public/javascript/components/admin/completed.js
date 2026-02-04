@@ -76,6 +76,10 @@ document.addEventListener('DOMContentLoaded', function () {
         // Image validation message
         const uploadBtn = form.querySelector('.upload-btn');
         if (uploadBtn) {
+            // Remove existing if any
+            const existingMsg = uploadBtn.parentNode.querySelector('.required-message-file');
+            if (existingMsg) existingMsg.remove();
+
             const msg = document.createElement('div');
             msg.className = 'required-message-file';
             msg.textContent = '* Project image is required';
@@ -127,8 +131,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Event delegation for upload buttons and navigation
     document.addEventListener('click', function (e) {
-        if (e.target.closest('.upload-btn')) {
+        if (e.target.closest('.upload-btn') && !e.target.closest('.remove-image')) {
             const button = e.target.closest('.upload-btn');
+            if (button.classList.contains('has-image')) return;
             const fileInput = button.nextElementSibling;
             if (fileInput) fileInput.click();
         }
@@ -602,20 +607,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            // Success cleanup
-            formsCache.forEach(form => form.remove());
-            formsCache = [];
-            formCount = 0;
-            hideAddedItemsSection();
-            addedItemsList.innerHTML = '';
-            createNewForm(); // Start fresh
-
-            Swal.fire({
+            await Swal.fire({
                 icon: 'success',
                 title: 'Success!',
                 text: `${completedArr.length} project(s) saved successfully!`,
                 confirmButtonColor: '#BC5322'
             });
+
+            window.location.reload();
 
         } catch (err) {
             console.error(err);

@@ -49,36 +49,76 @@ document.addEventListener('DOMContentLoaded', function () {
             const tempInput = document.createElement('input');
             tempInput.type = 'file';
             tempInput.accept = 'image/*';
-            tempInput.onchange = (ev) => handleImageProcess(ev.target.files[0], slot);
+            tempInput.onchange = (ev) => handleImageProcess(ev.target.files, slot);
             tempInput.click();
         }
     });
 
     imageGrid.addEventListener('change', function (e) {
         if (e.target.type === 'file' && e.target.classList.contains('image-upload')) {
-            handleImageProcess(e.target.files[0], e.target.closest('.image-upload-slot'));
+            handleImageProcess(e.target.files, e.target.closest('.image-upload-slot'));
         }
     });
 
     // --- FUNCTIONS ---
 
-    function handleImageProcess(file, slot) {
-        if (!file) return;
+    function handleImageProcess(files, slot) {
+        if (!files || files.length === 0) return;
 
         // Hide required message if it exists
         const msg = document.getElementById('banner-required-msg');
         if (msg) msg.style.display = 'none';
+
+        // Convert FileList to Array
+        const fileArray = Array.from(files);
+
+        // Process the first file in the CURRENT slot
+        const firstFile = fileArray[0];
+        displayImageInSlot(firstFile, slot);
 
         // Find if this slot already has a selected image being replaced
         const index = Array.from(imageGrid.children).indexOf(slot);
         const selectedIndex = index - existingBanners.length;
 
         if (selectedIndex >= 0) {
-            selectedImages[selectedIndex] = file;
+            selectedImages[selectedIndex] = firstFile;
         } else {
-            selectedImages.push(file);
+            // It's a new slot that was just created (or the initial one)
+            // Check if we already have this file in selectedImages to avoid duplicates if something weird happens, 
+            // but usually we just push.
+            // Actually, the initial slot is "new" so we push.
+            // But wait, if we are replacing an existing banner (index < existingBanners.length), we can't really "replace" it with multiple files easily in this logic without shifting everything.
+            // The implementation plan said: "If replacing... keep single file replacement".
+            // Let's stick to that for simplicity when index < existingBanners.length.
         }
 
+        if (index >= existingBanners.length) {
+            // This is a new upload slot.
+            // We need to ensure we track it.
+            // If we clicked "Upload" on an empty slot, it has no corresponding entry in selectedImages yet (or it might if we are re-uploading).
+            // Let's rely on the index mapping.
+            if (selectedIndex < selectedImages.length) {
+                selectedImages[selectedIndex] = firstFile;
+            } else {
+                selectedImages.push(firstFile);
+            }
+        }
+
+        // Process remaining files (only if we are NOT editing an existing saved banner)
+        // If we represent a new slot, we can expand.
+        if (index >= existingBanners.length && fileArray.length > 1) {
+            for (let i = 1; i < fileArray.length; i++) {
+                // Create a new slot
+                const newSlot = addImageSlot();
+                if (newSlot) {
+                    displayImageInSlot(fileArray[i], newSlot);
+                    selectedImages.push(fileArray[i]);
+                }
+            }
+        }
+    }
+
+    function displayImageInSlot(file, slot) {
         const reader = new FileReader();
         reader.onload = (e) => {
             slot.innerHTML = `
@@ -148,7 +188,10 @@ document.addEventListener('DOMContentLoaded', function () {
             if (slug === 'discoverUs' && (existingBanners.length + selectedImages.length) === 0) {
                 const addMoreSlot = document.querySelector('.image-upload-slot.add-more');
                 if (addMoreSlot) addMoreSlot.style.display = 'flex';
-                addImageSlot(); // Add back the initial upload button
+            }
+            // Ensure we always have at least one slot if everything is gone
+            if ((existingBanners.length + selectedImages.length) === 0) {
+                addImageSlot();
             }
         }
     }
@@ -172,10 +215,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 <p class="upload-text">Upload Image</p>
                 <p class="upload-subtext">JPG, PNG (max. 5MB)</p>
             </button>
-            <input type="file" class="image-upload" accept="image/*" style="display: none;">
+            <input type="file" class="image-upload" accept="image/*" style="display: none;" multiple>
         `;
         const addMoreSlot = document.querySelector('.image-upload-slot.add-more');
         imageGrid.insertBefore(newSlot, addMoreSlot);
+        return newSlot;
     }
 
     function loadExistingBanners() {
@@ -218,21 +262,21 @@ document.addEventListener('DOMContentLoaded', function () {
         // --- SINGLE IMAGE RESTRICTION FOR DISCOVER US ---
         if (slug === 'discoverUs') {
             if (existingBanners.length >= 1) {
-                addMoreSlot.style.display = 'none';
+                if (addMoreSlot) addMoreSlot.style.display = 'none';
             } else {
-                addMoreSlot.style.display = 'flex';
+                if (addMoreSlot) addMoreSlot.style.display = 'flex';
                 if (existingBanners.length === 0 && selectedImages.length === 0) {
                     addImageSlot();
                 }
             }
         } else {
-            addMoreSlot.style.display = 'flex';
+            if (addMoreSlot) addMoreSlot.style.display = 'flex';
             // Add one empty slot if none exist (standard behavior)
             if (existingBanners.length === 0) addImageSlot();
         }
     }
 
-    function uploadBanners() {
+    async function uploadBanners() {
         const formData = new FormData();
         selectedImages.forEach(file => formData.append('banners', file));
 
@@ -256,9 +300,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     text: data.message,
                     confirmButtonColor: '#BC5322'
                 });
-                selectedImages = [];
-                // loadExistingBanners();
-                displayExistingBanners(); // Reset UI to empty slots
+                window.location.reload();
             } else {
                 Swal.fire({
                     icon: 'error',
