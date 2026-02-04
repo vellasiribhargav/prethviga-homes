@@ -104,18 +104,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Create required message for file
         let msg = uploadBtn.parentNode.querySelector('.required-message-file');
-        if (!msg) {
-            msg = document.createElement('div');
-            msg.className = 'required-message-file';
-            msg.textContent = '* Cover image is required';
-            msg.style.cssText = 'font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic';
-            uploadBtn.parentNode.appendChild(msg);
-        }
+        if (msg) msg.remove();
 
+        msg = document.createElement('div');
+        msg.className = 'required-message-file';
+        msg.textContent = '* Cover image is required';
+        msg.style.cssText = 'font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic';
+        uploadBtn.parentNode.appendChild(msg);
+
+        /*
         uploadBtn.addEventListener('click', () => {
+            if (uploadBtn.classList.contains('has-image')) return;
             fileInput.click();
         });
+        */
 
+        /*
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
@@ -123,6 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 handleImageUpload(file, uploadBtn);
             }
         });
+        */
     }
 
     // Character limit message handler
@@ -151,7 +156,7 @@ document.addEventListener('DOMContentLoaded', function () {
             uploadBtn.innerHTML = `
                 <div class="uploaded-image">
                     <img src="${e.target.result}" alt="Uploaded cover">
-                    <button class="remove-image" onclick="removeImage(this)">
+                    <button class="remove-image" onclick="removeImage(this, event)">
                         <span class="material-symbols-outlined">close</span>
                     </button>
                 </div>
@@ -161,8 +166,10 @@ document.addEventListener('DOMContentLoaded', function () {
         reader.readAsDataURL(file);
     }
 
-    window.removeImage = function (button) {
+    window.removeImage = function (button, event) {
+        if (event) event.stopPropagation();
         const uploadBtn = button.closest('.upload-btn');
+        uploadBtn.classList.remove('has-image');
         uploadBtn.innerHTML = `
             <div class="upload-icon">
                 <span class="material-symbols-outlined">
@@ -175,11 +182,18 @@ document.addEventListener('DOMContentLoaded', function () {
             <p class="upload-subtext">JPG, PNG (max. 2MB)</p>
             <input class="image-upload" type="file" accept="image/*" style="display: none;">
         `;
-        uploadBtn.classList.remove('has-image');
-        setupImageUpload(uploadBtn.closest('.content-card'));
     };
 
     document.addEventListener('click', function (e) {
+        // Event delegation for upload buttons to avoid multiple stacking listeners
+        const uploadBtn = e.target.closest('.upload-btn');
+        if (uploadBtn && !e.target.closest('.remove-image')) {
+            if (!uploadBtn.classList.contains('has-image')) {
+                const fileInput = uploadBtn.parentNode.querySelector('.image-upload') || uploadBtn.querySelector('.image-upload');
+                if (fileInput) fileInput.click();
+            }
+        }
+
         if (e.target.classList.contains('submit-btn')) {
             e.preventDefault();
 
@@ -421,27 +435,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 const allForms = document.querySelectorAll('.content-card');
 
                 // Show success message
-                Swal.fire({
+                await Swal.fire({
                     icon: 'success',
                     title: 'Success!',
                     text: result.message,
                     confirmButtonColor: '#BC5322'
                 });
 
-                // Clear and reset forms
-                allForms.forEach((form, index) => {
-                    if (index === 0) {
-                        clearCurrentForm(form);
-                        form.style.display = 'block';
-                    } else {
-                        form.remove();
-                    }
-                });
-
-                formCount = 0;
-                window.currentFormIndex = 0;
-                blogArr = [];
-                updateAddedItemsDisplay();
+                window.location.reload();
 
                 // Reload from database to get official items
                 // loadExistingBlogs();
@@ -814,4 +815,15 @@ document.addEventListener('DOMContentLoaded', function () {
             if (nextBtn) nextBtn.disabled = window.currentFormIndex === forms.length - 1;
         });
     }
+
+    // Event delegation for file inputs
+    document.addEventListener('change', function (e) {
+        if (e.target.classList.contains('image-upload')) {
+            const file = e.target.files[0];
+            if (file) {
+                const uploadBtn = e.target.closest('.upload-btn') || e.target.parentNode.querySelector('.upload-btn');
+                handleImageUpload(file, uploadBtn);
+            }
+        }
+    });
 });

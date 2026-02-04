@@ -8,9 +8,9 @@ head
 include layout/header.pug 
 
 div
-  - var bannerImages = bannerData && bannerData.length > 0 ? bannerData.map(b => b.image) : ['/assets/images/blog1.webp']
-  - var bannerImagesJson = JSON.stringify(bannerImages)
-  .hero-container(data-banner-images=bannerImagesJson)
+  - var bannerImages = bannerData && bannerData.length > 0 ? bannerData.map(b => b.image) : ['/assets/images/blog1.webp', '/assets/images/blog3.webp']
+  - var bannerStyles = bannerImages.map((img, i) => `--banner-image-${i + 1}: url('${img}')`).join('; ')
+  .hero-container(style=bannerStyles)
     .details-wrapper
       span.details-wrapper__header OUR PROJECTS
       p.details-wrapper__paragraph
@@ -100,9 +100,9 @@ div
                 span.faq-toggle-icon
                   svg(width='10' height='6' viewbox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg')
                     path(d='M0.666504 0.666626L4.6665 4.66663L8.6665 0.666626' stroke='#717182' stroke-width='1.33333' stroke-linecap='round' stroke-linejoin='round')
-            .faq-answer-content
-              p.faq-answer-text
-                | #{item.answer}
+              .faq-answer-content
+                p.faq-answer-text
+                  | #{item.answer}
 
   #contact-section.contact-container
     .contact-section

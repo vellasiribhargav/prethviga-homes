@@ -74,6 +74,10 @@ document.addEventListener('DOMContentLoaded', function () {
         // Image validation message
         const uploadBtn = form.querySelector('.upload-btn');
         if (uploadBtn) {
+            // Remove existing if any
+            const existingMsg = uploadBtn.parentNode.querySelector('.required-message-file');
+            if (existingMsg) existingMsg.remove();
+
             const msg = document.createElement('div');
             msg.className = 'required-message-file';
             msg.textContent = '* Project image is required';
@@ -134,8 +138,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Event delegation for upload buttons and navigation
     document.addEventListener('click', function (e) {
-        if (e.target.closest('.upload-btn')) {
+        if (e.target.closest('.upload-btn') && !e.target.closest('.remove-image')) {
             const button = e.target.closest('.upload-btn');
+            if (button.classList.contains('has-image')) return;
             const fileInput = button.nextElementSibling;
             if (fileInput) fileInput.click();
         }
@@ -174,25 +179,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             if (formCard) {
-                formCard.remove();
-                updateFormsCache();
-
-                formsCache.forEach((form, index) => {
-                    const numberSpan = form.querySelector('.form-number');
-                    if (numberSpan) numberSpan.textContent = index + 1;
-                });
-
-                let newIndex = window.currentFormIndex;
-                if (newIndex >= formsCache.length) {
-                    newIndex = formsCache.length - 1;
-                }
-
-                window.currentFormIndex = newIndex;
-                formsCache.forEach(f => f.style.display = 'none');
-                if (formsCache[newIndex]) {
-                    formsCache[newIndex].style.display = 'block';
-                }
-
                 updateNavigationButtons();
                 updateSubmitButtons();
                 updateDeleteButtonsVisibility();
@@ -564,22 +550,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            // Cleanup
-            document.querySelectorAll('.content-card').forEach(f => f.remove());
-            addedItemsList.innerHTML = '';
-            hideAddedItemsSection();
-            formCount = 0;
-            formsCache = [];
-
-            // Create fresh form
-            createNewForm();
-
-            Swal.fire({
+            await Swal.fire({
                 icon: 'success',
                 title: 'Success!',
                 text: `${upcomingArr.length} project(s) saved successfully!`,
                 confirmButtonColor: '#BC5322'
             });
+
+            window.location.reload();
 
         } catch (err) {
             console.error(err);

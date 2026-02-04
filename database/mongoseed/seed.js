@@ -139,9 +139,22 @@ const seedMongoDB = async () => {
         const insertProjectPageData = [
             {
                 "page_slug": "ProjectPage",
+                "page_section": "project-banner",
+                "page_content": [
+                    {
+                        "image": `${process.env.PROJECT_URL}/assets/images/blog1.webp`
+                    },
+                    {
+                        "image": `${process.env.PROJECT_URL}/assets/images/cardblog3.webp`
+                    }
+                ]
+            },
+            {
+                "page_slug": "ProjectPage",
                 "page_section": "ongoing-gallery",
                 "page_content": [
                     {
+                        "project_id": new ObjectId(),
                         "card_image": `${process.env.PROJECT_URL}/assets/images/card1.webp`,
                         "project_name": "Pinnacle View Condominiums",
                         "project_location": "West side",
@@ -149,6 +162,7 @@ const seedMongoDB = async () => {
                         "card_footer_text": "24 Premium Apartments"
                     },
                     {
+                        "project_id": new ObjectId(),
                         "card_image": `${process.env.PROJECT_URL}/assets/images/card2.webp`,
                         "project_name": "Serenity Heights Estate",
                         "project_location": "West side",
@@ -156,6 +170,7 @@ const seedMongoDB = async () => {
                         "card_footer_text": "24 Premium Apartments",
                     },
                     {
+                        "project_id": new ObjectId(),
                         "card_image": `${process.env.PROJECT_URL}/assets/images/card3.webp`,
                         "project_name": "Grandview Manor Residences",
                         "project_location": "South End",
@@ -163,6 +178,7 @@ const seedMongoDB = async () => {
                         "card_footer_text": "24 Premium Apartments",
                     },
                     {
+                        "project_id": new ObjectId(),
                         "card_image": `${process.env.PROJECT_URL}/assets/images/card4.webp`,
                         "project_name": "Pinnacle View Condominiums",
                         "project_location": "East Side",
@@ -170,6 +186,7 @@ const seedMongoDB = async () => {
                         "card_footer_text": "24 Premium Apartments"
                     },
                     {
+                        "project_id": new ObjectId(),
                         "card_image": `${process.env.PROJECT_URL}/assets/images/card1.webp`,
                         "project_name": "Pinnacle View Condominiums",
                         "project_location": "East Side",
@@ -177,6 +194,7 @@ const seedMongoDB = async () => {
                         "card_footer_text": "24 Premium Apartments"
                     },
                     {
+                        "project_id": new ObjectId(),
                         "card_image": `${process.env.PROJECT_URL}/assets/images/card4.webp`,
                         "project_name": "Pinnacle View Condominiums",
                         "project_location": "East Side",
@@ -190,6 +208,7 @@ const seedMongoDB = async () => {
                 "page_section": "completed-gallery",
                 "page_content": [
                     {
+                        "project_id": new ObjectId(),
                         "card_image": `${process.env.PROJECT_URL}/assets/images/card2.webp`,
                         "project_name": "Pinnacle View Condominiums",
                         "project_location": "West side",
@@ -197,6 +216,7 @@ const seedMongoDB = async () => {
                         "card_footer_text": "24 Premium Apartments"
                     },
                     {
+                        "project_id": new ObjectId(),
                         "card_image": `${process.env.PROJECT_URL}/assets/images/card3.webp`,
                         "project_name": "Serenity Heights Estate",
                         "project_location": "West side",
@@ -204,6 +224,7 @@ const seedMongoDB = async () => {
                         "card_footer_text": "24 Premium Apartments"
                     },
                     {
+                        "project_id": new ObjectId(),
                         "card_image": `${process.env.PROJECT_URL}/assets/images/card4.webp`,
                         "project_name": "Grandview Manor Residences",
                         "project_location": "South End",
@@ -211,6 +232,7 @@ const seedMongoDB = async () => {
                         "card_footer_text": "24 Premium Apartments",
                     },
                     {
+                        "project_id": new ObjectId(),
                         "card_image": `${process.env.PROJECT_URL}/assets/images/card3.webp`,
                         "project_name": "Pinnacle View Condominiums",
                         "project_location": "East Side",
@@ -218,6 +240,7 @@ const seedMongoDB = async () => {
                         "card_footer_text": "24 Premium Apartments",
                     },
                     {
+                        "project_id": new ObjectId(),
                         "card_image": `${process.env.PROJECT_URL}/assets/images/card3.webp`,
                         "project_name": "Pinnacle View Condominiums",
                         "project_location": "East Side",
@@ -225,6 +248,7 @@ const seedMongoDB = async () => {
                         "card_footer_text": "24 Premium Apartments",
                     },
                     {
+                        "project_id": new ObjectId(),
                         "card_image": `${process.env.PROJECT_URL}/assets/images/card2.webp`,
                         "project_name": "Pinnacle View Condominiums",
                         "project_location": "East Side",
@@ -489,6 +513,15 @@ const seedMongoDB = async () => {
         ]
         const discoverUsConnection = mongoose.connection.db.collection("discoverUs");
         const insertdiscoverUsData = [
+            {
+                "page_slug": "discoverUs",
+                "page_section": "discover-banner",
+                "page_content": [
+                    {
+                        "image": `${process.env.PROJECT_URL}/assets/images/discover.webp`
+                    }
+                ]
+            },
             // {
             //     "page_slug":"discoverUs",
             //     "page_section":"about-content",
@@ -564,31 +597,34 @@ const seedMongoDB = async () => {
                 "page_section": "blogs-card",
                 "page_content": [
                     {
+                        blog_id: new ObjectId(),
                         inner_img: `${process.env.PROJECT_URL}assets/images/blog1.webp`,
                         badge_text: "Sustainability",
                         blog_date: `November 15, 2025`,
-                        blog_time: "4 min read",
+                        blog_time: "4",
                         blog_text: "Innovative Materials Revolutionizing Construction",
-                        blog_description: `Explore cutting-edge materials that enhance structural
-                        integrity and reduce costs in modern building projects.`,
+                        blog_description: `Explore cutting-edge materials that enhance structural integrity and reduce costs in modern building projects.`,
+                        blog_content: "<p>The construction industry is experiencing a revolution in materials science, bringing forth innovative solutions that promise to transform how we build homes and commercial structures. From self-healing concrete to transparent aluminum, these cutting-edge materials are not only more sustainable but also offer superior performance characteristics.</p><h2>The Rise of Sustainable Materials</h2><p>One of the most significant trends in modern construction is the shift toward sustainable materials. Cross-laminated timber (CLT), for instance, has emerged as a viable alternative to traditional concrete and steel.</p><p>This engineered wood product offers exceptional strength while significantly reducing carbon emissions associated with construction. It represents a fundamental shift in how we approach large-scale structural integrity.</p><h2>The Rise of Sustainable Materials</h2><p>One of the most significant trends in modern construction is the shift toward sustainable materials. Cross-laminated timber (CLT), for instance, has emerged as a viable alternative to traditional concrete and steel.</p>"
                     },
                     {
+                        blog_id: new ObjectId(),
                         inner_img: `${process.env.PROJECT_URL}assets/images/blog2.webp`,
                         badge_text: "Sustainability",
                         blog_date: `November 15, 2025`,
-                        blog_time: "4 min read",
+                        blog_time: "4",
                         blog_text: "Top 10 Sustainable Building Practices for 2025",
-                        blog_description: `Explore cutting-edge materials that enhance structural
-                        integrity and reduce costs in modern building projects.`,
+                        blog_description: `Explore cutting-edge materials that enhance structural integrity and reduce costs in modern building projects.`,
+                        blog_content: "<h1>Top 10 Sustainable Building Practices for 2025</h1><p>One of the most significant trends in modern construction is the shift toward sustainable materials...</p>"
                     },
                     {
+                        blog_id: new ObjectId(),
                         inner_img: `${process.env.PROJECT_URL}assets/images/proimage5.webp`,
                         badge_text: "Sustainability",
                         blog_date: `November 15, 2025`,
-                        blog_time: "4 min read",
+                        blog_time: "4",
                         blog_text: "Eco-Friendly Construction: The Future of Home Building",
-                        blog_description: `Explore cutting-edge materials that enhance structural
-                        integrity and reduce costs in modern building projects.`,
+                        blog_description: `Explore cutting-edge materials that enhance structural integrity and reduce costs in modern building projects.`,
+                        blog_content: "<h1>Eco-Friendly Construction: The Future of Home Building</h1><p>This engineered wood product offers exceptional strength while significantly reducing carbon emissions...</p>"
                     },
                 ]
             }

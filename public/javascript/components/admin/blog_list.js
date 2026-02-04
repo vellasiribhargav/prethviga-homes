@@ -156,14 +156,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (blogData.image) {
                     imageBtn.dataset.image = blogData.image;
                     imageBtn.style.display = 'inline-flex';
+                    removeBtn.style.display = 'inline-flex';
+                    fileInput.style.display = 'none';
                 } else {
                     imageBtn.style.display = 'none';
+                    removeBtn.style.display = 'none';
+                    fileInput.style.display = 'block';
                 }
             }
-
-            // Remove existing listener to avoid duplicates if any (though typically this runs once per load, but safe to be sure or just attach once outside)
-            // Better approach: The listener for .view-current-image-btn should be attached once outside this loop, but we need to make sure we don't attach it multiple times.
-            // Actually, we can attach it once in the DOMContentLoaded scope.
 
             // Reset validation states
             resetValidation(itemForm);
@@ -180,6 +180,23 @@ document.addEventListener('DOMContentLoaded', function () {
             if (imageUrl) {
                 previewImage.src = imageUrl;
                 openModal(previewModal);
+            }
+        });
+    }
+
+    // Listener for Remove Current Image button
+    const removeCurrentImageBtn = document.querySelector('.remove-current-image-btn');
+    if (removeCurrentImageBtn) {
+        removeCurrentImageBtn.addEventListener('click', function () {
+            const form = this.closest('form');
+            const viewBtn = form.querySelector('.view-current-image-btn');
+            const fileInput = form.querySelector('input[type="file"]');
+
+            this.style.display = 'none';
+            if (viewBtn) viewBtn.style.display = 'none';
+            if (fileInput) {
+                fileInput.style.display = 'block';
+                fileInput.value = ''; // Reset file input
             }
         });
     }
@@ -413,6 +430,57 @@ document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('input', (e) => {
         if (e.target.name === 'link') {
             // Simplified: no tooltip sync for forms as per user request
+        }
+    });
+
+    // Custom Tooltip Logic to avoid Table Clipping
+    const tooltip = document.createElement('div');
+    tooltip.className = 'custom-js-tooltip';
+    document.body.appendChild(tooltip);
+
+    document.addEventListener('mouseover', function (e) {
+        const target = e.target.closest('.tooltip-cell');
+        if (target) {
+            const text = target.getAttribute('data-tooltip');
+            if (text && text !== 'No description available...') {
+                tooltip.textContent = text;
+                tooltip.style.display = 'block'; // Make visible to calculate dims
+
+                const rect = target.getBoundingClientRect();
+                const tooltipWidth = tooltip.offsetWidth;
+                const tooltipHeight = tooltip.offsetHeight;
+
+                // Position to the right of the cell/cursor
+                let top = rect.top + (rect.height / 2) - 20; // Aligned roughly with text
+                let left = rect.right + 2; // Reduced gap to 2px
+
+                // Check if it goes off screen right
+                if (left + tooltipWidth > window.innerWidth) {
+                    // Flip to left side
+                    // rect.left is the cell edge. Cell has ~24px padding. 
+                    // To place it closer to text, we can overlap the padding slightly.
+                    left = rect.left - tooltipWidth - 2;
+                    tooltip.classList.add('left-side');
+                } else {
+                    tooltip.classList.remove('left-side');
+                }
+
+                // Check vertical bounds
+                if (top < 10) top = 10;
+                if (top + tooltipHeight > window.innerHeight) {
+                    top = window.innerHeight - tooltipHeight - 10;
+                }
+
+                tooltip.style.top = `${top}px`;
+                tooltip.style.left = `${left}px`;
+            }
+        }
+    });
+
+    document.addEventListener('mouseout', function (e) {
+        const target = e.target.closest('.tooltip-cell');
+        if (target) {
+            tooltip.style.display = 'none';
         }
     });
 });

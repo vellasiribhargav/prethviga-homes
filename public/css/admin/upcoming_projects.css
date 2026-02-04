@@ -596,6 +596,25 @@ body {
     border-color: var(--primary);
 }
 
+.remove-current-image-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    background: var(--surface-light);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    color: #e74c3c;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.remove-current-image-btn:hover {
+    background: #fdf2f2;
+    border-color: #ef4444;
+    transform: scale(1.05);
+}
+
 .form-group input:focus,
 .form-group textarea:focus {
     outline: none;

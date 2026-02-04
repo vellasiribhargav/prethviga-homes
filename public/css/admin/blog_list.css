@@ -664,6 +664,25 @@ body {
     border-color: var(--primary);
 }
 
+.remove-current-image-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    background: var(--surface-light);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    color: #e74c3c;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.remove-current-image-btn:hover {
+    background: #fdf2f2;
+    border-color: #ef4444;
+    transform: scale(1.05);
+}
+
 .form-group input:focus,
 .form-group textarea:focus {
     outline: none;
@@ -852,12 +871,9 @@ body {
     white-space: nowrap;
 }
 
-.tooltip-cell:hover::before {
-    content: attr(data-tooltip);
+/* Custom Tooltip Styling - JS Based */
+.custom-js-tooltip {
     position: absolute;
-    bottom: calc(100% + 10px);
-    left: 50%;
-    transform: translateX(-50%);
     background: #1b150e;
     color: #fff;
     padding: 10px 14px;
@@ -868,20 +884,53 @@ body {
     width: 300px;
     max-width: 90vw;
     white-space: normal;
-    z-index: 9999;
+    z-index: 10000;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
     text-align: left;
     pointer-events: none;
+    display: none;
+    transform: translateX(-50%);
+    max-height: 250px;
+    overflow-y: auto;
 }
 
-.tooltip-cell:hover::after {
+/* Custom Scrollbar for Tooltip */
+.custom-js-tooltip::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-js-tooltip::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.custom-js-tooltip::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+.custom-js-tooltip::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.custom-js-tooltip::after {
     content: '';
     position: absolute;
-    bottom: calc(100% + 2px);
-    left: 50%;
-    transform: translateX(-50%);
+    top: 15px;
+    /* Align near top */
+    right: 100%;
+    /* Arrow on left side */
     border: 8px solid transparent;
-    border-top-color: #1b150e;
-    z-index: 9999;
-    pointer-events: none;
+    border-right-color: #1b150e;
+    /* Pointing right (towards tooltip) means arrow base is on right, so tip is left... wait. border-right-color makes an arrow pointing LEFT. */
+}
+
+/* Variant when tooltip is flipped to the left */
+.custom-js-tooltip.left-side::after {
+    right: auto;
+    left: 100%;
+    /* Arrow on right side */
+    border-right-color: transparent;
+    border-left-color: #1b150e;
+    /* Pointing right */
 }

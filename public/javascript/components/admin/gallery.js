@@ -66,6 +66,10 @@ document.addEventListener('DOMContentLoaded', function () {
         // Image validation message
         const uploadBtn = form.querySelector('.upload-btn');
         if (uploadBtn) {
+            // Remove existing if any
+            const existingMsg = uploadBtn.parentNode.querySelector('.required-message-file');
+            if (existingMsg) existingMsg.remove();
+
             const msg = document.createElement('div');
             msg.className = 'required-message-file';
             msg.textContent = '* image is required';
@@ -198,10 +202,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (!uploadBtn || !fileInput) return;
 
+        /*
         uploadBtn.addEventListener('click', () => {
+            if (uploadBtn.classList.contains('has-image')) return;
             fileInput.click();
         });
+        */
 
+        /*
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
@@ -212,6 +220,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 handleImageUpload(file, uploadBtn);
             }
         });
+        */
     }
 
     function handleImageUpload(file, uploadBtn) {
@@ -222,68 +231,36 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const reader = new FileReader();
         reader.onload = (e) => {
-            // Find and hide the existing file input instead of removing it
-            const fileInput = uploadBtn.querySelector('.image-upload');
-            if (fileInput) {
-                fileInput.style.display = 'none';
-            }
-
-            // Remove old preview if exists
-            const oldPreview = uploadBtn.querySelector('.uploaded-image');
-            if (oldPreview) {
-                oldPreview.remove();
-            }
-
-            // Create and insert the preview
-            const previewDiv = document.createElement('div');
-            previewDiv.className = 'uploaded-image';
-            previewDiv.innerHTML = `
-                <img src="${e.target.result}" alt="Uploaded image">
-                <button class="remove-image" onclick="removeImage(this)">
-                    <span class="material-symbols-outlined">close</span>
-                </button>
+            uploadBtn.innerHTML = `
+                <div class="uploaded-image">
+                    <img src="${e.target.result}" alt="Uploaded image">
+                    <button class="remove-image" onclick="removeImage(this, event)">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+                <input class="image-upload" type="file" accept="image/*" style="display: none;">
             `;
-
-            // Insert preview before the file input
-            uploadBtn.insertBefore(previewDiv, fileInput);
-
-            // Hide other elements
-            const uploadIcon = uploadBtn.querySelector('.upload-icon');
-            const uploadText = uploadBtn.querySelector('.upload-text');
-            const uploadSubtext = uploadBtn.querySelector('.upload-subtext');
-            if (uploadIcon) uploadIcon.style.display = 'none';
-            if (uploadText) uploadText.style.display = 'none';
-            if (uploadSubtext) uploadSubtext.style.display = 'none';
-
             uploadBtn.classList.add('has-image');
+
+            // setupImageUpload call removed, handled by delegation
         };
         reader.readAsDataURL(file);
     }
 
-    window.removeImage = function (button) {
+    window.removeImage = function (button, event) {
+        if (event) event.stopPropagation();
         const uploadBtn = button.closest('.upload-btn');
-
-        // Remove the preview
-        const preview = uploadBtn.querySelector('.uploaded-image');
-        if (preview) {
-            preview.remove();
-        }
-
-        // Show the upload elements again
-        const uploadIcon = uploadBtn.querySelector('.upload-icon');
-        const uploadText = uploadBtn.querySelector('.upload-text');
-        const uploadSubtext = uploadBtn.querySelector('.upload-subtext');
-        const fileInput = uploadBtn.querySelector('.image-upload');
-
-        if (uploadIcon) uploadIcon.style.display = '';
-        if (uploadText) uploadText.style.display = '';
-        if (uploadSubtext) uploadSubtext.style.display = '';
-        if (fileInput) {
-            fileInput.value = ''; // Clear the file input
-            fileInput.style.display = 'none'; // Keep it hidden
-        }
-
         uploadBtn.classList.remove('has-image');
+        uploadBtn.innerHTML = `
+            <div class="upload-icon">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
+                    <path d="M480-260q75 0 127.5-52.5T660-440q0-75-52.5-127.5T480-620q-75 0-127.5 52.5T300-440q0 75 52.5 127.5T480-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM160-120q-33 0-56.5-23.5T80-200v-480q0-33 23.5-56.5T160-760h126l74-80h240l74 80h126q33 0 56.5 23.5T880-680v480q0 33-23.5 56.5T800-120H160Zm0-80h640v-480H638l-73-80H395l-73 80H160v480Zm320-240Z"/>
+                </svg>
+            </div>
+            <p class="upload-text">Upload Images</p>
+            <p class="upload-subtext">JPG, PNG (max. 5MB)</p>
+            <input class="image-upload" type="file" accept="image/*" style="display: none;">
+        `;
     };
 
     // Form Data Collection
@@ -518,6 +495,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Consolidated Submit Handler
     document.addEventListener('click', function (e) {
+        // Event delegation for upload buttons to avoid multiple stacking listeners
+        const uploadBtn = e.target.closest('.upload-btn');
+        if (uploadBtn && !e.target.closest('.remove-image')) {
+            if (!uploadBtn.classList.contains('has-image')) {
+                const fileInput = uploadBtn.parentNode.querySelector('.image-upload') || uploadBtn.querySelector('.image-upload');
+                if (fileInput) fileInput.click();
+            }
+        }
+
         const deleteBtn = e.target.closest('.delete-form-btn');
         if (deleteBtn) {
             e.preventDefault();
@@ -678,23 +664,14 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             if (result.success) {
-                Swal.fire({
+                await Swal.fire({
                     icon: 'success',
                     title: 'Success!',
                     text: `${finalGalleryArr.length} gallery item(s) saved successfully!`,
                     confirmButtonColor: '#BC5322'
                 });
 
-                // Clear and reset
-                document.querySelectorAll('.content-card').forEach(f => f.remove());
-                addedItemsList.innerHTML = '';
-                if (addedItemsSection) addedItemsSection.style.display = 'none';
-
-                formCount = 0;
-                formsCache = [];
-
-                // Create one fresh form
-                createNewForm();
+                window.location.reload();
 
             } else {
                 Swal.fire({
@@ -763,4 +740,18 @@ document.addEventListener('DOMContentLoaded', function () {
     function showAddedItemsSection() {
         addedItemsSection.style.display = 'block';
     }
+
+    // Event delegation for file inputs
+    document.addEventListener('change', function (e) {
+        if (e.target.classList.contains('image-upload')) {
+            const file = e.target.files[0];
+            if (file) {
+                const uploadBtn = e.target.closest('.upload-btn');
+                // Hide required message if it exists
+                const msg = uploadBtn.parentNode.querySelector('.required-message-file');
+                if (msg) msg.style.display = 'none';
+                handleImageUpload(file, uploadBtn);
+            }
+        }
+    });
 });
