@@ -859,41 +859,6 @@ body {
     width: 100%;
 }
 
-/* Custom Tooltip Styling */
-.tooltip-cell {
-    position: relative;
-    cursor: default;
-}
-
-.tooltip-cell .cell-text {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-/* Custom Tooltip Styling - JS Based */
-.custom-js-tooltip {
-    position: absolute;
-    background: #1b150e;
-    color: #fff;
-    padding: 10px 14px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 500;
-    line-height: 1.5;
-    width: 300px;
-    max-width: 90vw;
-    white-space: normal;
-    z-index: 10000;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    text-align: left;
-    pointer-events: none;
-    display: none;
-    transform: translateX(-50%);
-    max-height: 250px;
-    overflow-y: auto;
-}
-
 /* Custom Scrollbar for Tooltip */
 .custom-js-tooltip::-webkit-scrollbar {
     width: 6px;
