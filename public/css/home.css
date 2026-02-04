@@ -401,9 +401,15 @@
   overflow: hidden;
 }
 
+@media screen and (max-width: 1440px) {
+  .headerContainer {
+    min-height: 710px;
+  }
+}
+
 @media screen and (max-width: 1024px) {
   .headerContainer {
-    min-height: 600px;
+    min-height: 620px;
     max-height: 800px;
     margin-top: 72px;
   }

@@ -1349,7 +1349,7 @@
   justify-content: center;
   align-items: center;
   gap: 28px;
-  margin: 60px 0;
+  /* margin: 60px 0; */
 }
 
 .project-details-section .project-gallery .gallery-header {
