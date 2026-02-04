@@ -47,7 +47,7 @@ const getBlogsList = async (req, res) => {
     const blogs = data?.page_content?.map((b, index) => ({
       ...b,
       id: (b.blog_id || index).toString(),
-      title: b.blog_text,
+      title: b.blog_title,
       date: formatDateForDisplay(b.blog_date, true),
       tag: b.badge_text,
       image: b.inner_img,
@@ -113,7 +113,7 @@ const addBlogs = async (req, res) => {
         inner_img: file ? `${process.env.PROJECT_URL}uploads/blog/${file.filename}` : b.coverImage,
         badge_text: b.blogTag,
         blog_date: b.publicationDate,
-        blog_text: b.blogTitle,
+        blog_title: b.blogTitle,
         blog_description: b.blogDescription,
         blog_time: b.readTime,
         blog_content: b.blogContent,
@@ -142,7 +142,7 @@ const updateBlog = async (req, res) => {
     const config = BLOG_CONFIG[slug] || { collection: collectionName, slug: slug };
 
     const updateFields = {};
-    if (req.body.title) updateFields[`page_content.${index}.blog_text`] = req.body.title;
+    if (req.body.title) updateFields[`page_content.${index}.blog_title`] = req.body.title;
     if (req.body.date) updateFields[`page_content.${index}.blog_date`] = req.body.date;
     if (req.body.tag) updateFields[`page_content.${index}.badge_text`] = req.body.tag;
     if (req.body.description) updateFields[`page_content.${index}.blog_description`] = req.body.description;
@@ -151,6 +151,8 @@ const updateBlog = async (req, res) => {
 
     if (req.file) {
       updateFields[`page_content.${index}.inner_img`] = `${process.env.PROJECT_URL}uploads/blog/${req.file.filename}`;
+    } else if (req.body.remove_image === 'true') {
+      updateFields[`page_content.${index}.inner_img`] = null;
     }
 
     const result = await collection.updateOne(

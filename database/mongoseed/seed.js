@@ -267,18 +267,18 @@ const seedMongoDB = async () => {
                         "answer": `Prethviga Homes specializes in residential construction, including individual houses, villas, apartments, and renovation projects.`,
                     },
                     {
-                        "question":  "2. How does Prethviga Homes ensure construction quality?",
+                        "question": "2. How does Prethviga Homes ensure construction quality?",
                         "answer": `We follow strict quality standards, use premium materials, and conduct regular inspections at every stage of construction.`,
                     },
                     {
                         "question": "3. Does Prethviga Homes deliver projects on time?",
                         "answer": `Yes, timely delivery is a core commitment. We use structured planning and efficient project management to meet agreed timelines.`,
                     },
-                     {
+                    {
                         "question": "4. Are pricing and agreements transparent?",
                         "answer": `Absolutely. We provide clear cost estimates, detailed agreements, and regular updates to ensure complete transparency.`,
                     },
-                     {
+                    {
                         "question": "5. Can I customize my home design with Prethviga Homes?",
                         "answer": `Yes, we offer design flexibility and customization options to match your lifestyle, preferences, and budget.`,
                     }
@@ -568,7 +568,7 @@ const seedMongoDB = async () => {
             //         },
             //         {
             //             "row-text": 1,
-            //             "row-description": "Location &amp; Connectivity",
+            //             "row-description": "Location & Connectivity",
             //         },
             //         {
             //             "row-text": 2,
@@ -584,11 +584,11 @@ const seedMongoDB = async () => {
             //         },
             //         {
             //             "row-text": 5,
-            //             "row-description": "Amenities &amp; Lifestyle",
+            //             "row-description": "Amenities & Lifestyle",
             //         },
             //         {
             //             "row-text": 6,
-            //             "row-description": "Investment &amp; Budget",
+            //             "row-description": "Investment & Budget",
             //         },
             //     ]
             // },
@@ -602,19 +602,26 @@ const seedMongoDB = async () => {
                         badge_text: "Sustainability",
                         blog_date: `November 15, 2025`,
                         blog_time: "4",
-                        blog_text: "Innovative Materials Revolutionizing Construction",
-                        blog_description: `Explore cutting-edge materials that enhance structural integrity and reduce costs in modern building projects.`,
-                        blog_content: "<p>The construction industry is experiencing a revolution in materials science, bringing forth innovative solutions that promise to transform how we build homes and commercial structures. From self-healing concrete to transparent aluminum, these cutting-edge materials are not only more sustainable but also offer superior performance characteristics.</p><h2>The Rise of Sustainable Materials</h2><p>One of the most significant trends in modern construction is the shift toward sustainable materials. Cross-laminated timber (CLT), for instance, has emerged as a viable alternative to traditional concrete and steel.</p><p>This engineered wood product offers exceptional strength while significantly reducing carbon emissions associated with construction. It represents a fundamental shift in how we approach large-scale structural integrity.</p><h2>The Rise of Sustainable Materials</h2><p>One of the most significant trends in modern construction is the shift toward sustainable materials. Cross-laminated timber (CLT), for instance, has emerged as a viable alternative to traditional concrete and steel.</p>"
-                    },
-                    {
-                        blog_id: new ObjectId(),
-                        inner_img: `${process.env.PROJECT_URL}assets/images/blog2.webp`,
-                        badge_text: "Sustainability",
-                        blog_date: `November 15, 2025`,
-                        blog_time: "4",
-                        blog_text: "Top 10 Sustainable Building Practices for 2025",
-                        blog_description: `Explore cutting-edge materials that enhance structural integrity and reduce costs in modern building projects.`,
-                        blog_content: "<h1>Top 10 Sustainable Building Practices for 2025</h1><p>One of the most significant trends in modern construction is the shift toward sustainable materials...</p>"
+                        blog_title: "Lintel Level Brickwork & Sill Concreting: A Key Stage in Home Construction",
+                        blog_description: `When a building reaches the stage of lintel level brickwork and sill concreting, it marks an important milestone in the construction process. These elements play a critical role in providing structural strength, proper load distribution, and long-term durability to a home.`,
+                        blog_content: `<p>When a building reaches the stage of lintel level brickwork and sill concreting, it marks an important milestone in the construction process. These elements play a critical role in providing structural strength, proper load distribution, and long-term durability to a home.</p>
+                            <h3>What Is Lintel Level Brickwork?</h3>
+                            <p>Lintel level brickwork refers to the masonry work carried out up to the height where lintels are placed above doors and windows. A lintel is a horizontal structural member that supports the load of the wall above openings.</p>
+                            <h3>Why Lintel Level Brickwork Is Important</h3>
+                            <ul><li>Distributes the load above doors and windows evenly</li><li>Prevents cracks around openings</li><li>Improves structural stability</li><li>Acts as a level reference for further construction</li></ul>
+                            <p>Proper alignment and quality workmanship at this stage ensure the building remains strong and well-balanced.</p>
+                            <h3>Understanding Sill Concreting</h3>
+                            <p>Sill concreting is the process of casting concrete at the base of window openings. The sill supports the window frame and protects the wall from water seepage.</p>
+                            <h3>Benefits of Sill Concreting</h3>
+                            <ul><li>Provides a solid base for window installation</li><li>Prevents water penetration into walls</li><li>Enhances durability of window openings</li><li>Improves overall finishing and appearance</li></ul>
+                            <p>Well-executed sill concreting helps avoid long-term issues such as dampness and wall damage.</p>
+                            <h3>Why Quality Matters at This Stage</h3>
+                            <p>Both lintel level brickwork and sill concreting must be executed with precision and quality materials. Errors at this stage can lead to structural weakness, cracks, or water leakage issues in the future.</p>
+                            <p>At <strong>Prethviga Homes</strong>, we follow strict construction standards, accurate measurements, and quality checks to ensure strength and durability at every level of construction.</p>
+                            <h3>Best Practices Followed in Construction</h3>
+                            <ul><li>Use of quality bricks and concrete mix</li><li>Proper curing for strength development</li><li>Accurate alignment and level checking</li><li>Skilled workmanship and supervision</li></ul>
+                            <p>These practices ensure long-lasting performance and structural safety.</p>
+                        `
                     },
                     {
                         blog_id: new ObjectId(),
@@ -622,10 +629,84 @@ const seedMongoDB = async () => {
                         badge_text: "Sustainability",
                         blog_date: `November 15, 2025`,
                         blog_time: "4",
-                        blog_text: "Eco-Friendly Construction: The Future of Home Building",
-                        blog_description: `Explore cutting-edge materials that enhance structural integrity and reduce costs in modern building projects.`,
-                        blog_content: "<h1>Eco-Friendly Construction: The Future of Home Building</h1><p>This engineered wood product offers exceptional strength while significantly reducing carbon emissions...</p>"
+                        blog_title: "Why Eco-Friendly Construction Matters in Metro Cities Like Chennai",
+                        blog_description: `As urban cities continue to grow, sustainable construction has become more than a trend—it is a necessity. In fast-developing cities like Chennai, eco-friendly construction plays a vital role in reducing environmental impact while creating healthier and more efficient living spaces.`,
+                        blog_content: `<p>As urban cities continue to grow, sustainable construction has become more than a trend—it is a necessity. In fast-developing cities like Chennai, eco-friendly construction plays a vital role in reducing environmental impact while creating healthier and more efficient living spaces.</p>
+                            <h3>Why Eco-Friendly Construction Matters in Urban Areas</h3>
+                            <p>Urban environments face challenges such as rising temperatures, water scarcity, pollution, and limited open spaces. Traditional construction methods often increase energy consumption and environmental stress.</p>
+                            <p>Eco-friendly construction focuses on:</p>
+                            <ul><li>Reducing carbon footprint</li><li>Conserving natural resources</li><li>Improving indoor air quality</li><li>Lowering long-term energy and maintenance costs</li></ul>
+                            <h3>Key Eco-Friendly Construction Practices</h3>
+                            <h4>1. Sustainable Building Materials</h4>
+                            <p>Using eco-friendly materials such as fly ash bricks, AAC blocks, recycled steel, and low-VOC paints reduces environmental damage and improves energy efficiency.</p>
+                            <h4>2. Energy-Efficient Design</h4>
+                            <p>Smart orientation, natural ventilation, insulated walls, and energy-efficient lighting help reduce dependency on artificial cooling—especially important in Chennai’s hot and humid climate.</p>
+                            <h4>3. Water Conservation Systems</h4>
+                            <p>Rainwater harvesting, groundwater recharge pits, low-flow plumbing fixtures, and greywater reuse systems are essential for water sustainability in urban homes.</p>
+                            <h4>4. Green Roofing & Landscaping</h4>
+                            <p>Green roofs and landscaped spaces reduce heat absorption, improve air quality, and create natural insulation in dense city environments.</p>
+                            <h4>5. Waste Management & Recycling</h4>
+                            <p>Proper segregation of construction waste and reuse of materials help minimize landfill impact and promote responsible construction practices.</p>
+                            <h3>Benefits of Eco-Friendly Homes in Cities Like Chennai</h3>
+                            <ul><li>🌱 Lower electricity and water bills</li><li>🌱 Healthier indoor living environment</li><li>🌱 Reduced heat island effect</li><li>🌱 Long-term property value appreciation</li><li>🌱 Compliance with future sustainability norms</li></ul>
+                            <p>Eco-friendly homes are not just good for the environment—they are a smart investment for urban homeowners.</p>
+                            <h3>Challenges & the Way Forward</h3>
+                            <p>While eco-friendly construction may involve slightly higher initial planning and material costs, the long-term savings and environmental benefits far outweigh them.</p>
+                            <h3>Prethviga Homes Commitment to Sustainable Living</h3>
+                            <p>At <strong>Prethviga Homes</strong>, we believe responsible construction is the foundation of future-ready living. By adopting eco-friendly materials, efficient designs, and sustainable practices, we aim to build homes that are durable, comfortable, and environmentally conscious.</p>
+                        `
                     },
+                    {
+                        blog_id: new ObjectId(),
+                        inner_img: `${process.env.PROJECT_URL}assets/images/blog2.webp`,
+                        badge_text: "Sustainability",
+                        blog_date: `November 15, 2025`,
+                        blog_time: "4",
+                        blog_title: "Trending Home Construction Methods & Techniques in India (2026)",
+                        blog_description: `As India’s urban landscape evolves rapidly, so do the techniques and technologies used to build homes. In 2026, homeowners and builders alike are embracing smarter, faster, and more sustainable construction methods that deliver quality, efficiency, and long-term value.`,
+                        blog_content: `<p>As India’s urban landscape evolves rapidly, so do the techniques and technologies used to build homes. In 2026, homeowners and builders alike are embracing smarter, faster, and more sustainable construction methods that deliver quality, efficiency,and long-term value.</p>
+                            <h3>1. Pre-Engineered & Modular Construction</h3>
+                            <p>Modular construction involves building sections (modules) off-site and assembling them on location. Pre-engineered steel buildings are growing in popularity for residential and mixed-use developments.</p>
+                            <h3>Why it’s trending:</h3>
+                            <ul><li>Faster completion timelines</li><li>Less on-site waste and disruption</li><li>Higher precision and quality control</li><li>Ideal for tight urban sites</li></ul>
+                            <p>Modular homes allow for customization while reducing labor and cost uncertainties.</p>
+                            <h3>2. 3D Printing of Structures</h3>
+                            <p>3D concrete printing has moved beyond prototypes to real home projects in India. Large gantry printers or robotic arms lay down concrete layers per digital designs.</p>
+                            <h3>Benefits:</h3>
+                            <ul><li>Reduces construction time drastically</li><li>Uses less material</li><li>Enables complex architectural forms</li><li>Improves labor safety</li></ul>
+                            <p>While still emerging, 3D-printed homes are gaining traction for affordable housing and experimental builds.</p>
+                            <h3>3. Sustainable & Green Building Techniques</h3>
+                            <p>Sustainability remains at the core of modern construction. Green building certifications (like GRIHA and IGBC) are increasingly sought after.</p>
+                            <h3>Top sustainable practices:</h3>
+                            <ul><li>Fly ash bricks and AAC blocks</li><li>Solar passive design</li><li>Rainwater harvesting & recycling</li><li>Green roofs and vertical gardens</li></ul>
+                            <p>These techniques reduce environmental impact and utility costs while improving comfort.</p>
+                            <h3>4. Insulated Concrete Formwork (ICF)</h3>
+                            <p>ICF combines reinforced concrete with insulation panels, creating a strong and energy-efficient wall system.</p>
+                            <h3>Why builders love it:</h3>
+                            <ul><li>Excellent thermal insulation</li><li>Higher strength and durability</li><li>Faster assembly</li><li>Lower energy bills</li></ul>
+                            <p>For cities like Chennai and Bengaluru where heat load is high, ICF is becoming a preferred choice.</p>
+                            <h3>5. Advanced Brickwork with Precision Tools</h3>
+                            <p>Traditional brickwork is being modernized through laser leveling, digital measurement tools, and mechanized brick cutters. These improve alignment, reduce rework, and enhance finish quality.</p>
+                            <h3>Trends include:</h3>
+                            <ul><li>Laser-guided leveling systems</li><li>Pneumatic bricklaying assists</li><li>Jointless masonry techniques</li><li>High-strength mortar mixes</li></ul>
+                            <p>This fusion of tradition with technology upgrades quality without losing the familiar construction workflow.</p>
+                            <h3>6. Smart Building Integration</h3>
+                            <p>Tech isn’t just for homes once they’re built — it’s influencing how we build them. Smart planning and IoT monitoring improve construction outcomes.</p>
+                            <h3>Examples:</h3>
+                            <ul><li>IoT sensors for curing and moisture control</li><li>Drone-based site tracking</li><li>Digital project management dashboards</li><li>Predictive analytics</li></ul>
+                            <p>This data-driven approach improves safety, efficiency, and transparency.</p>
+                            <h3>7. Prefab Roof & Floor Systems</h3>
+                            <p>Engineered slab systems and prefab roofing units help manage structural loads and speed up build cycles.</p>
+                            <h3>Advantages:</h3>
+                            <ul><li>Enhanced structural performance</li><li>Reduced on-site labor</li><li>Fewer weather delays</li><li>Consistent quality</li></ul>
+                            <p>These systems are especially useful in multi-story residential projects.</p>
+                            <h3>8. Eco-Friendly Paints & Low VOC Finishes</h3>
+                            <p>Interior and exterior finishes are shifting toward low VOC (Volatile Organic Compound) paints and coatings that improve indoor air quality.</p>
+                            <h3>Benefits:</h3>
+                            <ul><li>Healthier living environments</li><li>Reduced off-gassing odors</li><li>Eco-certified products</li><li>Sustainable sourcing</li></ul>
+                            <p>Homebuyers now expect healthier material specifications as standard.</p>
+                        `
+                    }
                 ]
             }
         ]

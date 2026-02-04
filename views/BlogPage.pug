@@ -2,7 +2,7 @@ doctype html
 head
   meta(charset='UTF-8')
   meta(name='viewport' content='width=device-width, initial-scale=1.0')
-  title Innovative Materials | Prethviga Homes
+  title #{blog.blog_title}
   link(rel='stylesheet' href=utils.assetPath("/bundle/BlogPage.css"))
 if blog
   - var bannerUrl = blog.inner_img || (bannerData && bannerData.length > 0 ? bannerData[0].image : '/assets/images/blog1.webp')
@@ -10,7 +10,7 @@ if blog
   header.Blog-hero(style=bannerStyle)
     .Hero-content
       button.Badge #{blog.badge_text || 'Innovation'}
-      h1.Title #{blog.blog_text || 'Innovative Materials Revolutionizing Modern Construction'}
+      h1.Title #{blog.blog_title || 'Innovative Materials Revolutionizing Modern Construction'}
       .Meta-data
         span.Author Prethviga Homes Team
         span.dot

@@ -147,12 +147,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     date: inputs.date.value,
                     description: inputs.description.value.trim(),
                     read_time: inputs.read_time ? inputs.read_time.value : '',
-                    content: document.getElementById('edit-content-input').value
+                    content: document.getElementById('edit-content-input').value,
+                    remove_image: 'false'
                 };
             }, 0);
 
             const imageBtn = itemForm.querySelector('.view-current-image-btn');
-            if (imageBtn) {
+            const removeBtn = itemForm.querySelector('.remove-current-image-btn');
+            const fileInput = itemForm.querySelector('input[type="file"]');
+
+            if (imageBtn && removeBtn && fileInput) {
                 if (blogData.image) {
                     imageBtn.dataset.image = blogData.image;
                     imageBtn.style.display = 'inline-flex';
@@ -164,6 +168,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     fileInput.style.display = 'block';
                 }
             }
+
+            // Reset removal flag
+            if (inputs.remove_image) inputs.remove_image.value = 'false';
 
             // Reset validation states
             resetValidation(itemForm);
@@ -191,12 +198,16 @@ document.addEventListener('DOMContentLoaded', function () {
             const form = this.closest('form');
             const viewBtn = form.querySelector('.view-current-image-btn');
             const fileInput = form.querySelector('input[type="file"]');
+            const removeImageInput = form.querySelector('input[name="remove_image"]');
 
             this.style.display = 'none';
             if (viewBtn) viewBtn.style.display = 'none';
             if (fileInput) {
                 fileInput.style.display = 'block';
                 fileInput.value = ''; // Reset file input
+            }
+            if (removeImageInput) {
+                removeImageInput.value = 'true';
             }
         });
     }
@@ -316,6 +327,7 @@ document.addEventListener('DOMContentLoaded', function () {
             form.description.value.trim() !== originalFormData.description ||
             (form.read_time && form.read_time.value !== originalFormData.read_time) ||
             (document.getElementById('edit-content-input').value !== originalFormData.content) ||
+            (form.remove_image && form.remove_image.value !== originalFormData.remove_image) ||
             (form.file && form.file.files.length > 0)
         );
     }
@@ -430,57 +442,6 @@ document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('input', (e) => {
         if (e.target.name === 'link') {
             // Simplified: no tooltip sync for forms as per user request
-        }
-    });
-
-    // Custom Tooltip Logic to avoid Table Clipping
-    const tooltip = document.createElement('div');
-    tooltip.className = 'custom-js-tooltip';
-    document.body.appendChild(tooltip);
-
-    document.addEventListener('mouseover', function (e) {
-        const target = e.target.closest('.tooltip-cell');
-        if (target) {
-            const text = target.getAttribute('data-tooltip');
-            if (text && text !== 'No description available...') {
-                tooltip.textContent = text;
-                tooltip.style.display = 'block'; // Make visible to calculate dims
-
-                const rect = target.getBoundingClientRect();
-                const tooltipWidth = tooltip.offsetWidth;
-                const tooltipHeight = tooltip.offsetHeight;
-
-                // Position to the right of the cell/cursor
-                let top = rect.top + (rect.height / 2) - 20; // Aligned roughly with text
-                let left = rect.right + 2; // Reduced gap to 2px
-
-                // Check if it goes off screen right
-                if (left + tooltipWidth > window.innerWidth) {
-                    // Flip to left side
-                    // rect.left is the cell edge. Cell has ~24px padding. 
-                    // To place it closer to text, we can overlap the padding slightly.
-                    left = rect.left - tooltipWidth - 2;
-                    tooltip.classList.add('left-side');
-                } else {
-                    tooltip.classList.remove('left-side');
-                }
-
-                // Check vertical bounds
-                if (top < 10) top = 10;
-                if (top + tooltipHeight > window.innerHeight) {
-                    top = window.innerHeight - tooltipHeight - 10;
-                }
-
-                tooltip.style.top = `${top}px`;
-                tooltip.style.left = `${left}px`;
-            }
-        }
-    });
-
-    document.addEventListener('mouseout', function (e) {
-        const target = e.target.closest('.tooltip-cell');
-        if (target) {
-            tooltip.style.display = 'none';
         }
     });
 });

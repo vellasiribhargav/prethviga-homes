@@ -524,7 +524,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     id: blog.blog_id || index,
                     blogTag: blog.badge_text || 'No tag',
                     publicationDate: blog.blog_date ? new Date(blog.blog_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'No date',
-                    blogTitle: blog.blog_text || 'Untitled Blog',
+                    blogTitle: blog.blog_title || 'Untitled Blog',
                     blogDescription: blog.blog_description || 'No description',
                     coverImage: blog.inner_img || null,
                     index: index
