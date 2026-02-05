@@ -225,42 +225,88 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function handleImageUpload(file, uploadBtn) {
         if (file.size > 5 * 1024 * 1024) {
-            alert(`${file.name} is too large. Max size is 5MB.`);
+            Swal.fire({
+                icon: 'error',
+                title: 'File too large',
+                text: `${file.name} is too large. Max size is 5MB.`,
+                confirmButtonColor: '#BC5322'
+            });
             return;
         }
 
         const reader = new FileReader();
         reader.onload = (e) => {
-            uploadBtn.innerHTML = `
+            // Clear current content except the file input
+            const fileInput = uploadBtn.querySelector('.image-upload');
+
+            // Create preview container
+            const previewHTML = `
                 <div class="uploaded-image">
                     <img src="${e.target.result}" alt="Uploaded image">
-                    <button class="remove-image" onclick="removeImage(this, event)">
+                    <button class="remove-image" type="button">
                         <span class="material-symbols-outlined">close</span>
                     </button>
                 </div>
-                <input class="image-upload" type="file" accept="image/*" style="display: none;">
             `;
+
+            // Hide the upload placeholder content
+            const uploadIcon = uploadBtn.querySelector('.upload-icon');
+            const uploadText = uploadBtn.querySelector('.upload-text');
+            const uploadSubtext = uploadBtn.querySelector('.upload-subtext');
+
+            if (uploadIcon) uploadIcon.style.display = 'none';
+            if (uploadText) uploadText.style.display = 'none';
+            if (uploadSubtext) uploadSubtext.style.display = 'none';
+
+            // Add or update preview
+            let preview = uploadBtn.querySelector('.uploaded-image');
+            if (preview) {
+                preview.querySelector('img').src = e.target.result;
+            } else {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = previewHTML;
+                uploadBtn.insertBefore(tempDiv.firstElementChild, fileInput);
+            }
+
             uploadBtn.classList.add('has-image');
 
-            // setupImageUpload call removed, handled by delegation
+            // Add event listener to the new remove button
+            const removeBtn = uploadBtn.querySelector('.remove-image');
+            if (removeBtn) {
+                removeBtn.addEventListener('click', (event) => {
+                    removeImage(removeBtn, event);
+                });
+            }
         };
         reader.readAsDataURL(file);
     }
 
     window.removeImage = function (button, event) {
-        if (event) event.stopPropagation();
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
         const uploadBtn = button.closest('.upload-btn');
+        if (!uploadBtn) return;
+
         uploadBtn.classList.remove('has-image');
-        uploadBtn.innerHTML = `
-            <div class="upload-icon">
-                <svg class="icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
-                    <path d="M480-260q75 0 127.5-52.5T660-440q0-75-52.5-127.5T480-620q-75 0-127.5 52.5T300-440q0 75 52.5 127.5T480-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM160-120q-33 0-56.5-23.5T80-200v-480q0-33 23.5-56.5T160-760h126l74-80h240l74 80h126q33 0 56.5 23.5T880-680v480q0 33-23.5 56.5T800-120H160Zm0-80h640v-480H638l-73-80H395l-73 80H160v480Zm320-240Z"/>
-                </svg>
-            </div>
-            <p class="upload-text">Upload Images</p>
-            <p class="upload-subtext">JPG, PNG (max. 5MB)</p>
-            <input class="image-upload" type="file" accept="image/*" style="display: none;">
-        `;
+
+        // Remove preview
+        const preview = uploadBtn.querySelector('.uploaded-image');
+        if (preview) preview.remove();
+
+        // Restore placeholder content
+        const uploadIcon = uploadBtn.querySelector('.upload-icon');
+        const uploadText = uploadBtn.querySelector('.upload-text');
+        const uploadSubtext = uploadBtn.querySelector('.upload-subtext');
+
+        if (uploadIcon) uploadIcon.style.display = 'block';
+        if (uploadText) uploadText.style.display = 'block';
+        if (uploadSubtext) uploadSubtext.style.display = 'block';
+
+        // Clear file input
+        const fileInput = uploadBtn.querySelector('.image-upload');
+        if (fileInput) fileInput.value = '';
     };
 
     // Form Data Collection
