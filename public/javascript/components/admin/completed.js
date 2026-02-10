@@ -1,3 +1,5 @@
+import $ from 'jquery';
+window.$ = window.jQuery = $;
 import Swal from 'sweetalert2';
 
 function formatToDB(dateStr) {
@@ -38,8 +40,43 @@ document.addEventListener('DOMContentLoaded', function () {
     updateFormsCache();
     updateDeleteButtonsVisibility();
 
+    // Date Validation Helper
+    function isValidDate(dateString) {
+        if (!dateString) return false;
+
+        const dateParts = dateString.split('-');
+        if (dateParts.length !== 3) return false;
+
+        const year = parseInt(dateParts[0], 10);
+        const month = parseInt(dateParts[1], 10);
+        const day = parseInt(dateParts[2], 10);
+
+        // Check ranges
+        const currentYear = new Date().getFullYear();
+        if (year < 1998 || year > currentYear + 3) return false;
+        if (month < 1 || month > 12) return false;
+
+        // Days in month
+        const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+        // Leap year check
+        if (year % 400 === 0 || (year % 100 !== 0 && year % 4 === 0)) {
+            daysInMonth[1] = 29;
+        }
+
+        return day > 0 && day <= daysInMonth[month - 1];
+    }
+
     // Add required field validation
     function addRequiredFieldValidation(form) {
+        // Set Date Constraints
+        const dateInput = form.querySelector('input[name="completion-date"]');
+        if (dateInput) {
+            const currentYear = new Date().getFullYear();
+            dateInput.min = '1998-01-01';
+            dateInput.max = `${currentYear + 3}-12-31`;
+        }
+
         const inputs = [
             { selector: 'input[name="project-name"]', message: '* Project name is required' },
             { selector: 'input[name="project-location"]', message: '* Project location is required' },
@@ -65,11 +102,32 @@ document.addEventListener('DOMContentLoaded', function () {
 
             input.after(msg);
 
-            input.addEventListener('input', () => {
-                msg.style.display = 'none';
-            });
+            // Special validation for Date
+            if (name === 'completion-date') {
+                input.addEventListener('input', () => {
+                    if (input.value && !isValidDate(input.value)) {
+                        msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+                        msg.style.display = 'block';
+                    } else {
+                        msg.style.display = 'none';
+                        msg.textContent = message; // Reset to default required message
+                    }
+                });
+            } else {
+                input.addEventListener('input', () => {
+                    msg.style.display = 'none';
+                });
+            }
+
             input.addEventListener('change', () => {
-                msg.style.display = 'none';
+                const isDate = name === 'completion-date';
+                if (isDate && input.value && !isValidDate(input.value)) {
+                    msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+                    msg.style.display = 'block';
+                } else {
+                    msg.style.display = 'none';
+                    if (isDate) msg.textContent = message;
+                }
             });
         });
 
@@ -102,7 +160,21 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!input) return;
 
             const msg = input.parentNode.querySelector(`.required-message[data-for="${name}"]`);
+
+            let isFieldValid = true;
             if (input.value.trim() === '') {
+                isFieldValid = false;
+                if (msg) {
+                    msg.textContent = name === 'completion-date' ? '* Completion date is required' : msg.textContent;
+                }
+            } else if (name === 'completion-date' && !isValidDate(input.value)) {
+                isFieldValid = false;
+                if (msg) {
+                    msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+                }
+            }
+
+            if (!isFieldValid) {
                 if (msg) msg.style.display = 'block';
                 isValid = false;
             } else {
@@ -592,39 +664,48 @@ document.addEventListener('DOMContentLoaded', function () {
 
         formData.append('completedArr', JSON.stringify(completedArr));
 
-        try {
-            const res = await fetch('/admin/completed/addcompleted', {
-                method: 'POST',
-                body: formData
-            });
+        $.ajax({
+            url: '/admin/completed/addcompleted',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
 
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            success: async function (data) {
+                if (data.success) {
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: `${completedArr.length} Project(s) saved successfully!`,
+                        confirmButtonColor: '#BC5322'
+                    }).then(() => {
+                        window.location.href = '/admin/completed/list';
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: data.message || 'Failed to save project',
+                        confirmButtonColor: '#BC5322'
+                    });
+                }
+            },
+            error: function (xhr) {
+                console.error('Server error:', xhr.responseText);
 
-            const result = await res.json();
-
-            if (!result.success) {
-                alert(result.message);
-                return;
+                let message = 'Server error occurred';
+                if (xhr.responseJSON?.message) {
+                    message = xhr.responseJSON.message;
+                }
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: message,
+                    confirmButtonColor: '#BC5322'
+                });
             }
-
-            await Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: `${completedArr.length} project(s) saved successfully!`,
-                confirmButtonColor: '#BC5322'
-            });
-
-            window.location.reload();
-
-        } catch (err) {
-            console.error(err);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: 'Server error occurred',
-                confirmButtonColor: '#BC5322'
-            });
-        }
+        });
     }
 
     function clearForm(form) {
@@ -785,5 +866,3 @@ window.deleteProjectImage = function (button) {
         if (fileInput) fileInput.value = '';
     }
 };
-
-

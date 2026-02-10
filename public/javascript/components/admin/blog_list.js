@@ -1,5 +1,8 @@
+import $ from 'jquery';
+window.$ = window.jQuery = $;
 import Swal from 'sweetalert2';
 import { PaginationManager } from '../../utils/pagination.js';
+import { isValidDate, getDateRange } from '../../utils/validation.js';
 
 let originalFormData = {};
 
@@ -60,6 +63,14 @@ document.addEventListener('DOMContentLoaded', function () {
         if (modal) {
             modal.style.display = 'block';
             document.body.style.overflow = 'hidden';
+
+            // Set date constraints on modal open
+            const dateInput = modal.querySelector('input[name="date"]');
+            if (dateInput) {
+                const { min, max } = getDateRange();
+                dateInput.min = min;
+                dateInput.max = max;
+            }
         }
     }
 
@@ -224,26 +235,30 @@ document.addEventListener('DOMContentLoaded', function () {
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#3085d6',
                 confirmButtonText: 'Yes, delete it!'
-            });
-
-            if (result.isConfirmed) {
-                try {
-                    const response = await fetch(`/admin/blog/${CURRENT_SLUG}/${CURRENT_SECTION}/delete/${index}`, {
-                        method: 'DELETE'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/admin/blog/${CURRENT_SLUG}/${CURRENT_SECTION}/delete/${index}`,
+                        type: 'DELETE',
+                        success: function (data) {
+                            if (data.success) {
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Blog has been deleted.',
+                                    'success'
+                                ).then(() => {
+                                    window.location.reload();
+                                });
+                            } else {
+                                Swal.fire('Error!', data.message || 'Failed to delete blog', 'error');
+                            }
+                        },
+                        error: function (xhr) {
+                            Swal.fire('Error!', xhr.responseText, 'error');
+                        }
                     });
-
-                    const data = await response.json();
-
-                    if (data.success) {
-                        await Swal.fire('Deleted!', 'Blog has been deleted.', 'success');
-                        window.location.reload();
-                    } else {
-                        throw new Error(data.message);
-                    }
-                } catch (error) {
-                    Swal.fire('Error!', error.message || 'Failed to delete blog', 'error');
                 }
-            }
+            });
         });
     });
 
@@ -287,7 +302,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
             container.appendChild(msg);
 
-            input.addEventListener('input', () => msg.style.display = 'none');
+            // Special validation for Date
+            if (name === 'date') {
+                input.addEventListener('input', () => {
+                    if (input.value && !isValidDate(input.value)) {
+                        msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+                        msg.style.display = 'block';
+                    } else {
+                        msg.style.display = 'none';
+                        msg.textContent = message;
+                    }
+                });
+            } else {
+                input.addEventListener('input', () => msg.style.display = 'none');
+            }
             input.addEventListener('change', () => msg.style.display = 'none');
         });
     }
@@ -308,7 +336,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 val = quill.getText().trim();
             }
 
+            let isFieldValid = true;
+
             if (val === '') {
+                isFieldValid = false;
+                if (msg && name === 'date') msg.textContent = '* Publication date is required';
+            } else if (name === 'date' && !isValidDate(input.value)) {
+                isFieldValid = false;
+                if (msg) msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+            }
+
+            if (!isFieldValid) {
                 if (msg) msg.style.display = 'block';
                 isValid = false;
             } else {
@@ -371,35 +409,40 @@ document.addEventListener('DOMContentLoaded', function () {
             submitBtn.textContent = 'Saving...';
             submitBtn.disabled = true;
 
-            try {
-                const response = await fetch(`/admin/blog/${CURRENT_SLUG}/${CURRENT_SECTION}/update/${index}`, {
-                    method: 'PUT',
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    await Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: 'Blog updated successfully',
-                        timer: 1500
-                    });
-                    window.location.reload();
-                } else {
-                    throw new Error(data.message);
+            $.ajax({
+                url: `/admin/blog/${CURRENT_SLUG}/${CURRENT_SECTION}/update/${index}`,
+                type: 'PUT',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'blog updated successfully',
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message || 'Failed to update gallery item',
+                            timer: 1500
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire('Error!', xhr.responseText, 'error');
+                },
+                complete: function () {
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
                 }
-            } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: error.message || 'Failed to update blog'
-                });
-            } finally {
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-            }
+            });
         });
     }
 

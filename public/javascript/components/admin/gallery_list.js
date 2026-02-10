@@ -1,5 +1,8 @@
+import $ from 'jquery';
+window.$ = window.jQuery = $;
 import Swal from 'sweetalert2';
 import { PaginationManager } from '../../utils/pagination.js';
+import { isValidDate, getDateRange } from '../../utils/validation.js';
 
 let originalFormData = {};
 
@@ -23,6 +26,13 @@ document.addEventListener('DOMContentLoaded', function () {
         if (modal) {
             modal.style.display = 'block';
             document.body.style.overflow = 'hidden';
+
+            const dateInput = modal.querySelector('input[name="date"]');
+            if (dateInput) {
+                const { min, max } = getDateRange();
+                dateInput.min = min;
+                dateInput.max = max;
+            }
         }
     }
 
@@ -140,24 +150,32 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             if (result.isConfirmed) {
-                try {
-                    const response = await fetch(`/admin/gallery/deletegallery/${index}`, {
-                        method: 'DELETE'
-                    });
-
-                    const data = await response.json();
-
-                    if (data.success) {
-                        await Swal.fire('Deleted!', 'Gallery item has been deleted.', 'success');
-                        window.location.reload();
-                    } else {
-                        throw new Error(data.message);
+                $.ajax({
+                    url: `/admin/gallery/deletegallery/${index}`,
+                    type: 'DELETE',
+                    success: function (data) {
+                        if (data.success) {
+                            Swal.fire(
+                                'Deleted!',
+                                'Gallery has been deleted.',
+                                'success'
+                            ).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                'An error occurred while deleting the gallery.',
+                                'error'
+                            );
+                        }
+                    },
+                    error: function (xhr) {
+                        Swal.fire('Error!', xhr.responseText, 'error');
                     }
-                } catch (error) {
-                    Swal.fire('Error!', error.message || 'Failed to delete gallery item', 'error');
-                }
+                });
             }
-        });
+        })
     });
 
     document.querySelectorAll('.btn-preview').forEach(btn => {
@@ -183,19 +201,35 @@ document.addEventListener('DOMContentLoaded', function () {
             const input = form.querySelector(`[name="${name}"]`);
             if (!input) return;
 
+            const container = input.closest('.form-group') || input.parentNode;
+
             // remove old message
-            if (input.nextElementSibling?.classList.contains('required-message')) {
-                input.nextElementSibling.remove();
+            if (container.querySelector(`.required-message[data-for="${name}"]`)) {
+                container.querySelector(`.required-message[data-for="${name}"]`).remove();
             }
 
             const msg = document.createElement('div');
             msg.className = 'required-message';
             msg.textContent = message;
+            msg.dataset.for = name;
             msg.style.display = 'none';
 
-            input.after(msg);
+            container.appendChild(msg);
 
-            input.addEventListener('input', () => msg.style.display = 'none');
+            // Special validation for Date if it exists
+            if (name === 'date') {
+                input.addEventListener('input', () => {
+                    if (input.value && !isValidDate(input.value)) {
+                        msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+                        msg.style.display = 'block';
+                    } else {
+                        msg.style.display = 'none';
+                        msg.textContent = message;
+                    }
+                });
+            } else {
+                input.addEventListener('input', () => msg.style.display = 'none');
+            }
         });
     }
 
@@ -207,8 +241,22 @@ document.addEventListener('DOMContentLoaded', function () {
             const input = form.querySelector(`[name="${name}"]`);
             if (!input) return;
 
-            const msg = input.nextElementSibling;
+            const container = input.closest('.form-group') || input.parentNode;
+            const msg = container.querySelector(`.required-message[data-for="${name}"]`); // Ensure we select the right message
+
+            let isFieldValid = true;
+
             if (input.value.trim() === '') {
+                isFieldValid = false;
+                // if (msg && name === 'date') msg.textContent = '* Date is required';
+            }
+            // Date validation if added
+            else if (name === 'date' && !isValidDate(input.value)) {
+                isFieldValid = false;
+                if (msg) msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+            }
+
+            if (!isFieldValid) {
                 if (msg) msg.style.display = 'block';
                 isValid = false;
             } else {
@@ -264,35 +312,44 @@ document.addEventListener('DOMContentLoaded', function () {
             submitBtn.textContent = 'Saving...';
             submitBtn.disabled = true;
 
-            try {
-                const response = await fetch(`/admin/gallery/updategallery/${index}`, {
-                    method: 'PUT',
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    await Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: 'Gallery item updated successfully',
-                        timer: 1500
+            $.ajax({
+                url: `/admin/gallery/updategallery/${index}`,
+                type: 'PUT',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Gallery item updated successfully',
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message || 'Failed to update gallery item',
+                            timer: 1500
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: xhr.responseJSON?.message || 'Failed to update gallery item',
                     });
-                    window.location.reload();
-                } else {
-                    throw new Error(data.message);
+                },
+                complete: function () {
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
                 }
-            } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: error.message || 'Failed to update gallery item'
-                });
-            } finally {
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-            }
+            });
         });
     }
 });

@@ -1,5 +1,8 @@
+import $ from 'jquery';
+window.$ = window.jQuery = $;
 import Swal from 'sweetalert2';
 import { PaginationManager } from '../../utils/pagination.js';
+import { isValidDate, getDateRange } from '../../utils/validation.js';
 
 let originalFormData = {};
 
@@ -37,6 +40,14 @@ document.addEventListener('DOMContentLoaded', function () {
         if (modal) {
             modal.style.display = 'block';
             document.body.style.overflow = 'hidden';
+
+            // Set date constraints on modal open
+            const dateInput = modal.querySelector('input[type="date"]');
+            if (dateInput) {
+                const { min, max } = getDateRange();
+                dateInput.min = min;
+                dateInput.max = max;
+            }
         }
     }
 
@@ -169,22 +180,26 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             if (result.isConfirmed) {
-                try {
-                    const response = await fetch(`/admin/completed/deletecompleted/${index}`, {
-                        method: 'DELETE'
-                    });
-
-                    const data = await response.json();
-
-                    if (data.success) {
-                        await Swal.fire('Deleted!', 'Project has been deleted.', 'success');
-                        window.location.reload();
-                    } else {
-                        throw new Error(data.message);
+                $.ajax({
+                    url: `/admin/completed/deletecompleted/${index}`,
+                    type: 'DELETE',
+                    success: function (data) {
+                        if (data.success) {
+                            Swal.fire(
+                                'Deleted!',
+                                'Project has been deleted.',
+                                'success'
+                            ).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire('Error!', data.message, 'error');
+                        }
+                    },
+                    error: function (xhr) {
+                        Swal.fire('Error!', xhr.responseText, 'error');
                     }
-                } catch (error) {
-                    Swal.fire('Error!', error.message || 'Failed to delete project', 'error');
-                }
+                });
             }
         });
     });
@@ -224,7 +239,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
             input.after(msg);
 
-            input.addEventListener('input', () => msg.style.display = 'none');
+            // Special validation for Date
+            if (name === 'project_date') {
+                input.addEventListener('input', () => {
+                    if (input.value && !isValidDate(input.value)) {
+                        msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+                        msg.style.display = 'block';
+                    } else {
+                        msg.style.display = 'none';
+                        msg.textContent = message;
+                    }
+                });
+            } else {
+                input.addEventListener('input', () => msg.style.display = 'none');
+            }
         });
     }
 
@@ -237,8 +265,17 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!input) return;
 
             const msg = input.nextElementSibling;
+            let isFieldValid = true;
 
             if (input.value.trim() === '') {
+                isFieldValid = false;
+                if (msg && name === 'project_date') msg.textContent = '* Completion date is required';
+            } else if (name === 'project_date' && !isValidDate(input.value)) {
+                isFieldValid = false;
+                if (msg) msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+            }
+
+            if (!isFieldValid) {
                 if (msg) msg.style.display = 'block';
                 isValid = false;
             } else {
@@ -298,35 +335,40 @@ document.addEventListener('DOMContentLoaded', function () {
             submitBtn.textContent = 'Saving...';
             submitBtn.disabled = true;
 
-            try {
-                const response = await fetch(`/admin/completed/updatecompleted/${index}`, {
-                    method: 'PUT',
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    await Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: 'Project updated successfully',
-                        timer: 1500
+            $.ajax({
+                url: `/admin/completed/updatecompleted/${index}`,
+                type: 'PUT',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Project updated successfully',
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        throw new Error(data.message);
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: xhr.responseJSON?.message || 'Failed to update project'
                     });
-                    window.location.reload();
-                } else {
-                    throw new Error(data.message);
+                },
+                complete: function () {
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
                 }
-            } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: error.message || 'Failed to update project'
-                });
-            } finally {
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-            }
+
+            });
         });
     }
 });

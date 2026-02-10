@@ -899,6 +899,11 @@ main {
   filter: brightness(0) saturate(100%) invert(45%) sepia(85%) saturate(1200%) hue-rotate(25deg) brightness(95%) contrast(90%);
 }
 
+.upload-icon .icon {
+  color: var(--primary);
+  font-size: 24px;
+}
+
 .upload-text {
   color: var(--text-primary);
   font-size: 14px;

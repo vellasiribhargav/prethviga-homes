@@ -299,8 +299,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     title: 'Success!',
                     text: data.message,
                     confirmButtonColor: '#BC5322'
-                });
-                window.location.reload();
+                }).then(() => {
+                    window.location.href = `/admin/banner/${slug}/list`;
+                })
             } else {
                 Swal.fire({
                     icon: 'error',

@@ -57,10 +57,10 @@ html(lang='en')
                      tr(data-id=item.id data-index=item.index) 
                        td #{String(idx + 1).padStart(2, '0')}
                        td
-                         span.status-badge.badge-upcoming #{item.type}
-                       td.item-name-cell #{item.projectName}
-                       td #{item.title}
-                       td #{item.text || 'No description available...'}
+                         span.status-badge.badge-upcoming #{item.type || '--'}
+                       td.item-name-cell #{item.projectName || '--'}
+                       td #{item.title || 'No title'}
+                       td #{item.text || 'No description'}
                        td
                          if item.coverImage
                            button.btn-preview(data-image=item.coverImage)

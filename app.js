@@ -14,8 +14,8 @@ const homeRoutes = require("./routes/homeRoutes");
 const projectsRoutes = require("./routes/projectsRoutes");
 const onGoingPageRoutes = require("./routes/onGoingPageRoutes");
 const discoverUsRoutes = require("./routes/discoverUsRoutes");
-const contactRoutes = require('./routes/contactRoutes');
 const upcomingRoutes = require('./adminPanel/routes/upcomingRoutes');
+
 const completedRoutes = require('./adminPanel/routes/completedRoutes');
 const galleryRoutes = require('./adminPanel/routes/galleryRoutes');
 const blogRoutes = require('./adminPanel/routes/blogRoutes');
@@ -23,6 +23,7 @@ const bannerRoutes = require('./adminPanel/routes/bannerRoutes');
 const contactsRoutes = require('./adminPanel/routes/contactsRoutes');
 const adminAuthRoutes = require('./adminPanel/routes/authRoutes');
 const { protectAdmin } = require('./middleware/authMiddleware');
+
 const { errorHandler, notFoundHandler } = require('./middleware/errorMiddleware');
 
 const { initRedis } = require('./config/redis.js');
@@ -118,7 +119,7 @@ app.use('/home', homeRoutes);
 app.use("/ProjectPage", projectsRoutes);
 app.use("/OnGoingPage", onGoingPageRoutes);
 app.use("/discoverUs", discoverUsRoutes);
-app.use('/', contactRoutes);
+app.use('/', contactsRoutes);
 
 // Admin Auth Routes
 app.use('/admin', adminAuthRoutes);

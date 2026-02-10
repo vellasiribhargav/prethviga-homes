@@ -1,9 +1,20 @@
+import $ from 'jquery';
+window.$ = window.jQuery = $;
 import Swal from 'sweetalert2';
+import { isValidDate, getDateRange } from '../../utils/validation.js';
 
 function formatToDB(dateStr) {
     if (!dateStr) return '';
     const [year, month, day] = dateStr.split('-');
     return `${day}-${month}-${year}`;
+}
+// displaying date in form 
+function getTodayDate() {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -43,6 +54,13 @@ document.addEventListener('DOMContentLoaded', function () {
         updateSubmitButtonsVisibility();
         updateNavigationButtons();
         updateDeleteButtonsVisibility();
+
+        // Set default date for the first form 
+        // displaying date in form
+        const dateInput = firstForm.querySelector('input[name="publication-date"]');
+        if (dateInput && !dateInput.value) {
+            dateInput.value = getTodayDate();
+        }
     }
 
     function initQuill(formCard) {
@@ -111,23 +129,6 @@ document.addEventListener('DOMContentLoaded', function () {
         msg.textContent = '* Cover image is required';
         msg.style.cssText = 'font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic';
         uploadBtn.parentNode.appendChild(msg);
-
-        /*
-        uploadBtn.addEventListener('click', () => {
-            if (uploadBtn.classList.contains('has-image')) return;
-            fileInput.click();
-        });
-        */
-
-        /*
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                if (msg) msg.style.display = 'none';   // hide error when file selected
-                handleImageUpload(file, uploadBtn);
-            }
-        });
-        */
     }
 
     // Character limit message handler
@@ -329,6 +330,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function addRequiredFieldValidation(form) {
+        // Set Date Constraints
+        const dateInput = form.querySelector('input[name="publication-date"]');
+        if (dateInput) {
+            const { min, max } = getDateRange();
+            dateInput.min = min;
+            dateInput.max = max;
+        }
+
         const conf = [
             { selector: 'input[name="blog_tag"]', name: 'blog_tag', message: '* Blog tag is required' },
             { selector: 'input[name="publication-date"]', name: 'publication-date', message: '* Publication date is required' },
@@ -356,11 +365,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
             container.appendChild(msg);
 
-            input.addEventListener('input', () => {
-                msg.style.display = 'none';
-            });
+            // Special validation for Date
+            if (name === 'publication-date') {
+                input.addEventListener('input', () => {
+                    if (input.value && !isValidDate(input.value)) {
+                        msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+                        msg.style.display = 'block';
+                    } else {
+                        msg.style.display = 'none';
+                        msg.textContent = message;
+                    }
+                });
+            } else {
+                input.addEventListener('input', () => msg.style.display = 'none');
+            }
+
             input.addEventListener('change', () => {
-                msg.style.display = 'none';
+                const isDate = name === 'publication-date';
+                if (isDate && input.value && !isValidDate(input.value)) {
+                    msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+                    msg.style.display = 'block';
+                } else {
+                    msg.style.display = 'none';
+                    if (isDate) msg.textContent = message;
+                }
             });
         });
     }
@@ -389,7 +417,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 val = form.quill.getText().trim();
             }
 
+            let isFieldValid = true;
+
             if (val === '') {
+                isFieldValid = false;
+                if (msg && name === 'publication-date') msg.textContent = '* Publication date is required';
+            } else if (name === 'publication-date' && !isValidDate(input.value)) {
+                isFieldValid = false;
+                if (msg) msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+            }
+
+            if (!isFieldValid) {
                 if (msg) msg.style.display = 'block';
                 isValid = false;
             } else {
@@ -401,68 +439,63 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     async function submitAllBlogs(allFormData) {
-        try {
-            const formData = new FormData();
+        const formData = new FormData();
 
-            // Remove file objects from JSON data to avoid circular reference issues or unnecessary data transfer
-            const blogsData = allFormData.map(data => {
-                const { file, ...rest } = data;
-                return rest;
-            });
+        // Remove file objects from JSON data to avoid circular reference issues or unnecessary data transfer
+        const blogsData = allFormData.map(data => {
+            const { file, ...rest } = data;
+            return rest;
+        });
 
-            // console.log('Submitting blogsData:', blogsData);
-            const blogsToSubmit = blogsData.map(blog => ({
-                ...blog,
-                publicationDate: formatToDB(blog.publicationDate)
-            }));
-            formData.append('blogArr', JSON.stringify(blogsToSubmit));
+        const blogsToSubmit = blogsData.map(blog => ({
+            ...blog,
+            publicationDate: formatToDB(blog.publicationDate)
+        }));
+        formData.append('blogArr', JSON.stringify(blogsToSubmit));
 
-            // Append files with correct indexing ensuring 1:1 mapping
-            allFormData.forEach((data, index) => {
-                if (data.file) {
-                    formData.append(`file_${index}`, data.file);
+        // Append files with correct indexing ensuring 1:1 mapping
+        allFormData.forEach((data, index) => {
+            if (data.file) {
+                formData.append(`file_${index}`, data.file);
+            }
+        });
+
+        $.ajax({
+            url: `/admin/blog/${slug}/${section}/add`,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            success: async function (data) {
+                if (data.success) {
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: data.message,
+                        confirmButtonColor: '#BC5322'
+                    }).then(() => {
+                        window.location.href = `/admin/blog/${slug}/${section}/list`;
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message,
+                        confirmButtonColor: '#BC5322'
+                    });
                 }
-            });
-
-            const response = await fetch(`/admin/blog/${slug}/${section}/add`, {
-                method: 'POST',
-                body: formData
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                const allForms = document.querySelectorAll('.content-card');
-
-                // Show success message
-                await Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: result.message,
-                    confirmButtonColor: '#BC5322'
-                });
-
-                window.location.reload();
-
-                // Reload from database to get official items
-                // loadExistingBlogs();
-            } else {
+            },
+            error: function (xhr) {
+                console.error('Error submitting blogs:', xhr.responseText);
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: result.message,
+                    text: 'Error submitting blogs. Please try again.',
                     confirmButtonColor: '#BC5322'
                 });
             }
-        } catch (error) {
-            console.error('Error submitting blogs:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Error submitting blogs. Please try again.',
-                confirmButtonColor: '#BC5322'
-            });
-        }
+        });
     }
 
     function formatDateForPreview(dateStr) {
@@ -514,28 +547,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    async function loadExistingBlogs() {
-        try {
-            const response = await fetch(`/admin/blog/${slug}/${section}/get`);
-            const result = await response.json();
-
-            if (result.success && result.data.length > 0) {
-                blogArr = result.data.map((blog, index) => ({
-                    id: blog.blog_id || index,
-                    blogTag: blog.badge_text || 'No tag',
-                    publicationDate: blog.blog_date ? new Date(blog.blog_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'No date',
-                    blogTitle: blog.blog_title || 'Untitled Blog',
-                    blogDescription: blog.blog_description || 'No description',
-                    coverImage: blog.inner_img || null,
-                    index: index
-                }));
-                updateAddedItemsDisplay();
-            }
-        } catch (error) {
-            console.error('Error loading existing blogs:', error);
-        }
-    }
-
     function updateAddedItemsDisplay() {
         addedItemsList.innerHTML = '';
 
@@ -572,72 +583,6 @@ document.addEventListener('DOMContentLoaded', function () {
             showAddedItemsSection();
         }
     }
-
-    window.deleteItem = async function (id, index) {
-        if (index >= 0) {
-            try {
-                const response = await fetch(`/admin/blog/${slug}/${section}/delete/${index}`, {
-                    method: 'DELETE'
-                });
-                const result = await response.json();
-
-                if (result.success) {
-                    alert(result.message);
-                    loadExistingBlogs();
-                } else {
-                    alert('Error: ' + result.message);
-                }
-            } catch (error) {
-                console.error('Error deleting blog:', error);
-                alert('Error deleting blog. Please try again.');
-            }
-        } else {
-            const itemToDelete = blogArr.find(item => item.id === id);
-            if (itemToDelete && itemToDelete.formId) {
-                const formCard = document.querySelector(`.content-card[data-form-id="${itemToDelete.formId}"]`);
-                if (formCard) formCard.remove();
-            }
-            blogArr = blogArr.filter(item => item.id !== id);
-            updateAddedItemsDisplay();
-        }
-    };
-
-    window.editItem = function (id) {
-        const item = blogArr.find(i => i.id === id);
-        if (!item) return;
-
-        const currentForm = document.querySelector('.content-card:last-of-type');
-        const tagInput = currentForm.querySelector('input[placeholder*="About Us"]');
-        const dateInput = currentForm.querySelector('input[name="publication-date"]');
-        const titleInput = currentForm.querySelector('input[placeholder*="Discover Our Story"]');
-        const descInput = currentForm.querySelector('textarea[placeholder*="discover us blog content"]');
-        const readTimeInput = currentForm.querySelector('select[name="read_time"]');
-        const linkInput = currentForm.querySelector('input[name="link"]');
-
-        tagInput.value = item.blogTag;
-        dateInput.value = item.publicationDate;
-        titleInput.value = item.blogTitle;
-        descInput.value = item.blogDescription;
-        if (readTimeInput) readTimeInput.value = item.readTime || '';
-        if (linkInput) {
-            linkInput.value = item.link || '';
-        }
-
-        if (item.coverImage) {
-            const uploadBtn = currentForm.querySelector('.upload-btn');
-            uploadBtn.innerHTML = `
-                <div class="uploaded-image">
-                    <img src="${item.coverImage}" alt="Uploaded cover">
-                    <button class="remove-image" onclick="removeImage(this)">
-                        <span class="material-symbols-outlined">close</span>
-                    </button>
-                </div>
-            `;
-            uploadBtn.classList.add('has-image');
-        }
-
-        deleteItem(id, item.index || -1);
-    };
 
     function createNewForm() {
         // Reset formCount based on current number of forms to ensure sequential numbering
@@ -688,11 +633,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Publication Date</label>
-                        <input class="form-input" type="date" name="publication-date">
+                        <input class="form-input" type="date" name="publication-date" value="${getTodayDate()}">
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Time to read</label>
+                        <label class="form-label">Time to read(Minutes)</label>
                         <select class="form-select" name="read_time">
                             <option value="" disabled selected>Select time</option>
                             <option value="1">1</option>

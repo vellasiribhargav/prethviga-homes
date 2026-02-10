@@ -1,4 +1,7 @@
+import $ from 'jquery';
+window.$ = window.jQuery = $;
 import Swal from 'sweetalert2';
+import { isValidDate, getDateRange } from '../../utils/validation.js';
 
 function formatToDB(dateStr) {
     if (!dateStr) return '';
@@ -40,6 +43,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Add required field validation
     function addRequiredFieldValidation(form) {
+        // Set Date Constraints
+        const dateInput = form.querySelector('input[name="timeline-date"]');
+        if (dateInput) {
+            const { min, max } = getDateRange();
+            dateInput.min = min;
+            dateInput.max = max;
+        }
+
         const conf = [
             { selector: 'input[name="project-name"]', name: 'project-name', message: '* Project name is required' },
             { selector: 'input[name="project-location"]', name: 'project-location', message: '* Project location is required' },
@@ -63,11 +74,32 @@ document.addEventListener('DOMContentLoaded', function () {
 
             input.after(msg);
 
-            input.addEventListener('input', () => {
-                msg.style.display = 'none';
-            });
+            // Special validation for Date
+            if (name === 'timeline-date') {
+                input.addEventListener('input', () => {
+                    if (input.value && !isValidDate(input.value)) {
+                        msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+                        msg.style.display = 'block';
+                    } else {
+                        msg.style.display = 'none';
+                        msg.textContent = message;
+                    }
+                });
+            } else {
+                input.addEventListener('input', () => {
+                    msg.style.display = 'none';
+                });
+            }
+
             input.addEventListener('change', () => {
-                msg.style.display = 'none';
+                const isDate = name === 'timeline-date';
+                if (isDate && input.value && !isValidDate(input.value)) {
+                    msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+                    msg.style.display = 'block';
+                } else {
+                    msg.style.display = 'none';
+                    if (isDate) msg.textContent = message;
+                }
             });
         });
 
@@ -109,7 +141,21 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!input) return;
 
             const msg = input.parentNode.querySelector(`.required-message[data-for="${name}"]`);
+            let isFieldValid = true;
+
             if (input.value.trim() === '') {
+                isFieldValid = false;
+                if (msg) {
+                    msg.textContent = name === 'timeline-date' ? '* Timeline date is required' : msg.textContent;
+                }
+            } else if (name === 'timeline-date' && !isValidDate(input.value)) {
+                isFieldValid = false;
+                if (msg) {
+                    msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+                }
+            }
+
+            if (!isFieldValid) {
                 if (msg) msg.style.display = 'block';
                 isValid = false;
             } else {
@@ -179,6 +225,32 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             if (formCard) {
+                // Remove the form from DOM
+                formCard.remove();
+
+                // Update forms cache after removal
+                updateFormsCache();
+
+                // Renumber remaining forms
+                formsCache.forEach((form, index) => {
+                    const formNumber = form.querySelector('.form-number');
+                    if (formNumber) {
+                        formNumber.textContent = index + 1;
+                    }
+                    form.dataset.formIndex = index;
+                });
+
+                // Adjust current form index if needed
+                if (window.currentFormIndex >= formsCache.length) {
+                    window.currentFormIndex = formsCache.length - 1;
+                }
+
+                // Show the current form
+                formsCache.forEach(f => f.style.display = 'none');
+                if (formsCache[window.currentFormIndex]) {
+                    formsCache[window.currentFormIndex].style.display = 'block';
+                }
+
                 updateNavigationButtons();
                 updateSubmitButtons();
                 updateDeleteButtonsVisibility();
@@ -535,39 +607,41 @@ document.addEventListener('DOMContentLoaded', function () {
 
         formData.append('upcomingArr', JSON.stringify(upcomingArr));
 
-        try {
-            const res = await fetch('/admin/upcoming/addupcoming', {
-                method: 'POST',
-                body: formData
-            });
-
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-            const result = await res.json();
-
-            if (!result.success) {
-                alert(result.message);
-                return;
+        $.ajax({
+            url: '/admin/upcoming/addupcoming',
+            method: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: `${upcomingArr.length} project(s) saved successfully!`,
+                        confirmButtonColor: '#BC5322'
+                    }).then(() => {
+                        window.location.href = '/admin/upcoming/list';
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'Server error occurred',
+                        confirmButtonColor: '#BC5322'
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Network Error!',
+                    text: 'Failed to submit projects. Please try again.',
+                    confirmButtonColor: '#BC5322'
+                });
             }
-
-            await Swal.fire({
-                icon: 'success',
-                title: 'Success!',
-                text: `${upcomingArr.length} project(s) saved successfully!`,
-                confirmButtonColor: '#BC5322'
-            });
-
-            window.location.reload();
-
-        } catch (err) {
-            console.error(err);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: 'Server error occurred',
-                confirmButtonColor: '#BC5322'
-            });
-        }
+        });
     }
 
     function clearForm(form) {
