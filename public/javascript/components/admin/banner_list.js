@@ -1,3 +1,5 @@
+import $ from 'jquery';
+window.$ = window.jQuery = $;
 import Swal from 'sweetalert2';
 import { PaginationManager } from '../../utils/pagination.js';
 
@@ -133,26 +135,30 @@ document.addEventListener('DOMContentLoaded', function () {
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#3085d6',
                 confirmButtonText: 'Yes, delete it!'
-            });
-
-            if (result.isConfirmed) {
-                try {
-                    const response = await fetch(`/admin/banner/${CURRENT_SLUG}/delete/${index}`, {
-                        method: 'DELETE'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/admin/banner/${CURRENT_SLUG}/delete/${index}`,
+                        type: 'DELETE',
+                        success: function (data) {
+                            if (data.success) {
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Banner has been deleted.',
+                                    'success'
+                                ).then(() => {
+                                    window.location.reload();
+                                });
+                            } else {
+                                Swal.fire('Error!', data.message || 'Failed to delete banner', 'error');
+                            }
+                        },
+                        error: function (xhr) {
+                            Swal.fire('Error!', xhr.responseText, 'error');
+                        }
                     });
-
-                    const data = await response.json();
-
-                    if (data.success) {
-                        await Swal.fire('Deleted!', 'Banner has been deleted.', 'success');
-                        window.location.reload();
-                    } else {
-                        throw new Error(data.message);
-                    }
-                } catch (error) {
-                    Swal.fire('Error!', error.message || 'Failed to delete banner', 'error');
                 }
-            }
+            });
         });
     });
 
@@ -221,35 +227,34 @@ document.addEventListener('DOMContentLoaded', function () {
             submitBtn.textContent = 'Saving...';
             submitBtn.disabled = true;
 
-            try {
-                const response = await fetch(`/admin/banner/${CURRENT_SLUG}/update/${index}`, {
-                    method: 'PUT',
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    await Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: 'Banner updated successfully',
-                        timer: 1500
-                    });
-                    window.location.reload();
-                } else {
-                    throw new Error(data.message);
+            $.ajax({
+                url: `/admin/banner/${CURRENT_SLUG}/update/${index}`,
+                type: 'PUT',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Banner updated successfully',
+                            timer: 1500
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire('Error!', data.message || 'Failed to update banner', 'error');
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire('Error!', xhr.responseText, 'error');
+                },
+                complete: function () {
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
                 }
-            } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: error.message || 'Failed to update banner'
-                });
-            } finally {
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-            }
+            });
         });
     }
 

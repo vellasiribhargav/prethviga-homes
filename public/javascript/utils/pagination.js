@@ -14,8 +14,10 @@ export class PaginationManager {
         }
 
         this.rows = Array.from(this.tableBody.querySelectorAll('tr'));
-        this.currentPage = 1;
         this.calculateTotalPages();
+
+        // Always start from page 1 on refresh/navigation
+        this.currentPage = 1;
 
         this.init();
     }

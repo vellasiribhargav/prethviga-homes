@@ -1,6 +1,7 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
 // const connectMongoDB = require("../../config/mongodb.js");
+const bcrypt = require("bcryptjs");
 const config = require("../../config/config.js");
 const PROJECT_URL = process.env.PROJECT_URL;
 const { ObjectId } = require("mongodb");
@@ -16,19 +17,10 @@ const seedMongoDB = async () => {
                 "page_slug": "home",
                 "page_section": "home_banner",
                 "page_content": [
-                    {
-                        "projimage": `${process.env.PROJECT_URL}assets/images/homeani1.webp`
-                    },
-                    {
-                        "projimage": `${process.env.PROJECT_URL}assets/images/homeani2.webp`
-                    },
-                    {
-                        "projimage": `${process.env.PROJECT_URL}assets/images/homeani3.webp`
-                    },
-                    {
-                        "projimage": `${process.env.PROJECT_URL}assets/images/homeani4.webp`
-
-                    }
+                    { "projimage": `${process.env.PROJECT_URL}assets/images/homeani1.webp` },
+                    { "projimage": `${process.env.PROJECT_URL}assets/images/homeani2.webp` },
+                    { "projimage": `${process.env.PROJECT_URL}assets/images/homeani3.webp` },
+                    { "projimage": `${process.env.PROJECT_URL}assets/images/homeani4.webp` }
                 ]
             },
             {
@@ -141,12 +133,8 @@ const seedMongoDB = async () => {
                 "page_slug": "ProjectPage",
                 "page_section": "project-banner",
                 "page_content": [
-                    {
-                        "image": `${process.env.PROJECT_URL}/assets/images/blog1.webp`
-                    },
-                    {
-                        "image": `${process.env.PROJECT_URL}/assets/images/cardblog3.webp`
-                    }
+                    { "image": `${process.env.PROJECT_URL}/assets/images/blog1.webp` },
+                    { "image": `${process.env.PROJECT_URL}/assets/images/cardblog3.webp` }
                 ]
             },
             {
@@ -361,24 +349,12 @@ const seedMongoDB = async () => {
                 "page_slug": "OnGoingPage",
                 "page_section": "amenities-list",
                 "page_content": [
-                    {
-                        "feature": "Swimming Pool"
-                    },
-                    {
-                        "feature": "Theater"
-                    },
-                    {
-                        "feature": "Fitness Center"
-                    },
-                    {
-                        "feature": "Parking"
-                    },
-                    {
-                        "feature": "Playground"
-                    },
-                    {
-                        "feature": "24/7 Security"
-                    }
+                    { "feature": "Swimming Pool" },
+                    { "feature": "Theater" },
+                    { "feature": "Fitness Center" },
+                    { "feature": "Parking" },
+                    { "feature": "Playground" },
+                    { "feature": "24/7 Security" }
                 ]
             },
             {
@@ -517,9 +493,7 @@ const seedMongoDB = async () => {
                 "page_slug": "discoverUs",
                 "page_section": "discover-banner",
                 "page_content": [
-                    {
-                        "image": `${process.env.PROJECT_URL}/assets/images/discover.webp`
-                    }
+                    { "image": `${process.env.PROJECT_URL}/assets/images/discover.webp` }
                 ]
             },
             // {
@@ -598,7 +572,7 @@ const seedMongoDB = async () => {
                 "page_content": [
                     {
                         blog_id: new ObjectId(),
-                        inner_img: `${process.env.PROJECT_URL}assets/images/blog1.webp`,
+                        inner_img: `${process.env.PROJECT_URL}assets/images/Blog_1.webp`,
                         badge_text: "Sustainability",
                         blog_date: `November 15, 2025`,
                         blog_time: "4",
@@ -658,7 +632,7 @@ const seedMongoDB = async () => {
                     },
                     {
                         blog_id: new ObjectId(),
-                        inner_img: `${process.env.PROJECT_URL}assets/images/blog2.webp`,
+                        inner_img: `${process.env.PROJECT_URL}assets/images/Blog_3.webp`,
                         badge_text: "Sustainability",
                         blog_date: `November 15, 2025`,
                         blog_time: "4",
@@ -709,19 +683,36 @@ const seedMongoDB = async () => {
                     }
                 ]
             }
-        ]
+        ];
+
+        // Admin User Data
+        const adminUsersConnection = mongoose.connection.db.collection("admin");
+
+        const adminPassword = "admin@321";
+        const hashedAdminPassword = await bcrypt.hash(adminPassword, 10);
+        const insertAdminData = 
+            {
+                "userName": "admin@gmail.com",
+                "password": hashedAdminPassword,
+                "createdAt": new Date()
+            };
 
         // Clear existing data to prevent duplicates
         await homeConnection.deleteMany({});
         await ProjectPageConnection.deleteMany({});
         await OnGoingPageConnection.deleteMany({});
         await discoverUsConnection.deleteMany({});
+        
+        await adminUsersConnection.deleteMany({});
 
         // Insert fresh data
         await homeConnection.insertMany(insertHomeData);
         await ProjectPageConnection.insertMany(insertProjectPageData);
         await OnGoingPageConnection.insertMany(insertOnGoingPageData);
         await discoverUsConnection.insertMany(insertdiscoverUsData);
+
+        await adminUsersConnection.insertOne(insertAdminData);
+
         console.log('Seeding completed successfully');
         process.exit(0);
     } catch (error) {

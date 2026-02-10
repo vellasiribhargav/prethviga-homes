@@ -1,4 +1,5 @@
-import Swal from 'sweetalert2';
+import $ from 'jquery';
+window.$ = window.jQuery = $;
 
 document.addEventListener('DOMContentLoaded', function () {
     const loginForm = document.querySelector('.login-form');
@@ -161,31 +162,27 @@ document.addEventListener('DOMContentLoaded', function () {
         submitBtn.textContent = 'Verifying...';
         submitBtn.disabled = true;
 
-        try {
-            const response = await fetch('/admin/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify(loginData)
-            });
+        $.ajax({
+            url: '/admin/login',
+            type: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            data: JSON.stringify(loginData),
 
-            // Log status for debugging
-            // console.log('[Login] Response Status:', response.status);
-
-            const contentType = response.headers.get('content-type');
-            if (contentType && contentType.includes('application/json')) {
-                const data = await response.json();
-
+            success: function (data) {
                 if (data.success) {
                     // Store username in cookie for 30 days
                     setCookie('remembered_admin_username', formData.username, 30);
                     window.location.href = '/admin/list';
                 } else {
                     const passwordInput = document.getElementById('password');
-                    const msg = passwordInput.closest('.form-group').querySelector('.required-message');
+                    const msg = passwordInput
+                        .closest('.form-group')
+                        .querySelector('.required-message');
 
                     if (msg) {
                         msg.textContent = '* ' + (data.message || 'Invalid username or password');
@@ -195,32 +192,30 @@ document.addEventListener('DOMContentLoaded', function () {
                     submitBtn.textContent = originalText;
                     submitBtn.disabled = false;
                 }
-            } else {
-                // Not JSON! Probably an error page or redirect
-                const text = await response.text();
-                console.error('[Login] Received non-JSON response:', text.substring(0, 500));
+            },
+
+            error: function (xhr) {
+                console.error('[Login] AJAX error:', xhr.responseText);
 
                 const passwordInput = document.getElementById('password');
-                const msg = passwordInput.closest('.form-group').querySelector('.required-message');
+                const msg = passwordInput
+                    .closest('.form-group')
+                    .querySelector('.required-message');
+
                 if (msg) {
-                    msg.textContent = '* Server error (invalid response format)';
+                    // Handle non-JSON / server errors
+                    let message = 'Server error. Please try again.';
+                    if (xhr.responseJSON?.message) {
+                        message = xhr.responseJSON.message;
+                    }
+
+                    msg.textContent = '* ' + message;
                     msg.style.display = 'block';
                 }
+
                 submitBtn.textContent = originalText;
                 submitBtn.disabled = false;
             }
-        } catch (error) {
-            console.error('[Login] Fetch error:', error);
-            const passwordInput = document.getElementById('password');
-            const msg = passwordInput.closest('.form-group').querySelector('.required-message');
-
-            if (msg) {
-                msg.textContent = '* Connection error. Please try again.';
-                msg.style.display = 'block';
-            }
-
-            submitBtn.textContent = originalText;
-            submitBtn.disabled = false;
-        }
+        });
     });
 });

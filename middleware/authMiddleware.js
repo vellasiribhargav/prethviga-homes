@@ -1,12 +1,11 @@
 const jwt = require('jsonwebtoken');
 const { asyncHandler, UnauthorizedError } = require('../utils/errorHandler');
-const AdminUser = require('../models/AdminUser');
+const mongoose = require("mongoose");
 
 const protectAdmin = asyncHandler(async (req, res, next) => {
   const token = req.cookies.admin_token;
 
   if (!token) {
-    // For HTML requests, redirect to login
     if (!req.xhr && req.accepts('html')) {
       return res.redirect('/admin/login');
     }
@@ -17,7 +16,9 @@ const protectAdmin = asyncHandler(async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // Verify user exists in database
-    const user = await AdminUser.findOne({ username: decoded.username });
+    const adminUsersCollection = mongoose.connection.db.collection("admin");
+    const user = await adminUsersCollection.findOne({ userName: decoded.username });
+
     if (!user) {
       throw new Error('User no longer exists');
     }
@@ -27,7 +28,6 @@ const protectAdmin = asyncHandler(async (req, res, next) => {
   } catch (error) {
     res.clearCookie('admin_token');
 
-    // For HTML requests, redirect to login
     if (!req.xhr && req.accepts('html')) {
       return res.redirect('/admin/login');
     }

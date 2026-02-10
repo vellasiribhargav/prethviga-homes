@@ -1,3 +1,5 @@
+import $ from 'jquery';
+window.$ = window.jQuery = $;
 import Swal from 'sweetalert2';
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -129,32 +131,42 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     async function fetchProjects() {
-        try {
-            const [upcomingRes, completedRes] = await Promise.all([
-                fetch('/admin/upcoming/getupcoming'),
-                fetch('/admin/completed/getcompleted')
-            ]);
+        $.when(
+            $.ajax({
+                url: '/admin/upcoming/getupcoming',
+                type: 'GET',
+                dataType: 'json'
+            }),
+            $.ajax({
+                url: '/admin/completed/getcompleted',
+                type: 'GET',
+                dataType: 'json'
+            })
+        )
 
-            const upcomingData = await upcomingRes.json();
-            const completedData = await completedRes.json();
+            .done(function (upcomingRes, completedRes) {
+                // jQuery returns [data, statusText, xhr]
+                const upcomingData = upcomingRes[0];
+                const completedData = completedRes[0];
 
-            projectData.upcoming = upcomingData.data?.map((project, index) => ({
-                id: project.id || project.project_id || index + 1,
-                name: project.project_name || 'Untitled Project',
-                location: project.project_location || 'Location not specified'
-            })) || [];
+                projectData.upcoming = upcomingData.data?.map((project, index) => ({
+                    id: project.id || project.project_id || index + 1,
+                    name: project.project_name || 'Untitled Project',
+                    location: project.project_location || 'Location not specified'
+                })) || [];
 
-            projectData.completed = completedData.data?.map((project, index) => ({
-                id: project.id || project.project_id || index + 1,
-                name: project.project_name || 'Untitled Project',
-                location: project.project_location || 'Location not specified'
-            })) || [];
+                projectData.completed = completedData.data?.map((project, index) => ({
+                    id: project.id || project.project_id || index + 1,
+                    name: project.project_name || 'Untitled Project',
+                    location: project.project_location || 'Location not specified'
+                })) || [];
 
-            // Initialize first dropdown after data is fetched
-            initializeFirstDropdown();
-        } catch (error) {
-            console.error('Error fetching projects:', error);
-        }
+                // Initialize first dropdown after data is fetched
+                initializeFirstDropdown();
+            })
+            .fail(function (xhr, status, error) {
+                console.error('Error fetching projects:', error);
+            });
     }
 
     function initializeFirstDropdown() {
@@ -162,14 +174,14 @@ document.addEventListener('DOMContentLoaded', function () {
             const projectGroup = selectProjectSelect.closest('.form-group');
             if (projectGroup) projectGroup.style.display = 'none';
             projectTypeSelect.value = '';
-            selectProjectSelect.innerHTML = '<option value="">Select a project</option>';
+            selectProjectSelect.innerHTML = '<option value="" disabled selected>Select a project</option>';
             selectProjectSelect.disabled = true;
         }
     }
 
     function populateProjectDropdown(selectElement, projectType) {
         const projectGroup = selectElement.closest('.form-group');
-        selectElement.innerHTML = '<option value="">Select a project</option>';
+        selectElement.innerHTML = '<option value="" disabled selected>Select a project</option>';
 
         if (projectType && projectData[projectType]) {
             if (projectGroup) projectGroup.style.display = 'block';
@@ -300,7 +312,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const uploadText = uploadBtn.querySelector('.upload-text');
         const uploadSubtext = uploadBtn.querySelector('.upload-subtext');
 
-        if (uploadIcon) uploadIcon.style.display = 'block';
+        if (uploadIcon) uploadIcon.style.display = '';
         if (uploadText) uploadText.style.display = 'block';
         if (uploadSubtext) uploadSubtext.style.display = 'block';
 
@@ -426,7 +438,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <option value="completed">Completed Projects</option>
                     </select>
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="display: none;">
                     <label class="form-label">Select Project</label>
                     <select class="form-select" id="${selectId}" disabled>
                         <option disabled selected value=''>Select a project</option>
@@ -696,49 +708,51 @@ document.addEventListener('DOMContentLoaded', function () {
 
         formData.append('galleryArr', JSON.stringify(finalGalleryArr));
 
-        try {
-            const res = await fetch('/admin/gallery/addgallery', {
-                method: 'POST',
-                body: formData
-            });
+        $.ajax({
+            url: '/admin/gallery/addgallery',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
 
-            const result = await res.json();
+            success: async function (data) {
+                if (data.success) {
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: `${finalGalleryArr.length} gallery item(s) saved successfully!`,
+                        confirmButtonColor: '#BC5322'
+                    }).then(() => {
+                        window.location.href = '/admin/gallery/list';
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: data.message || 'Failed to save gallery',
+                        confirmButtonColor: '#BC5322'
+                    });
+                }
+            },
 
-            if (!res.ok) {
-                console.error('Server error:', result);
-                throw new Error(result.message || `HTTP ${res.status}`);
-            }
+            error: function (xhr) {
+                console.error('Server error:', xhr.responseText);
 
-            if (result.success) {
-                await Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: `${finalGalleryArr.length} gallery item(s) saved successfully!`,
-                    confirmButtonColor: '#BC5322'
-                });
+                let message = 'Server error occurred';
+                if (xhr.responseJSON?.message) {
+                    message = xhr.responseJSON.message;
+                }
 
-                window.location.reload();
-
-            } else {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error!',
-                    text: result.message || 'Failed to save gallery',
+                    text: message,
                     confirmButtonColor: '#BC5322'
                 });
             }
-        } catch (error) {
-            console.error('Error submitting gallery:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: error.message || 'Server error occurred',
-                confirmButtonColor: '#BC5322'
-            });
-        }
+        });
     }
-
-
 
     // Initial setup calls
     fetchProjects();
@@ -774,8 +788,14 @@ document.addEventListener('DOMContentLoaded', function () {
         selects.forEach(s => s.value = '');
         inputs.forEach(i => i.value = '');
         textareas.forEach(t => t.value = '');
-        const projectGroup = form.querySelector('#selectProject')?.closest('.form-group') || form.querySelector('[id^="selectProject"]')?.closest('.form-group');
-        if (projectGroup) projectGroup.style.display = 'none';
+
+        const selectProject = form.querySelector('#selectProject') || form.querySelector('[id^="selectProject"]');
+        if (selectProject) {
+            selectProject.innerHTML = '<option value="" disabled selected>Select a project</option>';
+            selectProject.disabled = true;
+            const projectGroup = selectProject.closest('.form-group');
+            if (projectGroup) projectGroup.style.display = 'none';
+        }
 
         const uploadBtn = form.querySelector('.upload-btn');
         if (uploadBtn && uploadBtn.classList.contains('has-image')) {

@@ -1,5 +1,8 @@
+import $ from 'jquery';
+window.$ = window.jQuery = $;
 import Swal from 'sweetalert2';
 import { PaginationManager } from '../../utils/pagination.js';
+import { isValidDate, getDateRange } from '../../utils/validation.js';
 
 let originalFormData = {};
 
@@ -39,6 +42,14 @@ document.addEventListener('DOMContentLoaded', function () {
         if (modal) {
             modal.style.display = 'block';
             document.body.style.overflow = 'hidden';
+
+            // Set date constraints on modal open
+            const dateInput = modal.querySelector('input[type="date"]');
+            if (dateInput) {
+                const { min, max } = getDateRange();
+                dateInput.min = min;
+                dateInput.max = max;
+            }
         }
     }
 
@@ -163,58 +174,51 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Handle Delete
-    document.querySelectorAll('.delete-btn').forEach(btn => {
-        btn.addEventListener('click', async function () {
-            const index = this.dataset.index;
+    $('.delete-btn').on('click', function () {
+        const index = $(this).data('index');
 
-            const result = await Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, delete it!'
-            });
-
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
             if (result.isConfirmed) {
-                try {
-                    const response = await fetch(`/admin/upcoming/deleteupcoming/${index}`, {
-                        method: 'DELETE'
-                    });
-
-                    const data = await response.json();
-
-                    if (data.success) {
-                        await Swal.fire(
+                $.ajax({
+                    url: `/admin/upcoming/deleteupcoming/${index}`,
+                    type: 'DELETE',
+                    success: function () {
+                        Swal.fire(
                             'Deleted!',
                             'Project has been deleted.',
                             'success'
+                        ).then(() => {
+                            window.location.reload();
+                        });
+                    },
+                    error() {
+                        Swal.fire(
+                            'Error!',
+                            'An error occurred while deleting the project.',
+                            'error'
                         );
-                        window.location.reload();
-                    } else {
-                        throw new Error(data.message);
                     }
-                } catch (error) {
-                    Swal.fire(
-                        'Error!',
-                        error.message || 'Failed to delete project',
-                        'error'
-                    );
-                }
+                })
             }
-        });
+        })
     });
 
     // Handle Preview
-    document.querySelectorAll('.btn-preview').forEach(btn => {
-        btn.addEventListener('click', function () {
-            const imageUrl = this.dataset.image;
-            if (imageUrl) {
-                previewImage.src = imageUrl;
-                openModal(previewModal);
-            }
-        });
+    $(document).on('click', '.btn-preview', function () {
+        const imageUrl = $(this).data('image');
+
+        if (!imageUrl) return;
+
+        $('#previewImage').attr('src', imageUrl);
+        $('#previewModal').show();
     });
 
     // Validation Functions
@@ -242,7 +246,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
             input.after(msg);
 
-            input.addEventListener('input', () => msg.style.display = 'none');
+            // Special validation for Date
+            if (name === 'project_date') {
+                input.addEventListener('input', () => {
+                    if (input.value && !isValidDate(input.value)) {
+                        msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+                        msg.style.display = 'block';
+                    } else {
+                        msg.style.display = 'none';
+                        msg.textContent = message;
+                    }
+                });
+            } else {
+                input.addEventListener('input', () => msg.style.display = 'none');
+            }
         });
     }
 
@@ -255,12 +272,21 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!input) return;
 
             const msg = input.nextElementSibling;
+            let isFieldValid = true;
 
             if (input.value.trim() === '') {
-                msg.style.display = 'block';
+                isFieldValid = false;
+                if (msg && name === 'project_date') msg.textContent = '* Completion date is required';
+            } else if (name === 'project_date' && !isValidDate(input.value)) {
+                isFieldValid = false;
+                if (msg) msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+            }
+
+            if (!isFieldValid) {
+                if (msg) msg.style.display = 'block';
                 isValid = false;
             } else {
-                msg.style.display = 'none';
+                if (msg) msg.style.display = 'none';
             }
         });
 
@@ -318,35 +344,43 @@ document.addEventListener('DOMContentLoaded', function () {
             submitBtn.textContent = 'Saving...';
             submitBtn.disabled = true;
 
-            try {
-                const response = await fetch(`/admin/upcoming/updateupcoming/${index}`, {
-                    method: 'PUT',
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    await Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: 'Project updated successfully',
-                        timer: 1500
+            $.ajax({
+                url: `/admin/upcoming/updateupcoming/${index}`,
+                type: 'PUT',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Project updated successfully',
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message || 'Failed to update project'
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: xhr.responseJSON?.message || 'Failed to update project'
                     });
-                    window.location.reload();
-                } else {
-                    throw new Error(data.message);
+                },
+                complete: function () {
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
                 }
-            } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: error.message || 'Failed to update project'
-                });
-            } finally {
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-            }
+            });
         });
     }
 });

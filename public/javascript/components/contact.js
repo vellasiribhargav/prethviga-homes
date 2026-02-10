@@ -1,3 +1,5 @@
+import $ from 'jquery';
+window.$ = window.jQuery = $;
 import Swal from 'sweetalert2';
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -11,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     inputs.forEach(({ id, message }) => {
         const input = document.getElementById(id);
+        if (!input) return;
 
         const msg = document.createElement('div');
         msg.className = 'required-message';
@@ -25,7 +28,23 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    // Real-time input filtering
+    const nameInput = document.getElementById('contact-name');
+    if (nameInput) {
+        nameInput.addEventListener('input', function () {
+            this.value = this.value.replace(/[^a-zA-Z\s]/g, '');
+        });
+    }
+
+    const phoneInputRealTime = document.getElementById('phone');
+    if (phoneInputRealTime) {
+        phoneInputRealTime.addEventListener('input', function () {
+            this.value = this.value.replace(/[^\d+]/g, '');
+        });
+    }
+
     const submitBtn = document.querySelector('.contact-card__button');
+    if (!submitBtn) return;
 
     submitBtn.addEventListener('click', function (e) {
         e.preventDefault();
@@ -54,65 +73,112 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (!isValid) return;
 
-        // Step 2: Format validations (only if required fields are filled)
-        if (!/^\d{10}$/.test(formData.phone)) {
-            const phoneInput = document.getElementById('phone');
-            const phoneMsg = phoneInput.parentNode.querySelector('.required-message');
-            phoneMsg.textContent = '* number should contain 10 digits';
+        // Step 2: Format validations
+        const phoneInput = document.getElementById('phone');
+        const phoneMsg = phoneInput.parentNode.querySelector('.required-message');
+
+        // remove spaces & hyphens
+        const phone = formData.phone.replace(/[\s-]/g, '');
+
+        const showError = (msg) => {
+            phoneMsg.textContent = msg;
             phoneMsg.style.display = 'block';
             isValid = false;
+        };
+
+        phoneMsg.style.display = 'none';
+
+        // +91 (India)
+        if (phone.startsWith('+91')) {
+            const number = phone.slice(3);
+
+            if (!/^[6-9]\d{9}$/.test(number)) {
+                showError('* Indian numbers must be 10 digits starting with 6–9');
+            }
+
+        // Other international numbers
+        } else if (phone.startsWith('+')) {
+            const number = phone.slice(1);
+
+            if (!/^\d{7,15}$/.test(number)) {
+                showError('* International numbers must be 7–15 digits');
+            }
+
+        // No country code
+        } else {
+            if (!/^\d{10,15}$/.test(phone)) {
+                showError('* Number must be 10–15 digits');
+            }
         }
 
-        if (!/^[a-zA-Z0-9._%+-]+@(gmail|outlook|yahoo|hotmail)\.com$/.test(formData.email)) {
-            const emailInput = document.getElementById('email');
-            const emailMsg = emailInput.parentNode.querySelector('.required-message');
-            emailMsg.textContent = '* format: username@example.com';
+        const emailInput = document.getElementById('email');
+        const emailMsg = emailInput.parentNode.querySelector('.required-message');
+        if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(formData.email)) {
+            emailMsg.textContent = '* format: username@example.any';
             emailMsg.style.display = 'block';
             isValid = false;
+        } else {
+            emailMsg.style.display = 'none';
         }
 
+        const nameInputForVal = document.getElementById('contact-name');
         if (!/^[a-zA-Z\s]+$/.test(formData.name)) {
-            const nameInput = document.getElementById('contact-name');
-            const nameMsg = nameInput.parentNode.querySelector('.required-message');
-            nameMsg.textContent = '* no special characters';
+            const nameMsg = nameInputForVal.parentNode.querySelector('.required-message');
+            nameMsg.textContent = '* Only letters and spaces allowed';
             nameMsg.style.display = 'block';
             isValid = false;
         }
 
         if (!isValid) return;
 
-        // Step 3: Send request and show success/error messages
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', '/create-contact');
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.onload = function () {
-            const data = JSON.parse(xhr.responseText);
-            if (data.success) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: 'Contact saved successfully!',
-                    confirmButtonColor: '#BC5322'
-                });
-                inputs.forEach(({ id }) => document.getElementById(id).value = '');
-                document.getElementById('contact-section').scrollIntoView({ behavior: 'smooth' });
-            } else {
+        // Step 3: Send request using jQuery AJAX
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Sending...';
+        submitBtn.disabled = true;
+
+        $.ajax({
+            url: '/create-contact',
+            type: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+            data: JSON.stringify(formData),
+            success: function (data) {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Contact saved successfully!',
+                        confirmButtonColor: '#BC5322'
+                    });
+                    inputs.forEach(({ id }) => {
+                        const input = document.getElementById(id);
+                        if (input) input.value = '';
+                    });
+                    const contactSection = document.getElementById('contact-section');
+                    if (contactSection) {
+                        contactSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: data.message || 'Failed to save contact',
+                        confirmButtonColor: '#BC5322'
+                    });
+                }
+            },
+            error: function (xhr) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error!',
-                    text: data.message,
+                    text: xhr.responseJSON?.message || 'Network error occurred',
                     confirmButtonColor: '#BC5322'
                 });
+            },
+            complete: function () {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
             }
-        };
-        xhr.onerror = function () {
-            Swal.fire({
-                icon: 'error',
-                title: 'Network Error!',
-                text: 'Network error occurred',
-                confirmButtonColor: '#BC5322'
-            });
-        };
-        xhr.send(JSON.stringify(formData));
+        });
     });
 });

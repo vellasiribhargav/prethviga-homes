@@ -770,6 +770,11 @@ main {
   font-size: 24px;
 }
 
+.upload-icon .icon {
+  color: var(--primary);
+  font-size: 24px;
+}
+
 .upload-text {
   color: var(--text-primary);
   font-size: 14px;

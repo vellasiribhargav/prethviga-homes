@@ -1,9 +1,11 @@
-const AdminUser = require('../../models/AdminUser');
+const mongoose = require("mongoose");
+const bcrypt = require('bcryptjs');
 const { getRedis } = require('../../config/redis.js');
 const jwt = require('jsonwebtoken');
 const { asyncHandler, ValidationError, UnauthorizedError } = require('../../utils/errorHandler');
 
 const Minutes = 60 * 1000;
+const COOKIE_EXPIRY_MINUTES = Number(process.env.ADMIN_COOKIE_EXPIRY_MINUTES || 20);
 
 const login = asyncHandler(async (req, res, next) => {
     const { username, password } = req.body;
@@ -20,7 +22,6 @@ const login = asyncHandler(async (req, res, next) => {
     try {
         redisClient = getRedis();
     } catch (err) {
-        // getRedis returning null (or throwing) handled below
         redisClient = null;
     }
 
@@ -32,23 +33,23 @@ const login = asyncHandler(async (req, res, next) => {
             }
         } catch (err) {
             console.error('Redis Rate Limiting Error (Skipping Check):', err.message);
-            // Proceed without rate limiting if Redis is down
         }
     }
 
-    const user = await AdminUser.findOne({ username });
+    const adminUsersCollection = mongoose.connection.db.collection("admin");
+    const user = await adminUsersCollection.findOne({ userName: username });
 
-    if (!user || !(await user.comparePassword(password))) {
+    if (!user || !(await bcrypt.compare(password, user.password))) {
         // Increment failed attempts
         if (redisClient) {
             try {
                 const attempts = await redisClient.incr(attemptsKey);
                 if (attempts === 1) {
-                    await redisClient.expire(attemptsKey, 60 * 10); // 10 min window to accumulate failures
+                    await redisClient.expire(attemptsKey, 60 * 10);
                 }
 
                 if (attempts > 3) {
-                    await redisClient.set(lockoutKey, 'locked', { EX: 60 * 10 }); // Lock for 10 mins
+                    await redisClient.set(lockoutKey, 'locked', 'EX', 60 * 10);
                     throw new UnauthorizedError('Account locked due to too many failed attempts. Try again in 10 minutes.');
                 }
                 throw new UnauthorizedError(`Invalid credentials. ${3 - attempts} attempts remaining.`);
@@ -76,7 +77,7 @@ const login = asyncHandler(async (req, res, next) => {
 
     // Generate JWT
     const token = jwt.sign(
-        { id: user.id, username: user.email },
+        { id: user._id.toString(), username: user.userName },
         process.env.JWT_SECRET,
         { expiresIn: '1d' }
     );
@@ -85,7 +86,7 @@ const login = asyncHandler(async (req, res, next) => {
     res.cookie('admin_token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 30 * Minutes, // productiom
+        maxAge: COOKIE_EXPIRY_MINUTES * Minutes,
         sameSite: 'strict'
     });
 
@@ -98,13 +99,11 @@ const logout = (req, res) => {
 };
 
 const renderLoginPage = asyncHandler(async (req, res) => {
-    // If user is already logged in, redirect to admin list
     if (req.cookies.admin_token) {
         try {
             const decoded = jwt.verify(req.cookies.admin_token, process.env.JWT_SECRET);
-
-            // Also verify user exists in DB
-            const user = await AdminUser.findOne({ username: decoded.username });
+            const adminUsersCollection = mongoose.connection.db.collection("admin");
+            const user = await adminUsersCollection.findOne({ userName: decoded.username });
             if (user) {
                 return res.redirect('/admin/list');
             } else {
@@ -112,7 +111,6 @@ const renderLoginPage = asyncHandler(async (req, res) => {
             }
         } catch (error) {
             res.clearCookie('admin_token');
-            // Token invalid, continue to render login page
         }
     }
 
