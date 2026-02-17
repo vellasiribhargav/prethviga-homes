@@ -28,6 +28,12 @@ const entryPoints = {
   banner: './public/javascript/admin/banner.js',
   banner_list: './public/javascript/admin/banner_list.js',
   contacts_list: './public/javascript/admin/contacts_list.js',
+  projectDetails: './public/javascript/admin/projectDetails.js',
+  projectDetailsList: './public/javascript/admin/projectDetailsList.js',
+  faq: './public/javascript/admin/faq.js',
+  faq_list: './public/javascript/admin/faq_list.js',
+  // reviews: './public/javascript/admin/reviews.js',
+  // reviews_list: './public/javascript/admin/reviews_list.js',
   login: './public/javascript/admin/login.js'
 };
 

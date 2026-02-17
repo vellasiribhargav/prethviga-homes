@@ -89,7 +89,11 @@ const addcompletedItem = async (req, res) => {
                 page_content: projectsToAdd
             });
 
-            return res.json({ success: true, message: "New page and new section created with project" });
+            return res.json({
+                success: true,
+                message: "New page and new section created with project",
+                projectIds: projectsToAdd.map(p => p.project_id.toString())
+            });
         } else {
             await collection.updateOne(
                 { page_slug: pageSlug, page_section: pageSection },
@@ -100,7 +104,11 @@ const addcompletedItem = async (req, res) => {
                 }
             );
 
-            return res.json({ success: true, message: "New section created in existing page and project added" });
+            return res.json({
+                success: true,
+                message: "New section created in existing page and project added",
+                projectIds: projectsToAdd.map(p => p.project_id.toString())
+            });
         }
 
     } catch (error) {
@@ -180,7 +188,8 @@ const getCompletedProjectsJSON = async (req, res) => {
             id: (project.project_id || project._id)?.toString() || index,
             project_id: (project.project_id || project._id)?.toString(),
             project_name: project.project_name,
-            project_location: project.project_location
+            project_location: project.project_location,
+            isSeeded: !!project.isSeeded
         })) || [];
 
         res.json({ success: true, data: projects });

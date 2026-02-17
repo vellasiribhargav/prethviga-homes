@@ -25,11 +25,21 @@ exports.formatDate = (dateString) => {
 
 exports.formatDateForDisplay = (dbDateStr, includeDay = false) => {
 	if (!dbDateStr || typeof dbDateStr !== 'string') return dbDateStr;
-	const parts = dbDateStr.split('-');
-	if (parts.length !== 3) return dbDateStr;
-	const [day, month, year] = parts;
+	let day, month, year;
 	const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+	if (/^\d{4}-\d{2}-\d{2}$/.test(dbDateStr)) {
+		// YYYY-MM-DD
+		[year, month, day] = dbDateStr.split('-');
+	} else if (/^\d{2}-\d{2}-\d{4}$/.test(dbDateStr)) {
+		// DD-MM-YYYY
+		[day, month, year] = dbDateStr.split('-');
+	} else {
+		// Fallback for other formats (like "November 2024" which is already formatted)
+		return dbDateStr;
+	}
+
 	const monthName = months[parseInt(month) - 1];
 	if (!monthName) return dbDateStr;
-	return includeDay ? `${monthName} ${day}, ${year}` : `${monthName} ${year}`;
+	return includeDay ? `${monthName} ${parseInt(day)}, ${year}` : `${monthName} ${year}`;
 };

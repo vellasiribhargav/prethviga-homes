@@ -14,6 +14,7 @@ export class PaginationManager {
         }
 
         this.rows = Array.from(this.tableBody.querySelectorAll('tr'));
+        this._allRows = [...this.rows]; // Cache all rows internally
         this.calculateTotalPages();
 
         // Always start from page 1 on refresh/navigation
@@ -37,16 +38,31 @@ export class PaginationManager {
         this.render();
     }
 
+    get allRows() {
+        return this._allRows;
+    }
+
+    refreshRows(newRows) {
+        this.rows = newRows;
+        this.currentPage = 1;
+        this.calculateTotalPages();
+        this.render();
+    }
+
     render() {
-        // 1. Toggle visibility of rows
+        if (this._allRows) {
+            this._allRows.forEach(row => row.style.display = 'none');
+        } else {
+            this.rows.forEach(row => row.style.display = 'none');
+        }
+
+        // 2. Show visible rows for current page
         const start = (this.currentPage - 1) * this.rowsPerPage;
         const end = start + this.rowsPerPage;
 
         this.rows.forEach((row, index) => {
             if (index >= start && index < end) {
                 row.style.display = '';
-            } else {
-                row.style.display = 'none';
             }
         });
 

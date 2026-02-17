@@ -19,8 +19,11 @@ const upcomingRoutes = require('./adminPanel/routes/upcomingRoutes');
 const completedRoutes = require('./adminPanel/routes/completedRoutes');
 const galleryRoutes = require('./adminPanel/routes/galleryRoutes');
 const blogRoutes = require('./adminPanel/routes/blogRoutes');
+const faqRoutes = require('./adminPanel/routes/faqRoutes');
 const bannerRoutes = require('./adminPanel/routes/bannerRoutes');
 const contactsRoutes = require('./adminPanel/routes/contactsRoutes');
+const projectDetailsRoutes = require('./adminPanel/routes/projectDetailsRoutes');
+// const reviewRoutes = require('./adminPanel/routes/reviewRoutes');
 const adminAuthRoutes = require('./adminPanel/routes/authRoutes');
 const { protectAdmin } = require('./middleware/authMiddleware');
 
@@ -130,8 +133,11 @@ app.use('/admin/upcoming', protectAdmin, upcomingRoutes);
 app.use('/admin/completed', protectAdmin, completedRoutes);
 app.use('/admin/gallery', protectAdmin, galleryRoutes);
 app.use('/admin/blog', protectAdmin, blogRoutes);
+app.use('/admin/faq', protectAdmin, faqRoutes);
 app.use('/admin/banner', protectAdmin, bannerRoutes);
 app.use('/admin/contacts', protectAdmin, contactsRoutes);
+app.use('/admin/projectDetails', protectAdmin, projectDetailsRoutes);
+// app.use('/admin/reviews', protectAdmin, reviewRoutes);
 app.use('/admin/upcoming_projects', protectAdmin, upcomingRoutes);
 
 app.use((req, res, next) => {

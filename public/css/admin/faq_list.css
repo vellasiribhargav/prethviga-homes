@@ -1,3 +1,6 @@
+/* List Pages Styling - Synchronized with Admin Panel & Reference Image */
+
+
 :root {
     --primary: #9e6520;
     --primary-light: rgba(158, 101, 32, 0.1);
@@ -69,8 +72,11 @@ body {
     cursor: pointer;
     transition: background-color 0.2s;
     font-size: 20px;
+    /* Ensure icon has size */
     position: relative;
+    /* For z-index to work */
     z-index: 1002;
+    /* Ensure it is above other elements */
 }
 
 @media (max-width: 768px) {
@@ -120,7 +126,7 @@ body {
 /* Main Content Wrapper */
 .main-content {
     padding: 0 32px 40px;
-    max-width: 1000px;
+    max-width: 1400px;
     margin: 0 auto;
 }
 
@@ -247,6 +253,7 @@ body {
 
 .table-wrapper {
     overflow-x: auto;
+    overflow-y: visible;
     width: 100%;
 }
 
@@ -263,7 +270,6 @@ body {
     font-size: 12px;
     letter-spacing: 0.05em;
     padding: 16px 24px;
-    text-align: left;
     border-bottom: 2px solid var(--background-light);
 }
 
@@ -279,29 +285,63 @@ body {
 .data-table th:nth-child(1),
 .data-table td:nth-child(1) {
     /* S.NO */
-    width: 80px;
+    width: 60px;
     text-align: center;
 }
 
+/* Adjusted for new 3-column layout */
 .data-table th:nth-child(2),
 .data-table td:nth-child(2) {
-    /* SECTION */
+    /* Q/A Column - Allow flexible width */
+    width: auto;
+    text-align: left;
+}
+
+.data-table th:nth-child(4),
+.data-table td:nth-child(4),
+.data-table th:nth-child(5),
+.data-table td:nth-child(5) {
+    /* DESCRIPTION & DETAILS (Tooltip cells) */
     width: 150px;
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: visible;
+    /* Ensure tooltips are not clipped */
+    text-overflow: ellipsis;
+    text-align: left;
+    position: relative;
+}
+
+.data-table th:nth-child(6),
+.data-table td:nth-child(6) {
+    /* DATE */
+    width: 120px;
     text-align: center;
 }
 
-.data-table th:nth-child(3),
-.data-table td:nth-child(3) {
+.data-table th:nth-child(7),
+.data-table td:nth-child(7) {
+    /* TIME TO READ */
+    width: 120px;
+    text-align: center;
+}
+
+.data-table th:nth-child(8),
+.data-table td:nth-child(8) {
     /* PREVIEW */
-    width: 150px;
+    width: 110px;
     text-align: center;
 }
 
 .data-table th:last-child,
 .data-table td:last-child {
     /* ACTIONS */
-    width: 120px;
-    text-align: center;
+    width: 100px;
+}
+
+td .cell-text {
+    text-align: left;
+    font-weight: normal;
 }
 
 .data-table tr:hover {
@@ -533,16 +573,6 @@ body {
     margin: 0;
 }
 
-.modal-forms-container {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-}
-
-.modal-forms-container form {
-    flex: 1;
-}
-
 .close-modal {
     background: var(--background-light);
     border: none;
@@ -565,7 +595,11 @@ body {
 .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 24px;
+}
+
+.form-group.full-width {
+    grid-column: span 2;
 }
 
 .form-group label {
@@ -574,6 +608,15 @@ body {
     font-weight: 700;
     color: var(--text-primary);
     margin-bottom: 8px;
+}
+
+.form-group input {
+    height: 48px;
+}
+
+.form-group textarea {
+    height: auto;
+    min-height: 100px;
 }
 
 .form-group input,
@@ -587,10 +630,8 @@ body {
     background: var(--input-bg);
     transition: all 0.2s;
     box-sizing: border-box;
-    /* Ensure padding doesn't increase width */
 }
 
-/* Fix for file input padding */
 .form-group input[type="file"] {
     padding: 10px;
     line-height: 1.5;
@@ -694,4 +735,166 @@ body {
     color: #e74c3c;
     margin-top: 4px;
     font-style: italic;
+    width: 100%;
+}
+
+.form-row {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+.form-group.link {
+    margin-bottom: 5px;
+}
+
+.link-container {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    width: 100%;
+}
+
+.link-container .form-input {
+    flex: 1;
+}
+
+.paste-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border-radius: 12px;
+    background-color: var(--input-bg);
+    color: var(--primary);
+    border: 1px solid var(--border-light);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 48px;
+    width: 48px;
+    flex-shrink: 0;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.paste-btn.table-link-btn {
+    height: 36px;
+    width: 36px;
+    padding: 6px;
+    border-radius: 8px;
+    background-color: transparent;
+    border: none;
+    color: #A9A29C;
+    box-shadow: none;
+}
+
+.paste-btn.table-link-btn:hover {
+    background-color: var(--stone-200);
+    color: var(--primary);
+    transform: none;
+    box-shadow: none;
+}
+
+.paste-btn.table-link-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+.paste-btn:hover {
+    background-color: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.paste-btn:active {
+    transform: translateY(0);
+}
+
+.paste-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.form-select {
+    width: 100%;
+    height: 48px;
+    padding: 12px 40px 12px 16px;
+    border: 1.5px solid var(--border-light);
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 15px;
+    color: var(--text-primary);
+    background: var(--input-bg);
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239e6520' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M8 9l4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 20px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.form-select:hover {
+    border-color: var(--primary);
+    background-color: var(--surface-light);
+}
+
+.form-select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px var(--primary-light);
+}
+
+.cell-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+}
+
+/* Custom Scrollbar for Tooltip */
+.custom-js-tooltip::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-js-tooltip::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.custom-js-tooltip::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+.custom-js-tooltip::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.custom-js-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 15px;
+    /* Align near top */
+    right: 100%;
+    /* Arrow on left side */
+    border: 8px solid transparent;
+    border-right-color: #1b150e;
+    /* Pointing right (towards tooltip) means arrow base is on right, so tip is left... wait. border-right-color makes an arrow pointing LEFT. */
+}
+
+/* Variant when tooltip is flipped to the left */
+.custom-js-tooltip.left-side::after {
+    right: auto;
+    left: 100%;
+    /* Arrow on right side */
+    border-right-color: transparent;
+    border-left-color: #1b150e;
+    /* Pointing right */
 }

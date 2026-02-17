@@ -1965,21 +1965,22 @@
       flex: 1;
 
       p {
-        font-size: 16px;
-        line-height: 28px;
-        font-family: Poppins, sans-serif;
-        color: #364153;
+        font-size: 1.1rem;
+        line-height: 1.8;
+        font-family: 'Poppins', sans-serif;
+        color: #4b5563;
         font-weight: 400;
         margin: 0;
+        font-style: italic;
 
         @media (max-width: 1024px) {
-          font-size: 15px;
-          line-height: 26px;
+          font-size: 1rem;
+          line-height: 1.7;
         }
 
         @media (max-width: 768px) {
-          font-size: 14px;
-          line-height: 24px;
+          font-size: 0.95rem;
+          line-height: 1.6;
         }
       }
     }

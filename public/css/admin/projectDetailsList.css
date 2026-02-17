@@ -1,3 +1,6 @@
+/* List Pages Styling - Synchronized with Admin Panel & Reference Image */
+
+
 :root {
     --primary: #9e6520;
     --primary-light: rgba(158, 101, 32, 0.1);
@@ -120,7 +123,7 @@ body {
 /* Main Content Wrapper */
 .main-content {
     padding: 0 32px 40px;
-    max-width: 1000px;
+    max-width: 1400px;
     margin: 0 auto;
 }
 
@@ -157,9 +160,25 @@ body {
     box-shadow: 0 4px 12px rgba(158, 101, 32, 0.2);
 }
 
+.header-actions {
+    margin-bottom: 20px;
+}
+
 .add-more-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(158, 101, 32, 0.3);
+}
+
+/* Search and Filter Row */
+.search-filter-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    background: var(--surface-light);
+    padding: 16px 24px;
+    border-radius: 12px;
+    border: 1px solid var(--border-light);
 }
 
 .search-container {
@@ -206,7 +225,6 @@ body {
     background-position: right 12px center;
     background-size: 20px;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    margin-bottom: 24px;
 }
 
 .filter-select:hover {
@@ -275,35 +293,6 @@ body {
     font-size: 14px;
 }
 
-/* Specific Column Widths */
-.data-table th:nth-child(1),
-.data-table td:nth-child(1) {
-    /* S.NO */
-    width: 80px;
-    text-align: center;
-}
-
-.data-table th:nth-child(2),
-.data-table td:nth-child(2) {
-    /* SECTION */
-    width: 150px;
-    text-align: center;
-}
-
-.data-table th:nth-child(3),
-.data-table td:nth-child(3) {
-    /* PREVIEW */
-    width: 150px;
-    text-align: center;
-}
-
-.data-table th:last-child,
-.data-table td:last-child {
-    /* ACTIONS */
-    width: 120px;
-    text-align: center;
-}
-
 .data-table tr:hover {
     background-color: rgba(158, 101, 32, 0.02);
 }
@@ -356,10 +345,7 @@ body {
 
 /* Action Buttons */
 .action-buttons {
-    display: flex;
-    gap: 5px;
     align-items: center;
-    justify-content: center;
 }
 
 .icon-action-btn {
@@ -533,16 +519,6 @@ body {
     margin: 0;
 }
 
-.modal-forms-container {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-}
-
-.modal-forms-container form {
-    flex: 1;
-}
-
 .close-modal {
     background: var(--background-light);
     border: none;
@@ -654,6 +630,7 @@ body {
     border-top: 1px solid var(--border-light);
     display: flex;
     justify-content: flex-end;
+    align-items: center;
     gap: 12px;
 }
 
@@ -689,6 +666,7 @@ body {
     border: 1px solid var(--border-light);
 }
 
+/* Required field validation message */
 .required-message {
     font-size: 12px;
     color: #e74c3c;

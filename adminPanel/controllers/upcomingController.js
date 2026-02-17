@@ -84,7 +84,7 @@ const addupcomingItem = asyncHandler(async (req, res) => {
         );
     }
 
-    res.json({ success: true, message: "Projects added successfully" });
+    res.json({ success: true, message: "Projects added successfully", projectIds: projectsToAdd.map(p => p.project_id.toString()) });
 });
 
 const updateupcomingItem = asyncHandler(async (req, res) => {
@@ -152,7 +152,8 @@ const getUpcomingProjectsJSON = asyncHandler(async (req, res) => {
         id: (project.project_id || project._id)?.toString() || index,
         project_id: (project.project_id || project._id)?.toString(),
         project_name: project.project_name,
-        project_location: project.project_location
+        project_location: project.project_location,
+        isSeeded: !!project.isSeeded
     })) || [];
 
     res.json({ success: true, data: projects });

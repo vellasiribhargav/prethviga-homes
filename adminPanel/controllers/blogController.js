@@ -110,7 +110,7 @@ const addBlogs = async (req, res) => {
     const blogs = blogArr.map((b, i) => {
       const file = req.files.find(f => f.fieldname === `file_${i}`);
       return {
-        inner_img: file ? `${process.env.PROJECT_URL}uploads/blog/${file.filename}` : b.coverImage,
+        inner_img: file ? `${process.env.PROJECT_URL}uploads/gallery/${file.filename}` : b.coverImage,
         badge_text: b.blogTag,
         blog_date: b.publicationDate,
         blog_title: b.blogTitle,
@@ -150,7 +150,7 @@ const updateBlog = async (req, res) => {
     if (req.body.content) updateFields[`page_content.${index}.blog_content`] = req.body.content;
 
     if (req.file) {
-      updateFields[`page_content.${index}.inner_img`] = `${process.env.PROJECT_URL}uploads/blog/${req.file.filename}`;
+      updateFields[`page_content.${index}.inner_img`] = `${process.env.PROJECT_URL}uploads/gallery/${req.file.filename}`;
     } else if (req.body.remove_image === 'true') {
       updateFields[`page_content.${index}.inner_img`] = null;
     }
