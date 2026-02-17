@@ -426,7 +426,11 @@ document.addEventListener('DOMContentLoaded', function () {
                                 <div class="uploaded-image">
                                     <img src="${img.src}" alt="Uploaded project image">
                                     <button class="remove-image" onclick="deleteProjectImage(this); event.stopPropagation();">
-                                        <span class="material-symbols-outlined">close</span>
+                                        <span class="material-symbols-outlined">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M19.207 6.207a1 1 0 0 0-1.414-1.414L12 10.586 6.207 4.793a1 1 0 0 0-1.414 1.414L10.586 12l-5.793 5.793a1 1 0 1 0 1.414 1.414L12 13.414l5.793 5.793a1 1 0 0 0 1.414-1.414L13.414 12l5.793-5.793z" fill="#ffffff"/>
+                                            </svg>
+                                        </span>
                                     </button>
                                 </div>
                             `;
@@ -674,14 +678,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
             success: async function (data) {
                 if (data.success) {
-                    await Swal.fire({
-                        icon: 'success',
-                        title: 'Success!',
-                        text: `${completedArr.length} Project(s) saved successfully!`,
-                        confirmButtonColor: '#BC5322'
-                    }).then(() => {
-                        window.location.href = '/admin/completed/list';
-                    });
+                    const projectIds = data.projectIds || [];
+                    if (projectIds.length === 1) {
+                        await Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: 'Project saved successfully! Redirecting to add project details...',
+                            confirmButtonColor: '#BC5322',
+                            timer: 2000
+                        }).then(() => {
+                            window.location.href = `/admin/projectDetails?projectId=${projectIds[0]}&type=completed`;
+                        });
+                    } else {
+                        await Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: `${completedArr.length} Project(s) saved successfully!`,
+                            confirmButtonColor: '#BC5322'
+                        }).then(() => {
+                            window.location.href = '/admin/projectDetails/details';
+                        });
+                    }
                 } else {
                     Swal.fire({
                         icon: 'error',
@@ -834,7 +851,11 @@ window.handleProjectImageUpload = function (input) {
                 <div class="uploaded-image">
                     <img src="${e.target.result}" alt="Uploaded project image">
                     <button class="remove-image" onclick="deleteProjectImage(this); event.stopPropagation();">
-                        <span class="material-symbols-outlined">close</span>
+                        <span class="material-symbols-outlined">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M19.207 6.207a1 1 0 0 0-1.414-1.414L12 10.586 6.207 4.793a1 1 0 0 0-1.414 1.414L10.586 12l-5.793 5.793a1 1 0 1 0 1.414 1.414L12 13.414l5.793 5.793a1 1 0 0 0 1.414-1.414L13.414 12l5.793-5.793z" fill="#ffffff"/>
+                            </svg>
+                        </span>
                     </button>
                 </div>
             `;

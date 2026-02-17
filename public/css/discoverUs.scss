@@ -1094,26 +1094,38 @@
 
   /*   testimonial section   */
 
-  .testimonial-section {
+  .reviewContainer {
     padding: 40px 60px;
-  }
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
 
-  .animations-containers {
-    width: calc((260px + 20px) * 3);
-    height: auto;
-    overflow: hidden;
-  }
+    .reviewCard {
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      border-radius: 16px;
+      background-color: #fff;
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+      width: 380px;
+      min-height: 320px;
 
-  .review-component {
-    width: calc((260px + 20px) * 9);
-    gap: 20px;
-    animation: slideGroupsTablet 12s infinite ease-in-out;
-  }
+      .reviewText {
+        flex: 1;
 
-  .cards-content {
-    width: 260px;
-    min-width: 260px;
-    padding: 20px;
+        p {
+          font-size: 1.1rem;
+          line-height: 1.8;
+          font-family: 'Poppins', sans-serif;
+          color: #4b5563;
+          font-weight: 400;
+          margin: 0;
+          font-style: italic;
+        }
+      }
+    }
   }
 
   @keyframes slideGroupsTablet {

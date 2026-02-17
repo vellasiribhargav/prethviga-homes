@@ -9,12 +9,10 @@ html(lang='en')
          'home': 'Home',
          'project': 'Project',
          'discoverUs': 'Discover Us',
-         'ongoing': 'On Going'
+         //-  'ongoing': 'On Going'
        }
        const displayTitle = titleMap[pageSlug] || (pageSlug.charAt(0).toUpperCase() + pageSlug.slice(1))
     title #{displayTitle} Banner Management
-    //- link(rel='stylesheet' href='assets/fonts/manrope.css')
-    //- link(rel='stylesheet' href='assets/icons/icons.css')
     link(rel='stylesheet' href=utils.assetPath("/bundle/banner.css"))
 
   body
@@ -52,37 +50,102 @@ html(lang='en')
                option(value="home" selected=pageSlug === 'home') Home
                option(value="project" selected=pageSlug === 'project') Project
                option(value="discoverUs" selected=pageSlug === 'discoverUs') Discover Us
-               option(value="ongoing" selected=pageSlug === 'ongoing') On Going
+               //-  option(value="ongoing" selected=pageSlug === 'ongoing') On Going
           
           .header-actions
             button.back-btn(onclick=`window.location.href='/admin/banner/${pageSlug}/list'`) List
             button.add-image-btn.add-more-btn Add More
         
+        // Section Selection Tabs
+        .section-tabs
+          button.tab-btn(data-section="banner-images") Banner Images
+          button.tab-btn.active(data-section="banner-text") Banner Text Content
+          if pageSlug === 'home'
+            button.tab-btn(data-section="banner-reviews") Banner Reviews
+
         // Form Container
         .form-container
-          .content-card
-            .form-section
-              // Banner Images Upload
-              .form-group
-                label.form-label Banner Images
-                .image-upload-grid
-                  .image-upload-slot
-                    button.upload-btn(type="button")
-                      .upload-icon
-                        svg.icon(xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24' fill='currentColor')
-                          path(d='M480-260q75 0 127.5-52.5T660-440q0-75-52.5-127.5T480-620q-75 0-127.5 52.5T300-440q0 75 52.5 127.5T480-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM160-120q-33 0-56.5-23.5T80-200v-480q0-33 23.5-56.5T160-760h126l74-80h240l74 80h126q33 0 56.5 23.5T880-680v480q0 33-23.5 56.5T800-120H160Zm0-80h640v-480H638l-73-80H395l-73 80H160v480Zm320-240Z')
-                      p.upload-text Upload Image
-                      p.upload-subtext JPG, PNG (max. 5MB)
-                    input.image-upload(type='file' accept='image/*' style='display: none;' multiple)
+          // Banner Text Content Section
+          .section-form#section-banner-text.active
+            .content-card
+              .form-section
+                h3.section-subtitle Banner Text Content
+                .form-group
+                  label.form-label Heading
+                  input#banner-heading.form-input(type="text" name="Heading" placeholder="Enter banner heading")
+              
+                if pageSlug === 'home'
+                  .form-group
+                    label.form-label Sub Heading
+                    input#banner-subheading.form-input(type="text" name="subHeading" placeholder="Enter banner sub heading")
+                
+                .form-group
+                  label.form-label Description
+                  textarea#banner-description.form-input(name="description" rows="4" placeholder="Enter banner description" style="height: auto; padding-top: 12px;")
+                
+                if pageSlug !== 'discoverUs'
+                  .form-group
+                    label.form-label Contact Number
+                    input#banner-number.form-input(type="text" name="number" placeholder="Enter contact number")
                   
-                  //- .image-upload-slot.add-more
-                    button.add-image-btn.styled-add-btn(type="button")
-                      svg.icon(xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24' fill='white')
-                        path(d='M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z')
-                      span Add More
-          
-          // Submit Button
-          .submit-section
-            button.submit-btn Submit
+                .submit-section(style="margin-top: 20px; text-align: right;")
+                  button.submit-btn.save-text-btn Save
+
+          // Banner Images Section
+          .section-form#section-banner-images
+            .content-card
+              .form-section
+                h3.section-subtitle Banner Images
+                .form-group
+                  label.form-label Banner Images
+                  .image-upload-grid
+                    .image-upload-slot
+                      button.upload-btn(type="button")
+                        .upload-icon
+                          svg.icon(xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24' fill='currentColor')
+                            path(d='M480-260q75 0 127.5-52.5T660-440q0-75-52.5-127.5T480-620q-75 0-127.5 52.5T300-440q0 75 52.5 127.5T480-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM160-120q-33 0-56.5-23.5T80-200v-480q0-33 23.5-56.5T160-760h126l74-80h240l74 80h126q33 0 56.5 23.5T880-680v480q0 33-23.5 56.5T800-120H160Zm0-80h640v-480H638l-73-80H395l-73 80H160v480Zm320-240Z')
+                        p.upload-text Upload Image
+                        p.upload-subtext JPG, PNG (max. 5MB)
+                      input.image-upload(type='file' accept='image/*' style='display: none;' multiple)
+
+                .submit-section(style="margin-top: 20px; text-align: right;")
+                  button.submit-btn.upload-images-btn Save
+
+          // Banner Reviews Section
+          if pageSlug === 'home'
+            .section-form#section-banner-reviews
+              .content-card
+                .form-section
+                  h3.section-subtitle Home Reviews (CEO/CFO Quotes)
+                  .reviews-container
+                    each i in [0, 1, 2]
+                      .review-item(style="margin-bottom: 30px; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;")
+                        h4(style="margin-bottom: 15px; color: #BC5322;") Review #{i + 1}
+                        .form-group
+                          label.form-label Profile Image
+                          .review-image-slot(style="width: 100px; height: 100px; border: 2px dashed #e5e7eb; border-radius: 50%; overflow: hidden; position: relative; cursor: pointer; margin-bottom: 10px;")
+                            img.review-pimg(src="/assets/images/home-profile.webp" style="width: 100%; height: 100%; object-fit: cover;")
+                            button.remove-review-img(type="button" style="position: absolute; top: 5px; right: 5px; background: rgba(231, 76, 60, 0.8); border: none; border-radius: 50%; width: 20px; height: 20px; display: none; align-items: center; justify-content: center; color: white; cursor: pointer; z-index: 10;")
+                              svg(width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3' stroke-linecap='round' stroke-linejoin='round')
+                                line(x1='18' y1='6' x2='6' y2='18')
+                                line(x1='6' y1='6' x2='18' y2='18')
+                            input.review-file-input(type="file" accept="image/*" style="display: none;")
+                          p.upload-subtext(style="font-size: 10px;") Click to change profile image
+                        
+                        .form-group
+                          label.form-label Name
+                          input.review-name.form-input(type="text" placeholder="Enter reviewer name")
+                        
+                        .form-group
+                          label.form-label Role
+                          input.review-role.form-input(type="text" placeholder="Enter reviewer role")
+                        
+                        .form-group
+                          label.form-label Review / Quote
+                          textarea.review-text.form-input(rows="3" placeholder="Enter the review text" style="height: auto; padding-top: 12px;")
+                  
+                  .submit-section(style="margin-top: 20px; text-align: right;")
+                    button.submit-btn.save-reviews-btn Save
+
     input#page_slug(type='hidden' value=pageSlug)
     script(src=utils.assetPath("/bundle/banner.js"))

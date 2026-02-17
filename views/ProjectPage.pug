@@ -8,13 +8,14 @@ head
 include layout/header.pug 
 
 div
-  - var bannerImages = bannerData && bannerData.length > 0 ? bannerData.map(b => b.image) : ['/assets/images/blog1.webp', '/assets/images/blog3.webp']
+  - var bannerText = bannerData && bannerData.length > 0 ? (bannerData.find(b => b.Heading || b.description) || {}) : {}
+  - var bannerImages = bannerData && bannerData.length > 0 ? bannerData.filter(b => b.image).map(b => b.image) : ['/assets/images/blog1.webp', '/assets/images/blog3.webp']
   - var bannerStyles = bannerImages.map((img, i) => `--banner-image-${i + 1}: url('${img}')`).join('; ')
   .hero-container(style=bannerStyles)
     .details-wrapper
-      span.details-wrapper__header OUR PROJECTS
+      span.details-wrapper__header= bannerText.Heading || 'OUR PROJECTS'
       p.details-wrapper__paragraph
-        | Explore our portfolio of exceptional construction projects, from completed masterpieces to exciting works in progress
+        | #{bannerText.description || 'Explore our portfolio of exceptional construction projects, from completed masterpieces to exciting works in progress'}
       span.details-wrapper__info
         .heroContact
           .heroIcon
@@ -25,7 +26,7 @@ div
             .heroCall
               h1.callText Call us now
             .heroNumber
-              h1.numberText +1 (555) 123-4567
+              h1.numberText= bannerText.number || '+1 (555) 123-4567'
 
   if (completed && completed.length > 0) || (ongoing && ongoing.length > 0)
     .project-body-wrapper

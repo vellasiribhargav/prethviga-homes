@@ -73,14 +73,21 @@ const formatErrorResponse = (err, req, res) => {
         });
     }
 
-    // For HTML responses, render appropriate error page
-    const errorView = statusCode === 404 ? '404' : 'error';
-    const viewData = {
-        message,
-        error: process.env.NODE_ENV === 'development' ? err : {}
-    };
+    // For HTML responses, only render 404 page if it exists
+    // For other errors, send JSON to avoid missing view errors
+    if (statusCode === 404) {
+        return res.status(404).render('404', {
+            message,
+            error: process.env.NODE_ENV === 'development' ? err : {}
+        });
+    }
 
-    res.status(statusCode).render(errorView, viewData);
+    // For all other errors, send JSON response
+    res.status(statusCode).json({
+        success: false,
+        message,
+        ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+    });
 };
 
 /**

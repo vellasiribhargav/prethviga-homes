@@ -31,6 +31,55 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Gallery modal functionality
+    const modalOverlay = document.getElementById('modalOverlay');
+    const mainImage = document.getElementById('mainImage');
+    const galleryThumbnails = document.getElementById('galleryThumbnails');
+    const closeModal = document.getElementById('closeModal');
+    const galleryCards = document.querySelectorAll('.gallery-card');
+
+    if (modalOverlay && galleryCards.length > 0) {
+        galleryCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const images = JSON.parse(card.getAttribute('data-images') || '[]');
+                if (images.length === 0) return;
+
+                // Set initial image
+                const initialImg = card.querySelector('img')?.src;
+                mainImage.src = initialImg || images[0];
+
+                // Render thumbnails
+                galleryThumbnails.innerHTML = '';
+                images.forEach(imgSrc => {
+                    const thumb = document.createElement('div');
+                    thumb.className = 'galleryThumbs';
+                    if (imgSrc === (initialImg || images[0])) thumb.classList.add('active');
+
+                    thumb.innerHTML = `<img src="${imgSrc}" alt="Thumbnail">`;
+                    thumb.addEventListener('click', () => {
+                        mainImage.src = imgSrc;
+                        document.querySelectorAll('.galleryThumbs').forEach(t => t.classList.remove('active'));
+                        thumb.classList.add('active');
+                    });
+                    galleryThumbnails.appendChild(thumb);
+                });
+
+                modalOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            });
+        });
+
+        const closeGallery = () => {
+            modalOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        };
+
+        closeModal?.addEventListener('click', closeGallery);
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) closeGallery();
+        });
+    }
+
     // scroll option
     const scrollBtn = document.getElementById("scrollToTopBtn");
     window.addEventListener("scroll", () => {

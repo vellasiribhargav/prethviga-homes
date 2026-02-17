@@ -6,13 +6,16 @@ document.addEventListener('DOMContentLoaded', function () {
     // console.log('[BannerJS] Initializing...');
 
     const imageGrid = document.querySelector('.image-upload-grid');
-    const submitBtn = document.querySelector('.submit-btn');
+    const saveTextBtn = document.querySelector('.save-text-btn');
+    const uploadImagesBtn = document.querySelector('.upload-images-btn');
     const pageSlugEl = document.getElementById('page_slug');
     const slugSelector = document.getElementById('banner-slug-selector');
 
     const slug = pageSlugEl ? pageSlugEl.value : 'home';
     let selectedImages = [];
     let existingBanners = [];
+    let reviewData = [];
+    let reviewSelectedImages = [null, null, null];
 
     // Initialize UI
     if (slugSelector) {
@@ -20,11 +23,38 @@ document.addEventListener('DOMContentLoaded', function () {
         slugSelector.addEventListener('change', () => window.location.href = `?slug=${slugSelector.value}`);
     }
 
+    // Tab Switching Logic
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const sections = document.querySelectorAll('.section-form');
+
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetSection = btn.getAttribute('data-section');
+
+            // Update tabs
+            tabBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            // Update sections
+            sections.forEach(s => {
+                s.classList.remove('active');
+                if (s.id === `section-${targetSection}`) {
+                    s.classList.add('active');
+                }
+            });
+        });
+    });
+
 
     const api = {
         get: `/admin/banner/${slug}/get`,
         add: `/admin/banner/${slug}/add`,
-        del: (i) => `/admin/banner/${slug}/delete/${i}`
+        updateText: `/admin/banner/${slug}/update-text`,
+        del: (i) => `/admin/banner/${slug}/delete/${i}`,
+        reviews: {
+            get: `/admin/banner/home-reviews/get`,
+            update: `/admin/banner/home-reviews/update-text`
+        }
     };
 
     // --- EVENT DELEGATION ---
@@ -82,21 +112,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (selectedIndex >= 0) {
             selectedImages[selectedIndex] = firstFile;
-        } else {
-            // It's a new slot that was just created (or the initial one)
-            // Check if we already have this file in selectedImages to avoid duplicates if something weird happens, 
-            // but usually we just push.
-            // Actually, the initial slot is "new" so we push.
-            // But wait, if we are replacing an existing banner (index < existingBanners.length), we can't really "replace" it with multiple files easily in this logic without shifting everything.
-            // The implementation plan said: "If replacing... keep single file replacement".
-            // Let's stick to that for simplicity when index < existingBanners.length.
         }
 
         if (index >= existingBanners.length) {
-            // This is a new upload slot.
-            // We need to ensure we track it.
-            // If we clicked "Upload" on an empty slot, it has no corresponding entry in selectedImages yet (or it might if we are re-uploading).
-            // Let's rely on the index mapping.
             if (selectedIndex < selectedImages.length) {
                 selectedImages[selectedIndex] = firstFile;
             } else {
@@ -105,7 +123,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // Process remaining files (only if we are NOT editing an existing saved banner)
-        // If we represent a new slot, we can expand.
         if (index >= existingBanners.length && fileArray.length > 1) {
             for (let i = 1; i < fileArray.length; i++) {
                 // Create a new slot
@@ -136,7 +153,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     </button>
                 </div>
             `;
-            // Hide "Add More" if this is discoverUs and we now have an image
             if (slug === 'discoverUs') {
                 const addMoreSlot = document.querySelector('.image-upload-slot.add-more');
                 if (addMoreSlot) addMoreSlot.style.display = 'none';
@@ -184,12 +200,10 @@ document.addEventListener('DOMContentLoaded', function () {
             selectedImages.splice(selectedIndex, 1);
             slot.remove();
 
-            // Re-show "Add More" if discoverUs and count became 0
             if (slug === 'discoverUs' && (existingBanners.length + selectedImages.length) === 0) {
                 const addMoreSlot = document.querySelector('.image-upload-slot.add-more');
                 if (addMoreSlot) addMoreSlot.style.display = 'flex';
             }
-            // Ensure we always have at least one slot if everything is gone
             if ((existingBanners.length + selectedImages.length) === 0) {
                 addImageSlot();
             }
@@ -197,10 +211,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function addImageSlot() {
-        // Prevent adding more slots for discoverUs if we already have one (existing or new)
         if (slug === 'discoverUs' && (existingBanners.length + selectedImages.length + document.querySelectorAll('.image-upload-slot:not(.add-more)').length) > 0) {
             const currentSlots = document.querySelectorAll('.image-upload-slot:not(.add-more)');
-            if (currentSlots.length > 0) return; // Already has a slot
+            if (currentSlots.length > 0) return;
         }
 
         const newSlot = document.createElement('div');
@@ -223,12 +236,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function loadExistingBanners() {
-        // console.log('[BannerJS] Fetching banners from:', api.get);
         $.get(api.get).done(data => {
-            // console.log('[BannerJS] Fetch response:', data);
             if (data.success) {
                 existingBanners = data.data;
                 displayExistingBanners();
+                populateTextFields();
             } else {
                 console.error('[BannerJS] API returned failure:', data);
                 imageGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #ef4444;">Error: ${data.message || 'Unknown error'}</div>`;
@@ -239,11 +251,28 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    function populateTextFields() {
+        // Find the first banner that has at least one text field
+        const textBanner = existingBanners.find(b => b.Heading || b.subHeading || b.description || b.number);
+        if (textBanner) {
+            const headingEl = document.getElementById('banner-heading');
+            const subHeadingEl = document.getElementById('banner-subheading');
+            const descriptionEl = document.getElementById('banner-description');
+            const numberEl = document.getElementById('banner-number');
+
+            if (headingEl) headingEl.value = textBanner.Heading || '';
+            if (subHeadingEl) subHeadingEl.value = textBanner.subHeading || '';
+            if (descriptionEl) descriptionEl.value = textBanner.description || '';
+            if (numberEl) numberEl.value = textBanner.number || '';
+        }
+    }
+
     function displayExistingBanners() {
         const addMoreSlot = document.querySelector('.image-upload-slot.add-more');
         document.querySelectorAll('.image-upload-slot:not(.add-more)').forEach(n => n.remove());
 
         existingBanners.forEach((banner, index) => {
+            if (!banner.image) return; // Skip text-only objects for the grid
             const slot = document.createElement('div');
             slot.className = 'image-upload-slot';
             slot.innerHTML = `
@@ -259,30 +288,81 @@ document.addEventListener('DOMContentLoaded', function () {
             imageGrid.insertBefore(slot, addMoreSlot);
         });
 
-        // --- SINGLE IMAGE RESTRICTION FOR DISCOVER US ---
         if (slug === 'discoverUs') {
-            if (existingBanners.length >= 1) {
+            if (existingBanners.filter(b => b.image).length >= 1) {
                 if (addMoreSlot) addMoreSlot.style.display = 'none';
             } else {
                 if (addMoreSlot) addMoreSlot.style.display = 'flex';
-                if (existingBanners.length === 0 && selectedImages.length === 0) {
+                if (existingBanners.filter(b => b.image).length === 0 && selectedImages.length === 0) {
                     addImageSlot();
                 }
             }
         } else {
             if (addMoreSlot) addMoreSlot.style.display = 'flex';
-            // Add one empty slot if none exist (standard behavior)
-            if (existingBanners.length === 0) addImageSlot();
+            if (existingBanners.filter(b => b.image).length === 0) addImageSlot();
         }
+    }
+
+    async function saveTextData() {
+        const payload = {
+            Heading: document.getElementById('banner-heading')?.value || '',
+            subHeading: document.getElementById('banner-subheading')?.value || '',
+            description: document.getElementById('banner-description')?.value || '',
+            number: document.getElementById('banner-number')?.value || ''
+        };
+
+        const originalBtnText = saveTextBtn.innerText;
+        saveTextBtn.innerText = 'Saving...';
+        saveTextBtn.disabled = true;
+
+        $.ajax({
+            url: api.updateText,
+            method: 'PUT',
+            data: JSON.stringify(payload),
+            contentType: 'application/json'
+        }).done(data => {
+            saveTextBtn.innerText = originalBtnText;
+            saveTextBtn.disabled = false;
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: data.message,
+                    confirmButtonColor: '#BC5322'
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Failed!',
+                    text: data.message,
+                    confirmButtonColor: '#BC5322'
+                });
+            }
+        }).fail(() => {
+            saveTextBtn.innerText = originalBtnText;
+            saveTextBtn.disabled = false;
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Server error during update',
+                confirmButtonColor: '#BC5322'
+            });
+        });
     }
 
     async function uploadBanners() {
         const formData = new FormData();
         selectedImages.forEach(file => formData.append('banners', file));
 
-        const originalBtnText = submitBtn.innerText;
-        submitBtn.innerText = 'Saving...';
-        submitBtn.disabled = true;
+        // Add text fields (optional but kept for compatibility with existing addBanners endpoint)
+        formData.append('Heading', document.getElementById('banner-heading')?.value || '');
+        formData.append('subHeading', document.getElementById('banner-subheading')?.value || '');
+        formData.append('description', document.getElementById('banner-description')?.value || '');
+        formData.append('number', document.getElementById('banner-number')?.value || '');
+
+        const originalBtnText = uploadImagesBtn.innerText;
+        uploadImagesBtn.innerText = 'Saving...';
+        uploadImagesBtn.disabled = true;
 
         $.ajax({
             url: api.add,
@@ -291,8 +371,8 @@ document.addEventListener('DOMContentLoaded', function () {
             processData: false,
             contentType: false
         }).done(data => {
-            submitBtn.innerText = originalBtnText;
-            submitBtn.disabled = false;
+            uploadImagesBtn.innerText = originalBtnText;
+            uploadImagesBtn.disabled = false;
             if (data.success) {
                 Swal.fire({
                     icon: 'success',
@@ -311,8 +391,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             }
         }).fail(() => {
-            submitBtn.innerText = originalBtnText;
-            submitBtn.disabled = false;
+            uploadImagesBtn.innerText = originalBtnText;
+            uploadImagesBtn.disabled = false;
             Swal.fire({
                 icon: 'error',
                 title: 'Error!',
@@ -325,7 +405,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Unified 'Add More' button handling
     document.querySelectorAll('.add-image-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            if (slug === 'discoverUs' && (existingBanners.length + selectedImages.length) >= 1) {
+            if (slug === 'discoverUs' && (existingBanners.filter(b => b.image).length + selectedImages.length) >= 1) {
                 return Swal.fire({
                     icon: 'warning',
                     title: 'Restriction',
@@ -336,33 +416,155 @@ document.addEventListener('DOMContentLoaded', function () {
             addImageSlot();
         });
     });
-    submitBtn && submitBtn.addEventListener('click', (e) => {
+
+    saveTextBtn && saveTextBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        const msg = document.getElementById('banner-required-msg');
+        saveTextData();
+    });
+
+    uploadImagesBtn && uploadImagesBtn.addEventListener('click', (e) => {
+        e.preventDefault();
         if (selectedImages.length > 0) {
-            if (msg) msg.style.display = 'none';
             uploadBanners();
         } else {
-            if (msg) {
-                msg.style.display = 'block';
-            } else {
-                // const newMsg = document.createElement('div');
-                // newMsg.id = 'banner-required-msg';
-                // newMsg.textContent = '* Please select at least one image to upload';
-                // newMsg.style.cssText = 'font-size:14px;color:#e74c3c;margin-top:10px;text-align:center;font-style:italic';
-                // submitBtn.parentNode.insertBefore(newMsg, submitBtn);
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Warning!',
-                    text: 'Please select at least one image to upload',
-                    showConfirmButton: true,
-                    confirmButtonColor: '#BC5322'
-                });
-            }
+            Swal.fire({
+                icon: 'warning',
+                title: 'Warning!',
+                text: 'Please select at least one image to upload',
+                showConfirmButton: true,
+                confirmButtonColor: '#BC5322'
+            });
         }
     });
 
+    async function saveReviewsData() {
+        const formData = new FormData();
+        const reviews = [];
+
+        document.querySelectorAll('.review-item').forEach((item, index) => {
+            const fileName = `review_image_${index}`;
+            reviews.push({
+                user_name: item.querySelector('.review-name').value,
+                user_role: item.querySelector('.review-role').value,
+                reviewer: item.querySelector('.review-text').value,
+                profile_image: item.querySelector('.review-pimg').src.includes('home-profile.webp') ? '' : (reviewData[index]?.profile_image || '')
+            });
+
+            // Add file if selected
+            const fileInput = item.querySelector('.review-file-input');
+            if (fileInput && fileInput.files[0]) {
+                formData.append(fileName, fileInput.files[0]);
+            }
+        });
+
+        formData.append('reviews', JSON.stringify(reviews));
+
+        const saveReviewsBtn = document.querySelector('.save-reviews-btn');
+        const originalBtnText = saveReviewsBtn.innerText;
+        saveReviewsBtn.innerText = 'Saving...';
+        saveReviewsBtn.disabled = true;
+
+        $.ajax({
+            url: api.reviews.update,
+            method: 'PUT',
+            data: formData,
+            processData: false,
+            contentType: false
+        }).done(data => {
+            saveReviewsBtn.innerText = originalBtnText;
+            saveReviewsBtn.disabled = false;
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Reviews updated successfully!',
+                    confirmButtonColor: '#BC5322'
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Failed!',
+                    text: data.message,
+                    confirmButtonColor: '#BC5322'
+                });
+            }
+        }).fail(() => {
+            saveReviewsBtn.innerText = originalBtnText;
+            saveReviewsBtn.disabled = false;
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: 'Server error during update',
+                confirmButtonColor: '#BC5322'
+            });
+        });
+    }
+
+    function loadReviews() {
+        if (slug !== 'home') return;
+        $.get(api.reviews.get).done(data => {
+            if (data.success) {
+                reviewData = data.data;
+                populateReviewFields();
+            }
+        });
+    }
+
+    function populateReviewFields() {
+        const reviewItems = document.querySelectorAll('.review-item');
+        reviewData.forEach((review, index) => {
+            if (index < reviewItems.length) {
+                const item = reviewItems[index];
+                item.querySelector('.review-name').value = review.user_name || '';
+                item.querySelector('.review-role').value = review.user_role || '';
+                item.querySelector('.review-text').value = review.reviewer || '';
+                if (review.profile_image) {
+                    item.querySelector('.review-pimg').src = review.profile_image;
+                    item.querySelector('.remove-review-img').style.display = 'flex';
+                }
+            }
+        });
+    }
+
+    // --- EVENT LISTENERS FOR REVIEWS ---
+    document.querySelectorAll('.review-image-slot').forEach((slot, index) => {
+        slot.addEventListener('click', () => {
+            slot.querySelector('.review-file-input').click();
+        });
+    });
+
+    document.querySelectorAll('.review-file-input').forEach((input, index) => {
+        input.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const slot = input.closest('.review-image-slot');
+                    slot.querySelector('.review-pimg').src = ev.target.result;
+                    slot.querySelector('.remove-review-img').style.display = 'flex';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+
+    document.querySelectorAll('.remove-review-img').forEach((btn, index) => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const slot = btn.closest('.review-image-slot');
+            slot.querySelector('.review-pimg').src = "/assets/images/home-profile.webp";
+            slot.querySelector('.review-file-input').value = '';
+            btn.style.display = 'none';
+        });
+    });
+
+    const saveReviewsBtn = document.querySelector('.save-reviews-btn');
+    saveReviewsBtn && saveReviewsBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        saveReviewsData();
+    });
+
     // Initial Load
-    // loadExistingBanners();
-    displayExistingBanners();
+    loadExistingBanners();
+    if (slug === 'home') loadReviews();
 });

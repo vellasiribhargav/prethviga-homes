@@ -5,21 +5,19 @@ const { formatDateForDisplay } = require('../utils/index');
 const getonGoingPageData = async (req, res) => {
   try {
     const { id } = req.params;
-    const onGoingPageData = await mongoose.connection.db.collection('OnGoingPage').find({ page_slug: 'OnGoingPage' }).toArray();
-    const projectPageData = await mongoose.connection.db.collection('ProjectPage').find({ page_slug: 'ProjectPage' }).toArray();
 
-    // Fetch all projects (ongoing and completed)
+    const projectPageData = await mongoose.connection.db.collection('ProjectPage').find({ page_slug: 'ProjectPage' }).toArray();
     const upcomingProjects = projectPageData.find(item => item.page_section === 'ongoing-gallery')?.page_content || [];
     const completedProjects = projectPageData.find(item => item.page_section === 'completed-gallery')?.page_content || [];
     const allProjects = [...upcomingProjects, ...completedProjects];
 
     let projectDetails = {};
     if (id && ObjectId.isValid(id)) {
-      const foundProject = allProjects.find(p => (p.project_id && p.project_id.toString() === new ObjectId(id).toString()) || (p._id && p._id.toString() === new ObjectId(id).toString()));
+      const foundProject = allProjects.find(p => (p.project_id?.toString() === id) || (p._id?.toString() === id));
       if (foundProject) {
         projectDetails = {
           title: foundProject.project_name,
-          buiding_name: foundProject.project_name, // Using project_name as building_name for now
+          buiding_name: foundProject.project_name,
           date: formatDateForDisplay(foundProject.project_date),
           location: foundProject.project_location,
           pimage: foundProject.card_image
@@ -27,41 +25,63 @@ const getonGoingPageData = async (req, res) => {
       }
     }
 
-    const projectData = onGoingPageData.find(item => item.page_section === 'hero-section')?.page_content || [];
-    const floorData = onGoingPageData.find(item => item.page_section === 'floor-image')?.page_content || [];
-    const featureData = onGoingPageData.find(item => item.page_section === 'features-grid')?.page_content || [];
-    const amenityData = onGoingPageData.find(item => item.page_section === 'amenities-list')?.page_content || [];
-    const locationContainer = onGoingPageData.find(item => item.page_section === 'location-container')?.page_content;
-    const locationData = Array.isArray(locationContainer) ? (locationContainer[0] || {}) : (locationContainer || {});
-
-    const allGallery = onGoingPageData.find(item => item.page_section === 'gallery-wrapper')?.page_content || [];
-
-    let galleryData = allGallery;
+    let onGoingPageData = {};
+    let hasProjectData = false;
     if (id && ObjectId.isValid(id)) {
-      const filteredGalleryData = allGallery.filter(item =>
-        item.project_id && item.project_id.toString() === new ObjectId(id).toString()
-      );
-      if (filteredGalleryData.length > 0) {
-        galleryData = filteredGalleryData;
+      const projectDoc = await mongoose.connection.db.collection('OnGoingPage').findOne({ project_id: new ObjectId(id) });
+      if (projectDoc?.sections) {
+        hasProjectData = true;
+        projectDoc.sections.forEach(section => {
+          onGoingPageData[section.page_section] = section.page_content;
+        });
+
+        const heroData = onGoingPageData['hero-section']?.[0];
+        if (heroData) {
+          if (heroData.title) projectDetails.title = heroData.title;
+          if (heroData.pimage && heroData.pimage.trim()) projectDetails.pimage = heroData.pimage;
+          if (heroData.buiding_name) projectDetails.buiding_name = heroData.buiding_name;
+          if (heroData.date) projectDetails.date = formatDateForDisplay(heroData.date);
+          if (heroData.location) projectDetails.location = heroData.location;
+        }
       }
     }
 
-    const frequencyData = onGoingPageData.find(item => item.page_section === 'faq-items-container')?.page_content || [];
+    const floorData = onGoingPageData['floor-image'] || [];
+    const featureData = onGoingPageData['features-grid'] || [];
 
-    const blogDataRaw = onGoingPageData.find(item => item.page_section === 'blogs-card')?.page_content || [];
+    const amenitiesContent = onGoingPageData['amenities-list'] || [];
+    const amenitiesDescription = amenitiesContent.find(item => item.features_Description)?.features_Description;
+    const amenityData = amenitiesContent.filter(item => !item.features_Description);
 
-    const blogData = blogDataRaw.map(blog => ({ ...blog, blog_date: formatDateForDisplay(blog.blog_date, true) }));
+    const locationContent = onGoingPageData['location-container'] || [];
+    const locationDescription = locationContent.find(item => item.location_Description)?.location_Description || '';
+    const locationImgObj = locationContent.find(item => item.image);
+    const locationDetailsObj = locationContent.find(item => item.details);
+    const locationData = {
+      image: locationImgObj?.image || '',
+      details: locationDetailsObj?.details || []
+    };
+
+    const galleryContent = onGoingPageData['gallery-wrapper'] || [];
+    const galleryDescription = galleryContent.find(item => item.gallery_Description)?.gallery_Description;
+    const galleryData = galleryContent.filter(item => !item.gallery_Description);
+
+    const globalFaqData = await mongoose.connection.db.collection('OnGoingPage').findOne({ page_slug: 'OnGoingPage', page_section: 'faq-items-container' });
+    const frequencyData = onGoingPageData['faq-items-container'] || globalFaqData?.page_content || [];
 
     res.render('OnGoingPage', {
-      projectData,
-      projectDetails, // Pass the found project details
+      projectData: onGoingPageData['hero-section'] || [],
+      projectDetails,
       floorData,
       featureData,
+      amenitiesDescription,
       amenityData,
+      locationDescription,
       locationData,
+      galleryDescription,
       galleryData,
       frequencyData,
-      blogData
+      hasProjectData
     });
   } catch (error) {
     console.error('Error fetching OnGoingPage data:', error);
@@ -71,10 +91,10 @@ const getonGoingPageData = async (req, res) => {
       floorData: [],
       featureData: [],
       amenityData: [],
-      locationData: [],
+      locationData: { image: '', details: [] },
       galleryData: [],
       frequencyData: [],
-      blogData: []
+      hasProjectData: false
     });
   }
 };

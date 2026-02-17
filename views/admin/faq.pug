@@ -1,0 +1,96 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
+    - var pageSlug = query?.slug || 'project'
+    - var pageSection = query?.section || 'faq-section-header'
+    
+    - 
+       const titleMap = {
+         'project': 'Project',
+         'ongoing': 'On Going'
+       }
+       const displayTitle = titleMap[pageSlug] || (pageSlug.charAt(0).toUpperCase() + pageSlug.slice(1))
+
+    title #{displayTitle} FAQ Management
+    link(rel='stylesheet' href=utils.assetPath("/bundle/blog.css"))
+
+  body
+    - var activeLink = 'faq'
+    include ../layout/sidebar.pug
+
+    // Main Page Content
+    .main-container.with-sidebar
+      // Top App Bar
+      header.app-header
+        .header-left
+          button.menu-btn
+            svg.icon(xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24' fill='currentColor')
+              path(d='M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z')
+          h1.page-title #{displayTitle} FAQ Management
+
+      // Breadcrumbs
+      .breadcrumbs
+        p.breadcrumb-text
+          span.breadcrumb-item Prethviga Homes
+          svg.icon(xmlns='http://www.w3.org/2000/svg' height='12' viewBox='0 -960 960 960' width='12' fill='#000')
+            path(d='M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z')
+          span.breadcrumb-item Content Management
+          svg.icon(xmlns='http://www.w3.org/2000/svg' height='12' viewBox='0 -960 960 960' width='12' fill='#000')
+            path(d='M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z')
+          span.breadcrumb-item.active #{displayTitle} FAQ Management
+
+      main.main-content
+        // Content Header
+        .content-header(style="display: flex; flex-direction: column; align-items: flex-start; gap: 15px;")
+          h2.content-title #{displayTitle} FAQ Management
+          
+          .selectors-container(style="display: flex; gap: 15px; width: 100%; justify-content: space-between;")
+            select#faq-slug-selector.form-select(style="flex: 1;")
+               option(value="project" selected=pageSlug === 'project') Project Page
+               option(value="ongoing" selected=pageSlug === 'ongoing') OnGoing Page
+            
+            .header-actions
+              button.back-btn(onclick=`window.location.href='/admin/faq/${pageSlug}/${pageSection}/list'`) List
+              button.add-more-btn Add More
+        
+        // Form Container
+        .form-container
+          .content-card
+            .form-header
+              span.form-number 1
+              button.delete-form-btn(type='button' title='Delete this form' style='display: none')
+                span.material-symbols-outlined 
+                  svg(width='17' height='17' viewbox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='currentColor')
+                    path(d='M8 3H16C16.55 3 17 3.45 17 4V5H19C19.55 5 20 5.45 20 6C20 6.55 19.55 7 19 7H5C4.45 7 4 6.55 4 6C4 5.45 4.45 5 5 5H7V4C7 3.45 7.45 3 8 3ZM6 9V19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V9H6ZM9 11C9.55 11 10 11.45 10 12V18C10 18.55 9.55 19 9 19C8.45 19 8 18.55 8 18V12C8 11.45 8.45 11 9 11ZM12 11C12.55 11 13 11.45 13 12V18C13 18.55 12.55 19 12 19C11.45 19 11 18.55 11 18V12C11 11.45 11.45 11 12 11ZM15 11C15.55 11 16 11.45 16 12V18C16 18.55 15.55 19 15 19C14.45 19 14 18.55 14 18V12C14 11.45 14.45 11 15 11Z')
+            .form-section
+              // FAQ Question
+              .form-group
+                label.form-label Question
+                input.form-input(type='text' name='faq_question' placeholder='Enter your question')
+              
+              // FAQ Answer
+              .form-group
+                label.form-label Answer
+                textarea.form-textarea(name="faq_answer", placeholder='Enter your answer...', rows="5")
+            
+            // Submit Button
+            .submit-section
+              button.submit-btn Submit
+            
+            // Navigation buttons
+            .navigation-buttons
+              button.nav-btn.prev-btn(disabled) Previous
+              button.nav-btn.next-btn Next
+        
+        // Added Items Section
+        .added-items-section(style='display: none;')
+          h3.section-title PREVIEW
+          .added-items-list
+
+    input#page_slug(type='hidden' value=pageSlug)
+    input#page_section(type='hidden' value=pageSection)
+    input#project_id(type='hidden' value=projectId)
+    
+    script(src=utils.assetPath("/bundle/faq.js"))

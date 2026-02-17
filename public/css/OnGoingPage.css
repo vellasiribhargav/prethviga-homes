@@ -1379,7 +1379,7 @@
 
 .project-details-section .project-gallery .gallery-wrapper {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 3fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 40px;
   justify-items: center;
   width: 100%;
@@ -1433,8 +1433,9 @@
     margin: 30px 0;
   }
 
-  .project-details-section .gallery-wrapper {
+  .project-details-section .project-gallery .gallery-wrapper {
     gap: 20px;
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .project-details-section .gallery-card {
@@ -1464,7 +1465,7 @@
     margin: 20px 0;
   }
 
-  .project-details-section .gallery-wrapper {
+  .project-details-section .project-gallery .gallery-wrapper {
     gap: 10px;
     width: 100%;
     grid-template-columns: 1fr;
