@@ -1,15 +1,17 @@
+import './sessionExpired';
+
 // Sidebar interactions and smooth animations
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   // Dropdown functionality for all dropdowns
   const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
-  
+
   dropdownToggles.forEach(toggle => {
-    toggle.addEventListener('click', function(e) {
+    toggle.addEventListener('click', function (e) {
       e.preventDefault();
       e.stopPropagation();
       const dropdown = this.parentElement;
       dropdown.classList.toggle('open');
-      
+
       // Close other dropdowns
       dropdownToggles.forEach(otherToggle => {
         if (otherToggle !== this) {
@@ -44,9 +46,9 @@ document.addEventListener('DOMContentLoaded', function() {
   if (navToggle) {
     navToggle.addEventListener('click', closeDrawer);
   }
-  
+
   // Close drawer on escape key
-  document.addEventListener('keydown', function(e) {
+  document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && navDrawer.classList.contains('open')) {
       closeDrawer();
     }
@@ -55,11 +57,11 @@ document.addEventListener('DOMContentLoaded', function() {
   // Smooth transitions for sidebar links
   const sidebarLinks = document.querySelectorAll('.sidebar-link');
   sidebarLinks.forEach(link => {
-    link.addEventListener('mouseenter', function() {
+    link.addEventListener('mouseenter', function () {
       this.style.transform = 'translateX(4px)';
     });
-    
-    link.addEventListener('mouseleave', function() {
+
+    link.addEventListener('mouseleave', function () {
       this.style.transform = 'translateX(0)';
     });
   });

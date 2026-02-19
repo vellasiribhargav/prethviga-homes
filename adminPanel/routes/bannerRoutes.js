@@ -22,13 +22,13 @@ router.post(
 
 router.put("/:slug/update-text", dynamicUpload.any(), bannerController.updateSectionText);
 router.put(
-  "/:slug/update/:index",
+  "/:slug/update/:id",
   dynamicUpload.single("file"),
   bannerController.updateBanner
 );
 
 router.delete(
-  "/:slug/delete/:index",
+  "/:slug/delete/:id",
   bannerController.deleteBanner
 );
 

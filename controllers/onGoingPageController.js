@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const dayjs = require('dayjs');
 const { ObjectId } = require('mongodb');
 const { formatDateForDisplay } = require('../utils/index');
 
@@ -6,14 +7,18 @@ const getonGoingPageData = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const projectPageData = await mongoose.connection.db.collection('ProjectPage').find({ page_slug: 'ProjectPage' }).toArray();
-    const upcomingProjects = projectPageData.find(item => item.page_section === 'ongoing-gallery')?.page_content || [];
-    const completedProjects = projectPageData.find(item => item.page_section === 'completed-gallery')?.page_content || [];
-    const allProjects = [...upcomingProjects, ...completedProjects];
+    // projects (Multi-document)
+    const projectsDocs = await mongoose.connection.db.collection('projects').find({ page_slug: 'projects' }).toArray();
+
+    // Format projects to find the matching one
+    const allProjects = projectsDocs.map(p => ({
+      ...p,
+      id: (p.project_id || p._id).toString()
+    }));
 
     let projectDetails = {};
     if (id && ObjectId.isValid(id)) {
-      const foundProject = allProjects.find(p => (p.project_id?.toString() === id) || (p._id?.toString() === id));
+      const foundProject = allProjects.find(p => p.id === id);
       if (foundProject) {
         projectDetails = {
           title: foundProject.project_name,
@@ -28,7 +33,8 @@ const getonGoingPageData = async (req, res) => {
     let onGoingPageData = {};
     let hasProjectData = false;
     if (id && ObjectId.isValid(id)) {
-      const projectDoc = await mongoose.connection.db.collection('OnGoingPage').findOne({ project_id: new ObjectId(id) });
+      // project_details: per-project sections (Single document with sections array)
+      const projectDoc = await mongoose.connection.db.collection('project_details').findOne({ project_id: new ObjectId(id) });
       if (projectDoc?.sections) {
         hasProjectData = true;
         projectDoc.sections.forEach(section => {
@@ -66,8 +72,20 @@ const getonGoingPageData = async (req, res) => {
     const galleryDescription = galleryContent.find(item => item.gallery_Description)?.gallery_Description;
     const galleryData = galleryContent.filter(item => !item.gallery_Description);
 
-    const globalFaqData = await mongoose.connection.db.collection('OnGoingPage').findOne({ page_slug: 'OnGoingPage', page_section: 'faq-items-container' });
-    const frequencyData = onGoingPageData['faq-items-container'] || globalFaqData?.page_content || [];
+    // faq: only show project-specific FAQ added by admin (filter out empty rows)
+    let frequencyData = (onGoingPageData['faq-items-container'] || []).filter(
+      item => item.question && item.question.trim() && item.answer && item.answer.trim()
+    );
+
+    // fallback to global project_details faq if project-specific is empty
+    if (frequencyData.length === 0) {
+      // FAQ fallbacks are now multi-document
+      const globalFaqData = await mongoose.connection.db.collection('faq').find({
+        page_slug: 'project_details',
+        page_section: 'faq-items-container'
+      }).toArray();
+      frequencyData = globalFaqData || [];
+    }
 
     res.render('OnGoingPage', {
       projectData: onGoingPageData['hero-section'] || [],

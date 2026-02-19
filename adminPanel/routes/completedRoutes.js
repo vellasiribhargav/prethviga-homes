@@ -9,7 +9,7 @@ router.get('/', completedController.renderCompletedPage);
 router.get('/list', completedController.getcompletedGallery);
 router.get('/getcompleted', completedController.getCompletedProjectsJSON);
 router.post('/addcompleted', upload.any(), completedController.addcompletedItem);
-router.put('/updatecompleted/:index', upload.single('file'), completedController.updatecompletedItem);
-router.delete('/deletecompleted/:index', completedController.deletecompletedItem);
+router.put('/update/:id', upload.single('file'), completedController.updatecompletedItem);
+router.delete('/delete/:id', completedController.deletecompletedItem);
 
 module.exports = router;

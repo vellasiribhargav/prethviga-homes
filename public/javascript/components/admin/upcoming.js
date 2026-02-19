@@ -1,12 +1,12 @@
 import $ from 'jquery';
 window.$ = window.jQuery = $;
+import dayjs from 'dayjs';
 import Swal from 'sweetalert2';
 import { isValidDate, getDateRange } from '../../utils/validation.js';
 
 function formatToDB(dateStr) {
     if (!dateStr) return '';
-    const [year, month, day] = dateStr.split('-');
-    return `${day}-${month}-${year}`;
+    return dayjs(dateStr).format('DD-MM-YYYY');
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (name === 'timeline-date') {
                 input.addEventListener('input', () => {
                     if (input.value && !isValidDate(input.value)) {
-                        msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+                        msg.textContent = '* Invalid date (Year 1998-' + (dayjs().year() + 3) + ')';
                         msg.style.display = 'block';
                     } else {
                         msg.style.display = 'none';
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
             input.addEventListener('change', () => {
                 const isDate = name === 'timeline-date';
                 if (isDate && input.value && !isValidDate(input.value)) {
-                    msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+                    msg.textContent = '* Invalid date (Year 1998-' + (dayjs().year() + 3) + ')';
                     msg.style.display = 'block';
                 } else {
                     msg.style.display = 'none';
@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function () {
             } else if (name === 'timeline-date' && !isValidDate(input.value)) {
                 isFieldValid = false;
                 if (msg) {
-                    msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+                    msg.textContent = '* Invalid date (Year 1998-' + (dayjs().year() + 3) + ')';
                 }
             }
 
@@ -301,11 +301,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function formatDateForPreview(dateStr) {
-        if (!dateStr) return 'Timeline not set';
-        const [year, month, day] = dateStr.split('-');
-        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        const monthName = months[parseInt(month) - 1];
-        return `Timeline: ${monthName} ${year}`;
+        if (!dateStr) return '';
+        return dayjs(dateStr).format('YYYY-MM-DD');
     }
 
     function addToProjectsList(data, formId) {
@@ -620,7 +617,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success!',
-                            text: 'Project saved successfully! Redirecting to add project details...',
+                            text: 'content saved',
                             confirmButtonColor: '#BC5322',
                             timer: 2000
                         }).then(() => {
@@ -630,7 +627,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success!',
-                            text: `${upcomingArr.length} project(s) saved successfully!`,
+                            text: 'content saved',
                             confirmButtonColor: '#BC5322'
                         }).then(() => {
                             window.location.href = '/admin/projectDetails/details';

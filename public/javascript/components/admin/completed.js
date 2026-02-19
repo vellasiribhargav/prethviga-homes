@@ -1,11 +1,11 @@
 import $ from 'jquery';
 window.$ = window.jQuery = $;
+import dayjs from 'dayjs';
 import Swal from 'sweetalert2';
 
 function formatToDB(dateStr) {
     if (!dateStr) return '';
-    const [year, month, day] = dateStr.split('-');
-    return `${day}-${month}-${year}`;
+    return dayjs(dateStr).format('DD-MM-YYYY');
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -52,7 +52,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const day = parseInt(dateParts[2], 10);
 
         // Check ranges
-        const currentYear = new Date().getFullYear();
+        const currentYear = dayjs().year();
+        // Range: 1998 to Current Year + 3
         if (year < 1998 || year > currentYear + 3) return false;
         if (month < 1 || month > 12) return false;
 
@@ -72,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Set Date Constraints
         const dateInput = form.querySelector('input[name="completion-date"]');
         if (dateInput) {
-            const currentYear = new Date().getFullYear();
+            const currentYear = dayjs().year();
             dateInput.min = '1998-01-01';
             dateInput.max = `${currentYear + 3}-12-31`;
         }
@@ -106,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (name === 'completion-date') {
                 input.addEventListener('input', () => {
                     if (input.value && !isValidDate(input.value)) {
-                        msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+                        msg.textContent = '* Invalid date (Year 1998-' + (dayjs().year() + 3) + ')';
                         msg.style.display = 'block';
                     } else {
                         msg.style.display = 'none';
@@ -122,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function () {
             input.addEventListener('change', () => {
                 const isDate = name === 'completion-date';
                 if (isDate && input.value && !isValidDate(input.value)) {
-                    msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+                    msg.textContent = '* Invalid date (Year 1998-' + (dayjs().year() + 3) + ')';
                     msg.style.display = 'block';
                 } else {
                     msg.style.display = 'none';
@@ -170,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function () {
             } else if (name === 'completion-date' && !isValidDate(input.value)) {
                 isFieldValid = false;
                 if (msg) {
-                    msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+                    msg.textContent = '* Invalid date (Year 1998-' + (dayjs().year() + 3) + ')';
                 }
             }
 
@@ -654,7 +655,6 @@ document.addEventListener('DOMContentLoaded', function () {
             validFormsCount++;
         }
 
-        // console.log('Submitting completedArr:', completedArr);
 
         if (!completedArr.length) {
             Swal.fire({
@@ -683,7 +683,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         await Swal.fire({
                             icon: 'success',
                             title: 'Success!',
-                            text: 'Project saved successfully! Redirecting to add project details...',
+                            text: 'content saved',
                             confirmButtonColor: '#BC5322',
                             timer: 2000
                         }).then(() => {
@@ -693,7 +693,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         await Swal.fire({
                             icon: 'success',
                             title: 'Success!',
-                            text: `${completedArr.length} Project(s) saved successfully!`,
+                            text: 'content saved',
                             confirmButtonColor: '#BC5322'
                         }).then(() => {
                             window.location.href = '/admin/projectDetails/details';

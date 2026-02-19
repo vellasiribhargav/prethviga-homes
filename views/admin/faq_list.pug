@@ -39,11 +39,19 @@ html(lang='en')
               path(d='M6 12H18M12 6V18' stroke='#ffffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
             |  Add New FAQ
 
-        // Section Selector Row
-        .search-filter-row
+        .filter-group
           select#faq-slug-selector.filter-select
             option(value="project" selected=slug === 'project') Project
-            option(value="ongoing" selected=slug === 'ongoing') Ongoing
+
+        .search-filter-row
+          .search-container
+            //- svg.search-icon(xmlns='http://www.w3.org/2000/svg' height='20' viewBox='0 -960 960 960' width='20' fill='currentColor')
+              path(d='M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z')
+            //- input#searchInput.search-input(type='text' placeholder='Search by question...')
+          
+          .filter-group
+            label.filter-label Date:
+            input#dateFilter.filter-date(type='date')
 
         .table-card
           .table-wrapper
@@ -52,32 +60,35 @@ html(lang='en')
                 tr
                   th S.NO.
                   th Q/A
+                  th CREATED DATE
                   th ACTIONS
               tbody
                 if faqs && faqs.length > 0
                    each f, idx in faqs
-                     tr(data-id=f.id data-index=f.index)
+                     tr(data-id=f.id data-index=f.id)
                        td #{String(idx + 1).padStart(2, '0')}
                        td.item-name-cell
-                         div(style="display: flex; gap: 5px; margin-bottom: 0.5rem;")
-                           strong Q: 
-                           span #{f.question || 'No question available...'}
-                         div(style="display: flex; gap: 5px;")
-                           strong A: 
-                           span.cell-text #{f.answer || 'No answer available...'}
+                         .faq-qa-container
+                           .faq-question
+                             strong Q: 
+                             span.cell-text(title=f.question) #{f.question || 'No question available...'}
+                           .faq-answer
+                             strong A: 
+                             span.cell-text(title=f.answer) #{f.answer || 'No answer available...'}
+                       td(title=f.formattedDate) #{utils.formatDateShort(f.createdAt)}
                        td
                          .action-buttons
-                           button.icon-action-btn.edit-btn(title="Edit" data-index=f.index data-faq=JSON.stringify(f))
+                           button.icon-action-btn.edit-btn(title="Edit" data-id=f.id data-index=f.id data-faq=JSON.stringify(f))
                              span.edit  
                                svg(width='17' height='17' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='currentColor')
                                  path(d='M3 17.25V21H6.75L17.81 9.94L14.06 6.19L3 17.25ZM20.71 7.04C21.1 6.65 21.1 6.02 20.71 5.63L18.37 3.29C17.98 2.9 17.35 2.9 16.96 3.29L15.13 5.12L18.88 8.87L20.71 7.04Z')
-                           button.icon-action-btn.delete-btn.delete(title="Delete" data-index=f.index)
+                           button.icon-action-btn.delete-btn.delete(title="Delete" data-id=f.id data-index=f.id)
                              span.delete
                                svg(width='17' height='17' viewbox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='currentColor')
                                  path(d='M8 3H16C16.55 3 17 3.45 17 4V5H19C19.55 5 20 5.45 20 6C20 6.55 19.55 7 19 7H5C4.45 7 4 6.55 4 6C4 5.45 4.45 5 5 5H7V4C7 3.45 7.45 3 8 3ZM6 9V19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V9H6ZM9 11C9.55 11 10 11.45 10 12V18C10 18.55 9.55 19 9 19C8.45 19 8 18.55 8 18V12C8 11.45 8.45 11 9 11ZM12 11C12.55 11 13 11.45 13 12V18C13 18.55 12.55 19 12 19C11.45 19 11 18.55 11 18V12C11 11.45 11.45 11 12 11ZM15 11C15.55 11 16 11.45 16 12V18C16 18.55 15.55 19 15 19C14.45 19 14 18.55 14 18V12C14 11.45 14.45 11 15 11Z')
                 else
                    tr
-                     td(colspan="3" style="text-align:center; padding: 2rem;") No FAQs found.
+                     td.no-data-cell(colspan="4") No FAQs found.
           
           // Table Footer / Pagination
           .table-footer

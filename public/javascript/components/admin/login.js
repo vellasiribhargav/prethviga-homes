@@ -1,7 +1,21 @@
 import $ from 'jquery';
 window.$ = window.jQuery = $;
+import Swal from 'sweetalert2';
 
 document.addEventListener('DOMContentLoaded', function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('expired') === 'true') {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Session Expired',
+            text: 'Your session has expired. Please login again.',
+            confirmButtonColor: '#9e6520'
+        });
+        // Remove the parameter from URL without refreshing
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+    }
+
     const loginForm = document.querySelector('.login-form');
     if (!loginForm) return;
 
@@ -153,7 +167,6 @@ document.addEventListener('DOMContentLoaded', function () {
             return; // Stop submission
         }
 
-        // Remove captcha from formData sent to server (server doesn't check it anymore)
         const { captcha, ...loginData } = formData;
 
         // Show loading state
@@ -177,7 +190,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (data.success) {
                     // Store username in cookie for 30 days
                     setCookie('remembered_admin_username', formData.username, 30);
-                    window.location.href = '/admin/list';
+                    window.location.href = '/admin/banner/home/list';
                 } else {
                     const passwordInput = document.getElementById('password');
                     const msg = passwordInput

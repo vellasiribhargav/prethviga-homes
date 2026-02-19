@@ -1,3 +1,6 @@
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
 import $ from 'jquery';
 window.$ = window.jQuery = $;
 import Swal from 'sweetalert2';
@@ -8,16 +11,12 @@ let originalFormData = {};
 
 function formatToDB(dateStr) {
     if (!dateStr) return '';
-    const [year, month, day] = dateStr.split('-');
-    return `${day}-${month}-${year}`;
+    return dayjs(dateStr).format('DD-MM-YYYY');
 }
 
-function parseFromDB(dbDateStr) {
-    if (!dbDateStr) return '';
-    const parts = dbDateStr.split('-');
-    if (parts.length !== 3) return dbDateStr;
-    const [day, month, year] = parts;
-    return `${year}-${month}-${day}`;
+function formatForDisplay(dbDateStr) {
+    if (!dbDateStr) return 'No date';
+    return dayjs(dbDateStr).format('MMMM YYYY');
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -26,15 +25,58 @@ document.addEventListener('DOMContentLoaded', function () {
     const itemForm = document.getElementById('itemForm');
     const previewImage = document.getElementById('previewImage');
     const closeModalBtns = document.querySelectorAll('.close-modal');
+    const searchInput = document.getElementById('searchInput');
+    const dateFilter = document.getElementById('dateFilter');
 
     // Initialize Pagination
-    new PaginationManager({
+    const pagination = new PaginationManager({
         tableBodySelector: '.data-table tbody',
         paginationContainerSelector: '.pagination',
         footerInfoSelector: '.footer-info span',
         rowsPerPage: 5,
         storageKey: 'rowsPerPage_completed'
     });
+
+    // Filter Logic
+    function applyFilters() {
+        const searchValue = searchInput ? searchInput.value.toLowerCase().trim() : '';
+        const dateValue = dateFilter ? dateFilter.value : '';
+
+        const allRows = pagination.allRows;
+
+        const filteredRows = allRows.filter(row => {
+            // Search check (by project name)
+            const projectName = row.querySelector('.item-name-cell') ? row.querySelector('.item-name-cell').textContent.toLowerCase() : '';
+            const searchMatch = !searchValue || projectName.includes(searchValue);
+            if (!searchMatch) return false;
+
+            // Date check (by Creation Date)
+            // Column indices: S.NO(0), PROJECT NAME(1), DESCRIPTION(2), LOCATION(3), TIMELINE(4), CREATED DATE(5), PREVIEW(6), ACTIONS(7)
+            const createdAtCell = row.cells[5];
+            const createdAtValue = createdAtCell ? createdAtCell.textContent.trim() : '';
+
+            let dateMatch = true;
+            if (dateValue && createdAtValue) {
+                const rowDate = dayjs(createdAtValue, 'MMMM D, YYYY');
+                const filterDate = dayjs(dateValue);
+                dateMatch = rowDate.isValid() && rowDate.isSame(filterDate, 'day');
+            }
+
+            return dateMatch;
+        });
+
+        // Update S.NO
+        filteredRows.forEach((row, idx) => {
+            if (row.cells && row.cells.length > 0) {
+                row.cells[0].textContent = String(idx + 1).padStart(2, '0');
+            }
+        });
+
+        pagination.refreshRows(filteredRows);
+    }
+
+    if (searchInput) searchInput.addEventListener('input', applyFilters);
+    if (dateFilter) dateFilter.addEventListener('change', applyFilters);
 
     function openModal(modal) {
         if (modal) {
@@ -73,28 +115,20 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.edit-btn').forEach(btn => {
         btn.addEventListener('click', function () {
             const projectData = JSON.parse(this.dataset.project);
-            const index = this.dataset.index;
+            const id = this.dataset.id || this.dataset.index;
 
             const inputs = itemForm.elements;
-            inputs.index.value = index;
+            inputs.index.value = id;
             inputs.project_name.value = projectData.project_name || '';
             inputs.project_location.value = projectData.project_location || '';
 
             // Format date for input[type="date"]
             if (projectData.project_date) {
-                const parsedDate = parseFromDB(projectData.project_date);
-                if (parsedDate && parsedDate.includes('-')) {
-                    inputs.project_date.value = parsedDate;
+                const date = dayjs(projectData.project_date);
+                if (date.isValid()) {
+                    inputs.project_date.value = date.format('YYYY-MM-DD');
                 } else {
-                    const date = new Date(projectData.project_date);
-                    if (!isNaN(date)) {
-                        const yyyy = date.getFullYear();
-                        const mm = String(date.getMonth() + 1).padStart(2, '0');
-                        const dd = String(date.getDate()).padStart(2, '0');
-                        inputs.project_date.value = `${yyyy}-${mm}-${dd}`;
-                    } else {
-                        inputs.project_date.value = '';
-                    }
+                    inputs.project_date.value = '';
                 }
             } else {
                 inputs.project_date.value = '';
@@ -167,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', async function () {
-            const index = this.dataset.index;
+            const id = this.dataset.id || this.dataset.index;
 
             const result = await Swal.fire({
                 title: 'Are you sure?',
@@ -181,7 +215,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `/admin/completed/deletecompleted/${index}`,
+                    url: `/admin/completed/delete/${id}`,
                     type: 'DELETE',
                     success: function (data) {
                         if (data.success) {
@@ -197,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                     },
                     error: function (xhr) {
-                        Swal.fire('Error!', xhr.responseText, 'error');
+                        Swal.fire('Error!', xhr.responseText || 'Failed to delete project', 'error');
                     }
                 });
             }
@@ -243,7 +277,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (name === 'project_date') {
                 input.addEventListener('input', () => {
                     if (input.value && !isValidDate(input.value)) {
-                        msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+                        msg.textContent = '* Invalid date (Year 1998-' + (dayjs().year() + 3) + ')';
                         msg.style.display = 'block';
                     } else {
                         msg.style.display = 'none';
@@ -272,7 +306,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (msg && name === 'project_date') msg.textContent = '* Completion date is required';
             } else if (name === 'project_date' && !isValidDate(input.value)) {
                 isFieldValid = false;
-                if (msg) msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+                if (msg) msg.textContent = '* Invalid date (Year 1998-' + (dayjs().year() + 3) + ')';
             }
 
             if (!isFieldValid) {
@@ -319,7 +353,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 Swal.fire({
                     icon: 'info',
                     title: 'No Changes Detected',
-                    text: 'You have not modified anything.'
+                    text: 'no changes is detected'
                 });
                 return;
             }
@@ -328,7 +362,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (formData.has('project_date')) {
                 formData.set('project_date', formatToDB(formData.get('project_date')));
             }
-            const index = formData.get('index');
+            const id = formData.get('index');
 
             const submitBtn = this.querySelector('button[type="submit"]');
             const originalText = submitBtn.textContent;
@@ -336,7 +370,7 @@ document.addEventListener('DOMContentLoaded', function () {
             submitBtn.disabled = true;
 
             $.ajax({
-                url: `/admin/completed/updatecompleted/${index}`,
+                url: `/admin/completed/update/${id}`,
                 type: 'PUT',
                 data: formData,
                 processData: false,
@@ -346,14 +380,14 @@ document.addEventListener('DOMContentLoaded', function () {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Project updated successfully',
+                            text: 'content updated',
                             timer: 1500,
                             showConfirmButton: false
                         }).then(() => {
                             window.location.reload();
                         });
                     } else {
-                        throw new Error(data.message);
+                        Swal.fire('Error!', data.message || 'Failed to update', 'error');
                     }
                 },
                 error: function (xhr) {

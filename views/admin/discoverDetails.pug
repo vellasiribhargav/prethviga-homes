@@ -1,0 +1,89 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
+    title Discover Management
+    link(rel='stylesheet' href=utils.assetPath("/bundle/discoverDetails.css"))
+
+  body
+    - var activeLink = 'discoverDetails'
+    
+    include ../layout/sidebar.pug
+
+    // Main Page Content
+    .main-container.with-sidebar
+      // Top App Bar
+      header.app-header
+        .header-left
+          button.menu-btn
+            svg.icon(xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24' fill='#000')
+              path(d='M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z')
+          h1.page-title Discover Management
+
+      // Breadcrumbs
+      .breadcrumbs
+        p.breadcrumb-text
+          span.breadcrumb-item Prethviga Homes 
+          svg.icon(xmlns='http://www.w3.org/2000/svg' height='12' viewBox='0 -960 960 960' width='12' fill='#000')
+            path(d='M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z')
+          span.breadcrumb-item Content Management 
+          svg.icon(xmlns='http://www.w3.org/2000/svg' height='12' viewBox='0 -960 960 960' width='12' fill='#000')
+            path(d='M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z')
+          span.breadcrumb-item.active Discover Details
+
+      // Section Selection Tabs
+      .section-tabs
+        button.tab-btn.active(data-section="core-values") Core Values
+        button.tab-btn(data-section="buyer-guide") Buyer's Guide
+
+      // Form Container
+      main.main-content
+        .content-header
+          h2.content-title Manage Discover Content
+          .header-actions
+            // No back button needed here as it's a main page
+
+        .form-container
+          // Core Values Section
+          .section-form#section-core-values.active
+            .content-card
+                h3.section-card-title Core Values
+                
+                #values-container
+                
+                button.add-more-btn#add-value-btn(type="button") + Add Value
+
+                .submit-section
+                  button.submit-btn#save-values-btn Save
+
+          // Buyer's Guide Section
+          .section-form#section-buyer-guide
+            .content-card
+              .form-section
+                h3.section-card-title Buyer's Guide
+                .form-grid
+                  .form-group.full-width
+                    label.form-label Section Title
+                    input#guide-title.form-input(type="text" placeholder="Buyer's Guide")
+                  .form-group.full-width
+                    label.form-label Section Description
+                    textarea#guide-description.form-input.form-textarea(rows="3" placeholder="Description" maxlength="200")
+                    .char-limit-msg * Characters are more than 200
+                
+                h3.section-card-title.with-margin-top Guide Features (Rows)
+                .form-group
+                  .amenities-dropdown-container
+                    .amenities-input-wrapper
+                      input.amenities-search-input#guideTagInput(type="text" placeholder="Type a feature and press Enter...")
+                      span.dropdown-arrow
+                        svg(width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+                          path(d='m6 9 6 6 6-6')
+                    #guideSuggestions.amenities-suggestions-list
+                  .selected-amenities-list#guideTags
+                  input#guideHiddenInput(type="hidden" name="rows")
+                
+                .submit-section
+                  button.submit-btn#save-guide-btn Save
+
+    script(src=utils.assetPath("/bundle/discoverDetails.js"))

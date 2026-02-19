@@ -1,20 +1,16 @@
 import $ from 'jquery';
 window.$ = window.jQuery = $;
+import dayjs from 'dayjs';
 import Swal from 'sweetalert2';
 import { isValidDate, getDateRange } from '../../utils/validation.js';
 
 function formatToDB(dateStr) {
     if (!dateStr) return '';
-    const [year, month, day] = dateStr.split('-');
-    return `${day}-${month}-${year}`;
+    return dayjs(dateStr).format('DD-MM-YYYY');
 }
 // displaying date in form 
 function getTodayDate() {
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0');
-    const dd = String(today.getDate()).padStart(2, '0');
-    return `${yyyy}-${mm}-${dd}`;
+    return dayjs().format('YYYY-MM-DD');
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -38,6 +34,25 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     let formCount = 0;
+
+    // Character limit message handler for all textareas
+    document.addEventListener('input', (e) => {
+        if (e.target.tagName === 'TEXTAREA' || e.target.classList.contains('form-textarea')) {
+            const textarea = e.target;
+            const container = textarea.closest('.form-group') || textarea.parentNode;
+            let charLimitMsg = container.querySelector('.char-limit-msg');
+            const limit = textarea.maxLength || 200;
+
+            if (charLimitMsg) {
+                if (textarea.value.length >= limit) {
+                    charLimitMsg.style.display = 'block';
+                    charLimitMsg.textContent = `* Characters are more than ${limit}`;
+                } else {
+                    charLimitMsg.style.display = 'none';
+                }
+            }
+        }
+    });
 
     // Initialize
     updateDeleteButtonsVisibility();
@@ -129,11 +144,17 @@ document.addEventListener('DOMContentLoaded', function () {
         msg.textContent = '* Cover image is required';
         msg.style.cssText = 'font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic';
         uploadBtn.parentNode.appendChild(msg);
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                msg.style.display = 'none';
+            }
+        });
     }
 
     // Character limit message handler
     document.addEventListener('input', (e) => {
-        if (e.target.classList.contains('form-textarea') && e.target.maxLength === 200) {
+        if (e.target.classList.contains('form-textarea')) {
             const msg = e.target.parentNode.querySelector('.char-limit-msg');
             if (msg) {
                 if (e.target.value.length >= 200) {
@@ -151,6 +172,9 @@ document.addEventListener('DOMContentLoaded', function () {
             alert(`${file.name} is too large. Max size is 2MB.`);
             return;
         }
+
+        // Store the File object on the button so it survives innerHTML replacement
+        uploadBtn._file = file;
 
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -174,6 +198,7 @@ document.addEventListener('DOMContentLoaded', function () {
     window.removeImage = function (button, event) {
         if (event) event.stopPropagation();
         const uploadBtn = button.closest('.upload-btn');
+        uploadBtn._file = null; // Clear stored file
         uploadBtn.classList.remove('has-image');
         uploadBtn.innerHTML = `
             <div class="upload-icon">
@@ -218,14 +243,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 allForms[firstInvalid].style.display = 'block';
                 updateSubmitButtonsVisibility();
                 updateNavigationButtons();
-
-                const invalidNumbers = invalidFormIndices.map(i => i + 1).join(', ');
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Validation Error',
-                    text: `Please check the following forms for missing fields: ${invalidNumbers}`,
-                    confirmButtonColor: '#BC5322'
-                });
                 return;
             }
 
@@ -318,8 +335,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const uploadedImage = form.querySelector('.uploaded-image img');
         const coverImage = uploadedImage ? uploadedImage.src : null;
-        const fileInput = form.querySelector('.image-upload');
-        const file = fileInput && fileInput.files[0] ? fileInput.files[0] : null;
+        const uploadBtn = form.querySelector('.upload-btn');
+        const file = uploadBtn?._file || null;
 
         return {
             blogTag,
@@ -373,7 +390,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (name === 'publication-date') {
                 input.addEventListener('input', () => {
                     if (input.value && !isValidDate(input.value)) {
-                        msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+                        msg.textContent = '* Invalid date (Year 1998-' + (dayjs().year() + 3) + ')';
                         msg.style.display = 'block';
                     } else {
                         msg.style.display = 'none';
@@ -387,7 +404,7 @@ document.addEventListener('DOMContentLoaded', function () {
             input.addEventListener('change', () => {
                 const isDate = name === 'publication-date';
                 if (isDate && input.value && !isValidDate(input.value)) {
-                    msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+                    msg.textContent = '* Invalid date (Year 1998-' + (dayjs().year() + 3) + ')';
                     msg.style.display = 'block';
                 } else {
                     msg.style.display = 'none';
@@ -428,7 +445,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (msg && name === 'publication-date') msg.textContent = '* Publication date is required';
             } else if (name === 'publication-date' && !isValidDate(input.value)) {
                 isFieldValid = false;
-                if (msg) msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+                if (msg) msg.textContent = '* Invalid date (Year 1998-' + (dayjs().year() + 3) + ')';
             }
 
             if (!isFieldValid) {
@@ -438,6 +455,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (msg) msg.style.display = 'none';
             }
         });
+
+        // Image Validation
+        const uploadBtn = form.querySelector('.upload-btn');
+        const hasImage = uploadBtn && uploadBtn.classList.contains('has-image');
+        const msgFile = form.querySelector('.required-message-file');
+
+        if (!hasImage) {
+            if (msgFile) msgFile.style.display = 'block';
+            isValid = false;
+        } else {
+            if (msgFile) msgFile.style.display = 'none';
+        }
 
         return isValid;
     }
@@ -476,7 +505,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     await Swal.fire({
                         icon: 'success',
                         title: 'Success!',
-                        text: data.message,
+                        text: 'content saved',
                         confirmButtonColor: '#BC5322'
                     }).then(() => {
                         window.location.href = `/admin/blog/${slug}/${section}/list`;
@@ -504,10 +533,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function formatDateForPreview(dateStr) {
         if (!dateStr) return 'No date';
-        const [year, month, day] = dateStr.split('-');
-        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        const monthName = months[parseInt(month) - 1];
-        return `${monthName} ${day}, ${year}`;
+        return dayjs(dateStr).format('MMMM D, YYYY');
     }
 
     function addToBlogList(data, formId) {
@@ -661,8 +687,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 
                 <div class="form-group">
                     <label class="form-label">Blog Description</label>
-                    <textarea name="blog_description" class="form-textarea" placeholder="blog description..." rows="3" maxlength="500"></textarea>
-                    <div class="char-limit-msg" style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic">* Characters are more than 500</div>
+                    <textarea name="blog_description" class="form-textarea" placeholder="blog description..." rows="3" maxlength="200"></textarea>
+                    <div class="char-limit-msg" style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic">* Characters are more than 200</div>
                 </div>
                 
                 <div class="form-group">

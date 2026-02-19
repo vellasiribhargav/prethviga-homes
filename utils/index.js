@@ -16,30 +16,48 @@ exports.getFiles = (req) => {
 	});
 };
 
-exports.formatDate = (dateString) => {
+const dayjs = require('dayjs');
+const customParseFormat = require('dayjs/plugin/customParseFormat');
+dayjs.extend(customParseFormat);
+
+exports.formatDate = (dateString, format = 'MMMM D, YYYY') => {
 	if (!dateString) return '';
-	const date = new Date(dateString);
-	if (isNaN(date.getTime())) return dateString;
-	return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+	const date = dayjs(dateString);
+	if (!date.isValid()) return dateString;
+	return date.format(format);
 };
 
 exports.formatDateForDisplay = (dbDateStr, includeDay = false) => {
-	if (!dbDateStr || typeof dbDateStr !== 'string') return dbDateStr;
-	let day, month, year;
-	const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+	if (!dbDateStr) return '';
 
-	if (/^\d{4}-\d{2}-\d{2}$/.test(dbDateStr)) {
-		// YYYY-MM-DD
-		[year, month, day] = dbDateStr.split('-');
-	} else if (/^\d{2}-\d{2}-\d{4}$/.test(dbDateStr)) {
-		// DD-MM-YYYY
-		[day, month, year] = dbDateStr.split('-');
+	let date;
+	if (dbDateStr instanceof Date) {
+		date = dayjs(dbDateStr);
+	} else if (typeof dbDateStr === 'string') {
+		// Try parsing common formats
+		const formats = ['YYYY-MM-DD', 'DD-MM-YYYY', 'ISO 8601'];
+		date = dayjs(dbDateStr, formats);
 	} else {
-		// Fallback for other formats (like "November 2024" which is already formatted)
 		return dbDateStr;
 	}
 
-	const monthName = months[parseInt(month) - 1];
-	if (!monthName) return dbDateStr;
-	return includeDay ? `${monthName} ${parseInt(day)}, ${year}` : `${monthName} ${year}`;
+	if (date.isValid()) {
+		return includeDay ? date.format('DD ddd MMM YYYY HH:mm') : date.format('MMMM YYYY');
+	}
+
+	return dbDateStr;
+};
+
+exports.formatDateShort = (dbDateStr) => {
+	if (!dbDateStr) return '';
+	let date;
+	if (dbDateStr instanceof Date) {
+		date = dayjs(dbDateStr);
+	} else if (typeof dbDateStr === 'string') {
+		date = dayjs(dbDateStr);
+	} else {
+		return dbDateStr;
+	}
+	if (!date.isValid()) return dbDateStr;
+	return date.format('DD MMM...');
 };

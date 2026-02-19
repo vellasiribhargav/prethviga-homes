@@ -1,8 +1,10 @@
-import $ from 'jquery';
-window.$ = window.jQuery = $;
 import Swal from 'sweetalert2';
+import dayjs from 'dayjs';
+import $ from 'jquery';
+import { showFieldError, hideFieldError, initCharLimitHighlight } from '../../utils/validation.js';
 
 document.addEventListener('DOMContentLoaded', function () {
+    initCharLimitHighlight();
     const projectTypeSelect = document.getElementById('projectType');
     if (!projectTypeSelect) return;
     const selectProjectSelect = document.getElementById('selectProject');
@@ -10,6 +12,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const detailsFormContainer = document.getElementById('detailsFormContainer');
     const sectionTabs = document.querySelectorAll('.tab-btn');
     const sectionForms = document.querySelectorAll('.section-form');
+
+    // Hide forms and tabs initially until a project is selected
+    if (detailsFormContainer) detailsFormContainer.style.display = 'none';
+    if (sectionTabsContainer) sectionTabsContainer.style.display = 'none';
 
     let amenitiesTags = [];
     let dirtySections = new Set();
@@ -19,15 +25,24 @@ document.addEventListener('DOMContentLoaded', function () {
     let galleryItems = [];
     let activeGalleryIndex = -1;
 
-    const COMMON_AMENITIES = [
-        "Swimming Pool", "Gymnasium", "24/7 Security", "Children's Play Area",
-        "Power Backup", "Clubhouse", "Intercom", "Car Parking", "Jogging Track",
-        "Rain Water Harvesting", "Landscaped Garden", "Multipurpose Room",
-        "Indoor Games", "Lift", "CCTV Camera", "Fire Fighting Systems",
-        "Gated Community", "Sewage Treatment Plant", "Yoga/Meditation Area",
-        "Badminton Court", "Gas Pipeline", "Waste Management", "Solar Water Heating",
-        "Theater", "Playground", "Fitness Center"
-    ].sort();
+    let dynamicAmenities = [];
+
+    // Fetch unique amenities from DB
+    async function fetchUniqueAmenities() {
+        try {
+            const response = await fetch('/admin/projectDetails/amenities/unique');
+            const res = await response.json();
+            if (res.success) {
+                dynamicAmenities = res.amenities;
+                // If the user wants to keep the default sorted list as a fallback, we can merge them
+                // but for now let's just use what's in the DB.
+            }
+        } catch (err) {
+            console.error('Error fetching unique amenities:', err);
+        }
+    }
+
+    fetchUniqueAmenities();
 
     const saveAllBtn = document.getElementById('saveAllBtn');
     if (saveAllBtn) saveAllBtn.style.display = 'none';
@@ -56,8 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
             dirtySections.add('amenities-list');
 
             // Hide validation message if it exists
-            const msg = document.querySelector('#form-amenities-list .required-container-message');
-            if (msg) msg.style.display = 'none';
+            hideFieldError(input);
 
             checkSaveAllVisibility();
         }
@@ -123,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         input.addEventListener('focus', () => {
             const val = input.value.toLowerCase();
-            const filtered = COMMON_AMENITIES.filter(item =>
+            const filtered = dynamicAmenities?.filter(item =>
                 (val === '' || item.toLowerCase().includes(val)) && !tagsArray.includes(item)
             );
             showSuggestions(filtered);
@@ -131,14 +145,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         input.addEventListener('input', () => {
             const val = input.value.toLowerCase();
-            const filtered = COMMON_AMENITIES.filter(item =>
+            const filtered = dynamicAmenities?.filter(item =>
                 (val === '' || item.toLowerCase().includes(val)) && !tagsArray.includes(item)
             );
             showSuggestions(filtered);
 
             // Clear validation on input
-            const formMsg = document.querySelector('#form-amenities-list .required-container-message');
-            if (formMsg && tagsArray.length > 0) formMsg.style.display = 'none';
+            hideFieldError(input);
         });
 
         input.addEventListener('keydown', (e) => {
@@ -224,21 +237,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // Clear validation messages
-        if (target.value.trim()) {
-            const name = target.getAttribute('name') || target.id;
-            let msg = null;
-            if (name) {
-                msg = container.querySelector(`.required-message[data-for="${name}"]`);
-            }
-            if (!msg) {
-                msg = container.querySelector('.required-message');
-            }
-            if (msg) msg.style.display = 'none';
-
-            // Also handle file validation messages if they were shown
-            const fileMsg = container.querySelector('.required-message-file');
-            if (fileMsg) fileMsg.style.display = 'none';
-        }
+        hideFieldError(target);
 
         // Character limit message handler for 200 char textareas
         if (target.tagName === 'TEXTAREA' && target.maxLength === 200) {
@@ -299,54 +298,21 @@ document.addEventListener('DOMContentLoaded', function () {
             const input = form.querySelector(selector);
             if (!input) return;
 
-            const container = input.closest('.form-group') || input.parentNode;
+            input.addEventListener('input', () => {
+                hideFieldError(input);
+                checkSaveAllVisibility();
+            });
 
             if (isFile) {
-                // File inputs use .required-message-file
-                const existingFileMsg = container.querySelector('.required-message-file');
-                if (existingFileMsg) existingFileMsg.remove();
-
-                const msg = document.createElement('div');
-                msg.className = 'required-message-file';
-                msg.textContent = message;
-                msg.style.cssText = 'font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic;';
-
-                const uploadBtn = container.querySelector('.upload-btn');
-                if (uploadBtn) {
-                    uploadBtn.after(msg);
-                } else {
-                    input.after(msg);
+                const fileInput = input.querySelector('input[type="file"]') || input;
+                if (fileInput && fileInput !== input) {
+                    fileInput.addEventListener('change', () => {
+                        hideFieldError(input);
+                        checkSaveAllVisibility();
+                    });
                 }
-            } else {
-                // Text inputs use .required-message with data-for
-                const existingMsg = container.querySelector(`.required-message[data-for="${name}"]`);
-                if (existingMsg) existingMsg.remove();
-
-                const msg = document.createElement('div');
-                msg.className = 'required-message';
-                msg.dataset.for = name;
-                msg.textContent = message;
-                msg.style.cssText = 'font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic;';
-
-                // Insert directly after input field (matching other form pages)
-                input.after(msg);
-
-                input.addEventListener('input', () => {
-                    msg.style.display = 'none';
-                    checkSaveAllVisibility();
-                });
             }
         });
-
-        // Setup file upload message if not present (for non-configured file inputs)
-        const uploadBtn = form.querySelector('.upload-btn');
-        if (uploadBtn && !uploadBtn.parentNode.querySelector('.required-message-file')) {
-            const msg = document.createElement('div');
-            msg.className = 'required-message-file';
-            msg.textContent = '* Image is required';
-            msg.style.cssText = 'font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic;';
-            uploadBtn.after(msg);
-        }
     }
 
     function validateForm(form) {
@@ -371,29 +337,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // 1. Check fields defined in configuration
         const conf = getSectionConfig(form.id);
-        conf.forEach(({ selector, name, isFile }) => {
+        conf.forEach(({ selector, name, message, isFile }) => {
             const input = form.querySelector(selector);
             if (!input) return;
 
-            const container = input.closest('.form-group') || input.parentNode;
-
             if (isFile) {
-                const uploadBtn = container.querySelector('.upload-btn');
-                const msg = container.querySelector('.required-message-file');
+                const uploadBtn = input.classList.contains('upload-btn') ? input : input.closest('.form-group')?.querySelector('.upload-btn');
                 if (uploadBtn && !uploadBtn.classList.contains('has-image')) {
-                    if (msg) msg.style.display = 'block';
+                    showFieldError(uploadBtn, message);
                     isValid = false;
                     if (!firstInvalidElement) firstInvalidElement = uploadBtn;
-                } else if (msg) {
-                    msg.style.display = 'none';
+                } else if (uploadBtn) {
+                    hideFieldError(uploadBtn);
                 }
             } else {
-                const msgSelector = `.required-message[data-for="${name}"]`;
-                // Configured fields are implicitly required, check value directly
                 if (!input.value.trim()) {
-                    markInvalid(input, msgSelector);
+                    showFieldError(input, message);
+                    isValid = false;
+                    if (!firstInvalidElement) firstInvalidElement = input;
                 } else {
-                    markInvalid(input, msgSelector, false);
+                    hideFieldError(input);
                 }
             }
         });
@@ -414,67 +377,124 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        const checkContainer = (containerId, formElement) => {
+        const checkContainer = (containerId, formElement, message) => {
             const container = document.getElementById(containerId);
-            let msg = formElement.querySelector('.required-container-message');
-            // Dynamically create container message if missing
-            if (!msg) {
-                msg = document.createElement('div');
-                msg.className = 'required-container-message';
-                msg.style.cssText = 'font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic;margin-bottom: 20px;';
-                msg.textContent = '* At least one item is required';
-                if (container) container.after(msg);
-            }
+            const target = container || formElement;
+
             if (container && container.children.length === 0) {
-                if (msg) {
-                    msg.style.cssText = 'font-size:12px;color:#e74c3c;margin-top:4px;display:block;font-style:italic;margin-bottom: 20px;';
-                }
+                showFieldError(target, message || '* At least one item is required');
                 isValid = false;
-                if (!firstInvalidElement) firstInvalidElement = msg;
+                if (!firstInvalidElement) firstInvalidElement = target;
             } else {
-                if (msg) msg.style.display = 'none';
+                hideFieldError(target);
             }
         };
 
-        if (form.id === 'form-features-grid') checkContainer('featuresContainer', form);
+        if (form.id === 'form-features-grid') {
+            checkContainer('featuresContainer', form, '* At least one feature is required');
+            const titles = form.querySelectorAll('.feature-title');
+            titles.forEach(t => {
+                if (!t.value.trim()) {
+                    showFieldError(t, '* Feature title is required');
+                    isValid = false;
+                    if (!firstInvalidElement) firstInvalidElement = t;
+                } else {
+                    hideFieldError(t);
+                }
+            });
+            const texts = form.querySelectorAll('.feature-text');
+            texts.forEach(t => {
+                if (!t.value.trim()) {
+                    showFieldError(t, '* Feature text is required');
+                    isValid = false;
+                    if (!firstInvalidElement) firstInvalidElement = t;
+                } else {
+                    hideFieldError(t);
+                }
+            });
+        }
         if (form.id === 'form-amenities-list') {
-            let msg = form.querySelector('.required-container-message');
-            if (!msg) {
-                msg = document.createElement('div');
-                msg.className = 'required-container-message';
-                msg.style.cssText = 'font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic;margin-bottom: 20px;';
-                msg.textContent = '* At least one amenity is required';
-                const tagsList = document.getElementById('amenitiesTags');
-                if (tagsList) tagsList.after(msg);
-            }
+            const tagsList = document.getElementById('amenitiesTags');
             if (amenitiesTags.length === 0) {
-                if (msg) msg.style.display = 'block';
+                showFieldError(tagsList, '* At least one amenity is required');
                 isValid = false;
-                if (!firstInvalidElement) firstInvalidElement = msg;
+                if (!firstInvalidElement) firstInvalidElement = tagsList;
             } else {
-                if (msg) msg.style.display = 'none';
+                hideFieldError(tagsList);
+            }
+            const descField = form.querySelector('#amenitiesDescription');
+            if (descField && !descField.value.trim()) {
+                showFieldError(descField, '* Amenities description is required');
+                isValid = false;
+                if (!firstInvalidElement) firstInvalidElement = descField;
+            } else if (descField) {
+                hideFieldError(descField);
             }
         }
-        if (form.id === 'form-location-container') checkContainer('landmarksContainer', form);
-        if (form.id === 'form-faq-items-container') checkContainer('faqContainer', form);
+        if (form.id === 'form-location-container') {
+            checkContainer('landmarksContainer', form, '* At least one landmark is required');
+            const landmarks = form.querySelectorAll('.landmark-text');
+            landmarks.forEach(l => {
+                if (!l.value.trim()) {
+                    showFieldError(l, '* Landmark text is required');
+                    isValid = false;
+                    if (!firstInvalidElement) firstInvalidElement = l;
+                } else {
+                    hideFieldError(l);
+                }
+            });
+            const locDesc = form.querySelector('#locationDescription');
+            if (locDesc && !locDesc.value.trim()) {
+                showFieldError(locDesc, '* Location description is required');
+                isValid = false;
+                if (!firstInvalidElement) firstInvalidElement = locDesc;
+            } else if (locDesc) {
+                hideFieldError(locDesc);
+            }
+        }
+        if (form.id === 'form-faq-items-container') {
+            checkContainer('faqContainer', form);
+            const questions = form.querySelectorAll('.faq-question');
+            questions.forEach(q => {
+                if (!q.value.trim()) {
+                    showFieldError(q, '* Question is required');
+                    isValid = false;
+                    if (!firstInvalidElement) firstInvalidElement = q;
+                } else {
+                    hideFieldError(q);
+                }
+            });
+            const answers = form.querySelectorAll('.faq-answer');
+            answers.forEach(a => {
+                if (!a.value.trim()) {
+                    showFieldError(a, '* Answer is required');
+                    isValid = false;
+                    if (!firstInvalidElement) firstInvalidElement = a;
+                } else {
+                    hideFieldError(a);
+                }
+            });
+        }
 
         // 4. Comprehensive Gallery Validation
         if (form.id === 'form-gallery-wrapper') {
-            let containerMsg = form.querySelector('.required-container-message');
-            if (!containerMsg) {
-                containerMsg = document.createElement('div');
-                containerMsg.className = 'required-container-message';
-                containerMsg.style.cssText = 'font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic;margin-bottom: 20px;';
-                containerMsg.textContent = '* At least one gallery item is required';
-                const galleryLayout = form.querySelector('.gallery-layout');
-                if (galleryLayout) galleryLayout.after(containerMsg);
-            }
-            if (galleryItems.length === 0) {
-                if (containerMsg) containerMsg.style.display = 'block';
+            const galleryLayout = form.querySelector('.gallery-layout');
+            const galleryDesc = form.querySelector('#galleryDescription');
+
+            if (galleryDesc && !galleryDesc.value.trim()) {
+                showFieldError(galleryDesc, '* Gallery description is required');
                 isValid = false;
-                if (!firstInvalidElement) firstInvalidElement = containerMsg;
+                if (!firstInvalidElement) firstInvalidElement = galleryDesc;
+            } else if (galleryDesc) {
+                hideFieldError(galleryDesc);
+            }
+
+            if (galleryItems.length === 0) {
+                showFieldError(galleryLayout, '* At least one gallery item is required');
+                isValid = false;
+                if (!firstInvalidElement) firstInvalidElement = galleryLayout;
             } else {
-                if (containerMsg) containerMsg.style.display = 'none';
+                hideFieldError(galleryLayout);
 
                 // Check EVERY item in galleryItems
                 let firstInvalidGalleryIndex = -1;
@@ -482,8 +502,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 galleryItems.forEach((item, idx) => {
                     let itemValid = true;
                     if (!item.title.trim()) itemValid = false;
-                    // text is optional in some contexts but marked required in code, 
-                    // following implementation_plan to ensure all fields in gallery card are validated.
                     if (!item.text.trim()) itemValid = false;
                     if (!item.coverImage && !item.file) itemValid = false;
 
@@ -504,11 +522,10 @@ document.addEventListener('DOMContentLoaded', function () {
                         const text = activeCard.querySelector('.gallery-text');
                         const uploadBtn = activeCard.querySelector('.upload-btn');
 
-                        if (!title.value.trim()) markInvalid(title, '.required-message[data-for="title"]');
-                        if (!text.value.trim()) markInvalid(text, '.required-message[data-for="text"]');
+                        if (!title.value.trim()) showFieldError(title, '* Gallery name is required');
+                        if (!text.value.trim()) showFieldError(text, '* Gallery text is required');
                         if (!uploadBtn.classList.contains('has-image')) {
-                            const fileMsg = activeCard.querySelector('.required-message-file');
-                            if (fileMsg) fileMsg.style.display = 'block';
+                            showFieldError(uploadBtn, '* Image is required');
                             if (!firstInvalidElement) firstInvalidElement = uploadBtn;
                         }
                     }
@@ -542,14 +559,14 @@ document.addEventListener('DOMContentLoaded', function () {
     async function fetchProjects() {
         try {
             const [upcomingRes, completedRes] = await Promise.all([
-                $.ajax({ url: '/admin/upcoming/getupcoming', type: 'GET', dataType: 'json' }),
-                $.ajax({ url: '/admin/completed/getcompleted', type: 'GET', dataType: 'json' })
+                fetch('/admin/upcoming/getupcoming').then(res => res.json()),
+                fetch('/admin/completed/getcompleted').then(res => res.json())
             ]);
 
             // Extract data from response - API returns { data: [...] }
             projectData.upcoming = upcomingRes.data?.map((project, index) => ({
                 ...project,
-                id: project.id || project.project_id || index + 1,
+                id: (project.project_id || project._id).toString(),
                 project_name: project.project_name || 'Untitled Project',
                 project_location: project.project_location || 'Location not specified',
                 project_status: project.project_status || project.project_date || '',
@@ -559,7 +576,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             projectData.completed = completedRes.data?.map((project, index) => ({
                 ...project,
-                id: project.id || project.project_id || index + 1,
+                id: (project.project_id || project._id).toString(),
                 project_name: project.project_name || 'Untitled Project',
                 project_location: project.project_location || 'Location not specified',
                 project_status: project.project_status || project.project_date || '',
@@ -579,10 +596,16 @@ document.addEventListener('DOMContentLoaded', function () {
         const projects = projectData[type] || [];
         projects.forEach(proj => {
             const opt = document.createElement('option');
-            opt.value = proj.id;
+            opt.value = proj.id || proj.project_id;
             opt.textContent = `${proj.project_name} - ${proj.project_location}`;
             selectProjectSelect.appendChild(opt);
         });
+
+        // Hide forms and clear state when type changes
+        if (detailsFormContainer) detailsFormContainer.style.display = 'none';
+        if (sectionTabsContainer) sectionTabsContainer.style.display = 'none';
+        currentProjectId = null;
+        currentProjectType = null;
     });
 
     selectProjectSelect.addEventListener('change', function () {
@@ -605,14 +628,22 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     async function handleProjectSelection(projectId, type) {
-        // //console.log('--- Full Project Selection ---', { projectId, type });
         currentProjectId = projectId;
         currentProjectType = type;
-        sectionTabsContainer.style.display = 'flex';
-        detailsFormContainer.style.display = 'block';
 
-        activeGalleryIndex = -1; // Reset gallery index when switching projects
-        loadProjectDetails(projectId, true); // true for full reload
+        if (sectionTabsContainer) sectionTabsContainer.style.display = 'flex';
+        if (detailsFormContainer) detailsFormContainer.style.display = 'block';
+
+        sectionTabs.forEach(t => t.classList.remove('active'));
+        sectionForms.forEach(f => f.classList.remove('active'));
+
+        const firstTab = document.querySelector('.tab-btn[data-section="hero-section"]');
+        const firstForm = document.getElementById('form-hero-section');
+        if (firstTab) firstTab.classList.add('active');
+        if (firstForm) firstForm.classList.add('active');
+
+        activeGalleryIndex = -1;
+        loadProjectDetails(projectId, true);
         dirtySections.clear();
         checkSaveAllVisibility();
     }
@@ -624,8 +655,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function loadProjectDetails(projectId, isFullReload = false) {
         try {
-            //console.log(`Loading project details for ${projectId}, isFullReload: ${isFullReload}`);
-            const res = await $.ajax({ url: `/admin/projectDetails/getdetails/${projectId}`, type: 'GET' });
+            if (!isFullReload) {
+                dirtySections.clear();
+                checkSaveAllVisibility();
+            }
+            fetchUniqueAmenities();
+            const response = await fetch(`/admin/projectDetails/getdetails/${projectId}`);
+            const res = await response.json();
             if (res.success) {
                 populateAllForms(res.data, isFullReload);
             }
@@ -635,14 +671,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function populateAllForms(data, isFullReload = false) {
-        //console.log('Populating forms. isFullReload:', isFullReload, 'Dirty sections:', Array.from(dirtySections));
-        // Handle Tab Visibility
+        // Show Tabs and Form Container (Reinforce visibility)
+        if (sectionTabsContainer) sectionTabsContainer.style.display = 'flex';
+        if (detailsFormContainer) detailsFormContainer.style.display = 'block';
         sectionTabs.forEach(tab => tab.style.display = 'block');
 
         // Hero Form
         const heroSection = 'hero-section';
         if (!isFullReload && dirtySections.has(heroSection)) {
-            //console.log(`Skipping reload for dirty section: ${heroSection}`);
         } else {
             const form = document.getElementById('form-' + heroSection);
             const project = getSelectedProjectData(currentProjectType, currentProjectId);
@@ -655,7 +691,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 if (titleInput) titleInput.value = data.hero.title || (project ? project.project_name : '');
                 if (buildingInput) buildingInput.value = data.hero.buiding_name || (project ? project.project_name : '');
-                if (dateInput) dateInput.value = formatDateForInput(data.hero.date) || (project ? formatDateForInput(project.project_status) : '');
+                if (dateInput) {
+                    const fallbackDate = project ? (project.project_date || project.project_status || '') : '';
+                    dateInput.value = formatDateForInput(data.hero.date) || formatDateForInput(fallbackDate);
+                }
                 if (locationInput) locationInput.value = data.hero.location || (project ? project.project_location : '');
                 updatePreview(form, data.hero.pimage);
             } else if (project) {
@@ -667,9 +706,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 if (titleInput) titleInput.value = ''; // Clear title
                 if (buildingInput) buildingInput.value = project.project_name || '';
-                if (dateInput) dateInput.value = formatDateForInput(project.project_status) || '';
+                if (dateInput) {
+                    const d = project ? (project.project_date || project.project_status || '') : '';
+                    dateInput.value = formatDateForInput(d);
+                }
                 if (locationInput) locationInput.value = project.project_location || '';
-                updatePreview(form, null); // Clear image preview
+                updatePreview(form, project.pimage || project.card_image || null);
             }
 
             // Disable Hero Section Image Upload
@@ -684,7 +726,6 @@ document.addEventListener('DOMContentLoaded', function () {
         // Floor Image Form
         const floorSection = 'floor-image';
         if (!isFullReload && dirtySections.has(floorSection)) {
-            //console.log(`Skipping reload for dirty section: ${floorSection}`);
         } else {
             const floorForm = document.getElementById('form-' + floorSection);
             if (data.floor && Object.keys(data.floor).length > 0) {
@@ -702,7 +743,6 @@ document.addEventListener('DOMContentLoaded', function () {
         // Features Grid Form
         const featuresSection = 'features-grid';
         if (!isFullReload && dirtySections.has(featuresSection)) {
-            //console.log(`Skipping reload for dirty section: ${featuresSection}`);
         } else {
             const featuresContainer = document.getElementById('featuresContainer');
             featuresContainer.innerHTML = '';
@@ -721,7 +761,6 @@ document.addEventListener('DOMContentLoaded', function () {
         // Amenities List Form
         const amenitiesSection = 'amenities-list';
         if (!isFullReload && dirtySections.has(amenitiesSection)) {
-            //console.log(`Skipping reload for dirty section: ${amenitiesSection}`);
         } else {
             const amenitiesForm = document.getElementById('form-' + amenitiesSection);
             const descField = amenitiesForm.querySelector('#amenitiesDescription');
@@ -781,7 +820,6 @@ document.addEventListener('DOMContentLoaded', function () {
         // Location Container Form
         const locationSection = 'location-container';
         if (!isFullReload && dirtySections.has(locationSection)) {
-            //console.log(`Skipping reload for dirty section: ${locationSection}`);
         } else {
             const locationForm = document.getElementById('form-' + locationSection);
             if (data.location && data.location.length > 0) {
@@ -832,7 +870,6 @@ document.addEventListener('DOMContentLoaded', function () {
         // Gallery Form
         const gallerySection = 'gallery-wrapper';
         if (!isFullReload && dirtySections.has(gallerySection)) {
-            //console.log(`Skipping reload for dirty section: ${gallerySection}`);
         } else {
             const galleryForm = document.getElementById('form-' + gallerySection);
             if (data.gallery && data.gallery.length > 0) {
@@ -895,7 +932,6 @@ document.addEventListener('DOMContentLoaded', function () {
         // FAQ Form
         const faqSection = 'faq-items-container';
         if (!isFullReload && dirtySections.has(faqSection)) {
-            //console.log(`Skipping reload for dirty section: ${faqSection}`);
         } else {
             const faqContainer = document.getElementById('faqContainer');
             faqContainer.innerHTML = '';
@@ -916,15 +952,17 @@ document.addEventListener('DOMContentLoaded', function () {
     function formatDateForInput(dateString) {
         if (!dateString) return '';
 
-        // Handle DD-MM-YYYY format
-        if (/^\d{2}-\d{2}-\d{4}$/.test(dateString)) {
+        // Handle dash-separated formats like DD-MM-YYYY or D-M-YYYY
+        if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(dateString)) {
             const [day, month, year] = dateString.split('-');
-            return `${year}-${month}-${day}`;
+            const paddedDay = day.padStart(2, '0');
+            const paddedMonth = month.padStart(2, '0');
+            return `${year}-${paddedMonth}-${paddedDay}`;
         }
 
-        const d = new Date(dateString);
-        if (isNaN(d.getTime())) return '';
-        return d.toISOString().split('T')[0];
+        const d = dayjs(dateString);
+        if (!d.isValid()) return '';
+        return d.format('YYYY-MM-DD');
     }
 
     function updatePreview(form, src) {
@@ -998,6 +1036,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <div class="form-group">
                 <textarea class="feature-text" placeholder="Feature Text" rows="3" maxlength="200" required>${text}</textarea>
                 <div class="required-message" style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic;">* Feature text is required</div>
+                <div class="char-limit-msg" style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic;">* Characters are more than 200</div>
             </div>
             <button type="button" class="delete-row-btn">
                 <svg width="17" height="17" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
@@ -1018,7 +1057,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const container = this.closest('#featuresContainer');
             this.parentElement.remove();
             if (container && container.children.length > 0) {
-                container.closest('form').querySelector('.required-container-message').style.display = 'none';
+                const msg = container.closest('form')?.querySelector('.required-container-message');
+                if (msg) msg.style.display = 'none';
             }
             dirtySections.add('features-grid');
             checkSaveAllVisibility();
@@ -1052,7 +1092,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const container = this.closest('#amenitiesContainer');
             this.parentElement.remove();
             if (container && container.children.length > 0) {
-                container.closest('form').querySelector('.required-container-message').style.display = 'none';
+                const msg = container.closest('form')?.querySelector('.required-container-message');
+                if (msg) msg.style.display = 'none';
             }
             checkSaveAllVisibility();
         });
@@ -1085,7 +1126,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const container = this.closest('#landmarksContainer');
             this.parentElement.remove();
             if (container && container.children.length > 0) {
-                container.closest('form').querySelector('.required-container-message').style.display = 'none';
+                const msg = container.closest('form')?.querySelector('.required-container-message');
+                if (msg) msg.style.display = 'none';
             }
             dirtySections.add('location-container');
             checkSaveAllVisibility();
@@ -1102,8 +1144,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 <div class="required-message" style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic;">* Question is required</div>
             </div>
             <div class="form-group">
-                <textarea class="faq-answer" placeholder="Answer" rows="3" required>${answer}</textarea>
+                <textarea class="faq-answer" placeholder="Answer" rows="3" maxlength="200" required>${answer}</textarea>
                 <div class="required-message" style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic;">* Answer is required</div>
+                <div class="char-limit-msg" style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic;">* Characters are more than 200</div>
             </div>
             <button type="button" class="delete-row-btn">
                 <svg width="17" height="17" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
@@ -1124,7 +1167,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const container = this.closest('#faqContainer');
             this.parentElement.remove();
             if (container && container.children.length > 0) {
-                container.closest('form').querySelector('.required-container-message').style.display = 'none';
+                const msg = container.closest('form')?.querySelector('.required-container-message');
+                if (msg) msg.style.display = 'none';
             }
             dirtySections.add('faq-items-container');
             checkSaveAllVisibility();
@@ -1165,8 +1209,16 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         div.innerHTML = `
+            <button type="button" class="delete-card-btn">
+                <span class="material-symbols-outlined" style="font-size: 18px;">
+                    <svg width="17" height="17" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                        <path d="M8 3H16C16.55 3 17 3.45 17 4V5H19C19.55 5 20 5.45 20 6C20 6.55 19.55 7 19 7H5C4.45 7 4 6.55 4 6C4 5.45 4.45 5 5 5H7V4C7 3.45 7.45 3 8 3ZM6 9V19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V9H6ZM9 11C9.55 11 10 11.45 10 12V18C10 18.55 9.55 19 9 19C8.45 19 8 18.55 8 18V12C8 11.45 8.45 11 9 11ZM12 11C12.55 11 13 11.45 13 12V18C13 18.55 12.55 19 12 19C11.45 19 11 18.55 11 18V12C11 11.45 11.45 11 12 11ZM15 11C15.55 11 16 11.45 16 12V18C16 18.55 15.55 19 15 19C14.45 19 14 18.55 14 18V12C14 11.45 14.45 11 15 11Z"></path>
+                    </svg>
+                </span>
+            </button>
+            
             <div class="form-group">
-                <label class="form-label">Gallery Item Name <span class="required-star">*</span></label>
+                <label class="form-label">Gallery Item Name</label>
                 <input type="text" class="form-input gallery-title" placeholder="e.g. Living Room View" value="${item.title || ''}" required>
                 <div class="required-message" data-for="title" style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic;">* Gallery item name is required</div>
             </div>
@@ -1193,14 +1245,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
                 <div class="required-message-file" style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic;">* Image is required</div>
             </div>
-
-            <button type="button" class="delete-card-btn" style="margin-top: 20px; background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; padding: 10px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; width: fit-content; font-weight: 600;">
-                <span class="material-symbols-outlined" style="font-size: 18px;">
-                    <svg width="17" height="17" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
-                        <path d="M8 3H16C16.55 3 17 3.45 17 4V5H19C19.55 5 20 5.45 20 6C20 6.55 19.55 7 19 7H5C4.45 7 4 6.55 4 6C4 5.45 4.45 5 5 5H7V4C7 3.45 7.45 3 8 3ZM6 9V19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V9H6ZM9 11C9.55 11 10 11.45 10 12V18C10 18.55 9.55 19 9 19C8.45 19 8 18.55 8 18V12C8 11.45 8.45 11 9 11ZM12 11C12.55 11 13 11.45 13 12V18C13 18.55 12.55 19 12 19C11.45 19 11 18.55 11 18V12C11 11.45 11.45 11 12 11ZM15 11C15.55 11 16 11.45 16 12V18C16 18.55 15.55 19 15 19C14.45 19 14 18.55 14 18V12C14 11.45 14.45 11 15 11Z"></path>
-                    </svg>
-                </span>
-            </button>
         `;
 
         // Sync inputs back to state
@@ -1299,6 +1343,7 @@ document.addEventListener('DOMContentLoaded', function () {
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#e74c3c',
+            cancelButtonColor: '#3085d6',
             confirmButtonText: 'Yes, delete it'
         }).then((result) => {
             if (result.isConfirmed) {
@@ -1317,18 +1362,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById('addFeatureBtn')?.addEventListener('click', () => {
         const container = document.getElementById('featuresContainer');
-        container.appendChild(createFeatureRow());
-        container.closest('form').querySelector('.required-container-message').style.display = 'none';
+        const newRow = createFeatureRow();
+        container.appendChild(newRow);
+        const msg = container.closest('form')?.querySelector('.required-container-message');
+        if (msg) msg.style.display = 'none';
         dirtySections.add('features-grid');
         checkSaveAllVisibility();
+        newRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
 
     document.getElementById('addLandmarkBtn')?.addEventListener('click', () => {
         const container = document.getElementById('landmarksContainer');
-        container.appendChild(createLandmarkRow());
-        container.closest('form').querySelector('.required-container-message').style.display = 'none';
+        const newRow = createLandmarkRow();
+        container.appendChild(newRow);
+        const msg = container.closest('form')?.querySelector('.required-container-message');
+        if (msg) msg.style.display = 'none';
         dirtySections.add('location-container');
         checkSaveAllVisibility();
+        newRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
 
     document.getElementById('addGalleryBtn')?.addEventListener('click', () => {
@@ -1341,22 +1392,31 @@ document.addEventListener('DOMContentLoaded', function () {
         };
         galleryItems.push(newItem);
         showGalleryItem(galleryItems.length - 1);
-        document.getElementById('form-gallery-wrapper').querySelector('.required-container-message').style.display = 'none';
+        const msg = document.getElementById('form-gallery-wrapper')?.querySelector('.required-container-message');
+        if (msg) msg.style.display = 'none';
         dirtySections.add('gallery-wrapper');
         checkSaveAllVisibility();
+
+        // Scroll the card into view
+        const card = document.querySelector('#galleryCardContainer .form-group');
+        if (card) {
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
     });
 
     document.getElementById('addFaqBtn')?.addEventListener('click', () => {
         const container = document.getElementById('faqContainer');
-        container.appendChild(createFaqRow());
-        container.closest('form').querySelector('.required-container-message').style.display = 'none';
+        const newRow = createFaqRow();
+        container.appendChild(newRow);
+        const msg = container.closest('form')?.querySelector('.required-container-message');
+        if (msg) msg.style.display = 'none';
         dirtySections.add('faq-items-container');
         checkSaveAllVisibility();
+        newRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
 
     async function submitSectionForm(form, quiet = false) {
         const section = form.id.replace('form-', '');
-        //console.log(`--- Submitting Section: ${section} (quiet: ${quiet}) ---`);
         const formData = new FormData();
         formData.append('projectId', currentProjectId);
         formData.append('projectType', currentProjectType);
@@ -1456,34 +1516,33 @@ document.addEventListener('DOMContentLoaded', function () {
 
         formData.append('pageContent', JSON.stringify(pageContent));
 
-        return $.ajax({
-            url: '/admin/projectDetails/save', type: 'POST', data: formData, processData: false, contentType: false
-        }).done(function (res) {
+        try {
+            const response = await fetch('/admin/projectDetails/save', {
+                method: 'POST',
+                body: formData
+            });
+            const res = await response.json();
+
             if (res.success) {
                 dirtySections.delete(section);
                 checkSaveAllVisibility();
                 if (!quiet) {
-                    Swal.fire('Saved!', res.message, 'success');
+                    Swal.fire('Success', res.message || 'content saved', 'success');
                     loadProjectDetails(currentProjectId);
                 }
             }
-        });
+            return res;
+        } catch (error) {
+            console.error(`Error saving section ${section}:`, error);
+            if (!quiet) {
+                Swal.fire('Error', res?.message || 'An error occurred while saving.', 'error');
+            }
+            throw error;
+        }
     }
 
     async function saveAllSections() {
-        //console.log('--- Saving All Sections ---', { dirtySections: Array.from(dirtySections) });
-        // Identify which forms need saving
-        const formsToSave = Array.from(sectionForms).filter(form => {
-            const section = form.id.replace('form-', '');
-            return dirtySections.has(section);
-        });
-
-        if (formsToSave.length === 0) {
-            Swal.fire('No Changes', 'No sections have been modified.', 'info');
-            return;
-        }
-
-        // Validate ALL forms
+        // Validate ALL modified sections
         let firstInvalidForm = null;
         for (const form of sectionForms) {
             if (!validateForm(form)) {
@@ -1494,7 +1553,17 @@ document.addEventListener('DOMContentLoaded', function () {
         if (firstInvalidForm) {
             // Re-validate to focus/scroll to error
             validateForm(firstInvalidForm);
-            Swal.fire('Validation Failed', 'Please fix the errors in the modified sections before saving.', 'error');
+            return;
+        }
+
+        // Identify which forms need saving
+        const formsToSave = Array.from(sectionForms).filter(form => {
+            const section = form.id.replace('form-', '');
+            return dirtySections.has(section);
+        });
+
+        if (formsToSave.length === 0) {
+            Swal.fire('No Changes', 'no changes is detected', 'info');
             return;
         }
 
@@ -1509,9 +1578,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         try {
             const savePromises = formsToSave.map(form => submitSectionForm(form, true));
-            await Promise.all(savePromises);
+            const results = await Promise.all(savePromises);
 
-            Swal.fire('Success', 'All modified sections saved successfully!', 'success');
+            // Determine if any operation was a "save" (new content)
+            const hasNewContent = results.some(res => res.message === 'Content saved');
+            const successMessage = hasNewContent ? 'Content saved' : 'Content updated';
+
+            Swal.fire('Success', successMessage, 'success');
 
             // Clear dirty flags after successful save
             dirtySections.clear();
@@ -1532,22 +1605,39 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.section-form').forEach(form => {
         form.onsubmit = async function (e) {
             e.preventDefault();
-            if (validateForm(this)) {
-                await submitSectionForm(this);
+
+            // Validate first
+            if (!validateForm(this)) {
+                return;
             }
+
+            const section = this.id.replace('form-', '');
+            if (!dirtySections.has(section)) {
+                Swal.fire('No Changes', 'no changes is detected', 'info');
+                return;
+            }
+
+            await submitSectionForm(this);
         };
     });
 
     // Image Upload Handler (Standard pattern from gallery.js)
     function handleImageUpload(file, uploadBtn) {
         if (file.size > 5 * 1024 * 1024) {
-            Swal.fire({
-                icon: 'error',
-                title: 'File too large',
-                text: `${file.name} is too large. Max size is 5MB.`,
-                confirmButtonColor: '#BC5322'
-            });
+            const container = uploadBtn.parentNode;
+            let sizeMsg = container.querySelector('.file-size-error');
+            if (!sizeMsg) {
+                sizeMsg = document.createElement('div');
+                sizeMsg.className = 'file-size-error';
+                sizeMsg.style.cssText = 'color: #ef4444; font-size: 11px; margin-top: 5px; font-style: italic;';
+                container.appendChild(sizeMsg);
+            }
+            sizeMsg.textContent = `* ${file.name} is too large. Max size is 5MB.`;
+            sizeMsg.style.display = 'block';
             return;
+        } else {
+            const sizeMsg = uploadBtn.parentNode.querySelector('.file-size-error');
+            if (sizeMsg) sizeMsg.style.display = 'none';
         }
 
         const reader = new FileReader();
@@ -1568,7 +1658,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
             `;
 
-            // Hide the upload placeholder content
             const uploadIcon = uploadBtn.querySelector('.upload-icon');
             const uploadText = uploadBtn.querySelector('.upload-text');
             const uploadSubtext = uploadBtn.querySelector('.upload-subtext');
@@ -1697,11 +1786,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // Event delegation for file input changes
     document.addEventListener('change', function (e) {
         if (e.target.classList.contains('image-upload')) {
-            // //console.log('File input changed:', e.target.files);
             const file = e.target.files[0];
             if (file) {
                 const uploadBtn = e.target.closest('.upload-btn');
-                // //console.log('Handling upload for:', uploadBtn);
                 handleImageUpload(file, uploadBtn);
             }
         }
@@ -1724,9 +1811,11 @@ document.addEventListener('DOMContentLoaded', function () {
             // Wait a bit for the project list to populate
             setTimeout(() => {
                 // Set the project dropdown
-                selectProjectSelect.value = projectId;
-                selectProjectSelect.dispatchEvent(new Event('change'));
-            }, 100);
+                if (projectId) {
+                    selectProjectSelect.value = projectId;
+                    selectProjectSelect.dispatchEvent(new Event('change'));
+                }
+            }, 500); // Increased timeout significantly
         } else {
             // Just fetch projects normally
             fetchProjects();

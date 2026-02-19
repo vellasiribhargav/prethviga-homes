@@ -9,7 +9,6 @@ html(lang='en')
     - 
        const titleMap = {
          'project': 'Project',
-         'ongoing': 'On Going'
        }
        const displayTitle = titleMap[pageSlug] || (pageSlug.charAt(0).toUpperCase() + pageSlug.slice(1))
 
@@ -49,7 +48,6 @@ html(lang='en')
           .selectors-container(style="display: flex; gap: 15px; width: 100%; justify-content: space-between;")
             select#faq-slug-selector.form-select(style="flex: 1;")
                option(value="project" selected=pageSlug === 'project') Project Page
-               option(value="ongoing" selected=pageSlug === 'ongoing') OnGoing Page
             
             .header-actions
               button.back-btn(onclick=`window.location.href='/admin/faq/${pageSlug}/${pageSection}/list'`) List
@@ -73,7 +71,8 @@ html(lang='en')
               // FAQ Answer
               .form-group
                 label.form-label Answer
-                textarea.form-textarea(name="faq_answer", placeholder='Enter your answer...', rows="5")
+                textarea.form-textarea(name="faq_answer", placeholder='Enter your answer...', rows="5" maxlength="200")
+                .char-limit-msg * Characters are more than 200
             
             // Submit Button
             .submit-section

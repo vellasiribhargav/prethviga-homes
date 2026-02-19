@@ -1,3 +1,6 @@
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
 import $ from 'jquery';
 window.$ = window.jQuery = $;
 import Swal from 'sweetalert2';
@@ -8,10 +11,13 @@ let originalFormData = {};
 
 function formatToDB(dateStr) {
     if (!dateStr) return '';
-    const [year, month, day] = dateStr.split('-');
-    return `${day}-${month}-${year}`;
+    return dayjs(dateStr).format('DD-MM-YYYY');
 }
 
+function formatForDisplay(dbDateStr) {
+    if (!dbDateStr) return 'No date';
+    return dayjs(dbDateStr).format('MMMM YYYY');
+}
 function parseFromDB(dbDateStr) {
     if (!dbDateStr) return '';
     const parts = dbDateStr.split('-');
@@ -27,15 +33,58 @@ document.addEventListener('DOMContentLoaded', function () {
     const itemForm = document.getElementById('itemForm');
     const previewImage = document.getElementById('previewImage');
     const closeModalBtns = document.querySelectorAll('.close-modal');
+    const searchInput = document.getElementById('searchInput');
+    const dateFilter = document.getElementById('dateFilter');
 
     // Initialize Pagination
-    new PaginationManager({
+    const pagination = new PaginationManager({
         tableBodySelector: '.data-table tbody',
         paginationContainerSelector: '.pagination',
         footerInfoSelector: '.footer-info span',
         rowsPerPage: 5,
         storageKey: 'rowsPerPage_upcoming'
     });
+
+    // Filter Logic
+    function applyFilters() {
+        const searchValue = searchInput ? searchInput.value.toLowerCase().trim() : '';
+        const dateValue = dateFilter ? dateFilter.value : '';
+
+        const allRows = pagination.allRows;
+
+        const filteredRows = allRows.filter(row => {
+            // Search check (by project name)
+            const projectName = row.querySelector('.item-name-cell') ? row.querySelector('.item-name-cell').textContent.toLowerCase() : '';
+            const searchMatch = !searchValue || projectName.includes(searchValue);
+            if (!searchMatch) return false;
+
+            // Date check (by Creation Date)
+            // Column indices: S.NO(0), PROJECT NAME(1), DESCRIPTION(2), LOCATION(3), TIMELINE(4), CREATED DATE(5), PREVIEW(6), ACTIONS(7)
+            const createdAtCell = row.cells[5];
+            const createdAtValue = createdAtCell ? createdAtCell.textContent.trim() : '';
+
+            let dateMatch = true;
+            if (dateValue && createdAtValue) {
+                const rowDate = dayjs(createdAtValue, 'MMMM D, YYYY');
+                const filterDate = dayjs(dateValue);
+                dateMatch = rowDate.isValid() && rowDate.isSame(filterDate, 'day');
+            }
+
+            return dateMatch;
+        });
+
+        // Update S.NO
+        filteredRows.forEach((row, idx) => {
+            if (row.cells && row.cells.length > 0) {
+                row.cells[0].textContent = String(idx + 1).padStart(2, '0');
+            }
+        });
+
+        pagination.refreshRows(filteredRows);
+    }
+
+    if (searchInput) searchInput.addEventListener('input', applyFilters);
+    if (dateFilter) dateFilter.addEventListener('change', applyFilters);
 
     // Modal Functions
     function openModal(modal) {
@@ -77,11 +126,11 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.edit-btn').forEach(btn => {
         btn.addEventListener('click', function () {
             const projectData = JSON.parse(this.dataset.project);
-            const index = this.dataset.index;
+            const id = this.dataset.id || this.dataset.index;
 
             // Populate Form
             const inputs = itemForm.elements;
-            inputs.index.value = index;
+            inputs.index.value = id;
             inputs.project_name.value = projectData.project_name || '';
             inputs.project_location.value = projectData.project_location || '';
 
@@ -91,12 +140,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (parsedDate && parsedDate.includes('-')) {
                     inputs.project_date.value = parsedDate;
                 } else {
-                    const date = new Date(projectData.project_date);
-                    if (!isNaN(date)) {
-                        const yyyy = date.getFullYear();
-                        const mm = String(date.getMonth() + 1).padStart(2, '0');
-                        const dd = String(date.getDate()).padStart(2, '0');
-                        inputs.project_date.value = `${yyyy}-${mm}-${dd}`;
+                    const date = dayjs(projectData.project_date);
+                    if (date.isValid()) {
+                        inputs.project_date.value = date.format('YYYY-MM-DD');
                     } else {
                         inputs.project_date.value = '';
                     }
@@ -174,8 +220,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Handle Delete
-    $('.delete-btn').on('click', function () {
-        const index = $(this).data('index');
+    $(document).on('click', '.delete-btn', function () {
+        const id = $(this).data('id') || $(this).data('index');
 
         Swal.fire({
             title: 'Are you sure?',
@@ -188,7 +234,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `/admin/upcoming/deleteupcoming/${index}`,
+                    url: `/admin/upcoming/delete/${id}`,
                     type: 'DELETE',
                     success: function () {
                         Swal.fire(
@@ -250,7 +296,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (name === 'project_date') {
                 input.addEventListener('input', () => {
                     if (input.value && !isValidDate(input.value)) {
-                        msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+                        msg.textContent = '* Invalid date (Year 1998-' + (dayjs().year() + 3) + ')';
                         msg.style.display = 'block';
                     } else {
                         msg.style.display = 'none';
@@ -279,7 +325,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (msg && name === 'project_date') msg.textContent = '* Completion date is required';
             } else if (name === 'project_date' && !isValidDate(input.value)) {
                 isFieldValid = false;
-                if (msg) msg.textContent = '* Invalid date (Year 1998-' + (new Date().getFullYear() + 3) + ')';
+                if (msg) msg.textContent = '* Invalid date (Year 1998-' + (dayjs().year() + 3) + ')';
             }
 
             if (!isFieldValid) {
@@ -327,7 +373,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 Swal.fire({
                     icon: 'info',
                     title: 'No Changes Detected',
-                    text: 'You have not modified anything.'
+                    text: 'no changes is detected'
                 });
                 return;
             }
@@ -336,7 +382,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (formData.has('project_date')) {
                 formData.set('project_date', formatToDB(formData.get('project_date')));
             }
-            const index = formData.get('index');
+            const id = formData.get('index');
 
             // Show loading state
             const submitBtn = this.querySelector('button[type="submit"]');
@@ -345,7 +391,7 @@ document.addEventListener('DOMContentLoaded', function () {
             submitBtn.disabled = true;
 
             $.ajax({
-                url: `/admin/upcoming/updateupcoming/${index}`,
+                url: `/admin/upcoming/update/${id}`,
                 type: 'PUT',
                 data: formData,
                 processData: false,
@@ -355,7 +401,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'Project updated successfully',
+                            text: 'content updated',
                             timer: 1500,
                             showConfirmButton: false
                         }).then(() => {

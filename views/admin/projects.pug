@@ -1,0 +1,97 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    title Projects
+    link(rel='stylesheet' href=utils.assetPath("/bundle/projects.css"))
+  body
+    - var activeLink = 'projects'
+    include ../layout/sidebar.pug
+    // Main Page Content
+    .main-container.with-sidebar
+      // Top App Bar
+      header.app-header
+        .header-left
+          button.menu-btn
+            svg.icon(xmlns='http://www.w3.org/2000/svg', height='24', viewBox='0 -960 960 960', width='24')
+              path(d='M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z')
+          h1.page-title Projects
+
+      // Breadcrumbs
+      .breadcrumbs
+        p.breadcrumb-text
+          span.breadcrumb-item Prethviga Homes
+          svg.icon(xmlns='http://www.w3.org/2000/svg' height='12' viewBox='0 -960 960 960' width='12' fill='#000')
+            path(d='M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z')
+          span.breadcrumb-item Content Management
+          svg.icon(xmlns='http://www.w3.org/2000/svg' height='12' viewBox='0 -960 960 960' width='12' fill='#000')
+            path(d='M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z')
+          span.breadcrumb-item.active Projects
+      main.main-content
+        // Content Header
+        .content-header
+          h2.content-title Add Project
+          .header-actions
+            button.back-btn(onclick="window.location.href='/admin/projects/list'") List
+            button#addMoreBtn.add-more-btn  Add More
+        // Form Container
+        .form-container
+          .content-card
+            .form-header
+              span.form-number 1
+              button.delete-form-btn(type="button" title="Delete this form" style="display: none;")
+                span.material-symbols-outlined
+                  svg(width='17' height='17' viewbox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='currentColor')
+                    path(d='M8 3H16C16.55 3 17 3.45 17 4V5H19C19.55 5 20 5.45 20 6C20 6.55 19.55 7 19 7H5C4.45 7 4 6.55 4 6C4 5.45 4.45 5 5 5H7V4C7 3.45 7.45 3 8 3ZM6 9V19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V9H6ZM9 11C9.55 11 10 11.45 10 12V18C10 18.55 9.55 19 9 19C8.45 19 8 18.55 8 18V12C8 11.45 8.45 11 9 11ZM12 11C12.55 11 13 11.45 13 12V18C13 18.55 12.55 19 12 19C11.45 19 11 18.55 11 18V12C11 11.45 11.45 11 12 11ZM15 11C15.55 11 16 11.45 16 12V18C16 18.55 15.55 19 15 19C14.45 19 14 18.55 14 18V12C14 11.45 14.45 11 15 11Z')
+            .form-section
+              // Status Selection
+              .form-group
+                label.form-label Project Status
+                select.form-input(name='project-type')
+                  option(value='' disabled selected) Select Project
+                  option(value='upcoming') Upcoming
+                  option(value='completed') Completed
+              // Image Upload
+              .form-group
+                label.form-label Project Image
+                button.upload-btn
+                  .upload-icon
+                    svg.icon(xmlns='http://www.w3.org/2000/svg', height='24', viewBox='0 -960 960 960', width='24', fill='currentColor')
+                      path(d='M480-260q75 0 127.5-52.5T660-440q0-75-52.5-127.5T480-620q-75 0-127.5 52.5T300-440q0 75 52.5 127.5T480-260Zm0-80q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM160-120q-33 0-56.5-23.5T80-200v-480q0-33 23.5-56.5T160-760h126l74-80h240l74 80h126q33 0 56.5 23.5T880-680v480q0 33-23.5 56.5T800-120H160Zm0-80h640v-480H638l-73-80H395l-73 80H160v480Zm320-240Z')
+                  p.upload-text Tap to upload
+                  p.upload-subtext SVG, PNG, JPG (max. 5MB)
+                input.hidden-file-input(type='file' accept='image/*')
+              // Project Name
+              .form-group
+                label.form-label Project Name
+                input.form-input(type='text' name='project-name' placeholder='e.g. New Office Tower Build')
+              // Project Location
+              .form-group.location-group
+                label.form-label Project Location
+                .input-wrapper
+                  input.form-input(type='text' name='project-location' placeholder='e.g. Chicago, IL')
+                  svg.icon.location-icon(xmlns='http://www.w3.org/2000/svg', height='20', viewBox='0 -960 960 960', width='20', fill='currentColor')
+                    path(d='M480-480q33 0 56.5-23.5T560-560q0-33-23.5-56.5T480-640q-33 0-56.5 23.5T400-560q0 33 23.5 56.5T480-480Zm0 294q122-112 181-203.5T720-552q0-109-69.5-178.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186Zm0 106Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Zm0-480Z')
+              // Project Timeline/Date
+              .form-group
+                label.form-label Project Date/Timeline
+                input.form-input(type='date' name='timeline-date')
+              // Project Description/Summary
+              .form-group
+                label.form-label Project Description/Summary
+                textarea.form-textarea(name="project-description", placeholder='project description...', rows="3" maxlength="200")
+                .char-limit-msg * Characters are more than 200
+            // Submit Button
+            .submit-section
+              button.submit-btn Submit
+            // Navigation buttons
+            .navigation-buttons
+              button.nav-btn.prev-btn(disabled='') Previous
+              button.nav-btn.next-btn Next
+        // Added Projects Preview
+        .added-items-section
+          h3.section-title PREVIEW
+          .added-items-list
+          
+    script(src=utils.assetPath("/bundle/projects.js"))

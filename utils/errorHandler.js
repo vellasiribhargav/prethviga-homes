@@ -42,30 +42,23 @@ class DatabaseError extends AppError {
     }
 }
 
-/**
- * Async handler wrapper to eliminate try-catch blocks
- * Usage: asyncHandler(async (req, res, next) => { ... })
- */
 const asyncHandler = (fn) => {
     return (req, res, next) => {
         Promise.resolve(fn(req, res, next)).catch(next);
     };
 };
 
-/**
- * Error response formatter
- * Determines whether to send JSON or render error page
- */
 const formatErrorResponse = (err, req, res) => {
     const statusCode = err.statusCode || 500;
     const message = err.message || 'Internal Server Error';
 
-    // Check if request expects JSON response
-    const isJsonRequest = req.xhr ||
+    const isJsonRequest =
+        req.xhr ||
         (req.get('Accept') && req.get('Accept').includes('json')) ||
-        req.path.startsWith('/api/');
+        req.path.startsWith('/api/') ||
+        req.path.startsWith('/admin/');
 
-    if (isJsonRequest) {
+    if (isJsonRequest || statusCode === 401) {
         return res.status(statusCode).json({
             success: false,
             message,
@@ -73,8 +66,6 @@ const formatErrorResponse = (err, req, res) => {
         });
     }
 
-    // For HTML responses, only render 404 page if it exists
-    // For other errors, send JSON to avoid missing view errors
     if (statusCode === 404) {
         return res.status(404).render('404', {
             message,
@@ -82,7 +73,7 @@ const formatErrorResponse = (err, req, res) => {
         });
     }
 
-    // For all other errors, send JSON response
+    // For all other errors, send JSON response to avoid missing view errors
     res.status(statusCode).json({
         success: false,
         message,
@@ -90,9 +81,6 @@ const formatErrorResponse = (err, req, res) => {
     });
 };
 
-/**
- * Log error details (can be extended to use logging service)
- */
 const logError = (err) => {
     if (process.env.NODE_ENV === 'development') {
         console.error('Error Details:', {
@@ -102,7 +90,6 @@ const logError = (err) => {
             isOperational: err.isOperational
         });
     } else {
-        // In production, log only essential info
         console.error(`[${new Date().toISOString()}] ${err.statusCode || 500}: ${err.message}`);
     }
 };

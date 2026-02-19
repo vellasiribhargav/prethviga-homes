@@ -9,7 +9,7 @@ router.get('/', galleryController.renderGalleryMainPage);
 router.get('/list', galleryController.getGallery);
 router.get('/getgallery/:projectId', galleryController.getGalleryByProject);
 router.post('/addgallery', upload.any(), galleryController.addGalleryItem);
-router.put('/updategallery/:index', upload.single('file'), galleryController.updateGalleryItem);
-router.delete('/deletegallery/:index', galleryController.deleteGalleryItem);
+router.put('/updategallery/:id', upload.single('file'), galleryController.updateGalleryItem);
+router.delete('/deletegallery/:id', galleryController.deleteGalleryItem);
 
 module.exports = router;

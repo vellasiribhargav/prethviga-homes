@@ -4,9 +4,6 @@ const { getRedis } = require('../../config/redis.js');
 const jwt = require('jsonwebtoken');
 const { asyncHandler, ValidationError, UnauthorizedError } = require('../../utils/errorHandler');
 
-const Minutes = 60 * 1000;
-const COOKIE_EXPIRY_MINUTES = Number(process.env.ADMIN_COOKIE_EXPIRY_MINUTES || 20);
-
 const login = asyncHandler(async (req, res, next) => {
     const { username, password } = req.body;
 
@@ -83,13 +80,13 @@ const login = asyncHandler(async (req, res, next) => {
     );
 
     // Set cookie
+    const expiryMinutes = Number(process.env.ADMIN_COOKIE_EXPIRY_MINUTES);
     res.cookie('admin_token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        maxAge: COOKIE_EXPIRY_MINUTES * Minutes,
+        maxAge: expiryMinutes * 60 * 1000,
         sameSite: 'strict'
     });
-
     res.json({ success: true });
 });
 
@@ -105,7 +102,7 @@ const renderLoginPage = asyncHandler(async (req, res) => {
             const adminUsersCollection = mongoose.connection.db.collection("admin");
             const user = await adminUsersCollection.findOne({ userName: decoded.username });
             if (user) {
-                return res.redirect('/admin/list');
+                return res.redirect('/admin/banner/home/list');
             } else {
                 res.clearCookie('admin_token');
             }
