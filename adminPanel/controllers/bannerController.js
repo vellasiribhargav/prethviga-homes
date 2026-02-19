@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { ObjectId } = require("mongodb");
 const path = `${process.env.PROJECT_URL}uploads/gallery/`;
-const { formatDateForDisplay } = require('../../utils/index');
+const { formatDateForDisplay, formatDateShortSimple } = require('../../utils/index');
 const BANNER_CONFIG = {
   home: {
     collection: "banner",
@@ -61,6 +61,7 @@ const getBannersList = async (req, res) => {
       number: item.number || '',
       index: index,
       id: item._id.toString(),
+      createdAt: formatDateShortSimple(item.createdAt),
       formattedDate: formatDateForDisplay(item.createdAt, true)
     }));
 

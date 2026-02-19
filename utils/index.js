@@ -59,5 +59,33 @@ exports.formatDateShort = (dbDateStr) => {
 		return dbDateStr;
 	}
 	if (!date.isValid()) return dbDateStr;
+	return date.format('DD ddd MMM YYYY HH:mm');
+};
+
+exports.formatDateShortSimple = (dbDateStr) => {
+	if (!dbDateStr) return '';
+	let date;
+	if (dbDateStr instanceof Date) {
+		date = dayjs(dbDateStr);
+	} else if (typeof dbDateStr === 'string') {
+		date = dayjs(dbDateStr);
+	} else {
+		return dbDateStr;
+	}
+	if (!date.isValid()) return dbDateStr;
 	return date.format('DD MMM...');
+};
+
+exports.formatDateMonthYear = (dbDateStr) => {
+	if (!dbDateStr) return '';
+	let date;
+	if (dbDateStr instanceof Date) {
+		date = dayjs(dbDateStr);
+	} else if (typeof dbDateStr === 'string') {
+		date = dayjs(dbDateStr);
+	} else {
+		return dbDateStr;
+	}
+	if (!date.isValid()) return dbDateStr;
+	return date.format('MMMM D, YYYY');
 };

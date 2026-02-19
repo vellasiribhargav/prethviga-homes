@@ -68,7 +68,7 @@ html(lang='en')
                        td.item-name-cell #{review['client-name']}
                        td(title=review['review-text'])
                          .review-text-preview #{review['review-text']}
-                       td(title=review.formattedDate) #{utils.formatDateShort(review.createdAt)}
+                       td(title=review.formattedDate) #{review.createdAt}
                        td
                          .action-buttons
                             button.icon-action-btn.edit-btn(title="Edit Review" onclick=`window.location.href='/admin/reviews'`)

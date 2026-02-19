@@ -284,6 +284,21 @@ body {
     font-size: 14px;
 }
 
+/* Specific Column Widths */
+.data-table th:nth-child(1),
+.data-table td:nth-child(1) {
+    /* S.NO */
+    width: 80px;
+    text-align: center;
+}
+
+.data-table th:nth-child(6),
+.data-table td:nth-child(6) {
+    /* CREATED DATE */
+    width: 120px;
+    text-align: center;
+}
+
 .data-table tr:hover {
     background-color: rgba(158, 101, 32, 0.02);
 }

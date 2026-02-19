@@ -165,7 +165,7 @@ body {
 /* Search and Filter Row */
 .search-filter-row {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     gap: 16px;
     margin-bottom: 24px;
     justify-content: space-between;

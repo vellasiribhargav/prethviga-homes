@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             let dateMatch = true;
             if (dateValue && createdAtValue) {
-                const rowDate = dayjs(createdAtValue, 'DD ddd MMM YYYY HH:mm');
+                const rowDate = dayjs(createdAtValue, 'DD MMM...');
                 const filterDate = dayjs(dateValue);
                 dateMatch = rowDate.isValid() && rowDate.isSame(filterDate, 'day');
             }

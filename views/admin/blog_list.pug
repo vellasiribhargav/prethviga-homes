@@ -68,6 +68,7 @@ html(lang='en')
                   th BLOG TITLE
                   th DESCRIPTION
                   th DETAILS
+                  th PUBLICATION DATE
                   th TIME TO READ
                   th PREVIEW
                   th CREATED DATE
@@ -84,7 +85,7 @@ html(lang='en')
                          .cell-text #{b.description || 'No description available...'}
                        td(title=b.cleanContent)
                          .cell-text #{b.contentSnippet}
-                       td #{b.date}
+                       td(title=b.formattedPublicationDate) #{b.date}
                        td #{b.timeToRead} min read
                        td
                          if b.image
@@ -95,7 +96,8 @@ html(lang='en')
                              span Preview
                          else
                            span No Image
-                       td(title=b.formattedDate) #{utils.formatDateShort(b.createdAt)}
+                       td(title=b.formattedDate) #{b.createdAt}
+                       td
                          .action-buttons
                            button.icon-action-btn.edit-btn(title="Edit" data-id=b.id data-index=b.id data-blog=JSON.stringify(b))
                              span.edit  

@@ -77,7 +77,7 @@ html(lang='en')
                              span Preview
                          else
                            span No Image
-                       td(title=b.formattedDate) #{utils.formatDateShort(b.createdAt)}
+                       td(title=b.formattedDate) #{b.createdAt}
                        td
                          .action-buttons
                            //- button.icon-action-btn.edit-btn(title="Edit" data-index=b.index data-banner=JSON.stringify(b))

@@ -133,9 +133,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if (deleteBtn) {
             e.preventDefault();
             const formCard = deleteBtn.closest('.content-card');
+            const cards = document.querySelectorAll('.content-card');
 
-            updateFormsCache();
-            if (formsCache.length <= 1) {
+            if (cards.length <= 1) {
                 Swal.fire({
                     icon: 'warning',
                     text: 'You cannot delete the only form.',
@@ -146,27 +146,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (formCard) {
                 formCard.remove();
-                updateFormsCache();
-
-                formsCache.forEach((form, index) => {
+                const remainingCards = document.querySelectorAll('.content-card');
+                remainingCards.forEach((form, index) => {
                     const numberSpan = form.querySelector('.form-number');
                     if (numberSpan) numberSpan.textContent = index + 1;
                 });
 
-                let newIndex = window.currentFormIndex;
-                if (newIndex >= formsCache.length) {
-                    newIndex = formsCache.length - 1;
+                if (currentFormIndex >= remainingCards.length) {
+                    currentFormIndex = remainingCards.length - 1;
                 }
-
-                window.currentFormIndex = newIndex;
-                formsCache.forEach(f => f.style.display = 'none');
-                if (formsCache[newIndex]) {
-                    formsCache[newIndex].style.display = 'block';
-                }
-
-                updateNavigationButtons();
-                updateSubmitButtons();
-                updateDeleteButtonsVisibility();
+                updateNavigation();
             }
         }
     });
@@ -281,6 +270,14 @@ document.addEventListener('DOMContentLoaded', function () {
             input.addEventListener('input', handler);
             input.addEventListener('change', handler);
         });
+
+        // Fix date input display
+        const dateInput = card.querySelector('[name="timeline-date"]');
+        if (dateInput) {
+            dateInput.addEventListener('change', function() {
+                this.setAttribute('value', this.value);
+            });
+        }
     }
 
     function handleFinalSubmit() {
@@ -302,7 +299,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 project_location: card.querySelector('[name="project-location"]').value,
                 project_date: card.querySelector('[name="timeline-date"]').value,
                 card_footer_text: card.querySelector('[name="project-description"]').value
-            }); l̥l̥
+            });
         });
 
         formData.append('projectsArr', JSON.stringify(projectsArr));

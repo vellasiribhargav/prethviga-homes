@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const dayjs = require('dayjs');
 const { ObjectId } = require('mongodb');
 const { asyncHandler, ValidationError, NotFoundError } = require('../../utils/errorHandler');
-const { formatDateForDisplay } = require('../../utils/index');
+const { formatDateForDisplay, formatDateShortSimple } = require('../../utils/index');
 
 // GET reviews management page
 const renderReviewsPage = asyncHandler(async (req, res) => {
@@ -26,6 +26,7 @@ const renderReviewsListPage = asyncHandler(async (req, res) => {
         ...item,
         id: item._id.toString(),
         index: index,
+        createdAt: formatDateShortSimple(item.createdAt),
         formattedDate: formatDateForDisplay(item.createdAt, true)
     })) || [];
 

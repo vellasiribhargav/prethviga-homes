@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const dayjs = require('dayjs');
 const { ObjectId } = require("mongodb");
-const { formatDateForDisplay } = require('../../utils/index');
+const { formatDateForDisplay, formatDateShortSimple } = require('../../utils/index');
 const { asyncHandler, ValidationError, NotFoundError } = require('../../utils/errorHandler');
 
 const renderInventoryForm = asyncHandler(async (req, res) => {
@@ -35,7 +35,8 @@ const getInventoryList = asyncHandler(async (req, res) => {
         description: project.card_footer_text,
         type: 'upcoming',
         index: index,
-        createdAt: formatDateForDisplay(project.createdAt, true)
+        createdAt: formatDateShortSimple(project.createdAt),
+        formattedDate: formatDateForDisplay(project.createdAt, true)
     }));
 
     const completedProjects = completedData.map((project, index) => ({
@@ -48,7 +49,8 @@ const getInventoryList = asyncHandler(async (req, res) => {
         description: project.card_footer_text,
         type: 'completed',
         index: index,
-        createdAt: formatDateForDisplay(project.createdAt, true)
+        createdAt: formatDateShortSimple(project.createdAt),
+        formattedDate: formatDateForDisplay(project.createdAt, true)
     }));
 
     const allProjects = [...upcomingProjects, ...completedProjects];

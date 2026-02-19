@@ -80,12 +80,12 @@ const login = asyncHandler(async (req, res, next) => {
     );
 
     // Set cookie
-    const expiryMinutes = Number(process.env.ADMIN_COOKIE_EXPIRY_MINUTES);
+    const expiryMinutes = Number(process.env.ADMIN_COOKIE_EXPIRY_MINUTES) || 1440;
     res.cookie('admin_token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         maxAge: expiryMinutes * 60 * 1000,
-        sameSite: 'strict'
+        sameSite: 'lax'
     });
     res.json({ success: true });
 });
