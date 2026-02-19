@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const dayjs = require('dayjs');
 const { ObjectId } = require('mongodb');
-const { formatDateForDisplay } = require('../../utils/index');
+const { formatDateForDisplay, formatDateShortSimple } = require('../../utils/index');
 
 const FAQ_CONFIG = {
     project: {
@@ -45,6 +45,7 @@ const getFaqsList = async (req, res) => {
             id: f._id.toString(),
             question: f.question || f.faq_question,
             answer: f.answer || f.faq_answer,
+            createdAt: formatDateShortSimple(f.createdAt),
             formattedDate: formatDateForDisplay(f.createdAt, true),
             index: index
         }));

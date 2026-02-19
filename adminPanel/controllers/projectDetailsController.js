@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const dayjs = require('dayjs');
 const { ObjectId } = require('mongodb');
-const { formatDateForDisplay } = require('../../utils/index');
+const { formatDateForDisplay, formatDateShortSimple } = require('../../utils/index');
 const { asyncHandler, ValidationError, NotFoundError } = require('../../utils/errorHandler');
 
 const renderDetailsPage = asyncHandler(async (req, res) => {
@@ -24,6 +24,7 @@ const getProjectsList = asyncHandler(async (req, res) => {
         id: (p.project_id || p._id).toString(),
         type: p.page_section === 'completed-gallery' ? 'completed' : 'upcoming',
         project_name: p.project_name,
+        createdAt: formatDateShortSimple(p.createdAt),
         formattedDate: formatDateForDisplay(p.createdAt, true)
     }));
 

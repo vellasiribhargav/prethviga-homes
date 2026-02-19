@@ -157,21 +157,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Format date for input[type="date"]
             if (blogData.date) {
-                // Try parsing as DD-MM-YYYY first
-                const parsedDate = parseFromDB(blogData.date);
-                if (parsedDate && parsedDate.includes('-')) {
-                    inputs.date.value = parsedDate;
+                const parsedDate = dayjs(blogData.date, ['DD-MM-YYYY', 'YYYY-MM-DD']);
+                if (parsedDate.isValid()) {
+                    inputs.date.value = parsedDate.format('YYYY-MM-DD');
                 } else {
-                    // Fallback for legacy data/other formats
-                    const date = new Date(blogData.date);
-                    if (!isNaN(date)) {
-                        const yyyy = date.getFullYear();
-                        const mm = String(date.getMonth() + 1).padStart(2, '0');
-                        const dd = String(date.getDate()).padStart(2, '0');
-                        inputs.date.value = `${yyyy}-${mm}-${dd}`;
-                    } else {
-                        inputs.date.value = '';
-                    }
+                    inputs.date.value = '';
                 }
             } else {
                 inputs.date.value = '';
@@ -441,15 +431,16 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function isFormChanged(form) {
+        const inputs = form.elements;
         return (
-            form.title.value.trim() !== originalFormData.title ||
-            form.tag.value.trim() !== originalFormData.tag ||
-            form.date.value !== originalFormData.date ||
-            form.description.value.trim() !== originalFormData.description ||
-            (form.read_time && form.read_time.value !== originalFormData.read_time) ||
+            inputs.title.value.trim() !== originalFormData.title ||
+            inputs.tag.value.trim() !== originalFormData.tag ||
+            inputs.date.value !== originalFormData.date ||
+            inputs.description.value.trim() !== originalFormData.description ||
+            (inputs.read_time && inputs.read_time.value !== originalFormData.read_time) ||
             (document.getElementById('edit-content-input').value !== originalFormData.content) ||
-            (form.remove_image && form.remove_image.value !== originalFormData.remove_image) ||
-            (form.file && form.file.files.length > 0)
+            (inputs.remove_image && inputs.remove_image.value !== originalFormData.remove_image) ||
+            (inputs.file && inputs.file.files.length > 0)
         );
     }
 

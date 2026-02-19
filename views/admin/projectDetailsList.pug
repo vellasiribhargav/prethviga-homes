@@ -75,7 +75,7 @@ html(lang='en')
                        td.item-name-cell #{project.project_name}
                        td #{project.type === 'upcoming' ? 'Upcoming' : 'Completed'}
                        td #{project.project_location}
-                       td(title=project.formattedDate) #{utils.formatDateShort(project.createdAt)}
+                       td(title=project.formattedDate) #{project.createdAt}
                        td
                          .action-buttons
                             button.icon-action-btn.edit-btn(title="Manage Details" onclick=`window.location.href='/admin/projectDetails/details?projectId=${project.id}&type=${project.type}'`)

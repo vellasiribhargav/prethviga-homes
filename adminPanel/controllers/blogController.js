@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const dayjs = require('dayjs');
 const { ObjectId } = require('mongodb');
-const { formatDateForDisplay } = require('../../utils/index');
+const { formatDateForDisplay, formatDateMonthYear, formatDateShortSimple } = require('../../utils/index');
 
 const BLOG_CONFIG = {
   home: {
@@ -49,7 +49,7 @@ const getBlogsList = async (req, res) => {
       ...b,
       id: b._id.toString(),
       title: b.blog_title,
-      date: formatDateForDisplay(b.createdAt, true),
+      date: formatDateMonthYear(b.blog_date),
       tag: b.badge_text,
       category: b.badge_text,
       isSeeded: !!b.isSeeded,
@@ -60,7 +60,9 @@ const getBlogsList = async (req, res) => {
       contentSnippet: b.blog_content ? b.blog_content.replace(/<h1[^>]*>.*?<\/h1>/gi, '').replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ').replace(/"/g, '&quot;').substring(0, 30) + (b.blog_content.replace(/<h1[^>]*>.*?<\/h1>/gi, '').replace(/<[^>]*>?/gm, '').length > 30 ? '...' : '') : 'No content available...',
       cleanContent: b.blog_content ? b.blog_content.replace(/<h1[^>]*>.*?<\/h1>/gi, '').replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ').replace(/"/g, '&quot;') : 'No content available...',
       index: index,
-      formattedDate: formatDateForDisplay(b.createdAt, true)
+      createdAt: formatDateShortSimple(b.createdAt),
+      formattedDate: formatDateForDisplay(b.createdAt, true),
+      formattedPublicationDate: formatDateMonthYear(b.blog_date)
     }));
 
     res.render('admin/blog_list', {

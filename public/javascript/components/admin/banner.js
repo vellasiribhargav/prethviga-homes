@@ -841,9 +841,15 @@ document.addEventListener('DOMContentLoaded', function () {
         const container = document.getElementById('reviews-container');
         if (!container) return;
         container.innerHTML = '';
-        reviewData.forEach((review, index) => {
-            renderReviewCard(review, index);
-        });
+        
+        // If no review data, render one empty card
+        if (!reviewData || reviewData.length === 0) {
+            renderReviewCard({}, 0);
+        } else {
+            reviewData.forEach((review, index) => {
+                renderReviewCard(review, index);
+            });
+        }
         checkReviewLimit();
     }
 

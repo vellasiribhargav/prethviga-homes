@@ -3,7 +3,7 @@ const dayjs = require('dayjs');
 const { ObjectId } = require("mongodb");
 const { asyncHandler, ValidationError, NotFoundError } = require('../../utils/errorHandler');
 
-const { formatDateForDisplay } = require('../../utils/index');
+const { formatDateShortSimple } = require('../../utils/index');
 
 const renderContactsPage = asyncHandler(async (req, res) => {
     const contactsCollection = mongoose.connection.db.collection("contacts");
@@ -14,7 +14,7 @@ const renderContactsPage = asyncHandler(async (req, res) => {
         ...contact,
         id: contact._id.toString(),
         index: index,
-        formattedDate: formatDateForDisplay(contact.createdAt, true)
+        createdAt: formatDateShortSimple(contact.createdAt)
     }));
 
     res.render('admin/contacts_list', {

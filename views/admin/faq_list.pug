@@ -75,7 +75,7 @@ html(lang='en')
                            .faq-answer
                              strong A: 
                              span.cell-text(title=f.answer) #{f.answer || 'No answer available...'}
-                       td(title=f.formattedDate) #{utils.formatDateShort(f.createdAt)}
+                       td(title=f.formattedDate) #{f.createdAt}
                        td
                          .action-buttons
                            button.icon-action-btn.edit-btn(title="Edit" data-id=f.id data-index=f.id data-faq=JSON.stringify(f))
