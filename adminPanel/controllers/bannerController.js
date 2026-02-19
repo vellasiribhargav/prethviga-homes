@@ -1,29 +1,31 @@
 const mongoose = require("mongoose");
+const { ObjectId } = require("mongodb");
 const path = `${process.env.PROJECT_URL}uploads/gallery/`;
+const { formatDateForDisplay } = require('../../utils/index');
 const BANNER_CONFIG = {
   home: {
-    collection: "home",
+    collection: "banner",
     slug: "home",
     section: "home_banner",
     path: path,
     imageField: "projimage"
   },
   project: {
-    collection: "ProjectPage",
-    slug: "ProjectPage",
+    collection: "banner",
+    slug: "projects",
     section: "project-banner",
     path: path,
     imageField: "image"
   },
   discoverUs: {
-    collection: "discoverUs",
+    collection: "banner",
     slug: "discoverUs",
     section: "discover-banner",
     path: path,
     imageField: "image"
   },
   'home-reviews': {
-    collection: "home",
+    collection: "banner",
     slug: "home",
     section: "home_reviews",
     path: path,
@@ -46,20 +48,21 @@ const getBannersList = async (req, res) => {
     const config = BANNER_CONFIG[slug] || BANNER_CONFIG.home;
     const collection = mongoose.connection.db.collection(config.collection);
 
-    const data = await collection.findOne({
+    const data = await collection.find({
       page_slug: config.slug,
       page_section: config.section
-    });
+    }).toArray();
 
-    const banners = data?.page_content?.map((item, index) => ({
+    const banners = data.map((item, index) => ({
       image: item[config.imageField] || item.image,
       Heading: item.Heading || '',
       subHeading: item.subHeading || '',
       description: item.description || '',
       number: item.number || '',
       index: index,
-      id: index.toString()
-    })) || [];
+      id: item._id.toString(),
+      formattedDate: formatDateForDisplay(item.createdAt, true)
+    }));
 
     res.render('admin/banner_list', {
       title: 'Banner Management',
@@ -81,9 +84,7 @@ const getBannersList = async (req, res) => {
   }
 };
 
-/**
- * GET banner images
- */
+// GET
 const getBanners = async (req, res) => {
   try {
     const { slug } = req.params;
@@ -98,16 +99,16 @@ const getBanners = async (req, res) => {
     }
     const collection = mongoose.connection.db.collection(config.collection);
 
-    const data = await collection.findOne({
+    const items = await collection.find({
       page_slug: config.slug,
       page_section: config.section,
-    });
+    }).toArray();
 
-    const items = data?.page_content || [];
     // Normalize field name to 'image' for the frontend and include text fields
     const banners = items.map(item => {
       if (slug === 'home-reviews') {
         return {
+          id: item._id.toString(),
           user_name: item.user_name || '',
           user_role: item.user_role || '',
           reviewer: item.reviewer || '',
@@ -115,6 +116,7 @@ const getBanners = async (req, res) => {
         };
       }
       return {
+        id: item._id.toString(),
         image: item[config.imageField] || item.image,
         Heading: item.Heading || '',
         subHeading: item.subHeading || '',
@@ -133,9 +135,6 @@ const getBanners = async (req, res) => {
   }
 };
 
-/**
- * ADD banner images (ARRAY)
- */
 const addBanners = async (req, res) => {
   try {
     const { slug } = req.params;
@@ -155,61 +154,33 @@ const addBanners = async (req, res) => {
 
     const { Heading, subHeading, description, number } = req.body;
     const bannersToAdd = req.files.map((file) => ({
+      page_slug: config.slug,
+      page_section: config.section,
       [config.imageField]: `${config.path}${file.filename}`,
       Heading: Heading || '',
       subHeading: subHeading || '',
       description: description || '',
       number: number || '',
-      createdAt: new Date()
+      createdAt: new Date(),
+      updatedAt: new Date()
     }));
 
-    const pageSlug = config.slug;
-    const pageSection = config.section;
+    await collection.insertMany(bannersToAdd);
 
-    // checking page & section
-    const page = await collection.findOne({
-      page_slug: pageSlug,
-      page_section: pageSection,
+    return res.json({
+      success: true,
+      message: "Banner images added successfully",
     });
 
-    if (!page) {
-      await collection.insertOne({
-        page_slug: pageSlug,
-        page_section: pageSection,
-        page_content: bannersToAdd,
-      });
-
-      return res.json({
-        success: true,
-        message: "New page and new banner section created with banners",
-      });
-    } else {
-      await collection.updateOne(
-        { page_slug: pageSlug, page_section: pageSection },
-        {
-          $push: {
-            page_content: { $each: bannersToAdd },
-          },
-        }
-      );
-
-      return res.json({
-        success: true,
-        message: "Banner images added to existing section",
-      });
-    }
   } catch (error) {
     console.error("Error in addBanners:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-/**
- * UPDATE banner image
- */
 const updateBanner = async (req, res) => {
   try {
-    const { slug, index } = req.params;
+    const { slug, id } = req.params;
     const config = BANNER_CONFIG[slug];
 
     if (!config) {
@@ -221,18 +192,23 @@ const updateBanner = async (req, res) => {
 
     const updateData = {};
     if (req.file) {
-      updateData[`page_content.${index}.${config.imageField}`] = `${config.path}${req.file.filename}`;
+      updateData[config.imageField] = `${config.path}${req.file.filename}`;
     }
 
     // Always update text fields if they are provided
-    if (Heading !== undefined) updateData[`page_content.${index}.Heading`] = Heading;
-    if (subHeading !== undefined) updateData[`page_content.${index}.subHeading`] = subHeading;
-    if (description !== undefined) updateData[`page_content.${index}.description`] = description;
-    if (number !== undefined) updateData[`page_content.${index}.number`] = number;
+    if (Heading !== undefined) updateData.Heading = Heading;
+    if (subHeading !== undefined) updateData.subHeading = subHeading;
+    if (description !== undefined) updateData.description = description;
+    if (number !== undefined) updateData.number = number;
 
     const result = await collection.updateOne(
-      { page_slug: config.slug, page_section: config.section },
-      { $set: updateData }
+      { _id: new ObjectId(id) },
+      {
+        $set: {
+          ...updateData,
+          updatedAt: new Date()
+        }
+      }
     );
 
     if (result.matchedCount === 0) {
@@ -246,9 +222,6 @@ const updateBanner = async (req, res) => {
   }
 };
 
-/**
- * UPDATE banner text data (Global for section)
- */
 const updateSectionText = async (req, res) => {
   try {
     const { slug } = req.params;
@@ -264,78 +237,50 @@ const updateSectionText = async (req, res) => {
     if (slug === 'home-reviews' && reviews) {
       let updatedReviews = JSON.parse(reviews);
 
-      // Handle file uploads for review profile images
-      if (req.files && req.files.length > 0) {
-        req.files.forEach(file => {
-          // Expecting fieldName like 'review_image_0'
-          const match = file.fieldname.match(/review_image_(\d+)/);
-          if (match) {
-            const index = parseInt(match[1]);
-            if (updatedReviews[index]) {
-              updatedReviews[index].profile_image = `${config.path}${file.filename}`;
+      for (let i = 0; i < updatedReviews.length; i++) {
+        const review = updatedReviews[i];
+        if (req.files && req.files.length > 0) {
+          req.files.forEach(file => {
+            const match = file.fieldname.match(/review_image_(\d+)/);
+            if (match && parseInt(match[1]) === i) {
+              review.profile_image = `${config.path}${file.filename}`;
             }
-          }
-        });
+          });
+        }
+
+        if (review.id || review._id) {
+          await collection.updateOne(
+            { _id: new ObjectId(review.id || review._id) },
+            {
+              $set: {
+                user_name: review.user_name,
+                user_role: review.user_role,
+                reviewer: review.reviewer,
+                profile_image: review.profile_image
+              }
+            }
+          );
+        } else {
+          // Insert new review
+          await collection.insertOne({
+            page_slug: config.slug,
+            page_section: config.section,
+            user_name: review.user_name,
+            user_role: review.user_role,
+            reviewer: review.reviewer,
+            profile_image: review.profile_image,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          });
+        }
       }
 
-      await collection.updateOne(
-        { page_slug: config.slug, page_section: config.section },
-        { $set: { page_content: updatedReviews } }
-      );
       return res.json({ success: true, message: 'Reviews updated successfully!' });
     }
 
-    const data = await collection.findOne({
-      page_slug: config.slug,
-      page_section: config.section,
-    });
-
-    if (!data || !data.page_content) {
-      return res.status(404).json({ success: false, message: "Banner section not found" });
-    }
-
-    // Update all items that have text fields, or ensure at least one has it
-    let textUpdated = false;
-    const updatedContent = data.page_content.map(item => {
-      // If it's an object that looks like it should have text (or even if it doesn't, we can add it to all for consistency if that's the pattern)
-      // Actually, let's only update objects that ALREADY have at least one text field,
-      // OR if it's the only object there.
-      const hasTextField = ('Heading' in item || 'subHeading' in item || 'description' in item || 'number' in item);
-
-      if (hasTextField) {
-        textUpdated = true;
-        return {
-          ...item,
-          Heading: Heading !== undefined ? Heading : item.Heading,
-          subHeading: subHeading !== undefined ? subHeading : item.subHeading,
-          description: description !== undefined ? description : item.description,
-          number: number !== undefined ? number : item.number
-        };
-      }
-      return item;
-    });
-
-    // If no item had text fields, add it to the first one or push a new one
-    if (!textUpdated) {
-      if (updatedContent.length > 0) {
-        updatedContent[0].Heading = Heading;
-        updatedContent[0].subHeading = subHeading;
-        updatedContent[0].description = description;
-        updatedContent[0].number = number;
-      } else {
-        updatedContent.push({
-          Heading,
-          subHeading,
-          description,
-          number,
-          createdAt: new Date()
-        });
-      }
-    }
-
-    await collection.updateOne(
+    await collection.updateMany(
       { page_slug: config.slug, page_section: config.section },
-      { $set: { page_content: updatedContent } }
+      { $set: { Heading, subHeading, description, number } }
     );
 
     res.json({ success: true, message: 'Banner text updated successfully!' });
@@ -345,12 +290,9 @@ const updateSectionText = async (req, res) => {
   }
 };
 
-/**
- * DELETE banner by index
- */
 const deleteBanner = async (req, res) => {
   try {
-    const { slug, index } = req.params;
+    const { slug, id } = req.params;
     const config = BANNER_CONFIG[slug];
 
     if (!config) {
@@ -362,23 +304,13 @@ const deleteBanner = async (req, res) => {
     }
     const collection = mongoose.connection.db.collection(config.collection);
 
-    const data = await collection.findOne({
-      page_slug: config.slug,
-      page_section: config.section,
+    const result = await collection.deleteOne({
+      _id: new ObjectId(id)
     });
 
-    if (!data?.page_content?.length) {
-      return res
-        .status(404)
-        .json({ success: false, message: "No banners found" });
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ success: false, message: "Banner not found" });
     }
-
-    data.page_content.splice(Number(index), 1);
-
-    await collection.updateOne(
-      { page_slug: config.slug, page_section: config.section },
-      { $set: { page_content: data.page_content } }
-    );
 
     res.json({ success: true, message: "Banner deleted successfully" });
   } catch (error) {

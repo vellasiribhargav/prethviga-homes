@@ -341,7 +341,10 @@ body {
 
 td .cell-text {
     text-align: left;
-    font-weight: normal;
+    width: 400px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .data-table tr:hover {
@@ -881,20 +884,77 @@ td .cell-text {
     content: '';
     position: absolute;
     top: 15px;
-    /* Align near top */
     right: 100%;
-    /* Arrow on left side */
     border: 8px solid transparent;
     border-right-color: #1b150e;
-    /* Pointing right (towards tooltip) means arrow base is on right, so tip is left... wait. border-right-color makes an arrow pointing LEFT. */
 }
 
-/* Variant when tooltip is flipped to the left */
 .custom-js-tooltip.left-side::after {
     right: auto;
     left: 100%;
-    /* Arrow on right side */
     border-right-color: transparent;
     border-left-color: #1b150e;
-    /* Pointing right */
+}
+
+.char-limit-msg {
+  display: none;
+  font-size: 12px;
+  color: #e74c3c;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+.search-filter-row {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 24px;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+td .cell-date {
+    text-align: left;
+    width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+input#dateFilter {
+    padding: 12px;
+    border: 1.5px solid var(--border-light);
+    border-radius: 10px;
+    background: var(--input-bg);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    appearance: none;
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 20px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 24px;
+}
+
+.no-data-cell {
+    text-align: center;
+    padding: 2rem;
+}
+
+.faq-qa-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.faq-question,
+.faq-answer {
+    display: flex;
+    gap: 5px;
+}
+
+.faq-answer {
+    font-weight: normal;
 }

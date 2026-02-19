@@ -1,35 +1,46 @@
 const mongoose = require('mongoose');
+const dayjs = require('dayjs');
 const { formatDateForDisplay } = require('../utils/index');
 
 const getdiscoverUsData = async (req, res) => {
   try {
-    const discoverUsData = await mongoose.connection.db.collection('discoverUs').find({ page_slug: 'discoverUs' }).toArray();
+    // discover_details: values + buyer guide
+    const discoverData = await mongoose.connection.db.collection('discover_details').find({ page_slug: 'discoverUs' }).toArray();
+    // banner: discover-banner
+    const bannerDocs = await mongoose.connection.db.collection('banner').find({ page_slug: 'discoverUs', page_section: 'discover-banner' }).toArray();
 
-    const ourvaluesData = discoverUsData.find(item => item.page_section === 'value-container')?.page_content || [];
-    const blogDataRaw = discoverUsData.find(item => item.page_section === 'blogs-card')?.page_content || [];
-    const bannerData = discoverUsData.find(item => item.page_section === 'discover-banner')?.page_content || [];
+    // blogs (Multi-document)
+    const blogsData = await mongoose.connection.db.collection('blogs').find({ page_slug: 'discoverUs', page_section: 'blogs-card' }).toArray();
 
-    const blogData = blogDataRaw.map(blog => ({
+    // reviews (Multi-document, from home)
+    const reviewsData = await mongoose.connection.db.collection('reviews').find({ page_slug: 'home', page_section: 'reviews' }).toArray();
+
+    const ourvaluesData = discoverData.find(item => item.page_section === 'value-container')?.page_content || [];
+    const buyerData = discoverData.find(item => item.page_section === 'buyer-container')?.page_content || [];
+    const bannerData = bannerDocs;
+
+    const blogData = blogsData.map(blog => ({
       ...blog,
+      blog_id: blog._id.toString(),
       blog_date: formatDateForDisplay(blog.blog_date, true),
-      timeToRead: blog.blog_time // Ensure consistency for the list view
+      timeToRead: blog.blog_time
     }));
-
-    const homeData = await mongoose.connection.db.collection('home').find({ page_slug: 'home' }).toArray();
-    const reviewsData = homeData.find(item => item.page_section === 'reviews')?.page_content || [];
 
     res.render('discoverUs', {
       ourvaluesData,
       blogData,
       bannerData,
-      reviewsData
+      reviewsData,
+      buyerData
     });
   } catch (error) {
     console.error('Error fetching discoverUs data:', error);
     res.render('discoverUs', {
       ourvaluesData: [],
       blogData: [],
-      bannerData: []
+      bannerData: [],
+      reviewsData: [],
+      buyerData: []
     });
   }
 };
@@ -37,36 +48,48 @@ const getdiscoverUsData = async (req, res) => {
 const getBlogById = async (req, res) => {
   try {
     const { id } = req.params;
-    // Fetch all sections for discoverUs to get both blogs and potentially a banner
-    const discoverUsData = await mongoose.connection.db.collection('discoverUs').find({ page_slug: 'discoverUs' }).toArray();
+    const { ObjectId } = require('mongodb');
 
-    if (!discoverUsData || discoverUsData.length === 0) {
-      return res.status(404).send('Blog data not found');
-    }
+    const blog = await mongoose.connection.db.collection('blogs').findOne({
+      $or: [
+        { _id: ObjectId.isValid(id) ? new ObjectId(id) : null },
+        { blog_id: ObjectId.isValid(id) ? new ObjectId(id) : id }
+      ]
+    });
 
-    const blogsSection = discoverUsData.find(item => item.page_section === 'blogs-card');
-    const bannerData = discoverUsData.find(item => item.page_section === 'discover-banner')?.page_content || [];
-
-    if (!blogsSection) {
-      return res.status(404).send('Blog section not found');
-    }
-
-    const blogs = blogsSection.page_content || [];
-    const blog = blogs.find(b => (b.blog_id && b.blog_id.toString() === id));
+    const bannerDocs = await mongoose.connection.db.collection('banner').find({ page_slug: 'discoverUs', page_section: 'discover-banner' }).toArray();
 
     if (!blog) {
-      return res.status(404).send('Blog not found');
+      // Fallback: search by blog_id if _id not found (for legacy compatibility)
+      const blogsData = await mongoose.connection.db.collection('blogs').find({ page_slug: 'discoverUs', page_section: 'blogs-card' }).toArray();
+      const fallbackBlog = blogsData.find(b => (b.blog_id && b.blog_id.toString() === id));
+
+      if (!fallbackBlog) {
+        return res.status(404).send('Blog not found');
+      }
+
+      const formattedBlog = {
+        ...fallbackBlog,
+        blog_date: formatDateForDisplay(fallbackBlog.blog_date, true),
+        timeToRead: fallbackBlog.blog_time
+      };
+
+      return res.render('BlogPage', {
+        blog: formattedBlog,
+        bannerData: bannerDocs,
+        isBlogPage: true
+      });
     }
 
     const formattedBlog = {
       ...blog,
       blog_date: formatDateForDisplay(blog.blog_date, true),
-      timeToRead: blog.blog_time // Key mismatch fix: template expects timeToRead
+      timeToRead: blog.blog_time
     };
 
     res.render('BlogPage', {
       blog: formattedBlog,
-      bannerData,
+      bannerData: bannerDocs,
       isBlogPage: true
     });
   } catch (error) {

@@ -1,6 +1,5 @@
-import $ from 'jquery';
-window.$ = window.jQuery = $;
 import Swal from 'sweetalert2';
+import { showFieldError, hideFieldError } from '../../utils/validation.js';
 
 document.addEventListener('DOMContentLoaded', function () {
     const addMoreBtn = document.querySelector('.add-more-btn');
@@ -15,6 +14,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const slug = pageSlugEl ? pageSlugEl.value : 'project';
     const section = pageSectionEl ? pageSectionEl.value : 'faq-section-header';
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentProjectId = urlParams.get('projectId') || '';
+
     if (slugSelector) {
         slugSelector.value = slug;
         slugSelector.addEventListener('change', () => {
@@ -28,6 +30,25 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     let faqArr = [];
+
+    // Character limit message handler for all textareas
+    document.addEventListener('input', (e) => {
+        if (e.target.tagName === 'TEXTAREA' || e.target.classList.contains('form-textarea')) {
+            const textarea = e.target;
+            const container = textarea.closest('.form-group') || textarea.parentNode;
+            let charLimitMsg = container.querySelector('.char-limit-msg');
+            const limit = textarea.maxLength || 200;
+
+            if (charLimitMsg) {
+                if (textarea.value.length >= limit) {
+                    charLimitMsg.style.display = 'block';
+                    charLimitMsg.textContent = `* Characters are more than ${limit}`;
+                } else {
+                    charLimitMsg.style.display = 'none';
+                }
+            }
+        }
+    });
 
     const firstForm = document.querySelector('.content-card');
     if (firstForm) {
@@ -78,14 +99,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 allForms[firstInvalid].style.display = 'block';
                 updateSubmitButtonsVisibility();
                 updateNavigationButtons();
-
-                const invalidNumbers = invalidFormIndices.map(i => i + 1).join(', ');
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Validation Error',
-                    text: `Please check the following forms for missing fields: ${invalidNumbers}`,
-                    confirmButtonColor: '#BC5322'
-                });
                 return;
             }
 
@@ -180,21 +193,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const input = form.querySelector(selector);
             if (!input) return;
 
-            const container = input.closest('.form-group') || input.parentNode;
-
-            const existingMsg = container.querySelector(`.required-message[data-for="${name}"]`);
-            if (existingMsg) existingMsg.remove();
-
-            const msg = document.createElement('div');
-            msg.className = 'required-message';
-            msg.dataset.for = name;
-            msg.textContent = message;
-            msg.style.cssText = 'font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic';
-
-            container.appendChild(msg);
-
-            input.addEventListener('input', () => msg.style.display = 'none');
-            input.addEventListener('change', () => msg.style.display = 'none');
+            input.addEventListener('input', () => hideFieldError(input));
+            input.addEventListener('change', () => hideFieldError(input));
         });
     }
 
@@ -202,24 +202,21 @@ document.addEventListener('DOMContentLoaded', function () {
         let isValid = true;
 
         const conf = [
-            { selector: 'input[name="faq_question"]', name: 'faq_question' },
-            { selector: 'textarea[name="faq_answer"]', name: 'faq_answer' }
+            { selector: 'input[name="faq_question"]', name: 'faq_question', message: '* Question is required' },
+            { selector: 'textarea[name="faq_answer"]', name: 'faq_answer', message: '* Answer is required' }
         ];
 
-        conf.forEach(({ selector, name }) => {
+        conf.forEach(({ selector, name, message }) => {
             const input = form.querySelector(selector);
             if (!input) return;
-
-            const container = input.closest('.form-group') || input.parentNode;
-            const msg = container.querySelector(`.required-message[data-for="${name}"]`);
 
             let val = input.value.trim();
 
             if (val === '') {
-                if (msg) msg.style.display = 'block';
+                showFieldError(input, message);
                 isValid = false;
             } else {
-                if (msg) msg.style.display = 'none';
+                hideFieldError(input);
             }
         });
 
@@ -245,7 +242,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     await Swal.fire({
                         icon: 'success',
                         title: 'Success!',
-                        text: data.message,
+                        text: 'content saved',
                         confirmButtonColor: '#BC5322'
                     }).then(() => {
                         window.location.href = `/admin/faq/${slug}/${section}/list${currentProjectId ? '?projectId=' + currentProjectId : ''}`;
@@ -341,7 +338,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 
                 <div class="form-group">
                     <label class="form-label">Answer</label>
-                    <textarea name="faq_answer" class="form-textarea" placeholder="Enter your answer..." rows="5"></textarea>
+                    <textarea name="faq_answer" class="form-textarea" placeholder="Enter your answer..." rows="5" maxlength="200"></textarea>
+                    <div class="char-limit-msg" style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic">* Characters are more than 200</div>
                 </div>
             </div>
             

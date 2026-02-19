@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
+const dayjs = require('dayjs');
 const { ObjectId } = require('mongodb');
-const { asyncHandler } = require('../../utils/errorHandler');
+const { formatDateForDisplay } = require('../../utils/index');
+const { asyncHandler, ValidationError, NotFoundError } = require('../../utils/errorHandler');
 
 const renderDetailsPage = asyncHandler(async (req, res) => {
     res.render('admin/projectDetails', {
@@ -10,16 +12,19 @@ const renderDetailsPage = asyncHandler(async (req, res) => {
 });
 
 const getProjectsList = asyncHandler(async (req, res) => {
-    const collection = mongoose.connection.db.collection("ProjectPage");
-    const ongoingData = await collection.findOne({ page_slug: "ProjectPage", page_section: "ongoing-gallery" });
-    const completedData = await collection.findOne({ page_slug: "ProjectPage", page_section: "completed-gallery" });
+    const collection = mongoose.connection.db.collection("projects");
 
-    const ongoingProjects = ongoingData?.page_content?.map((p, i) => ({ ...p, type: 'upcoming', index: i })) || [];
-    const completedProjects = completedData?.page_content?.map((p, i) => ({ ...p, type: 'completed', index: i })) || [];
+    // Fetch all projects (both ongoing and completed)
+    const projects = await collection.find({
+        page_slug: "projects"
+    }).toArray();
 
-    const allProjects = [...ongoingProjects, ...completedProjects].map(p => ({
+    const allProjects = projects.map(p => ({
         ...p,
-        id: (p.project_id || p._id)?.toString()
+        id: (p.project_id || p._id).toString(),
+        type: p.page_section === 'completed-gallery' ? 'completed' : 'upcoming',
+        project_name: p.project_name,
+        formattedDate: formatDateForDisplay(p.createdAt, true)
     }));
 
     res.render('admin/projectDetailsList', {
@@ -34,29 +39,11 @@ const getProjectsList = asyncHandler(async (req, res) => {
 const getDetailsByProject = asyncHandler(async (req, res) => {
     const { projectId } = req.params;
     if (!ObjectId.isValid(projectId)) {
-        return res.status(400).json({ success: false, message: "Invalid Project ID" });
+        throw new ValidationError("Invalid Project ID");
     }
 
-    // Resolve the actual project_id from ProjectPage first to handle cases where projectId might be _id
-    const projectPageCollection = mongoose.connection.db.collection("ProjectPage");
-    const projectPageDoc = await projectPageCollection.findOne({
-        page_slug: "ProjectPage",
-        page_content: { $elemMatch: { $or: [{ project_id: new ObjectId(projectId) }, { _id: new ObjectId(projectId) }] } }
-    });
-
-    let actualProjectId = projectId;
-    let projectInfo = null;
-    if (projectPageDoc) {
-        projectInfo = projectPageDoc.page_content.find(p =>
-            (p.project_id?.toString() === projectId) || (p._id?.toString() === projectId)
-        );
-        if (projectInfo && projectInfo.project_id) {
-            actualProjectId = projectInfo.project_id.toString();
-        }
-    }
-
-    const collection = mongoose.connection.db.collection("OnGoingPage");
-    const projectDoc = await collection.findOne({ project_id: new ObjectId(actualProjectId) });
+    const collection = mongoose.connection.db.collection("project_details");
+    const projectDoc = await collection.findOne({ project_id: new ObjectId(projectId) });
 
     const sectionData = {};
 
@@ -76,7 +63,6 @@ const getDetailsByProject = asyncHandler(async (req, res) => {
             }
         });
     }
-
     res.json({
         success: true,
         data: sectionData
@@ -86,35 +72,18 @@ const getDetailsByProject = asyncHandler(async (req, res) => {
 const saveProjectDetails = asyncHandler(async (req, res) => {
     const { projectId, section } = req.body;
     if (!projectId || !ObjectId.isValid(projectId)) {
-        return res.status(400).json({ success: false, message: "Invalid or missing Project ID" });
+        throw new ValidationError("Invalid or missing Project ID");
     }
 
-    // Resolve the actual project_id from ProjectPage first
-    const projectPageCollection = mongoose.connection.db.collection("ProjectPage");
-    const projectPageDoc = await projectPageCollection.findOne({
-        page_slug: "ProjectPage",
-        page_content: { $elemMatch: { $or: [{ project_id: new ObjectId(projectId) }, { _id: new ObjectId(projectId) }] } }
-    });
-
-    let actualProjectId = projectId;
-    if (projectPageDoc) {
-        const foundProject = projectPageDoc.page_content.find(p =>
-            (p.project_id?.toString() === projectId) || (p._id?.toString() === projectId)
-        );
-        if (foundProject && foundProject.project_id) {
-            actualProjectId = foundProject.project_id.toString();
-        }
+    const collection = mongoose.connection.db.collection("project_details");
+    let pageContent;
+    try {
+        pageContent = JSON.parse(req.body.pageContent);
+    } catch (e) {
+        throw new ValidationError("Invalid JSON content");
     }
-
-    const collection = mongoose.connection.db.collection("OnGoingPage");
-    let pageContent = JSON.parse(req.body.pageContent);
-
-    // console.log(`[Backend] Saving section: ${section} for projectId: ${projectId}`);
-    // console.log(`[Backend] Resolved actualProjectId: ${actualProjectId}`);
-    // console.log(`[Backend] pageContent items: ${pageContent.length}`);
 
     if (req.files?.length > 0) {
-        // console.log(`[Backend] Files received: ${req.files.length}`);
         const fileMap = {};
         req.files.forEach(file => {
             fileMap[file.fieldname] = `${process.env.PROJECT_URL}uploads/projects/${file.filename}`;
@@ -133,29 +102,62 @@ const saveProjectDetails = asyncHandler(async (req, res) => {
         }
     }
 
-    const doc = await collection.findOne({ project_id: new ObjectId(actualProjectId) });
+    const doc = await collection.findOne({ project_id: new ObjectId(projectId) });
     const sectionExists = doc?.sections?.some(s => s.page_section === section);
 
     if (sectionExists) {
         await collection.updateOne(
-            { project_id: new ObjectId(actualProjectId) },
-            { $set: { [`sections.$[elem].page_content`]: pageContent, updatedAt: new Date() } },
+            { project_id: new ObjectId(projectId) },
+            { $set: { [`sections.$[elem].page_content`]: pageContent, updatedAt: dayjs().toDate() } },
             { arrayFilters: [{ "elem.page_section": section }] }
         );
+        res.json({ success: true, message: `Content updated` });
     } else {
         await collection.updateOne(
-            { project_id: new ObjectId(actualProjectId) },
-            { $push: { sections: { page_section: section, page_content: pageContent } }, $set: { project_id: new ObjectId(actualProjectId), page_slug: "OnGoingPage", updatedAt: new Date() } },
+            { project_id: new ObjectId(projectId) },
+            {
+                $push: { sections: { page_section: section, page_content: pageContent } },
+                $set: {
+                    project_id: new ObjectId(projectId),
+                    page_slug: "project_details",
+                    updatedAt: dayjs().toDate()
+                }
+            },
             { upsert: true }
         );
+        res.json({ success: true, message: `Content saved` });
     }
+});
 
-    res.json({ success: true, message: `${section} updated successfully` });
+const getUniqueAmenities = asyncHandler(async (req, res) => {
+    const collection = mongoose.connection.db.collection("project_details");
+
+    const pipeline = [
+        { $unwind: "$sections" },
+        { $match: { "sections.page_section": "amenities-list" } },
+        { $unwind: "$sections.page_content" },
+        { $match: { "sections.page_content.features_Description": { $exists: false } } },
+        {
+            $project: {
+                amenityName: {
+                    $ifNull: ["$sections.page_content.title", { $ifNull: ["$sections.page_content.feature", "$sections.page_content.text"] }]
+                }
+            }
+        },
+        { $match: { amenityName: { $ne: null } } },
+        { $group: { _id: null, uniqueAmenities: { $addToSet: "$amenityName" } } }
+    ];
+
+    const result = await collection.aggregate(pipeline).toArray();
+    const amenities = result[0]?.uniqueAmenities || [];
+
+    res.json({ success: true, amenities: amenities.sort() });
 });
 
 module.exports = {
     renderDetailsPage,
     getProjectsList,
     getDetailsByProject,
-    saveProjectDetails
+    saveProjectDetails,
+    getUniqueAmenities
 };

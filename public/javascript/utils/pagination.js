@@ -6,6 +6,7 @@ export class PaginationManager {
         this.rowsPerPageOptions = options.rowsPerPageOptions || [5, 10];
         this.storageKey = options.storageKey || 'adminRowsPerPage';
         this.rowsPerPage = parseInt(localStorage.getItem(this.storageKey)) || options.rowsPerPage || 5;
+        this.noResultsRow = document.getElementById('noResultsRow');
 
         // Ensure elements exist
         if (!this.tableBody || !this.paginationContainer) {
@@ -13,7 +14,7 @@ export class PaginationManager {
             return;
         }
 
-        this.rows = Array.from(this.tableBody.querySelectorAll('tr'));
+        this.rows = Array.from(this.tableBody.querySelectorAll('tr:not(#noResultsRow):not(.no-results-row)'));
         this._allRows = [...this.rows]; // Cache all rows internally
         this.calculateTotalPages();
 
@@ -46,6 +47,16 @@ export class PaginationManager {
         this.rows = newRows;
         this.currentPage = 1;
         this.calculateTotalPages();
+        
+        // Show/hide no results row
+        if (this.noResultsRow) {
+            if (newRows.length === 0) {
+                this.noResultsRow.style.display = '';
+            } else {
+                this.noResultsRow.style.display = 'none';
+            }
+        }
+        
         this.render();
     }
 

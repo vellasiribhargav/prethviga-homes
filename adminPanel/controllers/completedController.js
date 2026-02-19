@@ -1,203 +1,157 @@
 const mongoose = require('mongoose');
+const dayjs = require('dayjs');
 const { ObjectId } = require("mongodb");
 const { formatDateForDisplay } = require('../../utils/index');
+const { asyncHandler, ValidationError, NotFoundError } = require('../../utils/errorHandler');
 
-const renderCompletedPage = async (req, res) => {
-    try {
-        res.render('admin/completed');
-    } catch (error) {
-        console.error('Error rendering completed page:', error);
-        res.render('admin/completed');
+const renderCompletedPage = asyncHandler(async (req, res) => {
+    res.render('admin/completed');
+});
+
+const getcompletedGallery = asyncHandler(async (req, res) => {
+    const collection = mongoose.connection.db.collection("projects");
+    const data = await collection.find({
+        page_slug: "projects",
+        page_section: "completed-gallery"
+    }).toArray();
+
+    // Ensure each project has proper ID mapping and convert ObjectId to string
+    const projects = data.map((project, index) => ({
+        ...project,
+        id: project._id.toString(),
+        name: project.project_name, // Map for table
+        location: project.project_location, // Map for table
+        timeline: formatDateForDisplay(project.project_date), // Map for table
+        coverImage: project.card_image, // Map for table preview
+        description: project.card_footer_text, // Map for edit form
+        index: index, // Important for edit/delete
+        createdAt: formatDateForDisplay(project.createdAt, true)
+    }));
+
+    res.render('admin/completed_projects', {
+        title: 'Completed Projects',
+        projects,
+        activeLink: 'completed',
+        rowsPerPage: 5,
+        rowsPerPageOptions: [5, 10]
+    });
+});
+
+const addcompletedItem = asyncHandler(async (req, res) => {
+    const completedArr = JSON.parse(req.body.completedArr || '[]');
+
+    if (!completedArr.length) {
+        throw new ValidationError("No projects data provided");
     }
-};
 
-const getcompletedGallery = async (req, res) => {
-    try {
-        const collection = mongoose.connection.db.collection("ProjectPage");
-        const data = await collection.findOne({
-            page_slug: "ProjectPage",
-            page_section: "completed-gallery"
-        });
+    const collection = mongoose.connection.db.collection("projects");
+    const projectsToAdd = [];
 
-        // Ensure each project has proper ID mapping and convert ObjectId to string
-        const projects = data?.page_content?.map((project, index) => ({
-            ...project,
-            id: (project.project_id || project._id)?.toString() || index,
-            name: project.project_name, // Map for table
-            location: project.project_location, // Map for table
-            timeline: formatDateForDisplay(project.project_date), // Map for table
-            coverImage: project.card_image, // Map for table preview
-            description: project.card_footer_text, // Map for edit form
-            index: index // Important for edit/delete
-        })) || [];
-
-        res.render('admin/completed_projects', {
-            title: 'Completed Projects',
-            projects,
-            activeLink: 'completed',
-            rowsPerPage: 5,
-            rowsPerPageOptions: [5, 10]
-        });
-    } catch (error) {
-        console.error('Error fetching details:', error);
-        res.render('admin/completed_projects', {
-            title: 'Completed Projects',
-            projects: [],
-            activeLink: 'completed',
-            error: error.message
-        });
-    }
-};
-
-const addcompletedItem = async (req, res) => {
-    try {
-        const completedArr = JSON.parse(req.body.completedArr || '[]');
-
-        if (!completedArr.length) {
-            return res.status(422).json({ success: false, message: "No projects data provided" });
+    for (let i = 0; i < completedArr.length; i++) {
+        const file = req.files.find(f => f.fieldname === `file_${i}`);
+        if (!file) {
+            throw new ValidationError(`File required for project ${i + 1}`);
         }
 
-        const collection = mongoose.connection.db.collection("ProjectPage");
-        const projectsToAdd = [];
+        projectsToAdd.push({
+            page_slug: "projects",
+            page_section: "completed-gallery",
+            project_name: completedArr[i].project_name,
+            project_location: completedArr[i].project_location,
+            project_date: completedArr[i].completion_date,
+            card_footer_text: completedArr[i].project_summary,
+            card_image: `${process.env.PROJECT_URL}uploads/gallery/${file.filename}`,
+            project_id: new ObjectId(),
+            createdAt: dayjs().toDate(),
+            updatedAt: dayjs().toDate()
+        });
+    }
 
-        for (let i = 0; i < completedArr.length; i++) {
-            const file = req.files.find(f => f.fieldname === `file_${i}`);
-            if (!file) {
-                return res.status(422).json({ success: false, message: `File required for project ${i + 1}` });
+    if (projectsToAdd.length > 0) {
+        await collection.insertMany(projectsToAdd);
+    }
+
+    res.json({
+        success: true,
+        message: "Projects added successfully",
+        projectIds: projectsToAdd.map(p => p.project_id.toString())
+    });
+});
+
+const updatecompletedItem = asyncHandler(async (req, res) => {
+    const id = req.params.id; // Changed index to id
+    const { project_name, project_location, project_date, card_footer_text } = req.body;
+    const file = req.file;
+
+    const collection = mongoose.connection.db.collection("projects");
+
+    const updateFields = {
+        project_name,
+        project_location,
+        project_date,
+        card_footer_text
+    };
+
+    if (file) {
+        updateFields.card_image = `${process.env.PROJECT_URL}uploads/gallery/${file.filename}`;
+    }
+
+    const query = ObjectId.isValid(id)
+        ? { $or: [{ _id: new ObjectId(id) }, { project_id: new ObjectId(id) }] }
+        : { project_id: id };
+
+    const result = await collection.updateOne(
+        query,
+        {
+            $set: {
+                ...updateFields,
+                updatedAt: new Date()
             }
-
-            projectsToAdd.push({
-                project_name: completedArr[i].project_name,
-                project_location: completedArr[i].project_location,
-                project_date: completedArr[i].completion_date,
-                card_footer_text: completedArr[i].project_summary,
-                card_image: `${process.env.PROJECT_URL}uploads/gallery/${file.filename}`, // Use relative path consistency
-                project_id: new ObjectId(),
-                createdAt: new Date()
-            });
         }
-        const pageSlug = "ProjectPage";
-        const pageSection = "completed-gallery";
+    );
 
-        // checking page & section
-        const page = await collection.findOne({ page_slug: pageSlug, page_section: pageSection });
-
-        if (!page) {
-            await collection.insertOne({
-                page_slug: pageSlug,
-                page_section: pageSection,
-                page_content: projectsToAdd
-            });
-
-            return res.json({
-                success: true,
-                message: "New page and new section created with project",
-                projectIds: projectsToAdd.map(p => p.project_id.toString())
-            });
-        } else {
-            await collection.updateOne(
-                { page_slug: pageSlug, page_section: pageSection },
-                {
-                    $push: {
-                        page_content: { $each: projectsToAdd }
-                    }
-                }
-            );
-
-            return res.json({
-                success: true,
-                message: "New section created in existing page and project added",
-                projectIds: projectsToAdd.map(p => p.project_id.toString())
-            });
-        }
-
-    } catch (error) {
-        console.error("Error adding project:", error);
-        return res.status(500).json({ success: false, message: "Server error", error: error.message });
+    if (result.matchedCount === 0) {
+        throw new NotFoundError('Project not found');
     }
-};
 
-const updatecompletedItem = async (req, res) => {
-    try {
-        const index = parseInt(req.params.index);
-        const { project_name, project_location, project_date, card_footer_text } = req.body;
-        const file = req.file;
+    return res.json({ success: true, message: "Project updated successfully" });
+});
 
-        const collection = mongoose.connection.db.collection("ProjectPage");
+const deletecompletedItem = asyncHandler(async (req, res) => {
+    const id = req.params.id; // Changed index to id
+    const collection = mongoose.connection.db.collection("projects");
 
-        const updateFields = {
-            [`page_content.${index}.project_name`]: project_name,
-            [`page_content.${index}.project_location`]: project_location,
-            [`page_content.${index}.project_date`]: project_date,
-            [`page_content.${index}.card_footer_text`]: card_footer_text
-        };
+    const query = ObjectId.isValid(id)
+        ? { $or: [{ _id: new ObjectId(id) }, { project_id: new ObjectId(id) }] }
+        : { project_id: id };
 
-        if (file) {
-            updateFields[`page_content.${index}.card_image`] = `${process.env.PROJECT_URL}uploads/gallery/${file.filename}`;
-        }
+    const result = await collection.deleteOne(query);
 
-        await collection.updateOne(
-            { page_slug: "ProjectPage", page_section: "completed-gallery" },
-            { $set: updateFields }
-        );
-
-        return res.json({ success: true, message: "Project updated successfully" });
-    } catch (error) {
-        console.error("Error updating project:", error);
-        return res.status(500).json({ success: false, message: "Server error" });
+    if (result.deletedCount === 0) {
+        throw new NotFoundError('Project not found');
     }
-};
 
-const deletecompletedItem = async (req, res) => {
-    try {
-        const index = parseInt(req.params.index);
-        const collection = mongoose.connection.db.collection("ProjectPage");
+    return res.json({ success: true, message: "Project deleted successfully" });
+});
 
-        const page = await collection.findOne({ page_slug: "ProjectPage", page_section: "completed-gallery" });
-        if (!page || !page.page_content) return res.status(404).json({ success: false, message: "Page not found" });
+const getCompletedProjectsJSON = asyncHandler(async (req, res) => {
+    const collection = mongoose.connection.db.collection("projects");
+    const data = await collection.find({
+        page_slug: "projects",
+        page_section: "completed-gallery"
+    }).toArray();
 
-        const newContent = [...page.page_content];
-        if (index < 0 || index >= newContent.length) {
-            return res.status(404).json({ success: false, message: "Item not found" });
-        }
+    const projects = data.map((project, index) => ({
+        ...project,
+        id: (project.project_id || project._id).toString(),
+        project_id: (project.project_id || project._id).toString(),
+        project_name: project.project_name,
+        project_location: project.project_location,
+        isSeeded: !!project.isSeeded
+    }));
 
-        newContent.splice(index, 1);
-
-        await collection.updateOne(
-            { page_slug: "ProjectPage", page_section: "completed-gallery" },
-            { $set: { page_content: newContent } }
-        );
-
-        return res.json({ success: true, message: "Project deleted successfully" });
-    } catch (error) {
-        console.error("Error deleting project:", error);
-        return res.status(500).json({ success: false, message: "Server error" });
-    }
-};
-
-const getCompletedProjectsJSON = async (req, res) => {
-    try {
-        const collection = mongoose.connection.db.collection("ProjectPage");
-        const data = await collection.findOne({
-            page_slug: "ProjectPage",
-            page_section: "completed-gallery"
-        });
-
-        const projects = data?.page_content?.map((project, index) => ({
-            ...project,
-            id: (project.project_id || project._id)?.toString() || index,
-            project_id: (project.project_id || project._id)?.toString(),
-            project_name: project.project_name,
-            project_location: project.project_location,
-            isSeeded: !!project.isSeeded
-        })) || [];
-
-        res.json({ success: true, data: projects });
-    } catch (error) {
-        console.error('Error fetching completed projects JSON:', error);
-        res.status(500).json({ success: false, message: error.message });
-    }
-};
+    res.json({ success: true, data: projects });
+});
 
 module.exports = {
     renderCompletedPage,

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const dayjs = require('dayjs');
 const { ObjectId } = require("mongodb");
 const { formatDateForDisplay } = require('../../utils/index');
 const { asyncHandler, ValidationError, NotFoundError, DatabaseError } = require('../../utils/errorHandler');
@@ -8,23 +9,24 @@ const renderUpcomingPage = asyncHandler(async (req, res) => {
 });
 
 const getupcomingGallery = asyncHandler(async (req, res) => {
-    const collection = mongoose.connection.db.collection("ProjectPage");
-    const data = await collection.findOne({
-        page_slug: "ProjectPage",
+    const collection = mongoose.connection.db.collection("projects");
+    const data = await collection.find({
+        page_slug: "projects",
         page_section: "ongoing-gallery"
-    });
+    }).toArray();
 
     // Ensure each project has proper ID mapping and convert ObjectId to string
-    const projects = data?.page_content?.map((project, index) => ({
+    const projects = data.map((project, index) => ({
         ...project,
-        id: (project.project_id || project._id)?.toString() || index,
+        id: project._id.toString(),
         name: project.project_name, // Map for table
         location: project.project_location, // Map for table
         timeline: formatDateForDisplay(project.project_date), // Map for table
         coverImage: project.card_image, // Map for table preview
         description: project.card_footer_text, // Map for edit form
-        index: index // Important for edit/delete
-    })) || [];
+        index: index, // Keeping index for potential UI needs, but not for ID
+        createdAt: formatDateForDisplay(project.createdAt, true)
+    }));
 
     res.render('admin/upcoming_projects', {
         title: 'Upcoming Projects',
@@ -42,7 +44,7 @@ const addupcomingItem = asyncHandler(async (req, res) => {
         throw new ValidationError("No projects data provided");
     }
 
-    const collection = mongoose.connection.db.collection("ProjectPage");
+    const collection = mongoose.connection.db.collection("projects");
     const projectsToAdd = [];
 
     for (let i = 0; i < upcomingArr.length; i++) {
@@ -52,63 +54,57 @@ const addupcomingItem = asyncHandler(async (req, res) => {
         }
 
         projectsToAdd.push({
+            page_slug: "projects",
+            page_section: "ongoing-gallery",
             project_name: upcomingArr[i].project_name,
             project_location: upcomingArr[i].project_location,
             project_date: upcomingArr[i].project_date,
             card_footer_text: upcomingArr[i].card_footer_text,
             card_image: `${process.env.PROJECT_URL}uploads/gallery/${file.filename}`,
             project_id: new ObjectId(),
-            createdAt: new Date()
+            createdAt: dayjs().toDate(),
+            updatedAt: dayjs().toDate()
         });
     }
 
-    const pageSlug = "ProjectPage";
-    const pageSection = "ongoing-gallery";
-
-    const page = await collection.findOne({ page_slug: pageSlug, page_section: pageSection });
-
-    if (!page) {
-        await collection.insertOne({
-            page_slug: pageSlug,
-            page_section: pageSection,
-            page_content: projectsToAdd
-        });
-    } else {
-        await collection.updateOne(
-            { page_slug: pageSlug, page_section: pageSection },
-            {
-                $push: {
-                    page_content: { $each: projectsToAdd }
-                }
-            }
-        );
+    if (projectsToAdd.length > 0) {
+        await collection.insertMany(projectsToAdd);
     }
 
     res.json({ success: true, message: "Projects added successfully", projectIds: projectsToAdd.map(p => p.project_id.toString()) });
 });
 
 const updateupcomingItem = asyncHandler(async (req, res) => {
-    const { index } = req.params;
+    const { id } = req.params; // Changed index to id
 
-    const collection = mongoose.connection.db.collection("ProjectPage");
+    const collection = mongoose.connection.db.collection("projects");
 
     // Construct update object dynamically to avoid overwriting image if not provided
     const updateFields = {};
-    if (req.body.project_name) updateFields[`page_content.${index}.project_name`] = req.body.project_name;
-    if (req.body.project_location) updateFields[`page_content.${index}.project_location`] = req.body.project_location;
-    if (req.body.project_date) updateFields[`page_content.${index}.project_date`] = req.body.project_date;
-    if (req.body.card_footer_text) updateFields[`page_content.${index}.card_footer_text`] = req.body.card_footer_text;
+    if (req.body.project_name) updateFields.project_name = req.body.project_name;
+    if (req.body.project_location) updateFields.project_location = req.body.project_location;
+    if (req.body.project_date) updateFields.project_date = req.body.project_date;
+    if (req.body.card_footer_text) updateFields.card_footer_text = req.body.card_footer_text;
 
     if (req.file) {
-        updateFields[`page_content.${index}.card_image`] = `${process.env.PROJECT_URL}uploads/gallery/${req.file.filename}`;
+        updateFields.card_image = `${process.env.PROJECT_URL}uploads/gallery/${req.file.filename}`;
     }
 
+    const query = ObjectId.isValid(id)
+        ? { $or: [{ _id: new ObjectId(id) }, { project_id: new ObjectId(id) }] }
+        : { project_id: id };
+
     const result = await collection.updateOne(
-        { page_slug: "ProjectPage", page_section: "ongoing-gallery" },
-        { $set: updateFields }
+        query,
+        {
+            $set: {
+                ...updateFields,
+                updatedAt: new Date()
+            }
+        }
     );
 
-    if (result.modifiedCount === 0) {
+    if (result.matchedCount === 0) {
         throw new NotFoundError('No changes made or project not found');
     }
 
@@ -116,45 +112,38 @@ const updateupcomingItem = asyncHandler(async (req, res) => {
 });
 
 const deleteupcomingItem = asyncHandler(async (req, res) => {
-    const { index } = req.params;
-    const idx = parseInt(index);
+    const { id } = req.params; // Changed index to id
 
-    const collection = mongoose.connection.db.collection("ProjectPage");
+    const collection = mongoose.connection.db.collection("projects");
 
-    const data = await collection.findOne({
-        page_slug: "ProjectPage",
-        page_section: "ongoing-gallery"
-    });
+    const query = ObjectId.isValid(id)
+        ? { $or: [{ _id: new ObjectId(id) }, { project_id: new ObjectId(id) }] }
+        : { project_id: id };
 
-    if (!data?.page_content || !data.page_content[idx]) {
+    const result = await collection.deleteOne(query);
+
+    if (result.deletedCount === 0) {
         throw new NotFoundError('Project not found');
     }
-
-    data.page_content.splice(idx, 1);
-
-    await collection.updateOne(
-        { page_slug: "ProjectPage", page_section: "ongoing-gallery" },
-        { $set: { page_content: data.page_content } }
-    );
 
     res.json({ success: true, message: 'Project deleted successfully!' });
 });
 
 const getUpcomingProjectsJSON = asyncHandler(async (req, res) => {
-    const collection = mongoose.connection.db.collection("ProjectPage");
-    const data = await collection.findOne({
-        page_slug: "ProjectPage",
+    const collection = mongoose.connection.db.collection("projects");
+    const data = await collection.find({
+        page_slug: "projects",
         page_section: "ongoing-gallery"
-    });
+    }).toArray();
 
-    const projects = data?.page_content?.map((project, index) => ({
+    const projects = data.map((project, index) => ({
         ...project,
-        id: (project.project_id || project._id)?.toString() || index,
-        project_id: (project.project_id || project._id)?.toString(),
+        id: project._id.toString(),
+        project_id: (project.project_id || project._id).toString(),
         project_name: project.project_name,
         project_location: project.project_location,
         isSeeded: !!project.isSeeded
-    })) || [];
+    }));
 
     res.json({ success: true, data: projects });
 });

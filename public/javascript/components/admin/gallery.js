@@ -1,6 +1,5 @@
-import $ from 'jquery';
-window.$ = window.jQuery = $;
 import Swal from 'sweetalert2';
+import { showFieldError, hideFieldError } from '../../utils/validation.js';
 
 document.addEventListener('DOMContentLoaded', function () {
     const addMoreBtn = document.querySelector('.add-more-btn');
@@ -11,22 +10,32 @@ document.addEventListener('DOMContentLoaded', function () {
     const selectProjectSelect = document.getElementById('selectProject');
 
     let formsCache = [];
-    // Character limit message handler
+    // Character limit message handler for all textareas
     document.addEventListener('input', (e) => {
-        if (e.target.classList.contains('form-textarea') && e.target.maxLength === 200) {
-            const msg = e.target.parentNode.querySelector('.char-limit-msg');
-            if (msg) {
-                if (e.target.value.length >= 200) {
-                    msg.style.display = 'block';
-                    msg.textContent = '* Characters are more than 200';
+        if (e.target.tagName === 'TEXTAREA' || e.target.classList.contains('form-textarea')) {
+            const textarea = e.target;
+            const container = textarea.closest('.form-group') || textarea.parentNode;
+            let charLimitMsg = container.querySelector('.char-limit-msg');
+            const limit = textarea.maxLength || 200;
+
+            if (charLimitMsg) {
+                if (textarea.value.length >= limit) {
+                    charLimitMsg.style.display = 'block';
+                    charLimitMsg.textContent = `* Characters are more than ${limit}`;
                 } else {
-                    msg.style.display = 'none';
+                    charLimitMsg.style.display = 'none';
                 }
             }
         }
     });
 
     let formCount = 0;
+    const VALIDATION_CONF = [
+        { selector: '#projectType, [id^="projectType"]', name: 'projectType', message: '* Project type is required' },
+        { selector: '#selectProject, [id^="selectProject"]', name: 'selectProject', message: '* Project selection is required' },
+        { selector: 'input[placeholder*="Plaza Images Collection"]', name: 'title', message: '* Gallery name is required' },
+        { selector: 'textarea.form-textarea', name: 'text', message: '* Image description is required' }
+    ];
 
     // Initialize
     updateFormsCache();
@@ -34,49 +43,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Add required field validation
     function addRequiredFieldValidation(form) {
-        const conf = [
-            { selector: '#projectType, [id^="projectType"]', name: 'projectType', message: '* Project type is required' },
-            { selector: '#selectProject, [id^="selectProject"]', name: 'selectProject', message: '* Project selection is required' },
-            { selector: 'input[placeholder*="Plaza Images Collection"]', name: 'title', message: '* Gallery name is required' },
-            { selector: 'textarea.form-textarea', name: 'text', message: '* Image description is required' }
-        ];
-
-        conf.forEach(({ selector, name, message }) => {
+        VALIDATION_CONF.forEach(({ selector, name, message }) => {
             const input = form.querySelector(selector);
             if (!input) return;
 
-            // Remove existing if any
-            const existingMsg = input.parentNode.querySelector(`.required-message[data-for="${name}"]`);
-            if (existingMsg) existingMsg.remove();
-
-            const msg = document.createElement('div');
-            msg.className = 'required-message';
-            msg.dataset.for = name;
-            msg.textContent = message;
-            msg.style.cssText = 'font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic';
-
-            input.after(msg);
-
-            input.addEventListener('input', () => {
-                msg.style.display = 'none';
-            });
-            input.addEventListener('change', () => {
-                msg.style.display = 'none';
-            });
+            input.addEventListener('input', () => hideFieldError(input));
+            input.addEventListener('change', () => hideFieldError(input));
         });
 
-        // Image validation message
+        // Image validation listener
         const uploadBtn = form.querySelector('.upload-btn');
         if (uploadBtn) {
-            // Remove existing if any
-            const existingMsg = uploadBtn.parentNode.querySelector('.required-message-file');
-            if (existingMsg) existingMsg.remove();
-
-            const msg = document.createElement('div');
-            msg.className = 'required-message-file';
-            msg.textContent = '* image is required';
-            msg.style.cssText = 'font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic';
-            uploadBtn.parentNode.appendChild(msg);
+            const fileInput = form.querySelector('.image-upload');
+            if (fileInput) {
+                fileInput.addEventListener('change', () => hideFieldError(uploadBtn));
+            }
         }
     }
 
@@ -89,36 +70,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function validateForm(form) {
         let isValid = true;
-        const conf = [
-            { selector: '#projectType, [id^="projectType"]', name: 'projectType' },
-            { selector: '#selectProject, [id^="selectProject"]', name: 'selectProject' },
-            { selector: 'input[placeholder*="Plaza Images Collection"]', name: 'title' },
-            { selector: 'textarea.form-textarea', name: 'text' }
-        ];
-
-        conf.forEach(({ selector, name }) => {
+        VALIDATION_CONF.forEach(({ selector, name, message }) => {
             const input = form.querySelector(selector);
             if (!input) return;
 
-            const msg = input.parentNode.querySelector(`.required-message[data-for="${name}"]`);
             if (input.value.trim() === '' || input.value === '-1') {
-                if (msg) msg.style.display = 'block';
+                showFieldError(input, message);
                 isValid = false;
             } else {
-                if (msg) msg.style.display = 'none';
+                hideFieldError(input);
             }
         });
 
         // Image validation
         const uploadBtn = form.querySelector('.upload-btn');
-        const fileMsg = uploadBtn.parentNode.querySelector('.required-message-file');
         const hasImage = uploadBtn.classList.contains('has-image');
 
         if (!hasImage) {
-            if (fileMsg) fileMsg.style.display = 'block';
+            showFieldError(uploadBtn, '* Image is required');
             isValid = false;
         } else {
-            if (fileMsg) fileMsg.style.display = 'none';
+            hideFieldError(uploadBtn);
         }
 
         return isValid;
@@ -725,7 +697,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     await Swal.fire({
                         icon: 'success',
                         title: 'Success!',
-                        text: `${finalGalleryArr.length} gallery item(s) saved successfully!`,
+                        text: 'content saved',
                         confirmButtonColor: '#BC5322'
                     }).then(() => {
                         window.location.href = '/admin/gallery/list';

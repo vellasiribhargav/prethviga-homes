@@ -9,7 +9,7 @@ router.get('/', upcomingController.renderUpcomingPage);
 router.get('/list', upcomingController.getupcomingGallery);
 router.get('/getupcoming', upcomingController.getUpcomingProjectsJSON);
 router.post('/addupcoming', upload.any(), upcomingController.addupcomingItem);
-router.put('/updateupcoming/:index', upload.single('file'), upcomingController.updateupcomingItem);
-router.delete('/deleteupcoming/:index', upcomingController.deleteupcomingItem);
+router.put('/update/:id', upload.single('file'), upcomingController.updateupcomingItem);
+router.delete('/delete/:id', upcomingController.deleteupcomingItem);
 
 module.exports = router;

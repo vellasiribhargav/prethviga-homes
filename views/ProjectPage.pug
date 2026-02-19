@@ -13,9 +13,9 @@ div
   - var bannerStyles = bannerImages.map((img, i) => `--banner-image-${i + 1}: url('${img}')`).join('; ')
   .hero-container(style=bannerStyles)
     .details-wrapper
-      span.details-wrapper__header= bannerText.Heading || 'OUR PROJECTS'
+      span.details-wrapper__header= bannerText.Heading
       p.details-wrapper__paragraph
-        | #{bannerText.description || 'Explore our portfolio of exceptional construction projects, from completed masterpieces to exciting works in progress'}
+        | #{bannerText.description}
       span.details-wrapper__info
         .heroContact
           .heroIcon
@@ -26,7 +26,7 @@ div
             .heroCall
               h1.callText Call us now
             .heroNumber
-              h1.numberText= bannerText.number || '+1 (555) 123-4567'
+              h1.numberText= bannerText.number
 
   if (completed && completed.length > 0) || (ongoing && ongoing.length > 0)
     .project-body-wrapper

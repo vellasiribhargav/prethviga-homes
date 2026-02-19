@@ -41,13 +41,22 @@ html(lang='en')
               path(d='M6 12H18M12 6V18' stroke='#ffffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
             |  Add New Blog
 
-        // Section Selector Row
-        .search-filter-row
+        .filter-group
           select#blog-slug-selector.filter-select
             option(value="home" selected=slug === 'home') Home
             option(value="project" selected=slug === 'project') Project
             option(value="ongoing" selected=slug === 'ongoing') Ongoing
             option(value="discoverUs" selected=slug === 'discoverUs') Discover Us
+          
+        .search-filter-row
+          .search-container
+            svg.search-icon(xmlns='http://www.w3.org/2000/svg' height='20' viewBox='0 -960 960 960' width='20' fill='currentColor')
+              path(d='M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z')
+            input#searchInput.search-input(type='text' placeholder='Search by blog title...')
+
+          .filter-group
+            label.filter-label Date:
+            input#dateFilter.filter-select(type='date')
 
         .table-card
           .table-wrapper
@@ -59,14 +68,14 @@ html(lang='en')
                   th BLOG TITLE
                   th DESCRIPTION
                   th DETAILS
-                  th DATE
                   th TIME TO READ
                   th PREVIEW
+                  th CREATED DATE
                   th ACTIONS
               tbody
                 if blogs && blogs.length > 0
                    each b, idx in blogs
-                     tr(data-id=b.id data-index=b.index) 
+                     tr(data-id=b.id data-index=b.id) 
                        td #{String(idx + 1).padStart(2, '0')}
                        td
                          span.status-badge.badge-upcoming #{b.tag}
@@ -86,19 +95,21 @@ html(lang='en')
                              span Preview
                          else
                            span No Image
-                       td
+                       td(title=b.formattedDate) #{utils.formatDateShort(b.createdAt)}
                          .action-buttons
-                           button.icon-action-btn.edit-btn(title="Edit" data-index=b.index data-blog=JSON.stringify(b))
+                           button.icon-action-btn.edit-btn(title="Edit" data-id=b.id data-index=b.id data-blog=JSON.stringify(b))
                              span.edit  
                                svg(width='17' height='17' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='currentColor')
                                  path(d='M3 17.25V21H6.75L17.81 9.94L14.06 6.19L3 17.25ZM20.71 7.04C21.1 6.65 21.1 6.02 20.71 5.63L18.37 3.29C17.98 2.9 17.35 2.9 16.96 3.29L15.13 5.12L18.88 8.87L20.71 7.04Z')
-                           button.icon-action-btn.delete-btn.delete(title="Delete" data-index=b.index)
+                           button.icon-action-btn.delete-btn.delete(title="Delete" data-id=b.id data-index=b.id)
                              span.delete
                                svg(width='17' height='17' viewbox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='currentColor')
                                  path(d='M8 3H16C16.55 3 17 3.45 17 4V5H19C19.55 5 20 5.45 20 6C20 6.55 19.55 7 19 7H5C4.45 7 4 6.55 4 6C4 5.45 4.45 5 5 5H7V4C7 3.45 7.45 3 8 3ZM6 9V19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V9H6ZM9 11C9.55 11 10 11.45 10 12V18C10 18.55 9.55 19 9 19C8.45 19 8 18.55 8 18V12C8 11.45 8.45 11 9 11ZM12 11C12.55 11 13 11.45 13 12V18C13 18.55 12.55 19 12 19C11.45 19 11 18.55 11 18V12C11 11.45 11.45 11 12 11ZM15 11C15.55 11 16 11.45 16 12V18C16 18.55 15.55 19 15 19C14.45 19 14 18.55 14 18V12C14 11.45 14.45 11 15 11Z')
-                else
+                tr#noResultsRow.no-results-row(style="display:none;")
+                  td.no-data-cell(colspan="10") No blogs found.
+                if !(blogs && blogs.length > 0)
                    tr
-                     td(colspan="10" style="text-align:center; padding: 2rem;") No blogs found.
+                     td.no-data-cell(colspan="10") No blogs found.
           
           // Table Footer / Pagination
           .table-footer
@@ -154,12 +165,12 @@ html(lang='en')
                   .form-group.full-width
                     label Blog Description
                     textarea.form-textarea(name="description", rows="3" maxlength="500")
-                    .char-limit-msg(style="font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic") * Characters are more than 500
+                    .char-limit-msg * Characters are more than 500
 
                   .form-group.full-width
                     label Blog Content
                     .content
-                      .quill-editor#edit-quill-editor(style="height: 300px;")
+                      .quill-editor#edit-quill-editor.editor-height
                         p
                       input#edit-content-input(type='hidden' name='content')
 
@@ -167,11 +178,11 @@ html(lang='en')
                     label Blog Image
                     .file-input-wrapper
                       input(type="file", name="file", accept="image/*")
-                      button(type="button" style="display:none").view-current-image-btn
+                      button.view-current-image-btn(type="button")
                         svg(xmlns='http://www.w3.org/2000/svg' viewbox='0 0 35 28' width='20' height='20' fill='#b57b2a')
                           path(d='M0 26.016q0 2.496 1.76 4.224t4.256 1.76h20q2.464 0 4.224-1.76t1.76-4.224v-20q0-2.496-1.76-4.256t-4.224-1.76h-20q-2.496 0-4.256 1.76t-1.76 4.256v20zM4 26.016v-20q0-0.832 0.576-1.408t1.44-0.608h20q0.8 0 1.408 0.608t0.576 1.408v20q0 0.832-0.576 1.408t-1.408 0.576h-20q-0.832 0-1.44-0.576t-0.576-1.408zM6.016 24q0 0.832 0.576 1.44t1.408 0.576h16q0.832 0 1.408-0.576t0.608-1.44v-0.928q-0.224-0.448-1.12-2.688t-1.6-3.584-1.28-2.112q-0.544-0.576-1.12-0.608t-1.152 0.384-1.152 1.12-1.184 1.568-1.152 1.696-1.152 1.6-1.088 1.184-1.088 0.448q-0.576 0-1.664-1.44-0.16-0.192-0.48-0.608-1.12-1.504-1.6-1.824-0.768-0.512-1.184 0.352-0.224 0.512-0.928 2.24t-1.056 2.56v0.64zM6.016 9.024q0 1.248 0.864 2.112t2.112 0.864 2.144-0.864 0.864-2.112-0.864-2.144-2.144-0.864-2.112 0.864-0.864 2.144z')
                         |  View Current Image
-                      button(type="button" style="display:none" title="Remove Image").remove-current-image-btn
+                      button.remove-current-image-btn(type="button" title="Remove Image")
                         svg(xmlns='http://www.w3.org/2000/svg' viewBox='0 0 25 25' width='20' height='20' fill='#e74c3c')
                           path(fill-rule='evenodd' d='M14,2 C14.2652165,2 14.5195704,2.10535684 14.7071068,2.29289322 L19.7071068,7.29289322 C19.8946432,7.4804296 20,7.73478351 20,8 L20,9 C20,9.55228475 19.5522847,10 19,10 L13,10 C12.4871642,10 12.0644928,9.61395981 12.0067277,9.11662113 L12,9 L11.999,4 L7,4 C6.44771525,4 6,4.44771525 6,5 L6,19 C6,19.5522847 6.44771525,20 7,20 L9,20 C9.55228475,20 10,20.4477153 10,21 C10,21.5522847 9.55228475,22 9,22 L7,22 C5.34314575,22 4,20.6568542 4,19 L4,5 C4,3.34314575 5.34314575,2 7,2 L14,2 Z M15.7071068,14.2928932 L18,16.585 L20.2928932,14.2928932 C20.6533772,13.9324093 21.2206082,13.9046797 21.6128994,14.2097046 L21.7071068,14.2928932 C22.0675907,14.6533772 22.0953203,15.2206082 21.7902954,15.6128994 L21.7071068,15.7071068 L19.415,18 L21.7071068,20.2928932 C22.0976311,20.6834175 22.0976311,21.3165825 21.7071068,21.7071068 C21.3165825,22.0976311 20.6834175,22.0976311 20.2928932,21.7071068 L18,19.415 L15.7071068,21.7071068 C15.3466228,22.0675907 14.7793918,22.0953203 14.3871006,21.7902954 L14.2928932,21.7071068 C13.9324093,21.3466228 13.9046797,20.7793918 14.2097046,20.3871006 L14.2928932,20.2928932 L16.585,18 L14.2928932,15.7071068 C13.9023689,15.3165825 13.9023689,14.6834175 14.2928932,14.2928932 C14.6834175,13.9023689 15.3165825,13.9023689 15.7071068,14.2928932 Z M13.999,4.414 L14,8 L17.586,8 L13.999,4.414 Z')
                 .modal-footer

@@ -7,6 +7,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 module.exports = env => {
 	return {
 		mode: env && env.build === 'true' ? "production" : "development",
+		devtool: 'source-map',
 		entry: {
 			// client entries
 			home: "./public/javascript/home.js",
@@ -31,8 +32,10 @@ module.exports = env => {
 			projectDetailsList: './public/javascript/admin/projectDetailsList.js',
 			faq: './public/javascript/admin/faq.js',
 			faq_list: './public/javascript/admin/faq_list.js',
-			// reviews: './public/javascript/admin/reviews.js',
-			// reviews_list: './public/javascript/admin/reviews_list.js',
+			reviews: './public/javascript/admin/reviews.js',
+			reviews_list: './public/javascript/admin/reviews_list.js',
+			projectsList: './public/javascript/admin/projectsList.js',
+			projects: './public/javascript/admin/projects.js',
 			login: './public/javascript/admin/login.js'
 		},
 		output: {

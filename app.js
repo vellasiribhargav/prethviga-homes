@@ -4,6 +4,8 @@ const path = require("path");
 // const flash = require("connect-flash");
 const cookieParser = require("cookie-parser");
 const dotenv = require("dotenv");
+dotenv.config();
+
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const createError = require("http-errors");
@@ -14,8 +16,8 @@ const homeRoutes = require("./routes/homeRoutes");
 const projectsRoutes = require("./routes/projectsRoutes");
 const onGoingPageRoutes = require("./routes/onGoingPageRoutes");
 const discoverUsRoutes = require("./routes/discoverUsRoutes");
-const upcomingRoutes = require('./adminPanel/routes/upcomingRoutes');
 
+const upcomingRoutes = require('./adminPanel/routes/upcomingRoutes');
 const completedRoutes = require('./adminPanel/routes/completedRoutes');
 const galleryRoutes = require('./adminPanel/routes/galleryRoutes');
 const blogRoutes = require('./adminPanel/routes/blogRoutes');
@@ -23,7 +25,9 @@ const faqRoutes = require('./adminPanel/routes/faqRoutes');
 const bannerRoutes = require('./adminPanel/routes/bannerRoutes');
 const contactsRoutes = require('./adminPanel/routes/contactsRoutes');
 const projectDetailsRoutes = require('./adminPanel/routes/projectDetailsRoutes');
-// const reviewRoutes = require('./adminPanel/routes/reviewRoutes');
+const discoverDetailsRoutes = require('./adminPanel/routes/discoverDetailsRoutes');
+const projectsListRoutes = require('./adminPanel/routes/projectsRoutes');
+const reviewRoutes = require('./adminPanel/routes/reviewRoutes');
 const adminAuthRoutes = require('./adminPanel/routes/authRoutes');
 const { protectAdmin } = require('./middleware/authMiddleware');
 
@@ -41,10 +45,6 @@ const { initRedis } = require('./config/redis.js');
 // const assetsForSaleRoutes = require("./routes/assetSalefileRoutes");
 // const fileRoutes = require("./routes/fileRoutes");
 var hsts = require("hsts");
-
-
-// Initialize dotenv for environment variables
-dotenv.config();
 
 // MongoDB connection
 mongoose.connect(config.mongodb.uri)
@@ -90,7 +90,7 @@ app.use((req, res, next) => {
 });
 
 app.get('/admin', (req, res) => {
-  res.redirect('/admin/list');
+  res.redirect('/admin/banner/home/list');
 });
 
 // Routes-way
@@ -137,7 +137,9 @@ app.use('/admin/faq', protectAdmin, faqRoutes);
 app.use('/admin/banner', protectAdmin, bannerRoutes);
 app.use('/admin/contacts', protectAdmin, contactsRoutes);
 app.use('/admin/projectDetails', protectAdmin, projectDetailsRoutes);
-// app.use('/admin/reviews', protectAdmin, reviewRoutes);
+app.use('/admin/discoverDetails', protectAdmin, discoverDetailsRoutes);
+app.use('/admin/reviews', protectAdmin, reviewRoutes);
+app.use('/admin/projects', protectAdmin, projectsListRoutes);
 app.use('/admin/upcoming_projects', protectAdmin, upcomingRoutes);
 
 app.use((req, res, next) => {

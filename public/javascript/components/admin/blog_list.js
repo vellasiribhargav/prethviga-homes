@@ -1,3 +1,6 @@
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
 import $ from 'jquery';
 window.$ = window.jQuery = $;
 import Swal from 'sweetalert2';
@@ -6,18 +9,19 @@ import { isValidDate, getDateRange } from '../../utils/validation.js';
 
 let originalFormData = {};
 
-function formatToDB(dateStr) {
-    if (!dateStr) return '';
-    const [year, month, day] = dateStr.split('-');
-    return `${day}-${month}-${year}`;
+function formatForDisplay(dbDateStr) {
+    if (!dbDateStr) return 'No date';
+    return dayjs(dbDateStr).format('MMMM D, YYYY');
 }
 
-function parseFromDB(dbDateStr) {
-    if (!dbDateStr) return '';
-    const parts = dbDateStr.split('-');
-    if (parts.length !== 3) return dbDateStr; // Return as is if not expected format
-    const [day, month, year] = parts;
-    return `${year}-${month}-${day}`;
+// Function to convert YYYY-MM-DD to DB format
+function formatToDB(dateStr) {
+    return dateStr;
+}
+
+// Function to parse date from DB for input[type="date"]
+function parseFromDB(dateStr) {
+    return dateStr;
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -26,15 +30,62 @@ document.addEventListener('DOMContentLoaded', function () {
     const itemForm = document.getElementById('itemForm');
     const previewImage = document.getElementById('previewImage');
     const closeModalBtns = document.querySelectorAll('.close-modal');
+    const searchInput = document.getElementById('searchInput');
+    const dateFilter = document.getElementById('dateFilter');
 
     // Initialize Pagination
-    new PaginationManager({
+    const pagination = new PaginationManager({
         tableBodySelector: '.data-table tbody',
         paginationContainerSelector: '.pagination',
         footerInfoSelector: '.footer-info span',
         rowsPerPage: 5,
         storageKey: 'rowsPerPage_blog'
     });
+
+    // Filter Logic
+    function applyFilters() {
+        const searchValue = searchInput ? searchInput.value.toLowerCase().trim() : '';
+        const dateValue = dateFilter ? dateFilter.value : '';
+
+        const allRows = pagination.allRows;
+
+        const filteredRows = allRows.filter(row => {
+            // Search check (by blog title and tag)
+            const blogTitle = row.querySelector('.item-name-cell') ? row.querySelector('.item-name-cell').textContent.toLowerCase() : '';
+            const blogTag = row.cells[1] ? row.cells[1].textContent.toLowerCase() : '';
+
+            const searchMatch = !searchValue ||
+                blogTitle.includes(searchValue) ||
+                blogTag.includes(searchValue);
+            if (!searchMatch) return false;
+
+            // Date check (by Creation Date)
+            // Column indices: S.NO(0), TAG(1), BLOG TITLE(2), DESCRIPTION(3), DETAILS(4), TIME(5), PREVIEW(6), CREATED DATE(7)
+            const createdAtCell = row.cells[7];
+            const createdAtValue = createdAtCell ? createdAtCell.textContent.trim() : '';
+
+            let dateMatch = true;
+            if (dateValue && createdAtValue) {
+                const rowDate = dayjs(createdAtValue, 'DD ddd MMM YYYY HH:mm');
+                const filterDate = dayjs(dateValue);
+                dateMatch = rowDate.isValid() && rowDate.isSame(filterDate, 'day');
+            }
+
+            return dateMatch;
+        });
+
+        // Update S.NO
+        filteredRows.forEach((row, idx) => {
+            if (row.cells && row.cells.length > 0) {
+                row.cells[0].textContent = String(idx + 1).padStart(2, '0');
+            }
+        });
+
+        pagination.refreshRows(filteredRows);
+    }
+
+    if (searchInput) searchInput.addEventListener('input', applyFilters);
+    if (dateFilter) dateFilter.addEventListener('change', applyFilters);
 
     // Initialize Quill for Edit Modal
     const quill = new Quill('#edit-quill-editor', {
@@ -96,10 +147,10 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.edit-btn').forEach(btn => {
         btn.addEventListener('click', function () {
             const blogData = JSON.parse(this.dataset.blog);
-            const index = this.dataset.index;
+            const id = this.dataset.id || this.dataset.index;
 
             const inputs = itemForm.elements;
-            inputs.index.value = index;
+            inputs.index.value = id;
             inputs.title.value = blogData.title || '';
             inputs.tag.value = blogData.tag || '';
             inputs.description.value = blogData.description || '';
@@ -180,17 +231,24 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
 
+            // Hide validation message if it exists
+            const fileInputEl = itemForm.querySelector('input[type="file"]');
+            if (fileInputEl) {
+                fileInputEl.addEventListener('change', () => {
+                    const msg = fileInputEl.closest('.form-group').querySelector('.required-message-file');
+                    if (msg && fileInputEl.files.length > 0) msg.style.display = 'none';
+                });
+            }
+
             // Reset removal flag
             if (inputs.remove_image) inputs.remove_image.value = 'false';
 
             // Reset validation states
             resetValidation(itemForm);
-
-            openModal(itemModal);
         });
     });
 
-    // Listener for View Current Image button inside the form
+    // Listener for separate View Current Image button inside the form
     const viewCurrentImageBtn = document.querySelector('.view-current-image-btn');
     if (viewCurrentImageBtn) {
         viewCurrentImageBtn.addEventListener('click', function () {
@@ -225,7 +283,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', async function () {
-            const index = this.dataset.index;
+            const id = this.dataset.id || this.dataset.index;
 
             const result = await Swal.fire({
                 title: 'Are you sure?',
@@ -238,7 +296,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: `/admin/blog/${CURRENT_SLUG}/${CURRENT_SECTION}/delete/${index}`,
+                        url: `/admin/blog/${CURRENT_SLUG}/${CURRENT_SECTION}/delete/${id}`,
                         type: 'DELETE',
                         success: function (data) {
                             if (data.success) {
@@ -354,6 +412,31 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
+        // Image Validation
+        const removeImageInput = form.querySelector('input[name="remove_image"]');
+        const fileInput = form.querySelector('input[name="file"]');
+        const viewBtn = form.querySelector('.view-current-image-btn');
+        const hasExistingImage = viewBtn && viewBtn.style.display !== 'none';
+        const isRemoving = removeImageInput && removeImageInput.value === 'true';
+        const hasNewFile = fileInput && fileInput.files.length > 0;
+
+        let msgFile = form.querySelector('.required-message-file');
+        if (!msgFile) {
+            msgFile = document.createElement('div');
+            msgFile.className = 'required-message-file';
+            msgFile.textContent = '* Blog cover image is required';
+            msgFile.style.cssText = 'font-size:12px;color:#e74c3c;margin-top:4px;display:none;font-style:italic';
+            const fileGroup = (fileInput ? fileInput.closest('.form-group') : null) || (viewBtn ? viewBtn.parentNode : null);
+            if (fileGroup) fileGroup.appendChild(msgFile);
+        }
+
+        if ((isRemoving || !hasExistingImage) && !hasNewFile) {
+            if (msgFile) msgFile.style.display = 'block';
+            isValid = false;
+        } else {
+            if (msgFile) msgFile.style.display = 'none';
+        }
+
         return isValid;
     }
 
@@ -392,17 +475,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 Swal.fire({
                     icon: 'info',
                     title: 'No Changes Detected',
-                    text: 'You have not modified anything.'
+                    text: 'no changes is detected'
                 });
                 return;
             }
 
             const formData = new FormData(this);
-            // Convert date to DB format
-            if (formData.has('date')) {
-                formData.set('date', formatToDB(formData.get('date')));
-            }
-            const index = formData.get('index');
+            const id = formData.get('index');
 
             const submitBtn = this.querySelector('button[type="submit"]');
             const originalText = submitBtn.textContent;
@@ -410,7 +489,7 @@ document.addEventListener('DOMContentLoaded', function () {
             submitBtn.disabled = true;
 
             $.ajax({
-                url: `/admin/blog/${CURRENT_SLUG}/${CURRENT_SECTION}/update/${index}`,
+                url: `/admin/blog/${CURRENT_SLUG}/${CURRENT_SECTION}/update/${id}`,
                 type: 'PUT',
                 data: formData,
                 processData: false,
@@ -420,7 +499,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
-                            text: 'blog updated successfully',
+                            text: 'content updated',
                             timer: 1500,
                             showConfirmButton: false
                         }).then(() => {
@@ -461,8 +540,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const copyBtn = e.target.closest('.paste-btn');
         if (copyBtn) {
             const link = copyBtn.dataset.link;
-
-            // If it has data-link, it's a copy button (table)
             if (link) {
                 try {
                     await navigator.clipboard.writeText(link);
@@ -484,7 +561,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Update title on input change
     document.addEventListener('input', (e) => {
         if (e.target.name === 'link') {
-            // Simplified: no tooltip sync for forms as per user request
+            // Simplified
         }
     });
 });

@@ -165,13 +165,11 @@ body {
 /* Search and Filter Row */
 .search-filter-row {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     gap: 16px;
     margin-bottom: 24px;
-    background: var(--surface-light);
-    padding: 16px 24px;
-    border-radius: 12px;
-    border: 1px solid var(--border-light);
+    justify-content: space-between;
+    margin-top: 10px;
 }
 
 .search-container {
@@ -626,4 +624,26 @@ body {
     color: #e74c3c;
     margin-top: 4px;
     font-style: italic;
+}
+
+input#dateFilter {
+    padding: 12px;
+    border: 1.5px solid var(--border-light);
+    border-radius: 10px;
+    background: var(--input-bg);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    appearance: none;
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 20px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 24px;
+}
+
+.no-data-cell {
+    text-align: center;
+    padding: 2rem;
 }

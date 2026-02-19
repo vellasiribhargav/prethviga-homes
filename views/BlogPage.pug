@@ -16,7 +16,7 @@ body
         .Meta-data
           span.Author Prethviga Homes Team
           span.dot
-          span.Date #{blog.blog_date ? new Date(blog.blog_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'January 28, 2026'}
+          span.Date #{blog.blog_date || 'January 28, 2026'}
           span.dot
           span.ReadTime #{blog.timeToRead || '5'} min read
     main.Blog-container
