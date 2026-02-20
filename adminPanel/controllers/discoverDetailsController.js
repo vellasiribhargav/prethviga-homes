@@ -13,14 +13,14 @@ const renderDiscoverDetailsPage = asyncHandler(async (req, res) => {
 // GET
 const getDiscoverDetails = asyncHandler(async (req, res) => {
     const collection = mongoose.connection.db.collection("discover_details");
-    const valuesData = await collection.findOne({ page_slug: "discoverUs", page_section: "value-container" });
-    const buyerData = await collection.findOne({ page_slug: "discoverUs", page_section: "buyer-container" });
+    const valuesData = await collection.find({ page_slug: "discoverUs", page_section: "value-container" }).toArray();
+    const buyerDataDoc = await collection.findOne({ page_slug: "discoverUs", page_section: "buyer-container" });
 
     res.json({
         success: true,
         data: {
-            values: valuesData?.page_content || [],
-            buyer: buyerData?.page_content?.[0] || { heading: { title: '', description: '' }, rows: [] }
+            values: valuesData || [],
+            buyer: buyerDataDoc || { heading: { title: '', description: '' }, rows: [] }
         }
     });
 });
@@ -40,20 +40,36 @@ const saveDiscoverDetails = asyncHandler(async (req, res) => {
         throw new ValidationError("Invalid JSON content");
     }
 
-    // If it's the buyer guide, it's usually wrapped in an array or object depending on seed
-    // Seed says: "page_content": [ { "heading": { ... }, "rows": [ ... ] } ]
-    const dataToSave = (section === 'buyer-container' && !Array.isArray(content)) ? [content] : content;
-
-    await collection.updateOne(
-        { page_slug: "discoverUs", page_section: section },
-        {
-            $set: {
-                page_content: dataToSave,
+    if (section === 'value-container') {
+        const existingDocs = await collection.find({ page_slug: "discoverUs", page_section: section }).toArray();
+        await collection.deleteMany({ page_slug: "discoverUs", page_section: section });
+        
+        const valueDocs = content.map((item, index) => {
+            const existingDoc = existingDocs[index];
+            return {
+                page_slug: "discoverUs",
+                page_section: section,
+                card_head: item.card_head,
+                description_text: item.description_text,
+                createdAt: existingDoc?.createdAt || new Date(),
                 updatedAt: dayjs().toDate()
-            }
-        },
-        { upsert: true }
-    );
+            };
+        });
+        await collection.insertMany(valueDocs);
+    } else if (section === 'buyer-container') {
+        await collection.updateOne(
+            { page_slug: "discoverUs", page_section: section },
+            {
+                $set: {
+                    heading: content.heading,
+                    rows: content.rows,
+                    updatedAt: dayjs().toDate()
+                },
+                $setOnInsert: { createdAt: new Date() }
+            },
+            { upsert: true }
+        );
+    }
 
     res.json({ success: true, message: `${section} updated successfully` });
 });

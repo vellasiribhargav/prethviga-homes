@@ -859,6 +859,15 @@ body {
     width: 100%;
 }
 
+/* Created Date Column - Allow two lines */
+.data-table td.item-name-cell .cell-text {
+    white-space: normal;
+    word-wrap: break-word;
+    word-break: break-word;
+    line-height: 1.4;
+    display: block;
+}
+
 /* Custom Scrollbar for Tooltip */
 .custom-js-tooltip::-webkit-scrollbar {
     width: 6px;

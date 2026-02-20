@@ -32,17 +32,21 @@ exports.formatDateForDisplay = (dbDateStr, includeDay = false) => {
 
 	let date;
 	if (dbDateStr instanceof Date) {
-		date = dayjs(dbDateStr);
+		date = dbDateStr;
 	} else if (typeof dbDateStr === 'string') {
-		// Try parsing common formats
-		const formats = ['YYYY-MM-DD', 'DD-MM-YYYY', 'ISO 8601'];
-		date = dayjs(dbDateStr, formats);
+		// Check if it's DD-MM-YYYY format
+		if (/^\d{2}-\d{2}-\d{4}$/.test(dbDateStr)) {
+			const [day, month, year] = dbDateStr.split('-');
+			date = new Date(year, month - 1, day);
+		} else {
+			date = new Date(dbDateStr);
+		}
 	} else {
 		return dbDateStr;
 	}
 
-	if (date.isValid()) {
-		return includeDay ? date.format('DD ddd MMM YYYY HH:mm') : date.format('MMMM YYYY');
+	if (date && !isNaN(date.getTime())) {
+		return includeDay ? date.toString() : dayjs(date).format('MMMM YYYY');
 	}
 
 	return dbDateStr;
@@ -78,6 +82,12 @@ exports.formatDateShortSimple = (dbDateStr) => {
 
 exports.formatDateMonthYear = (dbDateStr) => {
 	if (!dbDateStr) return '';
+	
+	// If already in "Month Day, Year" format, return as is
+	if (typeof dbDateStr === 'string' && /^[A-Z][a-z]+ \d{1,2}, \d{4}$/.test(dbDateStr)) {
+		return dbDateStr;
+	}
+	
 	let date;
 	if (dbDateStr instanceof Date) {
 		date = dayjs(dbDateStr);

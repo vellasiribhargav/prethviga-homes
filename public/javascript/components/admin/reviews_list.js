@@ -4,6 +4,7 @@ dayjs.extend(customParseFormat);
 import $ from 'jquery';
 import Swal from 'sweetalert2';
 import { PaginationManager } from '../../utils/pagination.js';
+import { getSearchValue, getDateValue, matchesSearch, matchesDate } from '../../utils/searchUtils.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize Pagination
@@ -21,30 +22,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Filter Logic
     function applyFilters() {
-        const searchValue = searchInput ? searchInput.value.toLowerCase().trim() : '';
-        const dateValue = dateFilter ? dateFilter.value : '';
+        const searchValue = getSearchValue(searchInput);
+        const dateValue = getDateValue(dateFilter);
 
         const allRows = pagination.allRows;
 
         const filteredRows = allRows.filter(row => {
             // Search check (by client name)
-            const clientName = row.querySelector('.item-name-cell') ? row.querySelector('.item-name-cell').textContent.toLowerCase() : '';
-            const searchMatch = !searchValue || clientName.includes(searchValue);
-            if (!searchMatch) return false;
+            const clientName = row.querySelector('.item-name-cell')?.textContent || '';
+            if (!matchesSearch(searchValue, clientName)) return false;
 
             // Date check (by Creation Date)
-            // Column indices: S.NO(0), CLIENT NAME(1), REVIEW PREVIEW(2), CREATED DATE(3), ACTIONS(4)
-            const createdAtCell = row.cells[3];
-            const createdAtValue = createdAtCell ? createdAtCell.textContent.trim() : '';
+            const createdAtValue = row.cells[3]?.textContent.trim() || '';
+            if (!matchesDate(dateValue, createdAtValue, ['DD ddd MMM YYYY HH:mm', 'DD-MM-YYYY'])) return false;
 
-            let dateMatch = true;
-            if (dateValue && createdAtValue) {
-                const rowDate = dayjs(createdAtValue, 'DD ddd MMM YYYY HH:mm');
-                const filterDate = dayjs(dateValue);
-                dateMatch = rowDate.isValid() && rowDate.isSame(filterDate, 'day');
-            }
-
-            return dateMatch;
+            return true;
         });
 
         // Update S.NO

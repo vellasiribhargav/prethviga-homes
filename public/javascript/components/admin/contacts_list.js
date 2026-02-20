@@ -5,6 +5,7 @@ import $ from 'jquery';
 window.$ = window.jQuery = $;
 import Swal from 'sweetalert2';
 import { PaginationManager } from '../../utils/pagination.js';
+import { getSearchValue, getDateValue, matchesSearch, matchesDate } from '../../utils/searchUtils.js';
 
 document.addEventListener('DOMContentLoaded', function () {
     const searchInput = document.getElementById('searchInput');
@@ -21,37 +22,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Filter Logic
     function applyFilters() {
-        const searchValue = searchInput ? searchInput.value.toLowerCase().trim() : '';
-        const dateValue = dateFilter ? dateFilter.value : '';
+        const searchValue = getSearchValue(searchInput);
+        const dateValue = getDateValue(dateFilter);
 
         const allRows = pagination.allRows;
 
         const filteredRows = allRows.filter(row => {
             // Search check (by name, email and phone)
-            const name = row.querySelector('.item-name-cell') ? row.querySelector('.item-name-cell').textContent.toLowerCase() : '';
-            const email = row.cells[2] ? row.cells[2].textContent.toLowerCase() : '';
-            const phone = row.cells[3] ? row.cells[3].textContent.toLowerCase() : '';
+            const name = row.querySelector('.item-name-cell')?.textContent || '';
+            const email = row.cells[2]?.textContent || '';
+            const phone = row.cells[3]?.textContent || '';
 
-            const searchMatch = !searchValue ||
-                name.includes(searchValue) ||
-                email.includes(searchValue) ||
-                phone.includes(searchValue);
-
-            if (!searchMatch) return false;
+            if (!matchesSearch(searchValue, name, email, phone)) return false;
 
             // Date check (by Creation Date)
-            // Column indices: S.NO(0), NAME(1), EMAIL(2), PHONE(3), ADDRESS(4), CREATED DATE(5)
-            const createdAtCell = row.cells[5];
-            const createdAtValue = createdAtCell ? createdAtCell.textContent.trim() : '';
+            const createdAtValue = row.cells[5]?.textContent.trim() || '';
+            if (!matchesDate(dateValue, createdAtValue, ['DD MMM YYYY', 'DD-MM-YYYY'])) return false;
 
-            let dateMatch = true;
-            if (dateValue && createdAtValue) {
-                const rowDate = dayjs(createdAtValue, 'DD MMM...');
-                const filterDate = dayjs(dateValue);
-                dateMatch = rowDate.isValid() && rowDate.isSame(filterDate, 'day');
-            }
-
-            return dateMatch;
+            return true;
         });
 
         // Update S.NO

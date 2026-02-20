@@ -61,7 +61,6 @@ const getBannersList = async (req, res) => {
       number: item.number || '',
       index: index,
       id: item._id.toString(),
-      createdAt: formatDateShortSimple(item.createdAt),
       formattedDate: formatDateForDisplay(item.createdAt, true)
     }));
 

@@ -5,6 +5,7 @@ import $ from 'jquery';
 window.$ = window.jQuery = $;
 import Swal from 'sweetalert2';
 import { PaginationManager } from '../../utils/pagination.js';
+import { getSearchValue, getDateValue, matchesSearch, matchesDate } from '../../utils/searchUtils.js';
 
 let originalFormData = {};
 
@@ -27,30 +28,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Filter Logic
     function applyFilters() {
-        const searchValue = searchInput ? searchInput.value.toLowerCase().trim() : '';
-        const dateValue = dateFilter ? dateFilter.value : '';
+        const searchValue = getSearchValue(searchInput);
+        const dateValue = getDateValue(dateFilter);
 
         const allRows = pagination.allRows;
 
         const filteredRows = allRows.filter(row => {
             // Search check (by question)
-            const questionText = row.querySelector('.item-name-cell') ? row.querySelector('.item-name-cell').textContent.toLowerCase() : '';
-            const searchMatch = !searchValue || questionText.includes(searchValue);
-            if (!searchMatch) return false;
+            const questionText = row.querySelector('.item-name-cell')?.textContent || '';
+            if (!matchesSearch(searchValue, questionText)) return false;
 
             // Date check (by Creation Date)
-            // Column indices: S.NO(0), Q/A(1), CREATED DATE(2)
-            const createdAtCell = row.cells[2];
-            const createdAtValue = createdAtCell ? createdAtCell.textContent.trim() : '';
+            const createdAtValue = row.cells[2]?.textContent.trim() || '';
+            if (!matchesDate(dateValue, createdAtValue, ['DD MMM YYYY', 'DD-MM-YYYY'])) return false;
 
-            let dateMatch = true;
-            if (dateValue && createdAtValue) {
-                const rowDate = dayjs(createdAtValue, 'DD MMM...');
-                const filterDate = dayjs(dateValue);
-                dateMatch = rowDate.isValid() && rowDate.isSame(filterDate, 'day');
-            }
-
-            return dateMatch;
+            return true;
         });
 
         // Update S.NO

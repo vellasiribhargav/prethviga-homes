@@ -723,3 +723,12 @@ input#dateFilter {
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     margin-bottom: 24px;
 }
+
+
+/* Created Date Column - Allow two lines */
+.data-table td.item-name-cell .cell-text {
+    white-space: normal;
+    word-wrap: break-word;
+    line-height: 1.4;
+    max-width: 200px;
+}
