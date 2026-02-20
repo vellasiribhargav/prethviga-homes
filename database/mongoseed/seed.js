@@ -22,32 +22,28 @@ const seedMongoDB = async () => {
                 "page_section": "home_tech",
                 "technologies-image": `${PROJECT_URL}assets/images/window.svg`,
                 "technologies-title": "Technologies",
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "home",
                 "page_section": "home_tech",
                 "tech-name": "Wall",
                 "tech-text": "We use top-tier materials like reinforced composites and sustainable timber, customized for your project and local climate.",
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "home",
                 "page_section": "home_tech",
                 "tech-name": "Roof",
                 "tech-text": "We ensure dry, comfortable, energy-efficient homes with advanced waterproofing, insulation, and cladding for year-round protection.",
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "home",
                 "page_section": "home_tech",
                 "tech-name": "Window",
                 "tech-text": "Our windows offer stunning views, energy efficiency, and security, seamlessly integrating indoor and outdoor living spaces.",
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             }
         ]
 
@@ -58,24 +54,21 @@ const seedMongoDB = async () => {
                 "page_section": "value-container",
                 card_head: "Integrity",
                 description_text: `We uphold the highest standards of honesty and transparency in every interaction and decision.`,
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "discoverUs",
                 "page_section": "value-container",
                 card_head: "Excellence",
                 description_text: `We strive for perfection in every project, ensuring superior quality and attention to detail.`,
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "discoverUs",
                 "page_section": "value-container",
                 card_head: "Customer First",
                 description_text: `We uphold the highest standards of honesty and transparency in every interaction and decision.`,
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "discoverUs",
@@ -92,8 +85,7 @@ const seedMongoDB = async () => {
                     { "row_description": "Amenities & Lifestyle" },
                     { "row_description": "Investment & Budget" }
                 ],
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             }
         ];
 
@@ -108,8 +100,7 @@ const seedMongoDB = async () => {
                 "project_location": "West side",
                 "project_date": "November 2024",
                 "card_footer_text": "24 Premium Apartments",
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "projects",
@@ -120,8 +111,7 @@ const seedMongoDB = async () => {
                 "project_location": "West side",
                 "project_date": "August 2024",
                 "card_footer_text": "24 Premium Apartments",
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "projects",
@@ -132,8 +122,7 @@ const seedMongoDB = async () => {
                 "project_location": "South End",
                 "project_date": "September 2024",
                 "card_footer_text": "24 Premium Apartments",
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "projects",
@@ -144,8 +133,7 @@ const seedMongoDB = async () => {
                 "project_location": "East side",
                 "project_date": "November 2024",
                 "card_footer_text": "24 Premium Apartments",
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "projects",
@@ -156,8 +144,7 @@ const seedMongoDB = async () => {
                 "project_location": "East side",
                 "project_date": "November 2024",
                 "card_footer_text": "24 Premium Apartments",
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "projects",
@@ -168,8 +155,7 @@ const seedMongoDB = async () => {
                 "project_location": "East side",
                 "project_date": "November 2024",
                 "card_footer_text": "24 Premium Apartments",
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "projects",
@@ -180,8 +166,7 @@ const seedMongoDB = async () => {
                 "project_location": "West side",
                 "project_date": "November 2024",
                 "card_footer_text": "24 Premium Apartments",
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "projects",
@@ -192,8 +177,7 @@ const seedMongoDB = async () => {
                 "project_location": "West side",
                 "project_date": "August 2024",
                 "card_footer_text": "24 Premium Apartments",
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "projects",
@@ -204,8 +188,7 @@ const seedMongoDB = async () => {
                 "project_location": "South End",
                 "project_date": "September 2024",
                 "card_footer_text": "24 Premium Apartments",
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "projects",
@@ -216,8 +199,7 @@ const seedMongoDB = async () => {
                 "project_location": "East side",
                 "project_date": "November 2024",
                 "card_footer_text": "24 Premium Apartments",
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "projects",
@@ -228,8 +210,7 @@ const seedMongoDB = async () => {
                 "project_location": "East side",
                 "project_date": "November 2024",
                 "card_footer_text": "24 Premium Apartments",
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "projects",
@@ -240,8 +221,7 @@ const seedMongoDB = async () => {
                 "project_location": "East side",
                 "project_date": "November 2024",
                 "card_footer_text": "24 Premium Apartments",
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             }
         ];
 
@@ -390,8 +370,7 @@ const seedMongoDB = async () => {
                             "answer": "Yes, we provide comprehensive warranties on structural integrity and workmanship. We stand by our quality and ensure long-term satisfaction."
                         }
                     ],
-                    "createdAt": new Date(),
-                    "updatedAt": new Date()
+                    "createdAt": new Date()
                 }
             ]
         });
@@ -412,40 +391,35 @@ const seedMongoDB = async () => {
                 "page_section": "faq-section-header",
                 "question": "1. What types of construction projects does Prethviga Homes undertake?",
                 "answer": `Prethviga Homes specializes in residential construction, including individual houses, villas, apartments, and renovation projects.`,
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "projects",
                 "page_section": "faq-section-header",
                 "question": "2. How does Prethviga Homes ensure construction quality?",
                 "answer": `We follow strict quality standards, use premium materials, and conduct regular inspections at every stage of construction.`,
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "projects",
                 "page_section": "faq-section-header",
                 "question": "3. Does Prethviga Homes deliver projects on time?",
                 "answer": `Yes, timely delivery is a core commitment. We use structured planning and efficient project management to meet agreed timelines.`,
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "projects",
                 "page_section": "faq-section-header",
                 "question": "4. Are pricing and agreements transparent?",
                 "answer": `Absolutely. We provide clear cost estimates, detailed agreements, and regular updates to ensure complete transparency.`,
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "projects",
                 "page_section": "faq-section-header",
                 "question": "5. Can I customize my home design with Prethviga Homes?",
                 "answer": `Yes, we offer design flexibility and customization options to match your lifestyle, preferences, and budget.`,
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
         ];
 
@@ -455,29 +429,25 @@ const seedMongoDB = async () => {
                 "page_slug": "home",
                 "page_section": "home_banner",
                 "projimage": `${PROJECT_URL}assets/images/homeani1.webp`,
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "home",
                 "page_section": "home_banner",
                 "projimage": `${PROJECT_URL}assets/images/homeani2.webp`,
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "home",
                 "page_section": "home_banner",
                 "projimage": `${PROJECT_URL}assets/images/homeani3.webp`,
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "home",
                 "page_section": "home_banner",
                 "projimage": `${PROJECT_URL}assets/images/homeani4.webp`,
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "home",
@@ -486,8 +456,7 @@ const seedMongoDB = async () => {
                 "subHeading": "Building Strong Foundations for a Better Tomorrow",
                 "description": "We are a trusted construction and building company delivering high-quality residential, commercial, and infrastructure projects. With a commitment to safety, innovation, and timely delivery, we turn your vision into reality.",
                 "number": "+1 (555) 123-4567",
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "home",
@@ -496,8 +465,7 @@ const seedMongoDB = async () => {
                 "reviewer": `At Prethviga, we don't just construct buildings—we create lasting value through quality, integrity, and innovation. Every project reflects our promise of excellence and timely delivery.`,
                 "user_name": "John Davidson",
                 "user_role": "CEO, Prethviga",
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "home",
@@ -506,8 +474,7 @@ const seedMongoDB = async () => {
                 "reviewer": `Prethviga was founded with a clear vision: to build spaces that stand strong, serve people, and shape the future. Our journey is driven by trust, craftsmanship, and commitment.`,
                 "user_name": "John Davidson",
                 "user_role": "CEO, Prethviga",
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "home",
@@ -516,22 +483,19 @@ const seedMongoDB = async () => {
                 "reviewer": `Strong financial discipline and transparent practices are the backbone of Prethviga sustainable growth. We ensure every project delivers value, efficiency, and long-term returns.`,
                 "user_name": "John Davidson",
                 "user_role": "CFO, Prethviga",
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "projects",
                 "page_section": "project-banner",
                 "image": `${PROJECT_URL}assets/images/blog1.webp`,
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "projects",
                 "page_section": "project-banner",
                 "image": `${PROJECT_URL}assets/images/cardblog3.webp`,
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "projects",
@@ -539,23 +503,20 @@ const seedMongoDB = async () => {
                 "Heading": "OUR PROJECTS",
                 "description": "Explore our portfolio of exceptional construction projects, from completed masterpieces to exciting works in progress.",
                 "number": "+1 (555) 123-4567",
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "discoverUs",
                 "page_section": "discover-banner",
                 "image": `${PROJECT_URL}assets/images/discover.webp`,
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "discoverUs",
                 "page_section": "discover-banner",
                 "Heading": "Building Dreams Since Inception",
                 "description": `Prethviga Homes is a leading construction company dedicated to transforming visions into reality. With years of experience in residential and commercial construction, we've built a reputation for excellence, innovation, and reliability.`,
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             }
         ];
 
@@ -565,8 +526,7 @@ const seedMongoDB = async () => {
                 "page_slug": "home",
                 "page_section": "reviews",
                 "review-title": "Loved by our clients",
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "home",
@@ -575,8 +535,7 @@ const seedMongoDB = async () => {
                 "client-name": "Rajesh Kumar",
                 "client-role": "Homeowner",
                 "review-footer": "Sunset Ridge Residence",
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "home",
@@ -585,8 +544,7 @@ const seedMongoDB = async () => {
                 "client-name": "Priya Sharma",
                 "client-role": "Business Owner",
                 "review-footer": "Tech Hub Commercial Plaza",
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "home",
@@ -595,8 +553,7 @@ const seedMongoDB = async () => {
                 "client-name": "Arun Venkatesh",
                 "client-role": "Investor",
                 "review-footer": "Green Valley Apartments",
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             }
         ];
 
@@ -630,8 +587,7 @@ const seedMongoDB = async () => {
                     <ul><li>Use of quality bricks and concrete mix</li><li>Proper curing for strength development</li><li>Accurate alignment and level checking</li><li>Skilled workmanship and supervision</li></ul>
                     <p>These practices ensure long-lasting performance and structural safety.</p>
                 `,
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "discoverUs",
@@ -667,8 +623,7 @@ const seedMongoDB = async () => {
                     <h3>Prethviga Homes Commitment to Sustainable Living</h3>
                     <p>At <strong>Prethviga Homes</strong>, we believe responsible construction is the foundation of future-ready living. By adopting eco-friendly materials, efficient designs, and sustainable practices, we aim to build homes that are durable, comfortable, and environmentally conscious.</p>
                 `,
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             },
             {
                 "page_slug": "discoverUs",
@@ -722,8 +677,7 @@ const seedMongoDB = async () => {
                     <ul><li>Healthier living environments</li><li>Reduced off-gassing odors</li><li>Eco-certified products</li><li>Sustainable sourcing</li></ul>
                     <p>Homebuyers now expect healthier material specifications as standard.</p>
                 `,
-                "createdAt": new Date(),
-                "updatedAt": new Date()
+                "createdAt": new Date()
             }
         ];
 

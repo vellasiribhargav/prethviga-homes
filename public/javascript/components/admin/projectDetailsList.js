@@ -4,6 +4,7 @@ dayjs.extend(customParseFormat);
 import $ from 'jquery';
 window.$ = window.jQuery = $;
 import { PaginationManager } from '../../utils/pagination.js';
+import { getSearchValue, getDateValue, matchesSearch, matchesDate } from '../../utils/searchUtils.js';
 
 document.addEventListener('DOMContentLoaded', function () {
     const filterSelect = document.getElementById('projectTypeFilter');
@@ -21,42 +22,29 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Filter functionality
-    // Filter functionality
     function applyFilters() {
         const typeValue = filterSelect ? filterSelect.value : 'all';
-        const searchValue = searchInput ? searchInput.value.toLowerCase().trim() : '';
-        const dateValue = dateFilter ? dateFilter.value : '';
+        const searchValue = getSearchValue(searchInput);
+        const dateValue = getDateValue(dateFilter);
 
         const allRows = manager.allRows;
 
         const filteredRows = allRows.filter(row => {
             // Type check
             const type = row.getAttribute('data-type');
-            const typeMatch = typeValue === 'all' || type === typeValue;
-            if (!typeMatch) return false;
+            if (typeValue !== 'all' && type !== typeValue) return false;
 
             // Search check (by Project Name and Location)
-            const projectName = row.querySelector('.item-name-cell') ? row.querySelector('.item-name-cell').textContent.toLowerCase() : '';
-            const projectLocation = row.cells[3] ? row.cells[3].textContent.toLowerCase() : ''; // Column 3: Location
+            const projectName = row.querySelector('.item-name-cell')?.textContent || '';
+            const projectLocation = row.cells[3]?.textContent || '';
 
-            const searchMatch = !searchValue ||
-                projectName.includes(searchValue) ||
-                projectLocation.includes(searchValue);
-            if (!searchMatch) return false;
+            if (!matchesSearch(searchValue, projectName, projectLocation)) return false;
 
             // Date check (by Creation Date)
-            // Column indices: S.NO(0), PROJECT NAME(1), TYPE(2), LOCATION(3), CREATED DATE(4), ACTIONS(5)
-            const createdAtCell = row.cells[4];
-            const createdAtValue = createdAtCell ? createdAtCell.textContent.trim() : '';
+            const createdAtValue = row.cells[4]?.textContent.trim() || '';
+            if (!matchesDate(dateValue, createdAtValue, ['DD MMM YYYY', 'DD-MM-YYYY'])) return false;
 
-            let dateMatch = true;
-            if (dateValue && createdAtValue) {
-                const rowDate = dayjs(createdAtValue, 'DD MMM...');
-                const filterDate = dayjs(dateValue);
-                dateMatch = rowDate.isValid() && rowDate.isSame(filterDate, 'day');
-            }
-
-            return dateMatch;
+            return true;
         });
 
         // Update S.NO

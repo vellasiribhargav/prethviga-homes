@@ -64,7 +64,8 @@ html(lang='en')
                        td #{item.email}
                        td #{item.phone}
                        td #{item.address}
-                       td(title=item.createdAt) #{item.createdAt}
+                       td.item-name-cell
+                         span.cell-text(title=item.createdAt) #{item.createdAt}
                        //- td
                         //-  .action-buttons
                            //- button.icon-action-btn.delete-btn.delete(title="Delete" data-id=item.id)

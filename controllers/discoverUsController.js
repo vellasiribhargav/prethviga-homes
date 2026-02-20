@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const dayjs = require('dayjs');
-const { formatDateForDisplay } = require('../utils/index');
+const { formatDateMonthYear } = require('../utils/index');
 
 const getdiscoverUsData = async (req, res) => {
   try {
@@ -15,16 +15,19 @@ const getdiscoverUsData = async (req, res) => {
     // reviews (Multi-document, from home)
     const reviewsData = await mongoose.connection.db.collection('reviews').find({ page_slug: 'home', page_section: 'reviews' }).toArray();
 
-    const ourvaluesData = discoverData.find(item => item.page_section === 'value-container')?.page_content || [];
-    const buyerData = discoverData.find(item => item.page_section === 'buyer-container')?.page_content || [];
+    const ourvaluesData = discoverData.filter(item => item.page_section === 'value-container');
+    const buyerDataDoc = discoverData.find(item => item.page_section === 'buyer-container');
+    const buyerData = buyerDataDoc ? [buyerDataDoc] : [];
     const bannerData = bannerDocs;
 
-    const blogData = blogsData.map(blog => ({
-      ...blog,
-      blog_id: blog._id.toString(),
-      blog_date: formatDateForDisplay(blog.blog_date, true),
-      timeToRead: blog.blog_time
-    }));
+    const blogData = blogsData.map(blog => {
+      return {
+        ...blog,
+        blog_id: blog._id.toString(),
+        blog_date: formatDateMonthYear(blog.blog_date),
+        timeToRead: blog.blog_time
+      };
+    });
 
     res.render('discoverUs', {
       ourvaluesData,
@@ -70,7 +73,7 @@ const getBlogById = async (req, res) => {
 
       const formattedBlog = {
         ...fallbackBlog,
-        blog_date: formatDateForDisplay(fallbackBlog.blog_date, true),
+        blog_date: formatDateMonthYear(fallbackBlog.blog_date),
         timeToRead: fallbackBlog.blog_time
       };
 
@@ -83,7 +86,7 @@ const getBlogById = async (req, res) => {
 
     const formattedBlog = {
       ...blog,
-      blog_date: formatDateForDisplay(blog.blog_date, true),
+      blog_date: formatDateMonthYear(blog.blog_date),
       timeToRead: blog.blog_time
     };
 

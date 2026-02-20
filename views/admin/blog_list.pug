@@ -96,7 +96,8 @@ html(lang='en')
                              span Preview
                          else
                            span No Image
-                       td(title=b.formattedDate) #{b.createdAt}
+                       td.item-name-cell
+                         span.cell-date(title=b.formattedDate) #{b.createdAt}
                        td
                          .action-buttons
                            button.icon-action-btn.edit-btn(title="Edit" data-id=b.id data-index=b.id data-blog=JSON.stringify(b))

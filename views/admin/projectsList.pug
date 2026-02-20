@@ -90,7 +90,8 @@ html(lang='en')
                              span Preview
                          else
                            span No Image
-                       td(title=project.formattedDate) #{project.createdAt}
+                       td.item-name-cell
+                         span.cell-text(title=project.formattedDate) #{project.createdAt}
                        td
                          .action-buttons
                             button.icon-action-btn.edit-btn(title="Edit" data-id=project.id data-index=project.index data-type=project.type data-project=JSON.stringify(project))

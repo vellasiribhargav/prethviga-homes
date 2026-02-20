@@ -45,7 +45,6 @@ const getFaqsList = async (req, res) => {
             id: f._id.toString(),
             question: f.question || f.faq_question,
             answer: f.answer || f.faq_answer,
-            createdAt: formatDateShortSimple(f.createdAt),
             formattedDate: formatDateForDisplay(f.createdAt, true),
             index: index
         }));

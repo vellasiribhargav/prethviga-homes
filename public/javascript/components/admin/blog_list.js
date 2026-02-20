@@ -6,6 +6,7 @@ window.$ = window.jQuery = $;
 import Swal from 'sweetalert2';
 import { PaginationManager } from '../../utils/pagination.js';
 import { isValidDate, getDateRange } from '../../utils/validation.js';
+import { getSearchValue, getDateValue, matchesSearch, matchesDate } from '../../utils/searchUtils.js';
 
 let originalFormData = {};
 
@@ -44,34 +45,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Filter Logic
     function applyFilters() {
-        const searchValue = searchInput ? searchInput.value.toLowerCase().trim() : '';
-        const dateValue = dateFilter ? dateFilter.value : '';
+        const searchValue = getSearchValue(searchInput);
+        const dateValue = getDateValue(dateFilter);
 
         const allRows = pagination.allRows;
 
         const filteredRows = allRows.filter(row => {
             // Search check (by blog title and tag)
-            const blogTitle = row.querySelector('.item-name-cell') ? row.querySelector('.item-name-cell').textContent.toLowerCase() : '';
-            const blogTag = row.cells[1] ? row.cells[1].textContent.toLowerCase() : '';
+            const blogTitle = row.querySelector('.item-name-cell')?.textContent || '';
+            const blogTag = row.cells[1]?.textContent || '';
 
-            const searchMatch = !searchValue ||
-                blogTitle.includes(searchValue) ||
-                blogTag.includes(searchValue);
-            if (!searchMatch) return false;
+            if (!matchesSearch(searchValue, blogTitle, blogTag)) return false;
 
             // Date check (by Creation Date)
-            // Column indices: S.NO(0), TAG(1), BLOG TITLE(2), DESCRIPTION(3), DETAILS(4), TIME(5), PREVIEW(6), CREATED DATE(7)
-            const createdAtCell = row.cells[7];
-            const createdAtValue = createdAtCell ? createdAtCell.textContent.trim() : '';
+            const createdAtValue = row.cells[7]?.textContent.trim() || '';
+            if (!matchesDate(dateValue, createdAtValue, ['DD ddd MMM YYYY HH:mm', 'DD-MM-YYYY'])) return false;
 
-            let dateMatch = true;
-            if (dateValue && createdAtValue) {
-                const rowDate = dayjs(createdAtValue, 'DD ddd MMM YYYY HH:mm');
-                const filterDate = dayjs(dateValue);
-                dateMatch = rowDate.isValid() && rowDate.isSame(filterDate, 'day');
-            }
-
-            return dateMatch;
+            return true;
         });
 
         // Update S.NO

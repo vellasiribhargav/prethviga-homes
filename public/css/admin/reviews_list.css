@@ -402,3 +402,12 @@ input#dateFilter:focus {
     text-align: center;
     padding: 2rem;
 }
+
+
+/* Created Date Column - Allow two lines */
+.data-table td.item-name-cell .cell-text {
+    white-space: normal;
+    word-wrap: break-word;
+    line-height: 1.4;
+    max-width: 200px;
+}

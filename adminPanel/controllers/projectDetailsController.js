@@ -24,7 +24,6 @@ const getProjectsList = asyncHandler(async (req, res) => {
         id: (p.project_id || p._id).toString(),
         type: p.page_section === 'completed-gallery' ? 'completed' : 'upcoming',
         project_name: p.project_name,
-        createdAt: formatDateShortSimple(p.createdAt),
         formattedDate: formatDateForDisplay(p.createdAt, true)
     }));
 

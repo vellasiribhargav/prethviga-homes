@@ -60,7 +60,6 @@ const getBlogsList = async (req, res) => {
       contentSnippet: b.blog_content ? b.blog_content.replace(/<h1[^>]*>.*?<\/h1>/gi, '').replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ').replace(/"/g, '&quot;').substring(0, 30) + (b.blog_content.replace(/<h1[^>]*>.*?<\/h1>/gi, '').replace(/<[^>]*>?/gm, '').length > 30 ? '...' : '') : 'No content available...',
       cleanContent: b.blog_content ? b.blog_content.replace(/<h1[^>]*>.*?<\/h1>/gi, '').replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ').replace(/"/g, '&quot;') : 'No content available...',
       index: index,
-      createdAt: formatDateShortSimple(b.createdAt),
       formattedDate: formatDateForDisplay(b.createdAt, true),
       formattedPublicationDate: formatDateMonthYear(b.blog_date)
     }));

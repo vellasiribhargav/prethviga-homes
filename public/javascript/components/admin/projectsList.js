@@ -6,6 +6,7 @@ window.$ = window.jQuery = $;
 import Swal from 'sweetalert2';
 import { PaginationManager } from '../../utils/pagination.js';
 import { isValidDate, getDateRange, showFieldError, hideFieldError, initCharLimitHighlight } from '../../utils/validation.js';
+import { getSearchValue, getDateValue, matchesSearch, matchesDate } from '../../utils/searchUtils.js';
 
 initCharLimitHighlight();
 
@@ -55,8 +56,8 @@ document.addEventListener('DOMContentLoaded', function () {
     // Filter Logic
     function applyFilters() {
         const statusValue = statusFilter ? statusFilter.value : 'all';
-        const searchValue = searchInput ? searchInput.value.toLowerCase().trim() : '';
-        const dateValue = dateFilter ? dateFilter.value : '';
+        const searchValue = getSearchValue(searchInput);
+        const dateValue = getDateValue(dateFilter);
 
         // Get all project rows
         const allRows = Array.from(document.querySelectorAll('.data-table tbody tr[data-id]'));
@@ -64,29 +65,19 @@ document.addEventListener('DOMContentLoaded', function () {
         const filteredRows = allRows.filter(row => {
             // Status check
             const type = row.dataset.type;
-            const statusMatch = statusValue === 'all' || type === statusValue;
-            if (!statusMatch) return false;
+            if (statusValue !== 'all' && type !== statusValue) return false;
 
             // Search check (by project name and location)
-            const projectName = row.querySelector('.item-name-cell') ? row.querySelector('.item-name-cell').textContent.toLowerCase() : '';
-            const projectLocation = row.cells[4] ? row.cells[4].textContent.toLowerCase() : '';
+            const projectName = row.querySelector('.item-name-cell')?.textContent || '';
+            const projectLocation = row.cells[4]?.textContent || '';
 
-            const searchMatch = !searchValue ||
-                projectName.includes(searchValue) ||
-                projectLocation.includes(searchValue);
-            if (!searchMatch) return false;
+            if (!matchesSearch(searchValue, projectName, projectLocation)) return false;
 
-            const createdAtCell = row.cells[7];
-            const createdAtValue = createdAtCell ? createdAtCell.textContent.trim() : '';
+            // Date check
+            const createdAtValue = row.cells[7]?.textContent.trim() || '';
+            if (!matchesDate(dateValue, createdAtValue, ['DD ddd MMM YYYY HH:mm', 'DD-MM-YYYY'])) return false;
 
-            let dateMatch = true;
-            if (dateValue && createdAtValue) {
-                const rowDate = dayjs(createdAtValue, 'DD ddd MMM YYYY HH:mm');
-                const filterDate = dayjs(dateValue);
-                dateMatch = rowDate.isValid() && rowDate.isSame(filterDate, 'day');
-            }
-
-            return dateMatch;
+            return true;
         });
 
         // Update S.NO
