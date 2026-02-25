@@ -99,7 +99,8 @@ const getonGoingPageData = async (req, res) => {
       galleryDescription,
       galleryData,
       frequencyData,
-      hasProjectData
+      hasProjectData,
+      activePage: 'ProjectPage'
     });
   } catch (error) {
     console.error('Error fetching OnGoingPage data:', error);
@@ -112,7 +113,8 @@ const getonGoingPageData = async (req, res) => {
       locationData: { image: '', details: [] },
       galleryData: [],
       frequencyData: [],
-      hasProjectData: false
+      activePage: 'ProjectPage',
+      hasProjectData: false,
     });
   }
 };

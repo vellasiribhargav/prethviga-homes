@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 const dayjs = require('dayjs');
 const { ObjectId } = require('mongodb');
-const { formatDateForDisplay, formatDateShortSimple } = require('../../utils/index');
+const { formatDateForDisplay, formatedDate } = require('../../utils/index');
 const { asyncHandler, ValidationError, NotFoundError } = require('../../utils/errorHandler');
+const { ListFilter } = require('../utils/filterUtils');
 
 const renderDetailsPage = asyncHandler(async (req, res) => {
     res.render('admin/projectDetails', {
@@ -12,28 +13,57 @@ const renderDetailsPage = asyncHandler(async (req, res) => {
 });
 
 const getProjectsList = asyncHandler(async (req, res) => {
+    let { search, fromDate, toDate, type, page = 1, limit = 5, is_filter = false } = req.query;
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 5;
+    const skip = (page - 1) * limit;
+
     const collection = mongoose.connection.db.collection("projects");
 
-    // Fetch all projects (both ongoing and completed)
-    const projects = await collection.find({
-        page_slug: "projects"
-    }).toArray();
+    const baseQuery = { page_slug: "projects" };
+    if (type && type !== 'all') {
+        baseQuery.page_section = type === 'completed' ? "completed-gallery" : "ongoing-gallery";
+    }
 
-    const allProjects = projects.map(p => ({
+    const { query, isFiltered } = ListFilter(baseQuery, req);
+
+    const totalItems = await collection.countDocuments(query);
+    const totalPages = Math.ceil(totalItems / limit);
+    const data = await collection.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit).toArray();
+
+    const allProjects = data.map((p, index) => ({
         ...p,
         id: (p.project_id || p._id).toString(),
         type: p.page_section === 'completed-gallery' ? 'completed' : 'upcoming',
         project_name: p.project_name,
-        formattedDate: formatDateForDisplay(p.createdAt, true)
+        location: p.project_location,
+        index: skip + index,
+        formattedDate: formatedDate(p.createdAt)
     }));
 
-    res.render('admin/projectDetailsList', {
+    const response = {
         title: 'Project Details List',
         projects: allProjects,
+        pagination: {
+            totalItems,
+            totalPages,
+            currentPage: page,
+            limit,
+            start: skip + 1,
+            end: Math.min(skip + limit, totalItems)
+        },
         activeLink: 'projectDetails',
-        rowsPerPage: 10,
-        rowsPerPageOptions: [5, 10, 20]
-    });
+        rowsPerPage: limit,
+        rowsPerPageOptions: [5, 10, 20],
+        filters: { search, fromDate, toDate, type },
+        is_filtered: isFiltered
+    };
+
+    if (is_filter) {
+        return res.json({ success: true, ...response });
+    }
+
+    res.render('admin/projectDetailsList', response);
 });
 
 const getDetailsByProject = asyncHandler(async (req, res) => {

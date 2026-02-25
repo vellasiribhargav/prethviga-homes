@@ -17,6 +17,8 @@ $breakpoint-mobile: 768px;
     transition: all 0.3s ease;
 }
 
+@import "./layout/header";
+
 * {
     margin: 0;
     padding: 0;
@@ -25,7 +27,7 @@ $breakpoint-mobile: 768px;
 }
 
 body {
-	font-family: 'Inter', sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
 // Hero Section

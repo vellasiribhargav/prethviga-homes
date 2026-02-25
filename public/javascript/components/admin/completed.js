@@ -484,7 +484,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             </svg>
                         </div>
                         <p class="upload-text">Tap to upload</p>
-                        <p class="upload-subtext">SVG, PNG, JPG (max. 5MB)</p>
+                        <p class="upload-subtext">JPG, PNG (max. 2MB)</p>
                     </button>
                     <input type="file" accept="image/*" style="display: none;">
                 </div>
@@ -825,16 +825,24 @@ window.handleProjectImageUpload = function (input) {
     const file = input.files[0];
     if (!file) return;
 
-    // Validate file size (5MB limit)
-    if (file.size > 5 * 1024 * 1024) {
-        alert('File size must be less than 5MB');
+    // Validate file size (2MB limit)
+    if (file.size > 2 * 1024 * 1024) {
+        Swal.fire({
+            icon: 'warning',
+            text: `${file.name} is too large. Max size is 2MB.`,
+            confirmButtonColor: '#BC5322'
+        });
         input.value = '';
         return;
     }
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
-        alert('Please select a valid image file');
+        Swal.fire({
+            icon: 'warning',
+            text: 'Please select a valid image file',
+            confirmButtonColor: '#BC5322'
+        });
         input.value = '';
         return;
     }
@@ -863,7 +871,12 @@ window.handleProjectImageUpload = function (input) {
         }
     };
     reader.onerror = function () {
-        alert('Error reading file');
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error reading file',
+            confirmButtonColor: '#BC5322'
+        });
         input.value = '';
     };
     reader.readAsDataURL(file);
@@ -881,7 +894,7 @@ window.deleteProjectImage = function (button) {
                 </svg>
             </div>
             <p class="upload-text">Tap to upload</p>
-            <p class="upload-subtext">SVG, PNG, JPG (max. 5MB)</p>
+            <p class="upload-subtext">JPG, PNG (max. 2MB)</p>
         `;
         const fileInput = uploadBtn.nextElementSibling;
         if (fileInput) fileInput.value = '';

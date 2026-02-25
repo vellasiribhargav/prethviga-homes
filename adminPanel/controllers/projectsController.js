@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 const dayjs = require('dayjs');
 const { ObjectId } = require("mongodb");
-const { formatDateForDisplay, formatDateShortSimple } = require('../../utils/index');
+const { formatDateForDisplay, formatDateShortSimple, formatedDate } = require('../../utils/index');
 const { asyncHandler, ValidationError, NotFoundError } = require('../../utils/errorHandler');
+const { ListFilter } = require('../utils/filterUtils');
 
 const renderInventoryForm = asyncHandler(async (req, res) => {
     res.render('admin/projects', {
@@ -13,19 +14,31 @@ const renderInventoryForm = asyncHandler(async (req, res) => {
 
 
 const getInventoryList = asyncHandler(async (req, res) => {
+    let { search, fromDate, toDate, status, is_filter = false, page = 1, limit = 5 } = req.query;
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 5;
+    const skip = (page - 1) * limit;
+
     const collection = mongoose.connection.db.collection("projects");
 
-    const upcomingData = await collection.find({
-        page_slug: "projects",
-        page_section: "ongoing-gallery"
-    }).toArray();
+    const baseQuery = { page_slug: "projects" };
 
-    const completedData = await collection.find({
-        page_slug: "projects",
-        page_section: "completed-gallery"
-    }).toArray();
+    // Status filter
+    if (status === 'upcoming') {
+        baseQuery.page_section = "ongoing-gallery";
+    } else if (status === 'completed') {
+        baseQuery.page_section = "completed-gallery";
+    } else {
+        baseQuery.page_section = { $in: ["ongoing-gallery", "completed-gallery"] };
+    }
 
-    const upcomingProjects = upcomingData.map((project, index) => ({
+    const { query, isFiltered } = ListFilter(baseQuery, req);
+
+    const totalItems = await collection.countDocuments(query);
+    const totalPages = Math.ceil(totalItems / limit);
+    const data = await collection.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit).toArray();
+
+    const projects = data.map((project, index) => ({
         ...project,
         id: (project.project_id || project._id).toString(),
         name: project.project_name,
@@ -33,35 +46,36 @@ const getInventoryList = asyncHandler(async (req, res) => {
         timeline: formatDateForDisplay(project.project_date),
         coverImage: project.card_image,
         description: project.card_footer_text,
-        type: 'upcoming',
-        index: index,
+        type: project.page_section === 'completed-gallery' ? 'completed' : 'upcoming',
+        index: skip + index,
         createdAt: formatDateShortSimple(project.createdAt),
-        formattedDate: formatDateForDisplay(project.createdAt, true)
+        formattedDate: formatedDate(project.createdAt)
     }));
 
-    const completedProjects = completedData.map((project, index) => ({
-        ...project,
-        id: (project.project_id || project._id).toString(),
-        name: project.project_name,
-        location: project.project_location,
-        timeline: formatDateForDisplay(project.project_date),
-        coverImage: project.card_image,
-        description: project.card_footer_text,
-        type: 'completed',
-        index: index,
-        createdAt: formatDateShortSimple(project.createdAt),
-        formattedDate: formatDateForDisplay(project.createdAt, true)
-    }));
-
-    const allProjects = [...upcomingProjects, ...completedProjects];
-
-    res.render('admin/projectsList', {
+    const response = {
+        success: true,
         title: 'Projects',
-        projects: allProjects,
+        projects: projects,
+        pagination: {
+            totalItems,
+            totalPages,
+            currentPage: page,
+            limit,
+            start: skip + 1,
+            end: Math.min(skip + limit, totalItems)
+        },
         activeLink: 'Projects',
-        rowsPerPage: 5,
-        rowsPerPageOptions: [5, 10, 20]
-    });
+        rowsPerPage: limit,
+        rowsPerPageOptions: [5, 10, 20],
+        filters: { search, fromDate, toDate, status },
+        is_filtered: isFiltered
+    };
+
+    if (is_filter) {
+        return res.json(response);
+    }
+
+    res.render('admin/projectsList', response);
 });
 
 const addInventoryItem = asyncHandler(async (req, res) => {
@@ -191,15 +205,13 @@ const deleteInventoryItem = asyncHandler(async (req, res) => {
 });
 
 const getInventoryJSON = asyncHandler(async (req, res) => {
+    const { type, search, fromDate, toDate } = req.query;
     const collection = mongoose.connection.db.collection("projects");
-    const { type } = req.query;
 
-    let query = { page_slug: "projects" };
-    if (type === 'upcoming') query.page_section = "ongoing-gallery";
-    else if (type === 'completed') query.page_section = "completed-gallery";
-    else query.page_section = { $in: ["ongoing-gallery", "completed-gallery"] };
+    const baseQuery = { page_slug: "projects" };
+    const { query: queryWithFilters, isFiltered } = ListFilter(baseQuery, req);
 
-    const projectsData = await collection.find(query).toArray();
+    let projectsData = await collection.find(queryWithFilters).toArray();
 
     const allProjects = projectsData.map((p, idx) => ({
         ...p,
@@ -208,7 +220,7 @@ const getInventoryJSON = asyncHandler(async (req, res) => {
         index: idx
     }));
 
-    res.json({ success: true, data: allProjects });
+    res.json({ success: true, data: allProjects, is_filtered: isFiltered });
 });
 
 module.exports = {

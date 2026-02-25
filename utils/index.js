@@ -82,12 +82,12 @@ exports.formatDateShortSimple = (dbDateStr) => {
 
 exports.formatDateMonthYear = (dbDateStr) => {
 	if (!dbDateStr) return '';
-	
+
 	// If already in "Month Day, Year" format, return as is
 	if (typeof dbDateStr === 'string' && /^[A-Z][a-z]+ \d{1,2}, \d{4}$/.test(dbDateStr)) {
 		return dbDateStr;
 	}
-	
+
 	let date;
 	if (dbDateStr instanceof Date) {
 		date = dayjs(dbDateStr);
@@ -98,4 +98,18 @@ exports.formatDateMonthYear = (dbDateStr) => {
 	}
 	if (!date.isValid()) return dbDateStr;
 	return date.format('MMMM D, YYYY');
+};
+
+exports.formatedDate = (dbDateStr) => {
+	if (!dbDateStr) return '';
+	let date;
+	if (dbDateStr instanceof Date) {
+		date = dayjs(dbDateStr);
+	} else if (typeof dbDateStr === 'string') {
+		date = dayjs(dbDateStr);
+	} else {
+		return dbDateStr;
+	}
+	if (!date.isValid()) return dbDateStr;
+	return date.format('DD-MMM-YYYY').toLowerCase();
 };

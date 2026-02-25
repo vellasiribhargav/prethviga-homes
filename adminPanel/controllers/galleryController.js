@@ -2,18 +2,35 @@ const mongoose = require('mongoose');
 const dayjs = require('dayjs');
 const { ObjectId } = require('mongodb');
 const { asyncHandler, ValidationError, NotFoundError } = require('../../utils/errorHandler');
-const { formatDateForDisplay } = require('../../utils/index');
+const { formatDateForDisplay, formatedDate } = require('../../utils/index');
+const { ListFilter } = require('../utils/filterUtils');
 
 const renderGalleryMainPage = asyncHandler(async (req, res) => {
     res.render('admin/gallery');
 });
 
 const getGallery = asyncHandler(async (req, res) => {
+    let { search, fromDate, toDate, page = 1, limit = 5, is_filter = false, type = 'all' } = req.query;
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 5;
+    const skip = (page - 1) * limit;
+
     const collection = mongoose.connection.db.collection("project_details");
-    const data = await collection.find({
+
+    const baseQuery = {
         page_slug: "project_details",
         page_section: "gallery-wrapper"
-    }).toArray();
+    };
+
+    if (type !== 'all') {
+        baseQuery.projectType = type;
+    }
+
+    const { query, isFiltered } = ListFilter(baseQuery, req);
+
+    const totalItems = await collection.countDocuments(query);
+    const totalPages = Math.ceil(totalItems / limit);
+    const data = await collection.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit).toArray();
 
     const galleryItems = data.map((item, index) => ({
         ...item,
@@ -23,27 +40,49 @@ const getGallery = asyncHandler(async (req, res) => {
         title: item.title,
         text: item.text,
         coverImage: item.coverImage,
-        index: index,
-        formattedDate: formatDateForDisplay(item.createdAt || item.created_at, true)
+        index: skip + index,
+        formattedDate: formatedDate(item.createdAt || item.created_at)
     }));
 
-    res.render('admin/gallery_list', {
+    const response = {
         title: 'Gallery Management',
         galleryItems,
+        pagination: {
+            totalItems,
+            totalPages,
+            currentPage: page,
+            limit,
+            start: skip + 1,
+            end: Math.min(skip + limit, totalItems)
+        },
         activeLink: 'gallery',
-        rowsPerPage: 5,
-        rowsPerPageOptions: [5, 10]
-    });
+        rowsPerPage: limit,
+        rowsPerPageOptions: [5, 10, 20],
+        filters: { search, fromDate, toDate, type },
+        is_filtered: isFiltered
+    };
+
+    if (is_filter) {
+        return res.json({ success: true, ...response });
+    }
+
+    res.render('admin/gallery_list', response);
 });
 
 const getGalleryByProject = asyncHandler(async (req, res) => {
     const { projectId } = req.params;
+    const { search, fromDate, toDate } = req.query;
     const collection = mongoose.connection.db.collection("project_details");
-    const filtered = await collection.find({
+
+    let query = {
         page_slug: "project_details",
         page_section: "gallery-wrapper",
         project_id: new ObjectId(projectId)
-    }).toArray();
+    };
+
+    const { query: queryWithFilters } = ListFilter(query, req);
+
+    let filtered = await collection.find(queryWithFilters).toArray();
 
     res.json({ success: true, data: filtered });
 });

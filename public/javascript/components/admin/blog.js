@@ -169,7 +169,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function handleImageUpload(file, uploadBtn) {
         if (file.size > 2 * 1024 * 1024) {
-            alert(`${file.name} is too large. Max size is 2MB.`);
+            Swal.fire({
+                icon: 'warning',
+                text: `${file.name} is too large. Max size is 2MB.`,
+                confirmButtonColor: '#BC5322'
+            });
             return;
         }
 

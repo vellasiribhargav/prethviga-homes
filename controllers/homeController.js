@@ -45,7 +45,7 @@ const getHomeData = async (req, res) => {
       projectsData: completedProjects,
       techData,
       reviewsData,
-      blogData
+      blogData,
     });
   } catch (error) {
     console.error('Error fetching home data:', error);

@@ -8,11 +8,11 @@ header.navbarContainer
     .pages.header_tab_action
       ul.pagesList
         li.pageLink
-          a.active(href="/home") Home
+          a(class=(activePage === 'home' ? 'active' : '') href="/home") Home
         li.pageLink
-          a(href="/ProjectPage") Projects
+          a(class=(activePage === 'projects' || activePage === 'ProjectPage' ? 'active' : '') href="/ProjectPage") Projects
         li.pageLink
-          a(href="/discoverUs") Discover Us
+          a(class=(activePage === 'discoverUs' ? 'active' : '') href="/discoverUs") Discover Us
     a(href="#contact-section")
       button.contactButton
         span
@@ -82,10 +82,10 @@ header.navbarContainer
             )
       ul.pagesList
         li.pageLink
-          a.activePageMobile(href="/home") Home
+          a(class=(activePage === 'home' ? 'activePageMobile' : '') href="/home") Home
         li.pageLink
-          a(href="/ProjectPage") Projects
+          a(class=(activePage === 'projects' || activePage === 'ProjectPage' ? 'activePageMobile' : '') href="/ProjectPage") Projects
         li.pageLink
-          a(href="/discoverUs") Discover Us
+          a(class=(activePage === 'discoverUs' || activePage === 'discover' ? 'activePageMobile' : '') href="/discoverUs") Discover Us
         li.pageLink
           a.contactLink(href="#contact-section") Contact us

@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 const dayjs = require('dayjs');
 const { ObjectId } = require('mongodb');
 const { asyncHandler, ValidationError, NotFoundError } = require('../../utils/errorHandler');
-const { formatDateForDisplay, formatDateShortSimple } = require('../../utils/index');
+const { formatDateForDisplay, formatedDate } = require('../../utils/index');
+const { ListFilter } = require('../utils/filterUtils');
 
 // GET reviews management page
 const renderReviewsPage = asyncHandler(async (req, res) => {
@@ -14,38 +15,75 @@ const renderReviewsPage = asyncHandler(async (req, res) => {
 
 // GET reviews list page
 const renderReviewsListPage = asyncHandler(async (req, res) => {
+    let { search, fromDate, toDate, page = 1, limit = 5, is_filter = false } = req.query;
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 5;
+    const skip = (page - 1) * limit;
+
     const collection = mongoose.connection.db.collection("reviews");
 
-    const data = await collection.find({
+    let query = {
         page_slug: "home",
         page_section: "reviews"
-    }).toArray();
+    };
+
+    const { query: filteredQuery, isFiltered } = ListFilter(query, req);
+
+    let allData = await collection.find(filteredQuery).toArray();
 
     // Separate header/title from review items
-    const reviews = data.filter(item => !item['review-title']).map((item, index) => ({
+    const filteredReviews = allData.filter(item => !item['review-title']);
+    const totalItems = filteredReviews.length;
+    const totalPages = Math.ceil(totalItems / limit);
+
+    const reviews = filteredReviews.slice(skip, skip + limit).map((item, index) => ({
         ...item,
         id: item._id.toString(),
-        index: index,
-        createdAt: formatDateShortSimple(item.createdAt),
-        formattedDate: formatDateForDisplay(item.createdAt, true)
+        reviewer_name: item['client-name'] || item.reviewer_name || '',
+        review_text: item['review-text'] || item.review_text || '',
+        review_footer: item['review-footer'] || item.review_footer || '',
+        index: skip + index,
+        formattedDate: formatedDate(item.createdAt)
     })) || [];
 
-    res.render('admin/reviews_list', {
+    const response = {
         title: 'Review Inventory',
         reviews,
+        pagination: {
+            totalItems,
+            totalPages,
+            currentPage: page,
+            limit,
+            start: skip + 1,
+            end: Math.min(skip + limit, totalItems)
+        },
         activeLink: 'userReviews',
-        rowsPerPage: 5,
-        rowsPerPageOptions: [5, 10, 20]
-    });
+        rowsPerPage: limit,
+        rowsPerPageOptions: [5, 10, 20],
+        filters: { search, fromDate, toDate },
+        is_filtered: isFiltered
+    };
+
+    if (is_filter) {
+        return res.json({ success: true, ...response });
+    }
+
+    res.render('admin/reviews_list', response);
 });
 
 const getReviews = asyncHandler(async (req, res) => {
+    const { search, fromDate, toDate } = req.query;
     const collection = mongoose.connection.db.collection("reviews");
 
-    const page_content = await collection.find({
+    let query = {
         page_slug: "home",
         page_section: "reviews"
-    }).toArray();
+    };
+
+    const { query: filteredQuery, isFiltered } = ListFilter(query, req);
+    query = filteredQuery;
+
+    let page_content = await collection.find(query).toArray();
 
     res.json({
         success: true,
@@ -69,14 +107,26 @@ const updateReviews = asyncHandler(async (req, res) => {
         page_section: "reviews"
     });
 
-    // Insert new reviews as individual documents with metadata
-    const insertDocs = page_content.map(item => ({
-        ...item,
-        page_slug: "home",
-        page_section: "reviews",
-        createdAt: item.createdAt || new Date(),
-        updatedAt: dayjs().toDate()
-    }));
+    // Insert new reviews
+    const insertDocs = page_content.map(item => {
+        const doc = {
+            page_slug: "home",
+            page_section: "reviews",
+            createdAt: item.createdAt || new Date(),
+            updatedAt: dayjs().toDate()
+        };
+
+        if (item['review-title']) {
+            doc['review-title'] = item['review-title'];
+        } else {
+            // Map to underscored names for consistency
+            doc.review_text = item.review_text || item['review-text'] || '';
+            doc.reviewer_name = item.reviewer_name || item['client-name'] || '';
+            doc.reviewer_role = item.reviewer_role || item['client-role'] || '';
+            doc.review_footer = item.review_footer || item['review-footer'] || '';
+        }
+        return doc;
+    });
 
     if (insertDocs.length > 0) {
         await collection.insertMany(insertDocs);

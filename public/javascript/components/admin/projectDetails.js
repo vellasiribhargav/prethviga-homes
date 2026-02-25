@@ -655,7 +655,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function loadProjectDetails(projectId, isFullReload = false) {
         try {
-            if (!isFullReload) {
+            if (isFullReload) {
                 dirtySections.clear();
                 checkSaveAllVisibility();
             }
@@ -1239,7 +1239,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         </svg>
                     </div>
                     <p class="upload-text" style="${uploadContentStyle}">Upload Image</p>
-                    <p class="upload-subtext" style="${uploadContentStyle}">JPG, PNG (max. 5MB)</p>
+                    <p class="upload-subtext" style="${uploadContentStyle}">JPG, PNG (max. 2MB)</p>
                     <input type="file" class="image-upload gallery-file" name="${fileInputName}" accept="image/*" style="display: none;">
                     ${previewHTML}
                 </div>
@@ -1623,17 +1623,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Image Upload Handler (Standard pattern from gallery.js)
     function handleImageUpload(file, uploadBtn) {
-        if (file.size > 5 * 1024 * 1024) {
-            const container = uploadBtn.parentNode;
-            let sizeMsg = container.querySelector('.file-size-error');
-            if (!sizeMsg) {
-                sizeMsg = document.createElement('div');
-                sizeMsg.className = 'file-size-error';
-                sizeMsg.style.cssText = 'color: #ef4444; font-size: 11px; margin-top: 5px; font-style: italic;';
-                container.appendChild(sizeMsg);
-            }
-            sizeMsg.textContent = `* ${file.name} is too large. Max size is 5MB.`;
-            sizeMsg.style.display = 'block';
+        if (file.size > 2 * 1024 * 1024) {
+            Swal.fire({
+                icon: 'warning',
+                text: `${file.name} is too large. Max size is 2MB.`,
+                confirmButtonColor: '#BC5322'
+            });
             return;
         } else {
             const sizeMsg = uploadBtn.parentNode.querySelector('.file-size-error');

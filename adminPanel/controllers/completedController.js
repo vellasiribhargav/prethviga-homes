@@ -1,40 +1,67 @@
 const mongoose = require('mongoose');
 const dayjs = require('dayjs');
 const { ObjectId } = require("mongodb");
-const { formatDateForDisplay } = require('../../utils/index');
+const { formatDateForDisplay, formatedDate } = require('../../utils/index');
 const { asyncHandler, ValidationError, NotFoundError } = require('../../utils/errorHandler');
+const { ListFilter } = require('../utils/filterUtils');
 
 const renderCompletedPage = asyncHandler(async (req, res) => {
     res.render('admin/completed');
 });
 
 const getcompletedGallery = asyncHandler(async (req, res) => {
+    let { page = 1, limit = 5, is_filter = false } = req.query;
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 5;
+    const skip = (page - 1) * limit;
+
     const collection = mongoose.connection.db.collection("projects");
-    const data = await collection.find({
+    const baseQuery = {
         page_slug: "projects",
         page_section: "completed-gallery"
-    }).toArray();
+    };
 
-    // Ensure each project has proper ID mapping and convert ObjectId to string
+    const { query, isFiltered } = ListFilter(baseQuery, req);
+
+    const totalItems = await collection.countDocuments(query);
+    const totalPages = Math.ceil(totalItems / limit);
+    const data = await collection.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit).toArray();
+
     const projects = data.map((project, index) => ({
         ...project,
         id: project._id.toString(),
-        name: project.project_name, // Map for table
-        location: project.project_location, // Map for table
-        timeline: formatDateForDisplay(project.project_date), // Map for table
-        coverImage: project.card_image, // Map for table preview
-        description: project.card_footer_text, // Map for edit form
-        index: index, // Important for edit/delete
-        createdAt: formatDateForDisplay(project.createdAt, true)
+        name: project.project_name,
+        location: project.project_location,
+        timeline: formatDateForDisplay(project.project_date),
+        coverImage: project.card_image,
+        description: project.card_footer_text,
+        index: skip + index,
+        createdAt: formatedDate(project.createdAt)
     }));
 
-    res.render('admin/completed_projects', {
+    const response = {
         title: 'Completed Projects',
         projects,
+        pagination: {
+            totalItems,
+            totalPages,
+            currentPage: page,
+            limit,
+            start: skip + 1,
+            end: Math.min(skip + limit, totalItems)
+        },
         activeLink: 'completed',
-        rowsPerPage: 5,
-        rowsPerPageOptions: [5, 10]
-    });
+        rowsPerPage: limit,
+        rowsPerPageOptions: [5, 10, 20],
+        filters: req.query,
+        is_filtered: isFiltered
+    };
+
+    if (is_filter) {
+        return res.json({ success: true, ...response });
+    }
+
+    res.render('admin/completed_projects', response);
 });
 
 const addcompletedItem = asyncHandler(async (req, res) => {

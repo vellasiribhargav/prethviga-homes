@@ -208,11 +208,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function handleImageUpload(file, uploadBtn) {
-        if (file.size > 5 * 1024 * 1024) {
+        if (file.size > 2 * 1024 * 1024) {
             Swal.fire({
-                icon: 'error',
-                title: 'File too large',
-                text: `${file.name} is too large. Max size is 5MB.`,
+                icon: 'warning',
+                text: `${file.name} is too large. Max size is 2MB.`,
                 confirmButtonColor: '#BC5322'
             });
             return;
@@ -438,10 +437,10 @@ document.addEventListener('DOMContentLoaded', function () {
                             </svg>
                         </div>
                         <p class="upload-text">Upload Images</p>
-                        <p class="upload-subtext">JPG, PNG (max. 5MB)</p>
+                        <p class="upload-subtext">JPG, PNG (max. 2MB)</p>
                         <input class="image-upload" type="file" accept="image/*" style="display: none;">
                     </button>
-                    <p class="upload-hint">Supported formats: JPG, PNG. Max 5MB.</p>
+                    <p class="upload-hint">Supported formats: JPG, PNG. Max 2MB.</p>
                 </div>
             </div>
             <div class="submit-section" style="display: none;">

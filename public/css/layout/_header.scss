@@ -1,0 +1,281 @@
+.navbarContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 2000;
+    background-color: #fff;
+    display: flex;
+    padding: 20px 150px;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(193, 131, 78, 0.1);
+
+    @media screen and (max-width: 1200px) {
+        padding: 20px 80px;
+    }
+
+    @media screen and (max-width: 1024px) {
+        padding: 20px 40px;
+    }
+
+    @media screen and (max-width: 768px) {
+        padding: 15px 30px;
+    }
+
+    @media screen and (max-width: 480px) {
+        padding: 15px 20px;
+        justify-content: space-between;
+    }
+
+    .navbarLogo {
+        .logoText {
+            display: flex;
+            gap: 5px;
+            margin: 0;
+        }
+
+        .textFirst {
+            color: #000;
+            font-size: 28px;
+            font-weight: 400;
+            line-height: 1;
+
+            @media screen and (max-width: 768px) {
+                font-size: 24px;
+            }
+
+            @media screen and (max-width: 480px) {
+                font-size: 22px;
+            }
+        }
+
+        .textSecondary {
+            color: #c1834e;
+            font-size: 28px;
+            font-weight: 400;
+            line-height: 1;
+
+            @media screen and (max-width: 768px) {
+                font-size: 24px;
+            }
+
+            @media screen and (max-width: 480px) {
+                font-size: 22px;
+            }
+        }
+    }
+
+    .actionArea {
+        display: flex;
+        align-items: center;
+        gap: 60px;
+
+        @media screen and (max-width: 1024px) {
+            gap: 40px;
+        }
+
+        @media screen and (max-width: 768px) {
+            gap: 15px;
+        }
+
+        @media screen and (max-width: 480px) {
+            gap: 0;
+        }
+
+        @media screen and (max-width: 520px) {
+            display: none;
+        }
+
+        .pagesList {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin: 0;
+            padding: 0;
+
+            @media screen and (max-width: 1024px) {
+                gap: 20px;
+            }
+
+            @media screen and (max-width: 768px) {
+                gap: 12px;
+            }
+
+            .pageLink {
+                a {
+                    color: #000;
+                    font-size: 18px;
+                    font-weight: 500;
+                    text-transform: capitalize;
+                    text-decoration: none;
+                    transition: color 0.3s ease;
+                    font-family: Poppins, sans-serif;
+
+                    &.active {
+                        color: #9e6520;
+                        font-weight: 600;
+                        border-bottom: 2px solid #9e6520;
+                    }
+
+                    &:hover {
+                        color: #c1834e;
+                    }
+
+                    @media screen and (max-width: 1024px) {
+                        font-size: 16px;
+                    }
+                }
+            }
+        }
+
+        .contactButton {
+            display: flex;
+            align-items: center;
+            height: 44px;
+            padding: 10px 20px;
+            align-items: center;
+            gap: 10px;
+            border-radius: 8px;
+            background: #c1834e;
+            color: #ffffff;
+            border: 0;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            font-family: Poppins, sans-serif;
+            transition: all 0.3s ease;
+
+            &:hover {
+                background: #a66d3e;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(193, 131, 78, 0.3);
+            }
+
+            &:active {
+                transform: scale(0.98);
+            }
+
+            span {
+                display: inline-block;
+                width: 16px;
+                height: 16px;
+            }
+
+            @media screen and (max-width: 768px) {
+                padding: 8px 16px;
+                font-size: 15px;
+                height: 40px;
+                display: none;
+            }
+
+            @media screen and (max-width: 480px) {
+                padding: 8px 14px;
+                font-size: 14px;
+                height: 38px;
+            }
+        }
+    }
+
+    .menuIcon {
+        display: none;
+
+        @media screen and (max-width: 520px) {
+            display: flex;
+            background-color: #fff;
+            border: none;
+        }
+    }
+
+    .actionAreaMobile {
+        font-family: 'Poppins', sans-serif;
+        position: absolute;
+        padding: 30px;
+        transform: translateX(250px);
+        opacity: 0;
+        right: 0px;
+        width: 250px;
+        top: 0px;
+        background-color: #a66d3e;
+        height: 100vh;
+        transition: 0.5s ease-in-out;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        .pages {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+
+            .closeIcon {
+                align-self: end;
+            }
+
+            .pagesList {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                align-items: self-start;
+                list-style: none;
+
+                .pageLink {
+                    a {
+                        color: #fff;
+                        text-decoration: none;
+                        font-family: 'Poppins', sans-serif;
+
+                        &.activePageMobile {
+                            color: #000;
+                        }
+                    }
+                }
+            }
+        }
+
+        &.showMenu {
+            transform: translateX(0px);
+            opacity: 1;
+        }
+    }
+
+    .callBtn {
+        display: none;
+        border-radius: 8px;
+        background: #c1834e;
+        color: #ffffff;
+        border: 0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &:hover {
+            background: #a66d3e;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(193, 131, 78, 0.3);
+        }
+
+        &:active {
+            transform: scale(0.98);
+        }
+
+        span {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+        }
+
+        @media screen and (max-width: 768px) {
+            padding: 10px;
+            font-size: 15px;
+            height: 40px;
+            display: flex;
+        }
+
+        @media screen and (max-width: 480px) {
+            padding: 8px 14px;
+            font-size: 14px;
+            height: 38px;
+        }
+    }
+}

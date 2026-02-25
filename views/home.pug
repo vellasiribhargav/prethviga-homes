@@ -223,10 +223,10 @@ if reviewsData && reviewsData.length > 0
                 p= review['review-text']
               .clientDetail
                 .clientImage
-                  span= review['client-name'].charAt(0)
+                  span= review['client-name'] ? review['client-name'].charAt(0) : '?'
                 .clientInfo
-                  h2.clientName= review['client-name']
-                  p.clientRole= review['client-role']
+                  h2.clientName= review['client-name'] || ''
+                  p.clientRole= review['client-role'] || ''
               .reviewFooter Project: #{review['review-footer']}
 section#contact-section.contact-container
   .contact-section
