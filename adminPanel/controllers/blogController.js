@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const dayjs = require('dayjs');
 const { ObjectId } = require('mongodb');
-const { formatDateForDisplay, formatDateMonthYear, formatDateShortSimple } = require('../../utils/index');
+const { formatDateMonthYear, formatedDate } = require('../../utils/index');
+const { ListFilter } = require('../utils/filterUtils');
 
 const BLOG_CONFIG = {
   home: {
@@ -36,43 +37,70 @@ const getBlogsList = async (req, res) => {
   try {
     const slug = req.params.slug || "discoverUs";
     const section = req.params.section || "blogs-card";
+    let { search, fromDate, toDate, page = 1, limit = 5, is_filter = false } = req.query;
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 5;
+    const skip = (page - 1) * limit;
+
     const collectionName = BLOG_CONFIG[slug]?.collection || "blogs";
     const collection = mongoose.connection.db.collection(collectionName);
     const config = BLOG_CONFIG[slug] || { collection: collectionName, slug: slug, section: section };
 
-    const data = await collection.find({
+    const baseQuery = {
       page_slug: config.slug,
       page_section: section
-    }).toArray();
+    };
 
-    const blogs = data.map((b, index) => ({
-      ...b,
-      id: b._id.toString(),
-      title: b.blog_title,
-      date: formatDateMonthYear(b.blog_date),
-      tag: b.badge_text,
-      category: b.badge_text,
-      isSeeded: !!b.isSeeded,
-      image: b.inner_img,
-      description: b.blog_description,
-      timeToRead: (b.blog_time && typeof b.blog_time === 'string') ? b.blog_time.replace(/\s*min\s*read\s*/i, '').trim() : b.blog_time,
-      content: b.blog_content,
-      contentSnippet: b.blog_content ? b.blog_content.replace(/<h1[^>]*>.*?<\/h1>/gi, '').replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ').replace(/"/g, '&quot;').substring(0, 30) + (b.blog_content.replace(/<h1[^>]*>.*?<\/h1>/gi, '').replace(/<[^>]*>?/gm, '').length > 30 ? '...' : '') : 'No content available...',
-      cleanContent: b.blog_content ? b.blog_content.replace(/<h1[^>]*>.*?<\/h1>/gi, '').replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ').replace(/"/g, '&quot;') : 'No content available...',
-      index: index,
-      formattedDate: formatDateForDisplay(b.createdAt, true),
-      formattedPublicationDate: formatDateMonthYear(b.blog_date)
-    }));
+    const { query, isFiltered } = ListFilter(baseQuery, req);
 
-    res.render('admin/blog_list', {
+    const totalItems = await collection.countDocuments(query);
+    const totalPages = Math.ceil(totalItems / limit);
+    const data = await collection.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit).toArray();
+
+    const blogs = data.map((b, index) => {
+      const cleanContent = b.blog_content ? b.blog_content.replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ').trim() : '';
+      return {
+        ...b,
+        id: b._id.toString(),
+        title: b.blog_title || 'Untitled',
+        tag: b.badge_text || 'No Tag',
+        description: b.blog_description || 'No description available...',
+        timeToRead: (b.blog_time && typeof b.blog_time === 'string') ? b.blog_time.replace(/\s*min\s*read\s*/i, '').trim() : (b.blog_time || '0'),
+        date: formatDateMonthYear(b.blog_date),
+        image: b.inner_img || '',
+        contentSnippet: cleanContent.substring(0, 100) + (cleanContent.length > 100 ? '...' : '') || 'No content available...',
+        cleanContent: cleanContent,
+        index: skip + index,
+        formattedDate: formatedDate(b.createdAt, true),
+        formattedPublicationDate: formatDateMonthYear(b.blog_date)
+      };
+    });
+
+    const response = {
       title: 'Blog Management',
       blogs,
+      pagination: {
+        totalItems,
+        totalPages,
+        currentPage: page,
+        limit,
+        start: skip + 1,
+        end: Math.min(skip + limit, totalItems)
+      },
       slug,
       section,
       activeLink: 'blog',
-      rowsPerPage: 5,
-      rowsPerPageOptions: [5, 10]
-    });
+      rowsPerPage: limit,
+      rowsPerPageOptions: [5, 10, 20],
+      filters: { search, fromDate, toDate },
+      is_filtered: isFiltered
+    };
+
+    if (is_filter) {
+      return res.json({ success: true, ...response });
+    }
+
+    res.render('admin/blog_list', response);
   } catch (error) {
     console.error('Error fetching blogs:', error);
     res.render('admin/blog_list', {
@@ -81,7 +109,8 @@ const getBlogsList = async (req, res) => {
       slug: req.params.slug,
       section: req.params.section,
       activeLink: 'blog',
-      error: error.message
+      error: error.message,
+      filters: {}
     });
   }
 };
@@ -89,16 +118,21 @@ const getBlogsList = async (req, res) => {
 const getBlogs = async (req, res) => {
   try {
     const { slug, section } = req.params;
+    const { search, fromDate, toDate } = req.query;
     const collectionName = BLOG_CONFIG[slug]?.collection || "blogs";
     const collection = mongoose.connection.db.collection(collectionName);
     const config = BLOG_CONFIG[slug] || { collection: collectionName, slug: slug };
 
-    const data = await collection.find({
+    let baseQuery = {
       page_slug: config.slug,
       page_section: section
-    }).toArray();
+    };
 
-    res.json({ success: true, data: data });
+    const { query, isFiltered } = ListFilter(baseQuery, req);
+
+    let data = await collection.find(query).toArray();
+
+    res.json({ success: true, data: data, is_filtered: isFiltered });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

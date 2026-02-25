@@ -8,6 +8,24 @@ const errorHandler = (err, req, res, next) => {
     // Log the error
     logError(err);
 
+    // Handle multer file size errors
+    if (err.code === 'LIMIT_FILE_SIZE') {
+        err.statusCode = 413;
+        err.message = 'File size exceeds 2MB limit';
+    }
+
+    // Handle multer file count errors
+    if (err.code === 'LIMIT_FILE_COUNT') {
+        err.statusCode = 413;
+        err.message = 'Too many files uploaded';
+    }
+
+    // Handle multer unexpected field errors
+    if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+        err.statusCode = 400;
+        err.message = 'Unexpected file field';
+    }
+
     // Handle specific error types
     if (err.name === 'ValidationError') {
         err.statusCode = 400;

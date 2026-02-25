@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     </svg>
                 </div>
                 <p class="upload-text">Tap to upload</p>
-                <p class="upload-subtext">SVG, PNG, JPG (max. 5MB)</p>
+                <p class="upload-subtext">SVG, PNG, JPG (max. 2MB)</p>
             `;
             uploadBtn.className = 'upload-btn';
 
@@ -87,6 +87,15 @@ document.addEventListener('DOMContentLoaded', function () {
         fileInput.addEventListener('change', function () {
             const file = this.files[0];
             if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    Swal.fire({
+                        icon: 'warning',
+                        text: `${file.name} is too large. Max size is 2MB.`,
+                        confirmButtonColor: '#BC5322'
+                    });
+                    this.value = '';
+                    return;
+                }
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     uploadBtn.innerHTML = `
@@ -113,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                     </svg>
                                 </div>
                                 <p class="upload-text">Tap to upload</p>
-                                <p class="upload-subtext">SVG, PNG, JPG (max. 5MB)</p>
+                                <p class="upload-subtext">SVG, PNG, JPG (max. 2MB)</p>
                             `;
                         };
                     }
@@ -207,7 +216,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const nameInput = card.querySelector('[name="project-name"]');
         const locInput = card.querySelector('[name="project-location"]');
         const dateInput = card.querySelector('[name="timeline-date"]');
-        const descInput = card.querySelector('[name="project-description"]');
+        const descInput = card.querySelector('[name="card_footer_text"]');
         const fileInput = card.querySelector('input[type="file"]');
 
         const markInvalid = (input, name, message) => {
@@ -274,7 +283,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Fix date input display
         const dateInput = card.querySelector('[name="timeline-date"]');
         if (dateInput) {
-            dateInput.addEventListener('change', function() {
+            dateInput.addEventListener('change', function () {
                 this.setAttribute('value', this.value);
             });
         }
@@ -298,7 +307,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 project_name: card.querySelector('[name="project-name"]').value,
                 project_location: card.querySelector('[name="project-location"]').value,
                 project_date: card.querySelector('[name="timeline-date"]').value,
-                card_footer_text: card.querySelector('[name="project-description"]').value
+                card_footer_text: card.querySelector('[name="card_footer_text"]').value
             });
         });
 

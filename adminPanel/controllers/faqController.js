@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const dayjs = require('dayjs');
 const { ObjectId } = require('mongodb');
-const { formatDateForDisplay, formatDateShortSimple } = require('../../utils/index');
+const { formatDateForDisplay, formatDateShortSimple, formatedDate } = require('../../utils/index');
+const { ListFilter } = require('../utils/filterUtils');
 
 const FAQ_CONFIG = {
     project: {
@@ -29,36 +30,61 @@ const renderFaqMainPage = async (req, res) => {
 
 const getFaqsList = async (req, res) => {
     try {
-        const slug = req.params.slug || "project";
-        const section = req.params.section || (slug === 'ongoing' ? 'faq-items-container' : 'faq-section-header');
+        const { slug, section } = req.params;
+        let { page = 1, limit = 5, is_filter = false } = req.query;
+        page = parseInt(page) || 1;
+        limit = parseInt(limit) || 5;
+        const skip = (page - 1) * limit;
         const collectionName = FAQ_CONFIG[slug]?.collection || "faq";
         const collection = mongoose.connection.db.collection(collectionName);
         const config = FAQ_CONFIG[slug] || { collection: collectionName, slug: slug, section: section };
 
-        const data = await collection.find({
+        const baseQuery = {
             page_slug: config.slug,
             page_section: section
-        }).toArray();
+        };
+
+        const { query, isFiltered } = ListFilter(baseQuery, req);
+
+        const totalItems = await collection.countDocuments(query);
+        const totalPages = Math.ceil(totalItems / limit);
+        const data = await collection.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit).toArray();
 
         const faqs = data.map((f, index) => ({
             ...f,
             id: f._id.toString(),
             question: f.question || f.faq_question,
             answer: f.answer || f.faq_answer,
-            formattedDate: formatDateForDisplay(f.createdAt, true),
-            index: index
+            formattedDate: formatedDate(f.createdAt),
+            index: skip + index
         }));
 
-        res.render('admin/faq_list', {
+        const response = {
             title: 'FAQ Management',
             faqs,
+            pagination: {
+                totalItems,
+                totalPages,
+                currentPage: page,
+                limit,
+                start: skip + 1,
+                end: Math.min(skip + limit, totalItems)
+            },
             slug,
             section,
             activeLink: 'faq',
             label: config.label,
-            rowsPerPage: 5,
-            rowsPerPageOptions: [5, 10]
-        });
+            rowsPerPage: limit,
+            rowsPerPageOptions: [5, 10, 20],
+            filters: { search: req.query.search, fromDate: req.query.fromDate, toDate: req.query.toDate },
+            is_filtered: isFiltered
+        };
+
+        if (is_filter) {
+            return res.json({ success: true, ...response });
+        }
+
+        res.render('admin/faq_list', response);
     } catch (error) {
         console.error('Error fetching faqs:', error);
         res.render('admin/faq_list', {
@@ -67,7 +93,8 @@ const getFaqsList = async (req, res) => {
             slug: req.params.slug,
             section: req.params.section,
             activeLink: 'faq',
-            error: error.message
+            error: error.message,
+            filters: {}
         });
     }
 };
@@ -79,10 +106,15 @@ const getFaqs = async (req, res) => {
         const collection = mongoose.connection.db.collection(collectionName);
         const config = FAQ_CONFIG[slug] || { collection: collectionName, slug: slug };
 
-        const data = await collection.find({
+        const baseQuery = {
             page_slug: config.slug,
             page_section: section
-        }).toArray();
+        };
+
+        const { query: filteredQuery } = ListFilter(baseQuery, req);
+        const query = filteredQuery;
+
+        const data = await collection.find(query).toArray();
 
         res.json({ success: true, data: data });
     } catch (error) {

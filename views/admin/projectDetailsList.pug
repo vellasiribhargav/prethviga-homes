@@ -52,10 +52,20 @@ html(lang='en')
               path(d='M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z')
             input#searchInput.search-input(type='text' placeholder='Search by project name or location...')
 
-          .filter-group
-            label.filter-label Date:
-            input#dateFilter.filter-select(type='date')
-              
+          .date-range-dropdown
+            button#dateRangeToggle.btn-dropdown-toggle(type='button')
+              svg(xmlns='http://www.w3.org/2000/svg' height='20' viewBox='0 -960 960 960' width='20' fill='currentColor')
+                path(d='M200-640h560v-80H200v80Zm0 280h560v-80H200v80Zm0 280h560v-80H200v80Z')
+              span Date filter
+            .dropdown-menu#dateRangeMenu
+              .date-range-picker
+                input#fromDateFilter.date-input(type='date' value=filters ? filters.fromDate : '')
+                span.date-separator —
+                input#toDateFilter.date-input(type='date' value=filters ? filters.toDate : '')
+              .dropdown-actions
+                button#clearDateBtn.btn-clear(type='button') Clear filters
+                button#applyDateBtn.btn-apply(type='button') Apply
+
         .table-card
           .table-wrapper
             table.data-table
@@ -67,36 +77,66 @@ html(lang='en')
                   th LOCATION
                   th CREATED DATE
                   th ACTIONS
-              tbody
+              tbody#projectDetailsTableBody
                 if projects && projects.length > 0
-                   each project, idx in projects
+                   each project in projects
                      tr(data-id=project.id data-type=project.type) 
-                       td #{String(idx + 1).padStart(2, '0')}
+                       td #{String(project.index + 1).padStart(2, '0')}
                        td.item-name-cell #{project.project_name}
                        td #{project.type === 'upcoming' ? 'Upcoming' : 'Completed'}
-                       td #{project.project_location}
-                       td.item-name-cell
-                         span.cell-text(title=project.formattedDate) #{project.createdAt}
+                       td #{project.location}
+                       td 
+                        b #{project.formattedDate}
                        td
                          .action-buttons
                             button.icon-action-btn.edit-btn(title="Manage Details" onclick=`window.location.href='/admin/projectDetails/details?projectId=${project.id}&type=${project.type}'`)
                                span.edit  
                                  svg(width='17' height='17' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='currentColor')
                                    path(d='M3 17.25V21H6.75L17.81 9.94L14.06 6.19L3 17.25ZM20.71 7.04C21.1 6.65 21.1 6.02 20.71 5.63L18.37 3.29C17.98 2.9 17.35 2.9 16.96 3.29L15.13 5.12L18.88 8.87L20.71 7.04Z')
-                else
-                   tr
-                     td(colspan="6" style="text-align:center; padding: 2rem;") No projects found.
+              tbody#noResultsTbody(style=(projects && projects.length > 0 ? "display:none;" : ""))
+                tr#noResultsRow.no-results-row
+                  td.no-data-cell(colspan="6" style="text-align:center") No projects found.
           
           .table-footer
             .footer-info
-              span Showing <span id="startRow">1</span> to <span id="endRow">#{projects ? projects.length : 0}</span> of <span id="totalRows">#{projects ? projects.length : 0}</span> projects
-            .pagination
-              button.page-btn.prev-page(disabled)
-                svg(fill='#000000' height='24' width='24' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24')
-                  path(d='M17.2 23.7 L5.4 12 L17.2 0.3 L18.5 1.7 L8.4 12 L18.5 22.3 Z')
-              span.page-numbers
-              button.page-btn.next-page
-                svg(fill='#000000' height='24' width='24' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' xml:space='preserve')
-                  path(d='M6.8 23.7 L5.4 22.3 L15.7 12 L5.4 1.7 L6.8 0.3 L18.5 12 Z')
+              if pagination
+                span Showing #{pagination.totalItems === 0 ? 0 : pagination.start} to #{pagination.end} of #{pagination.totalItems} projects
+              else
+                span Showing 1 to #{projects ? projects.length : 0} of #{projects ? projects.length : 0} projects
+            
+            .footer-right
+              .rows-per-page-wrapper
+                span.rows-label Rows per page:
+                select#rowsPerPageSelect.rows-select
+                  each opt in (rowsPerPageOptions || [5, 10, 20])
+                    option(value=opt selected=(rowsPerPage == opt)) #{opt}
+
+              .pagination
+                if pagination
+                  button.page-btn(disabled=pagination.currentPage === 1 onclick=`window.changePage(${pagination.currentPage - 1})`)
+                    svg(fill='#000000' height='24' width='24' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24')
+                      path(d='M17.2 23.7 L5.4 12 L17.2 0.3 L18.5 1.7 L8.4 12 L18.5 22.3 Z')
+                  
+                  - var startPage = Math.max(1, pagination.currentPage - 2)
+                  - var endPage = Math.min(pagination.totalPages, startPage + 4)
+                  if (endPage - startPage + 1 < 5)
+                    - startPage = Math.max(1, endPage - 4)
+                  
+                  - for (var i = startPage; i <= endPage; i++)
+                    if i > 0
+                      button.page-btn(class=(i === pagination.currentPage ? 'active' : '') onclick=`window.changePage(${i})`) #{i}
+                  
+                  button.page-btn(disabled=pagination.currentPage === pagination.totalPages || pagination.totalPages === 0 onclick=`window.changePage(${pagination.currentPage + 1})`)
+                    svg(fill='#000000' height='24' width='24' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' xml:space='preserve')
+                      path(d='M6.8 23.7 L5.4 22.3 L15.7 12 L5.4 1.7 L6.8 0.3 L18.5 12 Z')
+                else
+                  //- Fallback if no pagination object
+                  button.page-btn(disabled)
+                    svg(fill='#000000' height='24' width='24' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24')
+                      path(d='M17.2 23.7 L5.4 12 L17.2 0.3 L18.5 1.7 L8.4 12 L18.5 22.3 Z')
+                  button.page-btn.active 1
+                  button.page-btn(disabled)
+                    svg(fill='#000000' height='24' width='24' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' xml:space='preserve')
+                      path(d='M6.8 23.7 L5.4 22.3 L15.7 12 L5.4 1.7 L6.8 0.3 L18.5 12 Z')
 
     script(src=utils.assetPath("/bundle/projectDetailsList.js"))

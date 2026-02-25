@@ -4,6 +4,7 @@ const { formatDateMonthYear } = require('../utils/index');
 
 const getdiscoverUsData = async (req, res) => {
   try {
+    const { search, fromDate, toDate } = req.query;
     // discover_details: values + buyer guide
     const discoverData = await mongoose.connection.db.collection('discover_details').find({ page_slug: 'discoverUs' }).toArray();
     // banner: discover-banner
@@ -29,12 +30,30 @@ const getdiscoverUsData = async (req, res) => {
       };
     });
 
+    // Apply search and date filters
+    let filteredBlogs = blogData;
+    if (search) {
+      filteredBlogs = filteredBlogs.filter(b =>
+        b.blog_title.toLowerCase().includes(search.toLowerCase()) ||
+        b.blog_description.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+    if (fromDate || toDate) {
+      filteredBlogs = filteredBlogs.filter(b => {
+        const blogDate = dayjs(b.blog_date, 'MMMM D, YYYY');
+        if (fromDate && blogDate.isBefore(dayjs(fromDate))) return false;
+        if (toDate && blogDate.isAfter(dayjs(toDate))) return false;
+        return true;
+      });
+    }
+
     res.render('discoverUs', {
       ourvaluesData,
-      blogData,
+      blogData: filteredBlogs,
       bannerData,
       reviewsData,
-      buyerData
+      buyerData,
+      filters: { search, fromDate, toDate }
     });
   } catch (error) {
     console.error('Error fetching discoverUs data:', error);
@@ -43,13 +62,18 @@ const getdiscoverUsData = async (req, res) => {
       blogData: [],
       bannerData: [],
       reviewsData: [],
-      buyerData: []
+      buyerData: [],
+      filters: {}
     });
   }
 };
 
 const getBlogById = async (req, res) => {
   try {
+    if (!mongoose.connection.db) {
+      console.error('MongoDB not connected yet in getBlogById');
+      return res.status(503).send('Service temporarily unavailable. Please try again.');
+    }
     const { id } = req.params;
     const { ObjectId } = require('mongodb');
 
@@ -80,7 +104,8 @@ const getBlogById = async (req, res) => {
       return res.render('BlogPage', {
         blog: formattedBlog,
         bannerData: bannerDocs,
-        isBlogPage: true
+        isBlogPage: true,
+        activePage: 'discoverUs'
       });
     }
 
@@ -93,7 +118,8 @@ const getBlogById = async (req, res) => {
     res.render('BlogPage', {
       blog: formattedBlog,
       bannerData: bannerDocs,
-      isBlogPage: true
+      isBlogPage: true,
+      activePage: 'discoverUs'
     });
   } catch (error) {
     console.error('Error fetching blog by ID:', error);

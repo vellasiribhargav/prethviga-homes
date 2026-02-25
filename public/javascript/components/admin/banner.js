@@ -135,6 +135,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Process the first file in the CURRENT slot
         const firstFile = fileArray[0];
+
+        if (firstFile.size > 2 * 1024 * 1024) {
+            Swal.fire({
+                icon: 'warning',
+                text: `${firstFile.name} is too large. Max size is 2MB.`,
+                confirmButtonColor: '#BC5322'
+            });
+            return;
+        }
+
         displayImageInSlot(firstFile, slot);
 
         // Find if this slot already has a selected image being replaced
@@ -262,7 +272,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     </svg>
                 </div>
                 <p class="upload-text">Upload Image</p>
-                <p class="upload-subtext">JPG, PNG (max. 5MB)</p>
+                <p class="upload-subtext">JPG, PNG (max. 2MB)</p>
             </button>
             <input type="file" class="image-upload" accept="image/*" style="display: none;" multiple>
         `;
@@ -841,7 +851,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const container = document.getElementById('reviews-container');
         if (!container) return;
         container.innerHTML = '';
-        
+
         // If no review data, render one empty card
         if (!reviewData || reviewData.length === 0) {
             renderReviewCard({}, 0);
@@ -928,6 +938,15 @@ document.addEventListener('DOMContentLoaded', function () {
             if (input) {
                 const file = e.target.files[0];
                 if (file) {
+                    if (file.size > 2 * 1024 * 1024) {
+                        Swal.fire({
+                            icon: 'warning',
+                            text: `${file.name} is too large. Max size is 2MB.`,
+                            confirmButtonColor: '#BC5322'
+                        });
+                        input.value = '';
+                        return;
+                    }
                     const reader = new FileReader();
                     reader.onload = (ev) => {
                         const slot = input.closest('.review-image-slot');

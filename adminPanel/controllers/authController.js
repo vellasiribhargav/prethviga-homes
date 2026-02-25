@@ -73,14 +73,15 @@ const login = asyncHandler(async (req, res, next) => {
     }
 
     // Generate JWT
+    const expiryMinutes = Number(process.env.ADMIN_COOKIE_EXPIRY_MINUTES);
+    // console.log("Expiry Minutes:", expiryMinutes);
     const token = jwt.sign(
         { id: user._id.toString(), username: user.userName },
         process.env.JWT_SECRET,
-        { expiresIn: '1d' }
-    );
+        { expiresIn: `${expiryMinutes}m` }
+    )
 
     // Set cookie
-    const expiryMinutes = Number(process.env.ADMIN_COOKIE_EXPIRY_MINUTES);
     res.cookie('admin_token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',

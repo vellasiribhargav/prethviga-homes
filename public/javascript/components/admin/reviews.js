@@ -67,10 +67,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const footerInput = reviewItem.querySelector('.review-footer');
         const removeBtn = reviewItem.querySelector('.remove-review');
 
-        textArea.value = data['review-text'] || '';
-        nameInput.value = data['client-name'] || '';
-        roleInput.value = data['client-role'] || '';
-        footerInput.value = data['review-footer'] || '';
+        textArea.value = data.review_text || data['review-text'] || '';
+        nameInput.value = data.reviewer_name || data['client-name'] || '';
+        roleInput.value = data.reviewer_role || data['client-role'] || '';
+        if (footerInput) footerInput.value = data.review_footer || data['review-footer'] || '';
 
         // Remove placeholder if it exists
         const placeholder = reviewsContainer.querySelector('.empty-reviews-placeholder');
@@ -199,10 +199,10 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             page_content.push({
-                'review-text': reviewText,
-                'client-name': clientName,
-                'client-role': clientRole,
-                'review-footer': reviewFooter
+                review_text: reviewText,
+                reviewer_name: clientName,
+                reviewer_role: clientRole,
+                review_footer: reviewFooter
             });
         });
 
@@ -218,10 +218,10 @@ document.addEventListener('DOMContentLoaded', () => {
             originalContent.map(item => {
                 if (item['review-title']) return { 'review-title': item['review-title'] };
                 return {
-                    'review-text': item['review-text'] || '',
-                    'client-name': item['client-name'] || '',
-                    'client-role': item['client-role'] || '',
-                    'review-footer': item['review-footer'] || ''
+                    review_text: item.review_text || item['review-text'] || '',
+                    reviewer_name: item.reviewer_name || item['client-name'] || '',
+                    reviewer_role: item.reviewer_role || item['client-role'] || '',
+                    review_footer: item.review_footer || item['review-footer'] || ''
                 };
             })
         );

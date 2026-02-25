@@ -8,7 +8,10 @@ function updateActiveLinks() {
     menuBtn.forEach(tab => {
         tab.classList.remove("active");
         const href = tab.getAttribute("href");
-        if (href === currentPath || (currentPath === "/" && href === "/home")) {
+        const isHome = (href === "/home" || href === "/") && (currentPath === "/" || currentPath === "/home");
+        const isProjects = href === "/ProjectPage" && (currentPath === "/ProjectPage" || currentPath.startsWith("/OnGoingPage"));
+        const isDiscoverUs = href === "/discoverUs" && (currentPath === "/discoverUs" ||  currentPath.startsWith("/discoverUs/blog"));
+        if (isHome || isProjects || isDiscoverUs) {
             tab.classList.add("active");
         }
     });
@@ -16,7 +19,10 @@ function updateActiveLinks() {
     menuBar.forEach(tab => {
         tab.classList.remove("activePageMobile");
         const href = tab.getAttribute("href");
-        if (href === currentPath || (currentPath === "/" && href === "/home")) {
+        const isHome = (href === "/home" || href === "/") && (currentPath === "/" || currentPath === "/home");
+        const isProjects = href === "/ProjectPage" && (currentPath === "/ProjectPage" || currentPath.startsWith("/OnGoingPage"));
+        const isDiscoverUs = href === "/discoverUs" && (currentPath === "/discoverUs" || currentPath.startsWith("/blog") || currentPath.startsWith("/discoverUs/blog"));
+        if (isHome || isProjects || isDiscoverUs) {
             tab.classList.add("activePageMobile");
         }
     });
@@ -24,7 +30,6 @@ function updateActiveLinks() {
 
 updateActiveLinks();
 
-// Add click listeners (though navigation will reload the page and trigger the initial load logic)
 menuBtn.forEach((item) => {
     item.addEventListener("click", (e) => {
         menuBtn.forEach(tab => tab.classList.remove("active"));

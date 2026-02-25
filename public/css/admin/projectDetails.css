@@ -2043,17 +2043,31 @@ textarea[readonly] {
     gap: 12px;
     margin-bottom: 24px;
     border-bottom: 2px solid var(--border-light);
-    padding: 10px 0 10px 0;
+    padding: 10px 0 10px 12px;
     justify-content: space-around;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary) transparent;
     overflow-x: auto;
+    max-height: 75px;
 }
 
 .section-tabs::-webkit-scrollbar {
-    display: none;
+    height: 6px;
+}
+
+.section-tabs::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.section-tabs::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 3px;
+}
+
+.section-tabs::-webkit-scrollbar-thumb:hover {
+    background: rgba(158, 101, 32, 0.8);
 }
 
 .tab-btn {

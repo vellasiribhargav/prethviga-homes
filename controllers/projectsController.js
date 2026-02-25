@@ -4,6 +4,8 @@ const { formatDateForDisplay } = require('../utils/index');
 
 const getProjectsData = async (req, res) => {
   try {
+    const { search, fromDate, toDate } = req.query;
+
     // projects (Multi-document)
     const projectsDocs = await mongoose.connection.db.collection('projects').find({ page_slug: 'projects' }).toArray();
 
@@ -43,7 +45,8 @@ const getProjectsData = async (req, res) => {
       completed,
       frequencyData: faqSection,
       bannerData,
-      blogData
+      blogData,
+      filters: { search, fromDate, toDate }
     });
   } catch (error) {
     console.error('Error fetching ProjectPage data:', error);
@@ -53,7 +56,8 @@ const getProjectsData = async (req, res) => {
       upcoming: [],
       frequencyData: [],
       bannerData: [],
-      blogData: []
+      blogData: [],
+      filters: {}
     });
   }
 };

@@ -3,7 +3,7 @@ export class PaginationManager {
         this.tableBody = document.querySelector(options.tableBodySelector);
         this.paginationContainer = document.querySelector(options.paginationContainerSelector);
         this.footerInfo = document.querySelector(options.footerInfoSelector);
-        this.rowsPerPageOptions = options.rowsPerPageOptions || [5, 10];
+        this.rowsPerPageOptions = options.rowsPerPageOptions || [5, 10, 20];
         this.storageKey = options.storageKey || 'adminRowsPerPage';
         this.rowsPerPage = parseInt(localStorage.getItem(this.storageKey)) || options.rowsPerPage || 5;
         this.noResultsRow = document.getElementById('noResultsRow');
@@ -47,7 +47,7 @@ export class PaginationManager {
         this.rows = newRows;
         this.currentPage = 1;
         this.calculateTotalPages();
-        
+
         // Show/hide no results row
         if (this.noResultsRow) {
             if (newRows.length === 0) {
@@ -56,7 +56,7 @@ export class PaginationManager {
                 this.noResultsRow.style.display = 'none';
             }
         }
-        
+
         this.render();
     }
 

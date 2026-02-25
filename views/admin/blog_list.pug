@@ -21,6 +21,7 @@ html(lang='en')
             svg.icon(xmlns='http://www.w3.org/2000/svg', height='24', viewBox='0 -960 960 960', width='24')
               path(d='M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z')
           h1.page-title Blog List
+          span#filterIndicator.filter-indicator(style=(is_filtered ? "display: inline-block;" : "display: none;")) (Filtered Results)
 
       // Breadcrumbs
       .breadcrumbs
@@ -54,9 +55,20 @@ html(lang='en')
               path(d='M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z')
             input#searchInput.search-input(type='text' placeholder='Search by blog title...')
 
-          .filter-group
-            label.filter-label Date:
-            input#dateFilter.filter-select(type='date')
+          .date-range-dropdown
+            button#dateRangeToggle.btn-dropdown-toggle(type='button')
+              svg(xmlns='http://www.w3.org/2000/svg' height='20' viewBox='0 -960 960 960' width='20' fill='currentColor')
+                path(d='M200-640h560v-80H200v80Zm0 280h560v-80H200v80Zm0 280h560v-80H200v80Z')
+              span Date filter
+            .dropdown-menu#dateRangeMenu
+              .date-range-picker
+                input#fromDateFilter.date-input(type='date' value=filters.fromDate || '')
+                span.date-separator —
+                input#toDateFilter.date-input(type='date' value=filters.toDate || '')
+              .dropdown-actions
+                button#clearDateBtn.btn-clear(type='button') Clear filters
+                button#applyDateBtn.btn-apply(type='button') Apply
+
 
         .table-card
           .table-wrapper
@@ -96,8 +108,8 @@ html(lang='en')
                              span Preview
                          else
                            span No Image
-                       td.item-name-cell
-                         span.cell-date(title=b.formattedDate) #{b.createdAt}
+                       td 
+                        b #{b.formattedDate}
                        td
                          .action-buttons
                            button.icon-action-btn.edit-btn(title="Edit" data-id=b.id data-index=b.id data-blog=JSON.stringify(b))
@@ -108,26 +120,47 @@ html(lang='en')
                              span.delete
                                svg(width='17' height='17' viewbox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='currentColor')
                                  path(d='M8 3H16C16.55 3 17 3.45 17 4V5H19C19.55 5 20 5.45 20 6C20 6.55 19.55 7 19 7H5C4.45 7 4 6.55 4 6C4 5.45 4.45 5 5 5H7V4C7 3.45 7.45 3 8 3ZM6 9V19C6 20.1 6.9 21 8 21H16C17.1 21 18 20.1 18 19V9H6ZM9 11C9.55 11 10 11.45 10 12V18C10 18.55 9.55 19 9 19C8.45 19 8 18.55 8 18V12C8 11.45 8.45 11 9 11ZM12 11C12.55 11 13 11.45 13 12V18C13 18.55 12.55 19 12 19C11.45 19 11 18.55 11 18V12C11 11.45 11.45 11 12 11ZM15 11C15.55 11 16 11.45 16 12V18C16 18.55 15.55 19 15 19C14.45 19 14 18.55 14 18V12C14 11.45 14.45 11 15 11Z')
-                tr#noResultsRow.no-results-row(style="display:none;")
+              tbody#noResultsTbody(style=(blogs && blogs.length > 0 ? "display:none;" : ""))
+                tr#noResultsRow.no-results-row
                   td.no-data-cell(colspan="10") No blogs found.
-                if !(blogs && blogs.length > 0)
-                   tr
-                     td.no-data-cell(colspan="10") No blogs found.
           
           // Table Footer / Pagination
           .table-footer
             .footer-info
-              span Showing 1 to #{blogs ? blogs.length : 0} of #{blogs ? blogs.length : 0} blogs
-            .pagination
-              button.page-btn(disabled)
-                svg(fill='#000000' height='24' width='24' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24')
-                  path(d='M17.2 23.7 L5.4 12 L17.2 0.3 L18.5 1.7 L8.4 12 L18.5 22.3 Z')
-              button.page-btn.active 1
-              button.page-btn 2
-              button.page-btn 3
-              button.page-btn
-                svg(fill='#000000' height='24' width='24' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' xml:space='preserve')
-                  path(d='M6.8 23.7 L5.4 22.3 L15.7 12 L5.4 1.7 L6.8 0.3 L18.5 12 Z')
+              span Showing #{pagination ? (pagination.totalItems === 0 ? 0 : pagination.start) : 1} to #{pagination ? pagination.end : (blogs ? blogs.length : 0)} of #{pagination ? pagination.totalItems : (blogs ? blogs.length : 0)} blogs
+            
+            .footer-right
+              .rows-per-page-wrapper
+                span.rows-label Rows per page:
+                select#rowsPerPageSelect.rows-select
+                  each opt in (rowsPerPageOptions || [5, 10, 20])
+                    option(value=opt selected=(rowsPerPage == opt)) #{opt}
+
+              .pagination
+                if pagination
+                  button.page-btn(disabled=pagination.currentPage === 1 onclick=`window.changePage(${pagination.currentPage - 1})`)
+                    svg(fill='#000000' height='24' width='24' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24')
+                      path(d='M17.2 23.7 L5.4 12 L17.2 0.3 L18.5 1.7 L8.4 12 L18.5 22.3 Z')
+                  
+                  - var startPage = Math.max(1, pagination.currentPage - 2)
+                  - var endPage = Math.min(pagination.totalPages, startPage + 4)
+                  if (endPage - startPage + 1 < 5)
+                    - startPage = Math.max(1, endPage - 4)
+                  
+                  - for (var i = startPage; i <= endPage; i++)
+                    button.page-btn(class=(i === pagination.currentPage ? 'active' : '') onclick=`window.changePage(${i})`) #{i}
+                  
+                  button.page-btn(disabled=pagination.currentPage === pagination.totalPages || pagination.totalPages === 0 onclick=`window.changePage(${pagination.currentPage + 1})`)
+                    svg(fill='#000000' height='24' width='24' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' xml:space='preserve')
+                      path(d='M6.8 23.7 L5.4 22.3 L15.7 12 L5.4 1.7 L6.8 0.3 L18.5 12 Z')
+                else
+                  button.page-btn(disabled)
+                    svg(fill='#000000' height='24' width='24' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24')
+                      path(d='M17.2 23.7 L5.4 12 L17.2 0.3 L18.5 1.7 L8.4 12 L18.5 22.3 Z')
+                  button.page-btn.active 1
+                  button.page-btn
+                    svg(fill='#000000' height='24' width='24' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' xml:space='preserve')
+                      path(d='M6.8 23.7 L5.4 22.3 L15.7 12 L5.4 1.7 L6.8 0.3 L18.5 12 Z')
     // Modal for Editing
     #itemModal.modal
             .modal-content

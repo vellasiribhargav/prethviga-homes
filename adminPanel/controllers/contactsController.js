@@ -2,28 +2,54 @@ const mongoose = require('mongoose');
 const dayjs = require('dayjs');
 const { ObjectId } = require("mongodb");
 const { asyncHandler, ValidationError, NotFoundError } = require('../../utils/errorHandler');
-
-const { formatDateShortSimple, formatDateForDisplay } = require('../../utils/index');
+const { formatedDate } = require('../../utils/index');
+const { ListFilter } = require('../utils/filterUtils');
 
 const renderContactsPage = asyncHandler(async (req, res) => {
-    const contactsCollection = mongoose.connection.db.collection("contacts");
-    const contacts = await contactsCollection.find({}).sort({ createdAt: -1 }).toArray();
+    let { search, fromDate, toDate, page = 1, limit = 5, is_filter = false } = req.query;
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 5;
+    const skip = (page - 1) * limit;
 
-    // Add index for frontend use and map _id to id for compatibility with the view
-    const contactsWithIndex = contacts.map((contact, index) => ({
+    const contactsCollection = mongoose.connection.db.collection("contacts");
+
+    let query = {};
+    const { query: filteredQuery, isFiltered } = ListFilter(query, req);
+
+    const totalItems = await contactsCollection.countDocuments(filteredQuery);
+    const totalPages = Math.ceil(totalItems / limit);
+    const data = await contactsCollection.find(filteredQuery).sort({ createdAt: -1 }).skip(skip).limit(limit).toArray();
+
+    const contacts = data.map((contact, index) => ({
         ...contact,
         id: contact._id.toString(),
-        index: index,
-        createdAt: formatDateForDisplay(contact.createdAt, true)
+        index: skip + index,
+        createdAt: formatedDate(contact.createdAt)
     }));
 
-    res.render('admin/contacts_list', {
+    const response = {
         title: 'Contacts List',
-        contacts: contactsWithIndex,
+        contacts,
+        pagination: {
+            totalItems,
+            totalPages,
+            currentPage: page,
+            limit,
+            start: skip + 1,
+            end: Math.min(skip + limit, totalItems)
+        },
         activeLink: 'contacts',
-        rowsPerPage: 5,
-        rowsPerPageOptions: [5, 10]
-    });
+        rowsPerPage: limit,
+        rowsPerPageOptions: [5, 10, 20],
+        filters: { search, fromDate, toDate },
+        is_filtered: isFiltered
+    };
+
+    if (is_filter) {
+        return res.json({ success: true, ...response });
+    }
+
+    res.render('admin/contacts_list', response);
 });
 
 const createContact = asyncHandler(async (req, res) => {

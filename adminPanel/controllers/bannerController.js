@@ -1,7 +1,9 @@
 const mongoose = require("mongoose");
+const dayjs = require('dayjs');
 const { ObjectId } = require("mongodb");
 const path = `${process.env.PROJECT_URL}uploads/gallery/`;
-const { formatDateForDisplay, formatDateShortSimple } = require('../../utils/index');
+const { formatDateForDisplay, formatedDate } = require('../../utils/index');
+const { ListFilter } = require('../utils/filterUtils');
 const BANNER_CONFIG = {
   home: {
     collection: "banner",
@@ -45,33 +47,68 @@ const renderBannerMainPage = async (req, res) => {
 const getBannersList = async (req, res) => {
   try {
     const { slug } = req.params;
+    let { search, fromDate, toDate, page = 1, limit = 5, is_filter = false } = req.query;
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 5;
+    const skip = (page - 1) * limit;
+
     const config = BANNER_CONFIG[slug] || BANNER_CONFIG.home;
     const collection = mongoose.connection.db.collection(config.collection);
 
-    const data = await collection.find({
+    let query = {
       page_slug: config.slug,
-      page_section: config.section
-    }).toArray();
+      page_section: config.section,
+      $or: [
+        { [config.imageField]: { $exists: true, $ne: "" } },
+        { image: { $exists: true, $ne: "" } }
+      ]
+    };
 
-    const banners = data.map((item, index) => ({
+    const { query: filteredQuery, isFiltered } = ListFilter(query, req);
+    query = filteredQuery;
+
+    let allData = await collection.find(filteredQuery).toArray();
+
+
+
+    const totalItems = allData.length;
+    const totalPages = Math.ceil(totalItems / limit);
+
+    const banners = allData.slice(skip, skip + limit).map((item, index) => ({
       image: item[config.imageField] || item.image,
       Heading: item.Heading || '',
       subHeading: item.subHeading || '',
       description: item.description || '',
       number: item.number || '',
-      index: index,
+      index: skip + index,
       id: item._id.toString(),
-      formattedDate: formatDateForDisplay(item.createdAt, true)
+      formattedDate: formatedDate(item.createdAt)
     }));
 
-    res.render('admin/banner_list', {
+    const response = {
       title: 'Banner Management',
       banners,
+      pagination: {
+        totalItems,
+        totalPages,
+        currentPage: page,
+        limit,
+        start: skip + 1,
+        end: Math.min(skip + limit, totalItems)
+      },
       slug,
       activeLink: 'banner',
-      rowsPerPage: 5,
-      rowsPerPageOptions: [5, 10]
-    });
+      rowsPerPage: limit,
+      rowsPerPageOptions: [5, 10, 20],
+      filters: { search, fromDate, toDate },
+      is_filtered: isFiltered
+    };
+
+    if (is_filter) {
+      return res.json({ success: true, ...response });
+    }
+
+    res.render('admin/banner_list', response);
   } catch (error) {
     console.error('Error fetching banners:', error);
     res.render('admin/banner_list', {
@@ -79,7 +116,8 @@ const getBannersList = async (req, res) => {
       banners: [],
       slug: req.params.slug,
       activeLink: 'banner',
-      error: error.message
+      error: error.message,
+      filters: {}
     });
   }
 };
@@ -88,6 +126,7 @@ const getBannersList = async (req, res) => {
 const getBanners = async (req, res) => {
   try {
     const { slug } = req.params;
+    const { search, fromDate, toDate } = req.query;
     const config = BANNER_CONFIG[slug];
 
     if (!config) {
@@ -99,10 +138,14 @@ const getBanners = async (req, res) => {
     }
     const collection = mongoose.connection.db.collection(config.collection);
 
-    const items = await collection.find({
+    let query = {
       page_slug: config.slug,
       page_section: config.section,
-    }).toArray();
+    };
+
+    const { query: filteredQuery, isFiltered } = ListFilter(query, req);
+
+    let items = await collection.find(filteredQuery).toArray();
 
     // Normalize field name to 'image' for the frontend and include text fields
     const banners = items.map(item => {
@@ -128,6 +171,7 @@ const getBanners = async (req, res) => {
     res.json({
       success: true,
       data: banners,
+      is_filtered: isFiltered
     });
   } catch (error) {
     console.error(`[BannerAPI] GET Error: ${error.message}`, error);
