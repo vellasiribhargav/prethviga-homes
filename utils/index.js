@@ -92,7 +92,16 @@ exports.formatDateMonthYear = (dbDateStr) => {
 	if (dbDateStr instanceof Date) {
 		date = dayjs(dbDateStr);
 	} else if (typeof dbDateStr === 'string') {
-		date = dayjs(dbDateStr);
+		// Try DD-MM-YYYY and D-M-YYYY formats first (used by admin panel)
+		const ddmmyyyy = dayjs(dbDateStr, 'DD-MM-YYYY', true);
+		const dmmyyyy = dayjs(dbDateStr, 'D-M-YYYY', true);
+		if (ddmmyyyy.isValid()) {
+			date = ddmmyyyy;
+		} else if (dmmyyyy.isValid()) {
+			date = dmmyyyy;
+		} else {
+			date = dayjs(dbDateStr);
+		}
 	} else {
 		return dbDateStr;
 	}
