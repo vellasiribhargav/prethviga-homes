@@ -90,10 +90,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 <tr>
                     <td>${String(review.index + 1).padStart(2, '0')}</td>
                     <td class="item-name-cell">${review.reviewer_name}</td>
-                    <td>${review.review_text}</td>
+                    <td title="${review.review_text}" class="review-text-preview">${review.review_text}</td>
                     <td><b>${review.formattedDate}</b></td>
                     <td>
                         <div class="action-buttons">
+                            <button class="icon-action-btn edit-btn" title="Edit Review" onclick="window.location.href='/admin/reviews'">
+                                <span class="edit">
+                                    <svg width="17" height="17" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                                        <path d="M3 17.25V21H6.75L17.81 9.94L14.06 6.19L3 17.25ZM20.71 7.04C21.1 6.65 21.1 6.02 20.71 5.63L18.37 3.29C17.98 2.9 17.35 2.9 16.96 3.29L15.13 5.12L18.88 8.87L20.71 7.04Z"></path>
+                                    </svg>
+                                </span>
+                            </button>
                             <button class="icon-action-btn delete-btn" title="Delete" data-index="${review.id}">
                                 <span class="delete">
                                     <svg width="17" height="17" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
