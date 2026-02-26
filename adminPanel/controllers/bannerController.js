@@ -208,7 +208,6 @@ const addBanners = async (req, res) => {
       description: description || '',
       number: number || '',
       createdAt: new Date(),
-      updatedAt: new Date()
     }));
 
     await collection.insertMany(bannersToAdd);

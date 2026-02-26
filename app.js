@@ -53,6 +53,7 @@ mongoose.connect(config.mongodb.uri)
 
 // Initialize the app
 const app = express();
+app.set('trust proxy', 1);
 app.use(cors());
 app.use(cookieParser());
 // app.use(flash());
