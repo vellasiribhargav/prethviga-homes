@@ -7,6 +7,18 @@ import Swal from 'sweetalert2';
 import { PaginationManager } from '../../utils/pagination.js';
 import { getSearchValue, getDateValue, getDateRangeValues, matchesSearch, matchesDate, matchesDateRange } from '../../utils/searchUtils.js';
 
+function setCookie(name, value, days = 7) {
+    const expires = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+}
+
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift());
+    return '';
+}
+
 let originalFormData = {};
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -46,17 +58,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Filter Logic
     function applyFilters(page = 1) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentSlug = urlParams.get('slug') || getCookie('admin_faq_slug') || (typeof CURRENT_SLUG !== 'undefined' ? CURRENT_SLUG : 'project');
+        const currentSection = urlParams.get('section') || getCookie('admin_faq_section') || (typeof CURRENT_SECTION !== 'undefined' ? CURRENT_SECTION : 'faq-section-header');
+
         const params = {
             search: getSearchValue(searchInput),
             fromDate: fromDateFilter ? fromDateFilter.value : '',
             toDate: toDateFilter ? toDateFilter.value : '',
             page: page,
             limit: rowsPerPage,
-            is_filter: true
+            is_filter: true,
+            slug: currentSlug,
+            section: currentSection
         };
 
         $.ajax({
-            url: `/admin/faq/${CURRENT_SLUG}/${CURRENT_SECTION}/list`,
+            url: `/admin/faq/list`,
             type: 'GET',
             data: params,
             success: function (data) {
@@ -306,8 +324,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    const currentSlug = getCookie('admin_faq_slug') || (typeof CURRENT_SLUG !== 'undefined' ? CURRENT_SLUG : 'project');
+                    const currentSection = getCookie('admin_faq_section') || (typeof CURRENT_SECTION !== 'undefined' ? CURRENT_SECTION : 'faq-section-header');
                     $.ajax({
-                        url: `/admin/faq/${CURRENT_SLUG}/${CURRENT_SECTION}/delete/${id}`,
+                        url: `/admin/faq/delete/${id}?slug=${currentSlug}&section=${currentSection}`,
                         type: 'DELETE',
                         success: function (data) {
                             if (data.success) {
@@ -333,6 +353,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const slugSelector = document.getElementById('faq-slug-selector');
     if (slugSelector) {
+        // Initialize from cookie if exists
+        const savedSlug = getCookie('admin_faq_slug');
+        if (savedSlug) {
+            slugSelector.value = savedSlug;
+        }
+
         slugSelector.addEventListener('change', function () {
             const newSlug = this.value;
             const sectionMap = {
@@ -341,8 +367,16 @@ document.addEventListener('DOMContentLoaded', function () {
             };
             const section = sectionMap[newSlug] || 'faq-section-header';
 
-            window.location.href = `/admin/faq/${newSlug}/${section}/list`;
+            setCookie('admin_faq_slug', newSlug);
+            setCookie('admin_faq_section', section);
 
+            // Update Add button link
+            const addBtn = document.getElementById('addBtn');
+            if (addBtn) {
+                addBtn.setAttribute('onclick', `window.location.href='/admin/faq'`);
+            }
+
+            applyFilters(1);
         });
     }
 
@@ -443,8 +477,10 @@ document.addEventListener('DOMContentLoaded', function () {
             submitBtn.textContent = 'Saving...';
             submitBtn.disabled = true;
 
+            const currentSlug = getCookie('admin_faq_slug') || (typeof CURRENT_SLUG !== 'undefined' ? CURRENT_SLUG : 'project');
+            const currentSection = getCookie('admin_faq_section') || (typeof CURRENT_SECTION !== 'undefined' ? CURRENT_SECTION : 'faq-section-header');
             $.ajax({
-                url: `/admin/faq/${CURRENT_SLUG}/${CURRENT_SECTION}/update/${id}`,
+                url: `/admin/faq/update/${id}?slug=${currentSlug}&section=${currentSection}`,
                 type: 'PUT',
                 data: {
                     question: formData.get('question'),

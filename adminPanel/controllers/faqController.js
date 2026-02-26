@@ -21,7 +21,9 @@ const FAQ_CONFIG = {
 
 const renderFaqMainPage = async (req, res) => {
     try {
-        res.render('admin/faq');
+        const pageSlug = req.params.slug || req.query.slug || req.cookies.admin_faq_slug || 'project';
+        const pageSection = req.params.section || req.query.section || req.cookies.admin_faq_section || 'faq-section-header';
+        res.render('admin/faq', { pageSlug, pageSection });
     } catch (error) {
         console.error('Error rendering faq page:', error);
         res.render('admin/faq');
@@ -30,7 +32,8 @@ const renderFaqMainPage = async (req, res) => {
 
 const getFaqsList = async (req, res) => {
     try {
-        const { slug, section } = req.params;
+        const slug = req.params.slug || req.query.slug || req.cookies.admin_faq_slug || "project";
+        const section = req.params.section || req.query.section || req.cookies.admin_faq_section || "faq-section-header";
         let { page = 1, limit = 5, is_filter = false } = req.query;
         page = parseInt(page) || 1;
         limit = parseInt(limit) || 5;
@@ -101,7 +104,8 @@ const getFaqsList = async (req, res) => {
 
 const getFaqs = async (req, res) => {
     try {
-        const { slug, section } = req.params;
+        const slug = req.params.slug || req.query.slug || req.cookies.admin_faq_slug || "project";
+        const section = req.params.section || req.query.section || req.cookies.admin_faq_section || "faq-section-header";
         const collectionName = FAQ_CONFIG[slug]?.collection || "faq";
         const collection = mongoose.connection.db.collection(collectionName);
         const config = FAQ_CONFIG[slug] || { collection: collectionName, slug: slug };
@@ -124,7 +128,8 @@ const getFaqs = async (req, res) => {
 
 const addFaqs = async (req, res) => {
     try {
-        const { slug, section } = req.params;
+        const slug = req.params.slug || req.query.slug || req.cookies.admin_faq_slug || "project";
+        const section = req.params.section || req.query.section || req.cookies.admin_faq_section || "faq-section-header";
         const faqArr = JSON.parse(req.body.faqArr || '[]');
         const collectionName = FAQ_CONFIG[slug]?.collection || "faq";
         const collection = mongoose.connection.db.collection(collectionName);
@@ -151,7 +156,9 @@ const addFaqs = async (req, res) => {
 
 const updateFaq = async (req, res) => {
     try {
-        const { slug, section, id } = req.params; // Changed index to id
+        const slug = req.params.slug || req.query.slug || req.cookies.admin_faq_slug || "project";
+        const section = req.params.section || req.query.section || req.cookies.admin_faq_section || "faq-section-header";
+        const id = req.params.id || req.query.id; // Changed index to id, now checks req.query as well
         const collectionName = FAQ_CONFIG[slug]?.collection || "faq";
         const collection = mongoose.connection.db.collection(collectionName);
 
@@ -182,7 +189,9 @@ const updateFaq = async (req, res) => {
 
 const deleteFaq = async (req, res) => {
     try {
-        const { slug, section, id } = req.params; // Changed index to id
+        const slug = req.params.slug || req.query.slug || req.cookies.admin_faq_slug || "project";
+        const section = req.params.section || req.query.section || req.cookies.admin_faq_section || "faq-section-header";
+        const { id } = req.params; // Changed index to id
         const collectionName = FAQ_CONFIG[slug]?.collection || "faq";
         const collection = mongoose.connection.db.collection(collectionName);
 

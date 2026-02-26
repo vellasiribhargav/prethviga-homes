@@ -26,7 +26,9 @@ const BLOG_CONFIG = {
 
 const renderBlogMainPage = async (req, res) => {
   try {
-    res.render('admin/blog');
+    const pageSlug = req.params.slug || req.query.slug || req.cookies.admin_blog_slug || 'discoverUs';
+    const pageSection = req.params.section || req.query.section || req.cookies.admin_blog_section || 'blogs-card';
+    res.render('admin/blog', { pageSlug, pageSection });
   } catch (error) {
     console.error('Error rendering blog page:', error);
     res.render('admin/blog');
@@ -35,8 +37,8 @@ const renderBlogMainPage = async (req, res) => {
 
 const getBlogsList = async (req, res) => {
   try {
-    const slug = req.params.slug || "discoverUs";
-    const section = req.params.section || "blogs-card";
+    const slug = req.params.slug || req.query.slug || req.cookies.admin_blog_slug || "discoverUs";
+    const section = req.params.section || req.query.section || req.cookies.admin_blog_section || "blogs-card";
     let { search, fromDate, toDate, page = 1, limit = 5, is_filter = false } = req.query;
     page = parseInt(page) || 1;
     limit = parseInt(limit) || 5;
@@ -117,7 +119,8 @@ const getBlogsList = async (req, res) => {
 
 const getBlogs = async (req, res) => {
   try {
-    const { slug, section } = req.params;
+    const slug = req.params.slug || req.query.slug || req.cookies.admin_blog_slug || "discoverUs";
+    const section = req.params.section || req.query.section || req.cookies.admin_blog_section || "blogs-card";
     const { search, fromDate, toDate } = req.query;
     const collectionName = BLOG_CONFIG[slug]?.collection || "blogs";
     const collection = mongoose.connection.db.collection(collectionName);
@@ -140,7 +143,8 @@ const getBlogs = async (req, res) => {
 
 const addBlogs = async (req, res) => {
   try {
-    const { slug, section } = req.params;
+    const slug = req.params.slug || req.query.slug || req.cookies.admin_blog_slug || "discoverUs";
+    const section = req.params.section || req.query.section || req.cookies.admin_blog_section || "blogs-card";
     const blogArr = JSON.parse(req.body.blogArr || '[]');
     const collectionName = BLOG_CONFIG[slug]?.collection || "blogs";
     const collection = mongoose.connection.db.collection(collectionName);
@@ -176,7 +180,9 @@ const addBlogs = async (req, res) => {
 
 const updateBlog = async (req, res) => {
   try {
-    const { slug, section, id } = req.params; // Changed index to id
+    const slug = req.params.slug || req.query.slug || req.cookies.admin_blog_slug || "discoverUs";
+    const section = req.params.section || req.query.section || req.cookies.admin_blog_section || "blogs-card";
+    const { id } = req.params; // Changed index to id
     const collectionName = BLOG_CONFIG[slug]?.collection || "blogs";
     const collection = mongoose.connection.db.collection(collectionName);
 
@@ -218,7 +224,9 @@ const updateBlog = async (req, res) => {
 
 const deleteBlog = async (req, res) => {
   try {
-    const { slug, section, id } = req.params; // Changed index to id
+    const slug = req.params.slug || req.query.slug || req.cookies.admin_blog_slug || "discoverUs";
+    const section = req.params.section || req.query.section || req.cookies.admin_blog_section || "blogs-card";
+    const { id } = req.params; // Changed index to id
     const collectionName = BLOG_CONFIG[slug]?.collection || "blogs";
     const collection = mongoose.connection.db.collection(collectionName);
 

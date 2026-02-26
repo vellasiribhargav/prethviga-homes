@@ -4,6 +4,18 @@ import dayjs from 'dayjs';
 import Swal from 'sweetalert2';
 import { isValidDate, getDateRange } from '../../utils/validation.js';
 
+function setCookie(name, value, days = 7) {
+    const expires = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+}
+
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift());
+    return '';
+}
+
 function formatToDB(dateStr) {
     if (!dateStr) return '';
     return dayjs(dateStr).format('DD-MM-YYYY');
@@ -23,13 +35,17 @@ document.addEventListener('DOMContentLoaded', function () {
     const pageSectionEl = document.getElementById('page_section');
     const slugSelector = document.getElementById('blog-slug-selector');
 
-    const slug = pageSlugEl ? pageSlugEl.value : 'home';
-    const section = pageSectionEl ? pageSectionEl.value : 'blogs-card';
+    const slug = pageSlugEl ? pageSlugEl.value : (getCookie('admin_blog_slug') || 'discoverUs');
+    const section = pageSectionEl ? pageSectionEl.value : (getCookie('admin_blog_section') || 'blogs-card');
 
     if (slugSelector) {
         slugSelector.value = slug;
         slugSelector.addEventListener('change', () => {
-            window.location.href = `?slug=${slugSelector.value}`;
+            const newSlug = slugSelector.value;
+            const newSection = 'blogs-card';
+            setCookie('admin_blog_slug', newSlug);
+            setCookie('admin_blog_section', newSection);
+            window.location.href = '/admin/blog';
         });
     }
 
@@ -498,7 +514,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         $.ajax({
-            url: `/admin/blog/${slug}/${section}/add`,
+            url: `/admin/blog/add?slug=${slug}&section=${section}`,
             type: 'POST',
             data: formData,
             processData: false,
@@ -512,7 +528,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         text: 'content saved',
                         confirmButtonColor: '#BC5322'
                     }).then(() => {
-                        window.location.href = `/admin/blog/${slug}/${section}/list`;
+                        window.location.href = `/admin/blog/list`;
                     });
                 } else {
                     Swal.fire({

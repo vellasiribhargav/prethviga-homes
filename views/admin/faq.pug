@@ -3,8 +3,8 @@ html(lang='en')
   head
     meta(charset='utf-8')
     meta(name='viewport' content='width=device-width, initial-scale=1.0')
-    - var pageSlug = query?.slug || 'project'
-    - var pageSection = query?.section || 'faq-section-header'
+    - var pageSlug = pageSlug || 'project'
+    - var pageSection = pageSection || 'faq-section-header'
     
     - 
        const titleMap = {
@@ -50,7 +50,7 @@ html(lang='en')
                option(value="project" selected=pageSlug === 'project') Project Page
             
             .header-actions
-              button.back-btn(onclick=`window.location.href='/admin/faq/${pageSlug}/${pageSection}/list'`) List
+              button.back-btn(onclick=`window.location.href='/admin/faq/list${projectId ? "?projectId=" + projectId : ""}'`) List
               button.add-more-btn Add More
         
         // Form Container

@@ -11,6 +11,27 @@ const dynamicUpload = createImageUpload((req) => {
 });
 
 router.get("/", bannerController.renderBannerMainPage);
+router.get("/list", bannerController.getBannersList);
+router.get("/get", bannerController.getBanners);
+
+router.post(
+  "/add",
+  dynamicUpload.array("banners"),
+  bannerController.addBanners
+);
+
+router.put("/update-text", dynamicUpload.any(), bannerController.updateSectionText);
+router.put(
+  "/update/:id",
+  dynamicUpload.single("file"),
+  bannerController.updateBanner
+);
+
+router.delete(
+  "/delete/:id",
+  bannerController.deleteBanner
+);
+
 router.get("/:slug/list", bannerController.getBannersList);
 router.get("/:slug/get", bannerController.getBanners);
 

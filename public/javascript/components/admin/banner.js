@@ -3,6 +3,18 @@ import Swal from 'sweetalert2';
 import { initCharLimitHighlight } from '../../utils/validation.js';
 window.jQuery = window.$ = $;
 
+function setCookie(name, value, days = 7) {
+    const expires = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+}
+
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift());
+    return '';
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     initCharLimitHighlight();
 
@@ -12,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const pageSlugEl = document.getElementById('page_slug');
     const slugSelector = document.getElementById('banner-slug-selector');
 
-    const slug = pageSlugEl ? pageSlugEl.value : 'home';
+    const slug = pageSlugEl ? pageSlugEl.value : (getCookie('admin_banner_slug') || 'home');
     let selectedImages = [];
     let existingBanners = [];
     let reviewData = [];
@@ -30,7 +42,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initialize UI
     if (slugSelector) {
         slugSelector.value = slug;
-        slugSelector.addEventListener('change', () => window.location.href = `?slug=${slugSelector.value}`);
+        slugSelector.addEventListener('change', () => {
+            setCookie('admin_banner_slug', slugSelector.value);
+            window.location.href = '/admin/banner';
+        });
     }
 
     // Tab Switching Logic
@@ -78,10 +93,10 @@ document.addEventListener('DOMContentLoaded', function () {
     fetchUniqueAmenities();
 
     const api = {
-        get: `/admin/banner/${slug}/get`,
-        add: `/admin/banner/${slug}/add`,
-        updateText: `/admin/banner/${slug}/update-text`,
-        del: (i) => `/admin/banner/${slug}/delete/${i}`,
+        get: `/admin/banner/get?slug=${slug}`,
+        add: `/admin/banner/add?slug=${slug}`,
+        updateText: `/admin/banner/update-text?slug=${slug}`,
+        del: (i) => `/admin/banner/delete/${i}?slug=${slug}`,
         reviews: {
             get: `/admin/banner/home-reviews/get`,
             update: `/admin/banner/home-reviews/update-text`

@@ -8,6 +8,18 @@ import { PaginationManager } from '../../utils/pagination.js';
 import { isValidDate, getDateRange } from '../../utils/validation.js';
 import { getSearchValue, getDateValue, getDateRangeValues, matchesSearch, matchesDate, matchesDateRange } from '../../utils/searchUtils.js';
 
+function setCookie(name, value, days = 7) {
+    const expires = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+}
+
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift());
+    return '';
+}
+
 let originalFormData = {};
 
 function formatForDisplay(dbDateStr) {
@@ -64,17 +76,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Filter Logic
     function applyFilters(page = 1) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentSlug = urlParams.get('slug') || getCookie('admin_blog_slug') || (typeof CURRENT_SLUG !== 'undefined' ? CURRENT_SLUG : 'discoverUs');
+        const currentSection = urlParams.get('section') || getCookie('admin_blog_section') || (typeof CURRENT_SECTION !== 'undefined' ? CURRENT_SECTION : 'blogs-card');
+
         const params = {
             search: getSearchValue(searchInput),
             fromDate: fromDateFilter ? fromDateFilter.value : '',
             toDate: toDateFilter ? toDateFilter.value : '',
             page: page,
             limit: rowsPerPage,
-            is_filter: true
+            is_filter: true,
+            slug: currentSlug,
+            section: currentSection
         };
 
         $.ajax({
-            url: `/admin/blog/${CURRENT_SLUG}/${CURRENT_SECTION}/list`,
+            url: `/admin/blog/list`,
             type: 'GET',
             data: params,
             success: function (data) {
@@ -464,8 +482,10 @@ document.addEventListener('DOMContentLoaded', function () {
             confirmButtonText: 'Yes, delete it!'
         });
         if (result.isConfirmed) {
+            const currentSlug = getCookie('admin_blog_slug') || (typeof CURRENT_SLUG !== 'undefined' ? CURRENT_SLUG : 'discoverUs');
+            const currentSection = getCookie('admin_blog_section') || (typeof CURRENT_SECTION !== 'undefined' ? CURRENT_SECTION : 'blogs-card');
             $.ajax({
-                url: `/admin/blog/${CURRENT_SLUG}/${CURRENT_SECTION}/delete/${id}`,
+                url: `/admin/blog/delete/${id}?slug=${currentSlug}&section=${currentSection}`,
                 type: 'DELETE',
                 success: function (data) {
                     if (data.success) {
@@ -654,8 +674,10 @@ document.addEventListener('DOMContentLoaded', function () {
             submitBtn.textContent = 'Saving...';
             submitBtn.disabled = true;
 
+            const currentSlug = getCookie('admin_blog_slug') || (typeof CURRENT_SLUG !== 'undefined' ? CURRENT_SLUG : 'discoverUs');
+            const currentSection = getCookie('admin_blog_section') || (typeof CURRENT_SECTION !== 'undefined' ? CURRENT_SECTION : 'blogs-card');
             $.ajax({
-                url: `/admin/blog/${CURRENT_SLUG}/${CURRENT_SECTION}/update/${id}`,
+                url: `/admin/blog/update/${id}?slug=${currentSlug}&section=${currentSection}`,
                 type: 'PUT',
                 data: formData,
                 processData: false,
@@ -693,11 +715,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const slugSelector = document.getElementById('blog-slug-selector');
     if (slugSelector) {
+        // Initialize from cookie if exists
+        const savedSlug = getCookie('admin_blog_slug');
+        if (savedSlug) {
+            slugSelector.value = savedSlug;
+        }
+
         slugSelector.addEventListener('change', function () {
             const newSlug = this.value;
-            let section = 'blogs-card'; // Default for all now
+            const section = 'blogs-card';
+            setCookie('admin_blog_slug', newSlug);
+            setCookie('admin_blog_section', section);
 
-            window.location.href = `/admin/blog/${newSlug}/${section}/list`;
+            // Update Add button link
+            const addBtn = document.getElementById('addBtn');
+            if (addBtn) {
+                addBtn.setAttribute('onclick', `window.location.href='/admin/blog'`);
+            }
+
+            applyFilters(1);
         });
     }
 

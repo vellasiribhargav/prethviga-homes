@@ -1,6 +1,18 @@
 import Swal from 'sweetalert2';
 import { showFieldError, hideFieldError } from '../../utils/validation.js';
 
+function setCookie(name, value, days = 7) {
+    const expires = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+}
+
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift());
+    return '';
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const addMoreBtn = document.querySelector('.add-more-btn');
     const formContainer = document.querySelector('.form-container');
@@ -11,8 +23,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const pageSectionEl = document.getElementById('page_section');
     const slugSelector = document.getElementById('faq-slug-selector');
 
-    const slug = pageSlugEl ? pageSlugEl.value : 'project';
-    const section = pageSectionEl ? pageSectionEl.value : 'faq-section-header';
+    const slug = pageSlugEl ? pageSlugEl.value : (getCookie('admin_faq_slug') || 'project');
+    const section = pageSectionEl ? pageSectionEl.value : (getCookie('admin_faq_section') || 'faq-section-header');
 
     const urlParams = new URLSearchParams(window.location.search);
     const currentProjectId = urlParams.get('projectId') || '';
@@ -20,12 +32,16 @@ document.addEventListener('DOMContentLoaded', function () {
     if (slugSelector) {
         slugSelector.value = slug;
         slugSelector.addEventListener('change', () => {
+            const newSlug = slugSelector.value;
             const sectionMap = {
                 'project': 'faq-section-header',
                 'ongoing': 'faq-items-container'
             };
-            const newSection = sectionMap[slugSelector.value] || 'faq-section-header';
-            window.location.href = `?slug=${slugSelector.value}&section=${newSection}`;
+            const newSection = sectionMap[newSlug] || 'faq-section-header';
+
+            setCookie('admin_faq_slug', newSlug);
+            setCookie('admin_faq_section', newSection);
+            window.location.href = '/admin/faq' + (currentProjectId ? `?projectId=${currentProjectId}` : '');
         });
     }
 
@@ -230,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }));
 
         $.ajax({
-            url: `/admin/faq/${slug}/${section}/add`,
+            url: `/admin/faq/add?slug=${slug}&section=${section}`,
             type: 'POST',
             data: {
                 faqArr: JSON.stringify(faqsToSubmit),
@@ -245,7 +261,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         text: 'content saved',
                         confirmButtonColor: '#BC5322'
                     }).then(() => {
-                        window.location.href = `/admin/faq/${slug}/${section}/list${currentProjectId ? '?projectId=' + currentProjectId : ''}`;
+                        const projectIdParam = currentProjectId ? `?projectId=${currentProjectId}` : '';
+                        window.location.href = `/admin/faq/list${projectIdParam}`;
                     });
                 } else {
                     Swal.fire({
