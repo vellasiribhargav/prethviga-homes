@@ -370,9 +370,9 @@ const seedMongoDB = async () => {
                             "answer": "Yes, we provide comprehensive warranties on structural integrity and workmanship. We stand by our quality and ensure long-term satisfaction."
                         }
                     ],
-                    "createdAt": new Date()
                 }
-            ]
+            ],
+            "createdAt": new Date()
         });
 
         const insertProjectDetailsData = [
@@ -687,6 +687,7 @@ const seedMongoDB = async () => {
         const insertAdminData = {
             "userName": "admin@gmail.com",
             "password": hashedAdminPassword,
+            "createdAt": new Date()
         };
 
         await homeDetailsConn.deleteMany({});

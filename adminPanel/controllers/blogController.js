@@ -164,7 +164,6 @@ const addBlogs = async (req, res) => {
         blog_content: b.blogContent,
         blog_id: new ObjectId(), // keeping blog_id for now if used elsewhere, but _id is primary
         createdAt: new Date(), // Use new Date()
-        updatedAt: new Date()
       };
     });
 

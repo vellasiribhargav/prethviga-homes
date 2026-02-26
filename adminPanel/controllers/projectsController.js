@@ -115,7 +115,6 @@ const addInventoryItem = asyncHandler(async (req, res) => {
             card_image: `${process.env.PROJECT_URL}uploads/gallery/${file.filename}`,
             project_id: new ObjectId(), // keeping project_id for now
             createdAt: new Date(),
-            updatedAt: new Date()
         };
         projectsToAdd.push(projectData);
     }

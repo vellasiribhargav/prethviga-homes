@@ -141,7 +141,6 @@ const addFaqs = async (req, res) => {
             question: f.question,
             answer: f.answer,
             createdAt: new Date(),
-            updatedAt: new Date()
         }));
 
         if (faqs.length > 0) {
