@@ -44,7 +44,7 @@ const ListFilter = (baseQuery, req) => {
   }
 
   if (type && type !== 'all') {
-    query.page_section = type === 'completed' ? 'completed-gallery' : 'upcoming-gallery';
+    query.page_section = type === 'completed' ? 'completed-gallery' : 'ongoing-gallery';
     isFiltered = true;
   }
 

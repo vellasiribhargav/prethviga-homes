@@ -90,7 +90,7 @@ app.use((req, res, next) => {
 });
 
 app.get('/admin', (req, res) => {
-  res.redirect('/admin/banner/home/list');
+  res.redirect('/admin/banner/list');
 });
 
 // Routes-way

@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (data.success) {
                     // Store username in cookie for 30 days
                     setCookie('remembered_admin_username', formData.username, 30);
-                    window.location.href = '/admin/banner/home/list';
+                    window.location.href = '/admin/banner/list';
                 } else {
                     const passwordInput = document.getElementById('password');
                     const msg = passwordInput

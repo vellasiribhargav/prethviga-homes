@@ -37,7 +37,8 @@ const BANNER_CONFIG = {
 
 const renderBannerMainPage = async (req, res) => {
   try {
-    res.render('admin/banner');
+    const pageSlug = req.params.slug || req.query.slug || req.cookies.admin_banner_slug || 'home';
+    res.render('admin/banner', { pageSlug });
   } catch (error) {
     console.error('Error rendering banner page:', error);
     res.render('admin/banner');
@@ -46,7 +47,8 @@ const renderBannerMainPage = async (req, res) => {
 
 const getBannersList = async (req, res) => {
   try {
-    const { slug } = req.params;
+    const slug = req.params.slug || req.query.slug || req.cookies.admin_banner_slug || 'home';
+    // const section = req.params.section || req.query.section || 'home_banner';
     let { search, fromDate, toDate, page = 1, limit = 5, is_filter = false } = req.query;
     page = parseInt(page) || 1;
     limit = parseInt(limit) || 5;
@@ -125,7 +127,7 @@ const getBannersList = async (req, res) => {
 // GET
 const getBanners = async (req, res) => {
   try {
-    const { slug } = req.params;
+    const slug = req.params.slug || req.query.slug || req.cookies.admin_banner_slug || 'home';
     const { search, fromDate, toDate } = req.query;
     const config = BANNER_CONFIG[slug];
 
@@ -181,7 +183,7 @@ const getBanners = async (req, res) => {
 
 const addBanners = async (req, res) => {
   try {
-    const { slug } = req.params;
+    const slug = req.params.slug || req.query.slug || req.cookies.admin_banner_slug || 'home';
     const config = BANNER_CONFIG[slug];
 
     if (!config) {
@@ -224,7 +226,8 @@ const addBanners = async (req, res) => {
 
 const updateBanner = async (req, res) => {
   try {
-    const { slug, id } = req.params;
+    const slug = req.params.slug || req.query.slug || req.cookies.admin_banner_slug || 'home';
+    const { id } = req.params;
     const config = BANNER_CONFIG[slug];
 
     if (!config) {
@@ -268,7 +271,7 @@ const updateBanner = async (req, res) => {
 
 const updateSectionText = async (req, res) => {
   try {
-    const { slug } = req.params;
+    const slug = req.params.slug || req.query.slug || req.cookies.admin_banner_slug || 'home';
     const config = BANNER_CONFIG[slug];
     const { Heading, subHeading, description, number, reviews } = req.body;
 
@@ -336,7 +339,8 @@ const updateSectionText = async (req, res) => {
 
 const deleteBanner = async (req, res) => {
   try {
-    const { slug, id } = req.params;
+    const slug = req.params.slug || req.query.slug || req.cookies.admin_banner_slug || 'home';
+    const { id } = req.params;
     const config = BANNER_CONFIG[slug];
 
     if (!config) {

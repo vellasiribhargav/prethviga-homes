@@ -3,7 +3,7 @@ html(lang='en')
   head
     meta(charset='utf-8')
     meta(name='viewport' content='width=device-width, initial-scale=1.0')
-    - var pageSlug = query?.slug || 'home'
+    - var pageSlug = pageSlug || 'home'
     - 
        const titleMap = {
          'home': 'Home',
@@ -52,7 +52,7 @@ html(lang='en')
                //-  option(value="ongoing" selected=pageSlug === 'ongoing') On Going
           
           .header-actions
-            button.back-btn(onclick=`window.location.href='/admin/banner/${pageSlug}/list'`) List
+            button.back-btn(onclick=`window.location.href='/admin/banner/list'`) List
             button.add-image-btn.add-more-btn Add More
         
         // Section Selection Tabs

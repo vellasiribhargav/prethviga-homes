@@ -3,8 +3,8 @@ html(lang='en')
   head
     meta(charset='utf-8')
     meta(name='viewport' content='width=device-width, initial-scale=1.0')
-    - var pageSlug = query?.slug || 'home'
-    - var pageSection = query?.section || 'blogs-card'
+    - var pageSlug = pageSlug || 'home'
+    - var pageSection = pageSection || 'blogs-card'
     
     - 
        const titleMap = {
@@ -58,7 +58,7 @@ html(lang='en')
                option(value="ongoing" selected=pageSlug === 'ongoing') On Going
             
             .header-actions
-              button.back-btn(onclick=`window.location.href='/admin/blog/${pageSlug}/${pageSection}/list'`) List
+              button.back-btn(onclick=`window.location.href='/admin/blog/list'`) List
               button.add-more-btn Add More
         
         // Form Container

@@ -21,7 +21,7 @@ html(lang='en')
             svg.icon(xmlns='http://www.w3.org/2000/svg', height='24', viewBox='0 -960 960 960', width='24')
               path(d='M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z')
           h1.page-title Blog List
-          span#filterIndicator.filter-indicator(style=(is_filtered ? "display: inline-block;" : "display: none;")) (Filtered Results)
+          // span#filterIndicator.filter-indicator(style=(is_filtered ? "display: inline-block;" : "display: none;")) (Filtered Results)
 
       // Breadcrumbs
       .breadcrumbs
@@ -37,7 +37,7 @@ html(lang='en')
       main.main-content
         .content-header
           h2.content-title Blog Inventory
-          button#addBtn.add-more-btn(onclick=`window.location.href='/admin/blog?slug=${slug}&section=${section}'`)
+          button#addBtn.add-more-btn(onclick=`window.location.href='/admin/blog'`)
             svg(width='24' height='24' viewbox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg')
               path(d='M6 12H18M12 6V18' stroke='#ffffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
             |  Add New Blog

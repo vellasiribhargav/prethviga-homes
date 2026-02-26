@@ -5,7 +5,7 @@
 
   nav.sidebar-nav
     // Banners
-    a.sidebar-link(href='/admin/banner/home/list' class=(activeLink === 'banner') ? 'active' : '')
+    a.sidebar-link(href='/admin/banner/list' class=(activeLink === 'banner') ? 'active' : '')
       svg.icon(xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24' fill='white')
         path(d='M720-440v-80q0-17 11.5-28.5T760-560q17 0 28.5 11.5T800-520v80q0 17-11.5 28.5T760-400q-17 0-28.5-11.5T720-440ZM160-160v-200q0-33 23.5-56.5T240-440h120q33 0 56.5 23.5T440-360v200q0 33-23.5 56.5T360-80H240q-33 0-56.5-23.5T160-160Zm80-80h120v-120H240v120Zm200-280v-280q0-17 11.5-28.5T480-840q17 0 28.5 11.5T520-800v280q0 17-11.5 28.5T480-480q-17 0-28.5-11.5T440-520Zm160 80v-160q0-17 11.5-28.5T640-640q17 0 28.5 11.5T680-600v160q0 17-11.5 28.5T640-400q-17 0-28.5-11.5T600-440Z')
       span Banners
@@ -30,7 +30,7 @@
       span Contacts
 
     // Blogs
-    a.sidebar-link(href='/admin/blog/discoverUs/blogs-card/list' class=(activeLink === 'blog') ? 'active' : '')
+    a.sidebar-link(href='/admin/blog/list' class=(activeLink === 'blog') ? 'active' : '')
       svg.icon(xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 0 512 512' width='24' fill='white')
         path(d='M172.2 226.8c-14.6-2.9-28.2 8.9-28.2 23.8V301c0 10.2 7.1 18.4 16.7 22 18.2 6.8 31.3 24.4 31.3 45 0 26.5-21.5 48-48 48s-48-21.5-48-48V120c0-13.3-10.7-24-24-24H24c-13.3 0-24 10.7-24 24v248c0 89.5 82.1 160.2 175 140.7 54.4-11.4 98.3-55.4 109.7-109.7 17.4-82.9-37-157.2-112.5-172.2zM209 0c-9.2-.5-17 6.8-17 16v31.6c0 8.5 6.6 15.5 15 15.9 129.4 7 233.4 112 240.9 241.5.5 8.4 7.5 15 15.9 15h32.1c9.2 0 16.5-7.8 16-17C503.4 139.8 372.2 8.6 209 0zm.3 96c-9.3-.7-17.3 6.7-17.3 16.1v32.1c0 8.4 6.5 15.3 14.8 15.9 76.8 6.3 138 68.2 144.9 145.2.8 8.3 7.6 14.7 15.9 14.7h32.2c9.3 0 16.8-8 16.1-17.3-8.4-110.1-96.5-198.2-206.6-206.7z')
       span  Blogs
@@ -48,7 +48,7 @@
       span User Reviews
 
     // FAQ
-    a.sidebar-link(href='/admin/faq/project/faq-section-header/list' class=(activeLink === 'faq') ? 'active' : '')
+    a.sidebar-link(href='/admin/faq/list' class=(activeLink === 'faq') ? 'active' : '')
       svg.icon(xmlns='http://www.w3.org/2000/svg' height='24' viewBox='0 -960 960 960' width='24' fill='white')
         path(d='M478-240q21 0 35.5-14.5T528-290q0-21-14.5-35.5T478-340q-21 0-35.5 14.5T428-290q0 21 14.5 35.5T478-240Zm-36-154h74q0-33 7.5-52t42.5-52q26-26 41-49.5t15-56.5q0-56-41-86t-97-30q-57 0-92.5 30T342-618l66 26q5-18 22.5-39t53.5-21q32 0 48 17.5t16 38.5q0 20-12 37.5T506-526q-44 39-54 59t-10 73Zm38 314q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z')
       span FAQ
@@ -68,7 +68,7 @@
   .nav-divider
 
   nav.nav-menu
-    a.nav-link(href='/admin/banner/home/list' class=(activeLink === 'banner') ? 'active' : '')
+    a.nav-link(href='/admin/banner/list' class=(activeLink === 'banner') ? 'active' : '')
       span Banners
 
     a.nav-link(href='/admin/Projects/list' class=(activeLink === 'Projects') ? 'active' : '')
@@ -80,7 +80,7 @@
     a.nav-link(href='/admin/contacts/list' class=(activeLink === 'contacts') ? 'active' : '')
       span Contacts
 
-    a.nav-link(href='/admin/blog/discoverUs/blogs-card/list' class=(activeLink === 'blog') ? 'active' : '')
+    a.nav-link(href='/admin/blog/list' class=(activeLink === 'blog') ? 'active' : '')
       span Blogs
 
     a.nav-link(href='/admin/discoverDetails' class=(activeLink === 'discoverDetails') ? 'active' : '')
@@ -89,7 +89,7 @@
     a.nav-link(href='/admin/reviews/list' class=(activeLink === 'userReviews') ? 'active' : '')
       span User Reviews
 
-    a.nav-link(href='/admin/faq/project/faq-section-header/list' class=(activeLink === 'faq') ? 'active' : '')
+    a.nav-link(href='/admin/faq/list' class=(activeLink === 'faq') ? 'active' : '')
       span FAQ
 
     a.nav-link.logout(href='/admin/logout')
