@@ -103,18 +103,12 @@ app.get('/admin', (req, res) => {
 // app.use("/file", fileRoutes);
 
 app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.quilljs.com"],
-      scriptSrcAttr: ["'unsafe-inline'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.quilljs.com"],
-      imgSrc: ["'self'", "data:", "blob:"],
-      connectSrc: ["'self'"],
-      fontSrc: ["'self'", "data:"],
-    },
-  },
+  contentSecurityPolicy: false,
   crossOriginEmbedderPolicy: false,
+  crossOriginOpenerPolicy: false,
+  crossOriginResourcePolicy: false,
+  originAgentCluster: false,
+  hsts: false,
 })
 );
 
@@ -143,72 +137,42 @@ app.use('/admin/reviews', protectAdmin, reviewRoutes);
 app.use('/admin/projects', protectAdmin, projectsListRoutes);
 app.use('/admin/upcoming_projects', protectAdmin, upcomingRoutes);
 
-app.use((req, res, next) => {
-  res.setHeader(
-    "Strict-Transport-Security",
-    "max-age=31536000; includeSubDomains"
-  );
-  next();
-});
+// Disabled for HTTP - enable only when using HTTPS
+// app.use((req, res, next) => {
+//   res.setHeader(
+//     "Strict-Transport-Security",
+//     "max-age=31536000; includeSubDomains"
+//   );
+//   next();
+// });
 
-app.use(
-  hsts({
-    maxAge: 31536000,
-    includeSubDomains: true, // Also enabled by default
-  })
-);
+// app.use(
+//   hsts({
+//     maxAge: 31536000,
+//     includeSubDomains: true,
+//   })
+// );
 
 app.get("/", (req, res) => {
-  res.setHeader(
-    "Content-Security-Policy",
-    "default-src 'self' data:; script-src 'self' 'unsafe-inline' https://cdn.quilljs.com; script-src-attr 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.quilljs.com; font-src 'self' data:; img-src 'self' data: blob:;"
-  );
-  res.setHeader(
-    "Strict-Transport-Security",
-    "max-age=31536000; includeSubDomains"
-  );
   res.render("home");
 });
 
 app.get("/:cat/:slug", (req, res, next) => {
-  res.setHeader(
-    "Content-Security-Policy",
-    "default-src 'self' data:; script-src 'self' 'unsafe-inline' https://cdn.quilljs.com; script-src-attr 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.quilljs.com; font-src 'self' data:; img-src 'self' data: blob:;"
-  );
-
-  res.setHeader(
-    "Strict-Transport-Security",
-    "max-age=31536000; includeSubDomains"
-  );
-
   const { slug, cat } = req.params;
   const fileName = path.basename(slug);
 
   const filePath = path.join(__dirname, `views/${cat}`, `${fileName}.pug`);
-  // console.log(filePath,'filePath')
 
   if (fs.existsSync(filePath)) {
     res.render(`${cat}/${slug}`);
   } else {
     next();
   }
-
 });
 
 // single slug
 app.get("/:slug", async (req, res, next) => {
-  res.setHeader(
-    "Content-Security-Policy",
-    "default-src 'self' data:; script-src 'self' 'unsafe-inline' https://cdn.quilljs.com; script-src-attr 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdn.quilljs.com; font-src 'self' data:; img-src 'self' data: blob:;"
-  );
-
-  res.setHeader(
-    "Strict-Transport-Security",
-    "max-age=31536000; includeSubDomains"
-  );
-
   const { slug } = req.params;
-
   const fileName = path.basename(slug);
 
   if (slug === "login" || slug === "upload" || slug === "assetsale_upload" || slug === "OnGoingPage" || slug === "admin" || slug === "BlogPage") {
@@ -216,7 +180,6 @@ app.get("/:slug", async (req, res, next) => {
   }
 
   const filePath = path.join(__dirname, "views", `${fileName}.pug`);
-  // console.log(filePath,'filePath')
 
   if (fs.existsSync(filePath)) {
     res.render(slug);
