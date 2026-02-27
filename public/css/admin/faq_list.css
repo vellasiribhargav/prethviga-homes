@@ -1036,7 +1036,7 @@ td .cell-text {
 
 .filter-group {
     display: flex;
-    align-items: baseline;
+    align-items: flex-start;
     justify-content: space-between;
 }
 

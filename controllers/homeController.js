@@ -4,6 +4,19 @@ const dayjs = require('dayjs');
 
 const getHomeData = async (req, res) => {
   try {
+    // Check if DB is connected
+    if (!mongoose.connection.db) {
+      console.warn('MongoDB connection not ready yet.');
+      return res.render('home', {
+        bannerData: [],
+        bannerReview: [],
+        projectsData: [],
+        techData: [],
+        reviewsData: [],
+        blogData: []
+      });
+    }
+
     // home_details (Multi-document for different sections)
     const homeData = await mongoose.connection.db.collection('home_details').find({ page_slug: 'home' }).toArray();
 
@@ -11,7 +24,7 @@ const getHomeData = async (req, res) => {
     const bannerDocs = await mongoose.connection.db.collection('banner').find({ page_slug: 'home' }).toArray();
 
     // reviews (Multi-document)
-    const reviewsData = await mongoose.connection.db.collection('reviews').find({ page_slug: 'home', page_section: 'reviews' }).toArray();
+    const reviewsDataRaw = await mongoose.connection.db.collection('reviews').find({ page_slug: 'home', page_section: 'reviews' }).toArray();
 
     // blogs (Multi-document, fetching from discoverUs section)
     const blogsData = await mongoose.connection.db.collection('blogs').find({ page_slug: 'discoverUs', page_section: 'blogs-card' }).toArray();
@@ -39,6 +52,15 @@ const getHomeData = async (req, res) => {
       card_footer_text: p.card_footer_text || p['card-footer-text']
     })).slice(-3);
 
+    // Filter out the review title document and format reviews
+    const reviewsData = reviewsDataRaw.filter(r => !r['review-title']).map(r => ({
+      ...r,
+      review_text: r.review_text || r['review-text'] || '',
+      reviewer_name: r.reviewer_name || r['client-name'] || '',
+      reviewer_role: r.reviewer_role || r['client-role'] || '',
+      review_footer: r.review_footer || r['review-footer'] || ''
+    }));
+
     res.render('home', {
       bannerData,
       bannerReview,
@@ -46,6 +68,7 @@ const getHomeData = async (req, res) => {
       techData,
       reviewsData,
       blogData,
+      reviewTitle: reviewsDataRaw.find(r => r['review-title'])?.['review-title'] || 'Reviews'
     });
   } catch (error) {
     console.error('Error fetching home data:', error);
@@ -55,7 +78,8 @@ const getHomeData = async (req, res) => {
       projectsData: [],
       techData: [],
       reviewsData: [],
-      blogData: []
+      blogData: [],
+      reviewTitle: 'Reviews'
     });
   }
 };

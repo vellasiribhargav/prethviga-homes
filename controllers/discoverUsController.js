@@ -5,6 +5,20 @@ const { formatDateMonthYear } = require('../utils/index');
 const getdiscoverUsData = async (req, res) => {
   try {
     const { search, fromDate, toDate } = req.query;
+
+    // Check if DB is connected
+    if (!mongoose.connection.db) {
+      console.warn('MongoDB connection not ready yet in discoverUs.');
+      return res.render('discoverUs', {
+        ourvaluesData: [],
+        blogData: [],
+        bannerData: [],
+        reviewsData: [],
+        buyerData: [],
+        filters: {}
+      });
+    }
+
     // discover_details: values + buyer guide
     const discoverData = await mongoose.connection.db.collection('discover_details').find({ page_slug: 'discoverUs' }).toArray();
     // banner: discover-banner
@@ -14,7 +28,7 @@ const getdiscoverUsData = async (req, res) => {
     const blogsData = await mongoose.connection.db.collection('blogs').find({ page_slug: 'discoverUs', page_section: 'blogs-card' }).toArray();
 
     // reviews (Multi-document, from home)
-    const reviewsData = await mongoose.connection.db.collection('reviews').find({ page_slug: 'home', page_section: 'reviews' }).toArray();
+    const reviewsDataRaw = await mongoose.connection.db.collection('reviews').find({ page_slug: 'home', page_section: 'reviews' }).toArray();
 
     const ourvaluesData = discoverData.filter(item => item.page_section === 'value-container');
     const buyerDataDoc = discoverData.find(item => item.page_section === 'buyer-container');
@@ -29,6 +43,15 @@ const getdiscoverUsData = async (req, res) => {
         timeToRead: blog.blog_time
       };
     });
+
+    // Filter out the review title document and format reviews
+    const reviewsData = reviewsDataRaw.filter(r => !r['review-title']).map(r => ({
+      ...r,
+      review_text: r.review_text || r['review-text'] || '',
+      reviewer_name: r.reviewer_name || r['client-name'] || '',
+      reviewer_role: r.reviewer_role || r['client-role'] || '',
+      review_footer: r.review_footer || r['review-footer'] || ''
+    }));
 
     // Apply search and date filters
     let filteredBlogs = blogData;
@@ -53,6 +76,7 @@ const getdiscoverUsData = async (req, res) => {
       bannerData,
       reviewsData,
       buyerData,
+      reviewTitle: reviewsDataRaw.find(r => r['review-title'])?.['review-title'] || 'Happy Customers',
       filters: { search, fromDate, toDate }
     });
   } catch (error) {
@@ -63,6 +87,7 @@ const getdiscoverUsData = async (req, res) => {
       bannerData: [],
       reviewsData: [],
       buyerData: [],
+      reviewTitle: 'Happy Customers',
       filters: {}
     });
   }
