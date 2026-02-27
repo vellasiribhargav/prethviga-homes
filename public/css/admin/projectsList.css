@@ -881,7 +881,7 @@ input#dateFilter {
 
 @media (max-width: 1024px) {
     .search-filter-row {
-        flex-direction: column;
+        display: flex;
         align-items: flex-start;
     }
 
