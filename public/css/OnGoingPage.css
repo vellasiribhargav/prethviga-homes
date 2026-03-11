@@ -1613,3 +1613,255 @@
 .hidden-content {
   display: none;
 }
+
+.blogs-section {
+  display: flex;
+  padding: 40px 150px;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  width: 100%;
+  max-width: 100%;
+  font-family: "Poppins", sans-serif;
+}
+
+.blogs-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.blogs-title {
+  display: flex;
+  padding: 0 268px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.blogs-text {
+  color: #000;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 70px;
+}
+
+.blogs-description {
+  display: flex;
+  padding: 0 25px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.blogs-descrip {
+  color: #4a5565;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 27px;
+  width: 622px;
+}
+
+.blogses {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  align-content: flex-start;
+  gap: 60px 20px;
+  flex-wrap: wrap;
+}
+
+.blogs-card {
+  display: flex;
+  width: 345px;
+  padding: 1px 0 14px 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  border: 1px solid rgba(193, 131, 78, 0.2);
+  background: #fff;
+  overflow: hidden;
+}
+
+.blogs-img {
+  position: relative;
+  padding: 0;
+  width: 100%;
+  height: 250px;
+  overflow: hidden;
+}
+
+.blogs-img-inner {
+  width: 100%;
+  height: 100%;
+}
+
+.blogs-img-inner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.blogs-badge {
+  border: 1px solid black;
+  display: flex;
+  width: 90.781px;
+  height: 22px;
+  padding: 2px 8px;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  position: absolute;
+  left: 26px;
+  top: 21px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0);
+  background: #c1834e;
+  backdrop-filter: blur(3.7000000477px);
+}
+
+.badge-text {
+  color: #fff;
+  font-family: Arial;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 16px;
+}
+
+.blogs-header {
+  display: flex;
+  padding: 0 14px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.cards-sections {
+  display: flex;
+  height: 17.141px;
+  align-items: center;
+  gap: 16px;
+}
+
+.cards-containers {
+  display: flex;
+  width: 134px;
+  height: 17px;
+  align-items: center;
+  gap: 4px;
+}
+
+.cards-images img {
+  display: flex;
+  align-items: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.cards-titles {
+  display: flex;
+  height: 17px;
+  align-items: flex-start;
+  flex: 1 0 0;
+}
+
+.cards-textses {
+  color: #6a7282;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 17px;
+}
+
+.cards-time {
+  display: flex;
+  width: 70px;
+  height: 17px;
+  align-items: flex-start;
+}
+
+.cards-times {
+  color: #6a7282;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 17px;
+}
+
+.blogs-headings {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.headings-texts {
+  overflow: hidden;
+  color: #0a0a0a;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 330px;
+}
+
+.cardses-title {
+  display: flex;
+  height: 110px;
+  padding: 0 14px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.cardses-description {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.cardses-text {
+  color: #717182;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  width: 393px;
+  line-clamp: 3;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cardblog-sec {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+a.cardblog-link {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.cardblog-text {
+  color: #c1834e;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 21px;
+  margin: 0;
+}

@@ -455,34 +455,34 @@ const seedMongoDB = async () => {
                 "Heading": "EXCELLENCE IN EVERY BUILD",
                 "subHeading": "Building Strong Foundations for a Better Tomorrow",
                 "description": "We are a trusted construction and building company delivering high-quality residential, commercial, and infrastructure projects. With a commitment to safety, innovation, and timely delivery, we turn your vision into reality.",
-                "number": "+1 (555) 123-4567",
+                "number": "9841043539",
                 "createdAt": new Date()
             },
             {
                 "page_slug": "home",
                 "page_section": "home_reviews",
-                "profile_image": `${PROJECT_URL}assets/images/home-profile.webp`,
-                "reviewer": `At Prethviga, we don't just construct buildings—we create lasting value through quality, integrity, and innovation. Every project reflects our promise of excellence and timely delivery.`,
-                "user_name": "John Davidson",
-                "user_role": "CEO, Prethviga",
-                "createdAt": new Date()
-            },
-            {
-                "page_slug": "home",
-                "page_section": "home_reviews",
-                "profile_image": `${PROJECT_URL}assets/images/home-profile.webp`,
+                "profile_image": `${PROJECT_URL}assets/images/G_saravanan.jpg`,
                 "reviewer": `Prethviga was founded with a clear vision: to build spaces that stand strong, serve people, and shape the future. Our journey is driven by trust, craftsmanship, and commitment.`,
-                "user_name": "John Davidson",
-                "user_role": "CEO, Prethviga",
+                "user_name": "G saravanan",
+                "user_role": "Director",
                 "createdAt": new Date()
             },
             {
                 "page_slug": "home",
                 "page_section": "home_reviews",
-                "profile_image": `${PROJECT_URL}assets/images/home-profile.webp`,
+                "profile_image": `${PROJECT_URL}assets/images/Jayanthi_saravanan.jpg`,
                 "reviewer": `Strong financial discipline and transparent practices are the backbone of Prethviga sustainable growth. We ensure every project delivers value, efficiency, and long-term returns.`,
-                "user_name": "John Davidson",
-                "user_role": "CFO, Prethviga",
+                "user_name": "Jayanthi saravanan",
+                "user_role": "Treasurer",
+                "createdAt": new Date()
+            },
+            {
+                "page_slug": "home",
+                "page_section": "home_reviews",
+                "profile_image": `${PROJECT_URL}assets/images/Gopinath.jpg`,
+                "reviewer": `At Prethviga, we don't just construct buildings—we create lasting value through quality, integrity, and innovation. Every project reflects our promise of excellence and timely delivery.`,
+                "user_name": "Gopinath",
+                "user_role": "Site Engineer",
                 "createdAt": new Date()
             },
             {
@@ -502,7 +502,7 @@ const seedMongoDB = async () => {
                 "page_section": "project-banner",
                 "Heading": "OUR PROJECTS",
                 "description": "Explore our portfolio of exceptional construction projects, from completed masterpieces to exciting works in progress.",
-                "number": "+1 (555) 123-4567",
+                "number": "9841043539",
                 "createdAt": new Date()
             },
             {

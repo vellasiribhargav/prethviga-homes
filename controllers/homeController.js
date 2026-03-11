@@ -26,8 +26,8 @@ const getHomeData = async (req, res) => {
     // reviews (Multi-document)
     const reviewsDataRaw = await mongoose.connection.db.collection('reviews').find({ page_slug: 'home', page_section: 'reviews' }).toArray();
 
-    // blogs (Multi-document, fetching from discoverUs section)
-    const blogsData = await mongoose.connection.db.collection('blogs').find({ page_slug: 'discoverUs', page_section: 'blogs-card' }).toArray();
+    // blogs (Multi-document, fetching from home section)
+    const blogsData = await mongoose.connection.db.collection('blogs').find({ page_slug: 'home', page_section: 'blogs-card' }).toArray();
 
     // projects (Multi-document)
     const projectsDataRaw = await mongoose.connection.db.collection('projects').find({ page_slug: 'projects', page_section: 'completed-gallery' }).toArray();
