@@ -15,8 +15,8 @@ const getProjectsData = async (req, res) => {
     // faq (Multi-document)
     const faqData = await mongoose.connection.db.collection('faq').find({ page_slug: 'projects', page_section: 'faq-section-header' }).toArray();
 
-    // blogs (Multi-document, from discoverUs)
-    const blogsData = await mongoose.connection.db.collection('blogs').find({ page_slug: 'discoverUs', page_section: 'blogs-card' }).toArray();
+    // blogs (Multi-document, from projects)
+    const blogsData = await mongoose.connection.db.collection('blogs').find({ page_slug: 'projects', page_section: 'blogs-card' }).toArray();
 
     const completed = projectsDocs.filter(item => item.page_section === 'completed-gallery').map(p => ({
       ...p,

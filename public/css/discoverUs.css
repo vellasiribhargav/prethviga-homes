@@ -45,6 +45,7 @@
 @media (max-width: 1400px) {
   .about-section {
     padding: 40px 80px;
+    min-height: 640px;
   }
 }
 
