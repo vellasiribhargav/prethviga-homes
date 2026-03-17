@@ -1,7 +1,7 @@
 const dayjs = require('dayjs');
 
 const ListFilter = (baseQuery, req) => {
-  const { search, fromDate, toDate, type } = req.query;
+  const { search, fromDate, toDate, type, status } = req.query;
   const query = { ...baseQuery };
   let isFiltered = false;
 
@@ -43,8 +43,9 @@ const ListFilter = (baseQuery, req) => {
     isFiltered = true;
   }
 
-  if (type && type !== 'all') {
-    query.page_section = type === 'completed' ? 'completed-gallery' : 'ongoing-gallery';
+  const statusValue = type || status;
+  if (statusValue && statusValue !== 'all') {
+    query.page_section = statusValue === 'completed' ? 'completed-gallery' : 'ongoing-gallery';
     isFiltered = true;
   }
 

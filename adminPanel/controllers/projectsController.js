@@ -34,9 +34,16 @@ const getInventoryList = asyncHandler(async (req, res) => {
 
     const { query, isFiltered } = ListFilter(baseQuery, req);
 
-    const totalItems = await collection.countDocuments(query);
-    const totalPages = Math.ceil(totalItems / limit);
-    const data = await collection.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit).toArray();
+    let totalItems = await collection.countDocuments(query);
+    let totalPages = Math.ceil(totalItems / limit);
+    
+    // Adjust page if it's out of bounds
+    if (page > totalPages && totalPages > 0) {
+        page = totalPages;
+    }
+    const newSkip = (page - 1) * limit;
+
+    const data = await collection.find(query).sort({ createdAt: -1 }).skip(newSkip).limit(limit).toArray();
 
     const projects = data.map((project, index) => ({
         ...project,
@@ -47,7 +54,7 @@ const getInventoryList = asyncHandler(async (req, res) => {
         coverImage: project.card_image,
         description: project.card_footer_text,
         type: project.page_section === 'completed-gallery' ? 'completed' : 'upcoming',
-        index: skip + index,
+        index: newSkip + index,
         createdAt: formatDateShortSimple(project.createdAt),
         formattedDate: formatedDate(project.createdAt)
     }));
@@ -61,8 +68,8 @@ const getInventoryList = asyncHandler(async (req, res) => {
             totalPages,
             currentPage: page,
             limit,
-            start: skip + 1,
-            end: Math.min(skip + limit, totalItems)
+            start: totalItems === 0 ? 0 : newSkip + 1,
+            end: Math.min(newSkip + limit, totalItems)
         },
         activeLink: 'Projects',
         rowsPerPage: limit,

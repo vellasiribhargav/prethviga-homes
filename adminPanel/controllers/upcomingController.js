@@ -23,9 +23,16 @@ const getupcomingGallery = asyncHandler(async (req, res) => {
 
     const { query, isFiltered } = ListFilter(baseQuery, req);
 
-    const totalItems = await collection.countDocuments(query);
-    const totalPages = Math.ceil(totalItems / limit);
-    const data = await collection.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit).toArray();
+    let totalItems = await collection.countDocuments(query);
+    let totalPages = Math.ceil(totalItems / limit);
+
+    // Adjust page if it's out of bounds
+    if (page > totalPages && totalPages > 0) {
+        page = totalPages;
+    }
+    const newSkip = (page - 1) * limit;
+
+    const data = await collection.find(query).sort({ createdAt: -1 }).skip(newSkip).limit(limit).toArray();
 
     const projects = data.map((project, index) => ({
         ...project,
@@ -35,7 +42,7 @@ const getupcomingGallery = asyncHandler(async (req, res) => {
         timeline: formatDateForDisplay(project.project_date),
         coverImage: project.card_image,
         description: project.card_footer_text,
-        index: skip + index,
+        index: newSkip + index,
         createdAt: formatedDate(project.createdAt)
     }));
 
@@ -47,8 +54,8 @@ const getupcomingGallery = asyncHandler(async (req, res) => {
             totalPages,
             currentPage: page,
             limit,
-            start: skip + 1,
-            end: Math.min(skip + limit, totalItems)
+            start: totalItems === 0 ? 0 : newSkip + 1,
+            end: Math.min(newSkip + limit, totalItems)
         },
         activeLink: 'upcoming',
         rowsPerPage: limit,
@@ -156,6 +163,31 @@ const deleteupcomingItem = asyncHandler(async (req, res) => {
     res.json({ success: true, message: 'Project deleted successfully!' });
 });
 
+const moveToCompletedItem = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const collection = mongoose.connection.db.collection("projects");
+
+    const query = ObjectId.isValid(id)
+        ? { $or: [{ _id: new ObjectId(id) }, { project_id: new ObjectId(id) }] }
+        : { project_id: id };
+
+    const result = await collection.updateOne(
+        query,
+        {
+            $set: {
+                page_section: "completed-gallery",
+                updatedAt: new Date()
+            }
+        }
+    );
+
+    if (result.matchedCount === 0) {
+        throw new NotFoundError('Project not found');
+    }
+
+    res.json({ success: true, message: 'Project moved to completed successfully!' });
+});
+
 const getUpcomingProjectsJSON = asyncHandler(async (req, res) => {
     const collection = mongoose.connection.db.collection("projects");
     const data = await collection.find({
@@ -181,5 +213,6 @@ module.exports = {
     addupcomingItem,
     updateupcomingItem,
     deleteupcomingItem,
+    moveToCompletedItem,
     getUpcomingProjectsJSON
 };

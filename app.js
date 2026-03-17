@@ -12,6 +12,7 @@ const createError = require("http-errors");
 const helmet = require("helmet");
 const mongoose = require("mongoose");
 const config = require("./config/config.js");
+
 const homeRoutes = require("./routes/homeRoutes");
 const projectsRoutes = require("./routes/projectsRoutes");
 const onGoingPageRoutes = require("./routes/onGoingPageRoutes");
@@ -123,7 +124,6 @@ app.use('/', contactsRoutes);
 app.use('/admin', adminAuthRoutes);
 
 // Protected Admin Routes
-app.use('/admin', protectAdmin, upcomingRoutes);
 app.use('/admin/upcoming', protectAdmin, upcomingRoutes);
 app.use('/admin/completed', protectAdmin, completedRoutes);
 app.use('/admin/gallery', protectAdmin, galleryRoutes);

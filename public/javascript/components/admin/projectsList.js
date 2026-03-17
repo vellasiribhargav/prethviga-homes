@@ -201,6 +201,15 @@ document.addEventListener('DOMContentLoaded', function () {
                                     </svg>
                                 </span>
                             </button>
+                            ${project.type === 'upcoming' ? `
+                            <button class="icon-action-btn complete-btn" title="Mark as Completed" data-id="${project.id}" data-type="${project.type}">
+                                <span class="complete">
+                                    <svg width="17" height="17" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                                    </svg>
+                                </span>
+                            </button>
+                            ` : ''}
                             <button class="icon-action-btn delete-btn" title="Delete" data-id="${project.id}" data-type="${project.type}">
                                 <span class="delete">
                                     <svg width="17" height="17" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
@@ -374,7 +383,6 @@ document.addEventListener('DOMContentLoaded', function () {
         inputs.type.value = type;
         inputs.project_name.value = projectData.name || projectData.project_name || '';
         inputs.project_location.value = projectData.location || projectData.project_location || '';
-        inputs.new_type.value = type;
 
         inputs.project_date.value = parseFromDB(projectData.project_date) || '';
 
@@ -416,8 +424,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 project_name: inputs.project_name.value.trim(),
                 project_location: inputs.project_location.value.trim(),
                 project_date: inputs.project_date.value,
-                card_footer_text: inputs.card_footer_text.value.trim(),
-                type: inputs.new_type.value
+                card_footer_text: inputs.card_footer_text.value.trim()
             };
         }, 0);
     });
@@ -447,6 +454,40 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
+
+    // Handle Mark as Completed
+    $(document).on('click', '.complete-btn', function () {
+        const id = $(this).data('id');
+
+        Swal.fire({
+            title: 'Move to Completed?',
+            text: "This project will be moved to the completed gallery.",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, move it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/admin/upcoming/move-to-completed/${id}`,
+                    type: 'PUT',
+                    success: function (data) {
+                        if (data.success) {
+                            Swal.fire('Moved!', 'Project has been moved to completed.', 'success').then(() => {
+                                applyFilters(window.currentPage || 1);
+                            });
+                        } else {
+                            Swal.fire('Error!', data.message || 'Failed to move', 'error');
+                        }
+                    },
+                    error: function () {
+                        Swal.fire('Error!', 'An error occurred while moving the project.', 'error');
+                    }
+                });
+            }
+        });
+    });
 
     // Handle Delete
     $(document).on('click', '.delete-btn', function () {
@@ -594,7 +635,6 @@ document.addEventListener('DOMContentLoaded', function () {
             form.project_location.value.trim() !== originalFormData.project_location ||
             form.project_date.value !== originalFormData.project_date ||
             form.card_footer_text.value.trim() !== originalFormData.card_footer_text ||
-            form.new_type.value !== originalFormData.type ||
             (form.file && form.file.files.length > 0)
         );
     }

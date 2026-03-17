@@ -542,6 +542,12 @@ button.remove-current-image-btn.hidden {
     color: var(--text-primary);
 }
 
+.icon-action-btn.complete-btn:hover {
+    background: #f0fdf4;
+    color: #28a745;
+    transform: scale(1.1);
+}
+
 .icon-action-btn.delete:hover {
     background: #fee2e2;
     color: #ef4444;
