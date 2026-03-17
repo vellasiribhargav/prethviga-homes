@@ -112,17 +112,6 @@ const seedMongoDB = async () => {
                 "project_date": "January  2022",
                 "card_footer_text": "3 BHK Apartment",
                 "createdAt": new Date()
-            },
-            {
-                "page_slug": "projects",
-                "page_section": "ongoing-gallery",
-                "project_id": upcomingProjectIds[0],
-                "card_image": `${PROJECT_URL}assets/images/IMG_0879_O1.png`,
-                "project_name": "Madesh Real Estate",
-                "project_location": "Siruseri & Tambaram IT Hubs, Chennai",
-                "project_date": "January  2027",
-                "card_footer_text": "Premium 3BHK Apartment For Sale",
-                "createdAt": new Date()
             }
         ];
 
@@ -133,10 +122,22 @@ const seedMongoDB = async () => {
         const projectSpecificData = {
             "Prethviga Poongavanam": {
                 features: [
-                    { feature: "Vaastu Compliant", description: "All units are designed according to Vaastu principles for positive energy." },
-                    { feature: "Rapid Construction", description: "Utilizing advanced techniques for faster delivery without compromising quality." },
-                    { feature: "Prime Connectivity", description: "Located in the heart of Chitlapakkam with easy access to GST Road." },
-                    { feature: "Sustainable Living", description: "Equipped with rainwater harvesting and solar lighting for common areas." }
+                    {
+                        feature: "Premium Quality",
+                        description: "High-quality materials and superior craftsmanship ensuring lasting value"
+                    },
+                    {
+                        feature: "Community Living",
+                        description: "Fostering a sense of belonging with well-planned common spaces."
+                    },
+                    {
+                        feature: "Spacious Design",
+                        description: "Maximizing natural light and ventilation for a healthy living environment."
+                    },
+                    {
+                        feature: "Modern Architecture",
+                        description: "A perfect blend of aesthetics and functional design."
+                    }
                 ],
                 amenities: [
                     { "features_Description": "Experience a lifestyle of comfort and convenience with our premium amenities." },
@@ -169,9 +170,22 @@ const seedMongoDB = async () => {
             },
             "Prethviga Poongavanam 2025": {
                 features: [
-                    { feature: "Exclusive Address", description: "One of the upcoming under-construction housing societies in Chennai South." },
-                    { feature: "Ample Parking", description: "Dedicated car parking with EV Charging Stations for residents." },
-                    { feature: "Vaastu Compliant", description: "100% Vaastu compliant 3BHK homes designed for positive energy." }
+                    {
+                        feature: "Premium Quality",
+                        description: "High-quality materials and superior craftsmanship ensuring lasting value"
+                    },
+                    {
+                        feature: "Community Living",
+                        description: "Fostering a sense of belonging with well-planned common spaces."
+                    },
+                    {
+                        feature: "Spacious Design",
+                        description: "Maximizing natural light and ventilation for a healthy living environment."
+                    },
+                    {
+                        feature: "Modern Architecture",
+                        description: "A perfect blend of aesthetics and functional design."
+                    }
                 ],
                 amenities: [
                     { "features_Description": "This society will have all basic facilities and amenities to suit homebuyer's needs." },
@@ -187,40 +201,6 @@ const seedMongoDB = async () => {
                 floor_image: `${PROJECT_URL}assets/images/Rectangle 42.webp`,
                 gallery: [
                     { "gallery_Description": "Explore the stunning interiors and features of Prethviga Poongavanam 2025" },
-                    { 
-                        title: "Living Room", 
-                        text: "Spacious living area with modern aesthetics",
-                        coverImage: `${PROJECT_URL}assets/images/interior 5.jpg`, 
-                    },
-                    {
-                        title: "Modern Kitchen",
-                        text: "Fully equipped modular kitchen",
-                        coverImage: `${PROJECT_URL}assets/images/interior7.jpg`,
-                    }
-                ]
-            },
-            "Madesh Real Estate": {
-                features: [
-                    { feature: "Project Highlights", description: "G + 3 Floors | Only 3 Flats (1 Flat per Floor). 1743 Sq.Ft. Built-Up Area." },
-                    { feature: "Construction & Legal", description: "100% Legal Clear Title, High-Quality Construction, Only Branded Materials Used." },
-                    { feature: "Ground Floor Parking", description: "Ground floor reserved for parking. Lift provided." }
-                ],
-                amenities: [
-                    { "features_Description": "Premium facilities for modern, secure, and sustainable living." },
-                    { "feature": "EV Charging Point", "icon": "battery-charging" },
-                    { "feature": "Solar Power (Common Areas)", "icon": "sun" },
-                    { "feature": "Parking" },
-                    { "feature": "Lift", "icon": "arrow-up-down" }
-                ],
-                landmarks: [
-                    "Near Siruseri & Tambaram IT Hubs",
-                    "Fully Residential Area",
-                    "Green, Clean & Peaceful Surroundings",
-                    "Easy Access to Main Road"
-                ],
-                floor_image: `${PROJECT_URL}assets/images/pps.jpg`,
-                gallery: [
-                    { "gallery_Description": "Explore the stunning interiors and features of Madesh Real Estate" },
                     { 
                         title: "Living Room", 
                         text: "Spacious living area with modern aesthetics",
