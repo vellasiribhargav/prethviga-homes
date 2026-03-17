@@ -93,134 +93,35 @@ const seedMongoDB = async () => {
         const insertProjectsData = [
             {
                 "page_slug": "projects",
-                "page_section": "ongoing-gallery",
-                "project_id": upcomingProjectIds[0],
-                "card_image": `${PROJECT_URL}assets/images/card1.webp`,
-                "project_name": "Pinnacle View Condominiums",
-                "project_location": "West side",
-                "project_date": "November 2024",
-                "card_footer_text": "24 Premium Apartments",
-                "createdAt": new Date()
-            },
-            {
-                "page_slug": "projects",
-                "page_section": "ongoing-gallery",
-                "project_id": upcomingProjectIds[1],
-                "card_image": `${PROJECT_URL}assets/images/card2.webp`,
-                "project_name": "Serenity Heights Estate",
-                "project_location": "West side",
-                "project_date": "August 2024",
-                "card_footer_text": "24 Premium Apartments",
-                "createdAt": new Date()
-            },
-            {
-                "page_slug": "projects",
-                "page_section": "ongoing-gallery",
-                "project_id": upcomingProjectIds[2],
-                "card_image": `${PROJECT_URL}assets/images/card3.webp`,
-                "project_name": "Grandview Manor Residences",
-                "project_location": "South End",
-                "project_date": "September 2024",
-                "card_footer_text": "24 Premium Apartments",
-                "createdAt": new Date()
-            },
-            {
-                "page_slug": "projects",
-                "page_section": "ongoing-gallery",
-                "project_id": upcomingProjectIds[3],
-                "card_image": `${PROJECT_URL}assets/images/card4.webp`,
-                "project_name": "Pinnacle View Condominiums",
-                "project_location": "East side",
-                "project_date": "November 2024",
-                "card_footer_text": "24 Premium Apartments",
-                "createdAt": new Date()
-            },
-            {
-                "page_slug": "projects",
-                "page_section": "ongoing-gallery",
-                "project_id": upcomingProjectIds[4],
-                "card_image": `${PROJECT_URL}assets/images/card1.webp`,
-                "project_name": "Pinnacle View Condominiums",
-                "project_location": "East side",
-                "project_date": "November 2024",
-                "card_footer_text": "24 Premium Apartments",
-                "createdAt": new Date()
-            },
-            {
-                "page_slug": "projects",
-                "page_section": "ongoing-gallery",
-                "project_id": upcomingProjectIds[5],
-                "card_image": `${PROJECT_URL}assets/images/card4.webp`,
-                "project_name": "Pinnacle View Condominiums",
-                "project_location": "East side",
-                "project_date": "November 2024",
-                "card_footer_text": "24 Premium Apartments",
-                "createdAt": new Date()
-            },
-            {
-                "page_slug": "projects",
                 "page_section": "completed-gallery",
                 "project_id": completedProjectIds[0],
-                "card_image": `${PROJECT_URL}assets/images/card2.webp`,
-                "project_name": "Pinnacle View Condominiums",
-                "project_location": "West side",
-                "project_date": "November 2024",
-                "card_footer_text": "24 Premium Apartments",
+                "card_image": `${PROJECT_URL}assets/images/Rectangle.webp`,
+                "project_name": "Prethviga Poongavanam 2025",
+                "project_location": "Chitlapakkam, Chennai",
+                "project_date": "April 2025",
+                "card_footer_text": "Premium 3BHK Residential Units",
                 "createdAt": new Date()
             },
             {
                 "page_slug": "projects",
                 "page_section": "completed-gallery",
                 "project_id": completedProjectIds[1],
-                "card_image": `${PROJECT_URL}assets/images/card3.webp`,
-                "project_name": "Serenity Heights Estate",
-                "project_location": "West side",
-                "project_date": "August 2024",
-                "card_footer_text": "24 Premium Apartments",
+                "card_image": `${PROJECT_URL}assets/images/Prethviga_Poongavanam_1.jpg`,
+                "project_name": "Prethviga Poongavanam",
+                "project_location": "Chitlapakkam, Chennai",
+                "project_date": "January  2022",
+                "card_footer_text": "3 BHK Apartment",
                 "createdAt": new Date()
             },
             {
                 "page_slug": "projects",
-                "page_section": "completed-gallery",
-                "project_id": completedProjectIds[2],
-                "card_image": `${PROJECT_URL}assets/images/card4.webp`,
-                "project_name": "Grandview Manor Residences",
-                "project_location": "South End",
-                "project_date": "September 2024",
-                "card_footer_text": "24 Premium Apartments",
-                "createdAt": new Date()
-            },
-            {
-                "page_slug": "projects",
-                "page_section": "completed-gallery",
-                "project_id": completedProjectIds[3],
-                "card_image": `${PROJECT_URL}assets/images/card3.webp`,
-                "project_name": "Pinnacle View Condominiums",
-                "project_location": "East side",
-                "project_date": "November 2024",
-                "card_footer_text": "24 Premium Apartments",
-                "createdAt": new Date()
-            },
-            {
-                "page_slug": "projects",
-                "page_section": "completed-gallery",
-                "project_id": completedProjectIds[4],
-                "card_image": `${PROJECT_URL}assets/images/card3.webp`,
-                "project_name": "Pinnacle View Condominiums",
-                "project_location": "East side",
-                "project_date": "November 2024",
-                "card_footer_text": "24 Premium Apartments",
-                "createdAt": new Date()
-            },
-            {
-                "page_slug": "projects",
-                "page_section": "completed-gallery",
-                "project_id": completedProjectIds[5],
-                "card_image": `${PROJECT_URL}assets/images/card2.webp`,
-                "project_name": "Pinnacle View Condominiums",
-                "project_location": "East side",
-                "project_date": "November 2024",
-                "card_footer_text": "24 Premium Apartments",
+                "page_section": "ongoing-gallery",
+                "project_id": upcomingProjectIds[0],
+                "card_image": `${PROJECT_URL}assets/images/IMG_0879_O1.png`,
+                "project_name": "Madesh Real Estate",
+                "project_location": "Siruseri & Tambaram IT Hubs, Chennai",
+                "project_date": "January  2027",
+                "card_footer_text": "Premium 3BHK Apartment For Sale",
                 "createdAt": new Date()
             }
         ];
@@ -229,160 +130,264 @@ const seedMongoDB = async () => {
         const completedProjectsList = insertProjectsData.filter(p => p.page_section === 'completed-gallery');
 
         const projectDetailsConn = mongoose.connection.db.collection("project_details");
-        const createProjectDetails = (pid, name, location, date, cardImage) => ({
-            "page_slug": "project_details",
-            "project_id": pid,
-            "sections": [
-                {
-                    "page_section": "hero-section",
-                    "page_content": [
-                        {
-                            "pimage": cardImage,
-                            "title": name,
-                            "buiding_name": name,
-                            "date": date,
-                            "location": location
-                        }
-                    ]
-                },
-                {
-                    "page_section": "features-grid",
-                    "page_content": [
-                        {
-                            feature: "Premium Quality",
-                            description: "High-quality materials and superior craftsmanship ensuring lasting value"
-                        },
-                        {
-                            feature: "Community Living",
-                            description: "High-quality materials and superior craftsmanship ensuring lasting value"
-                        },
-                        {
-                            feature: "Spacious Design",
-                            description: "High-quality materials and superior craftsmanship ensuring lasting value"
-                        },
-                        {
-                            feature: "Modern Architecture",
-                            description: "High-quality materials and superior craftsmanship ensuring lasting value"
-                        }
-                    ]
-                },
-                {
-                    "page_section": "amenities-list",
-                    "page_content": [
-                        { "features_Description": `Discover the exceptional amenities and features that make ${name} stand out.` },
-                        { "feature": "Swimming Pool" },
-                        { "feature": "Theater" },
-                        { "feature": "Fitness Center" },
-                        { "feature": "Parking" },
-                        { "feature": "Playground" },
-                        { "feature": "24/7 Security" }
-                    ]
-                },
-                {
-                    "page_section": "location-container",
-                    "page_content": [
-                        { "location_Description": `Ideally located in ${location}, providing excellent connectivity.` },
-                        { "image": `${PROJECT_URL}assets/images/Rectangle.webp` },
-                        {
-                            details: [
-                                {
-                                    type: "address",
-                                    title: "Address",
-                                    text: `${location}, Chennai - 600001`
-                                },
-                                {
-                                    type: "landmarks",
-                                    title: "Nearby Landmarks",
-                                    list: [
-                                        "2 km from Connectivity Hub",
-                                        "5 min to Schools & Hospitals",
-                                        "10 min to Shopping Malls",
-                                        "Easy access to IT Parks"
-                                    ]
-                                },
-                                {
-                                    type: "connectivity",
-                                    title: "Connectivity",
-                                    text: "Well-connected by major roads and public transport with easy access to highways",
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "page_section": "floor-image",
-                    "page_content": [
-                        {
-                            "title": "Floor Layout",
-                            "floor_image": `${PROJECT_URL}assets/images/Rectangle 42.webp`
-                        }
-                    ]
-                },
-                {
-                    "page_section": "gallery-wrapper",
-                    "page_content": [
-                        { "gallery_Description": `Explore the stunning interiors and features of ${name}` },
-                        {
+        const projectSpecificData = {
+            "Prethviga Poongavanam": {
+                features: [
+                    { feature: "Vaastu Compliant", description: "All units are designed according to Vaastu principles for positive energy." },
+                    { feature: "Rapid Construction", description: "Utilizing advanced techniques for faster delivery without compromising quality." },
+                    { feature: "Prime Connectivity", description: "Located in the heart of Chitlapakkam with easy access to GST Road." },
+                    { feature: "Sustainable Living", description: "Equipped with rainwater harvesting and solar lighting for common areas." }
+                ],
+                amenities: [
+                    { "features_Description": "Experience a lifestyle of comfort and convenience with our premium amenities." },
+                    { "feature": "CCTV Surveillance", "icon": "cctv" },
+                    { "feature": "Gated Community", "icon": "shield-check" },
+                    { "feature": "Power Backup", "icon": "zap" },
+                    { "feature": "Rainwater Harvesting", "icon": "droplet" },
+                    { "feature": "Parking" }
+                ],
+                landmarks: [
+                    "500m from Chitlapakkam Lake",
+                    "1.5 km from Tambaram Sanatorium Railway Station",
+                    "Nearby leading schools (SSV, Zion)",
+                    "Close to multi-specialty hospitals"
+                ],
+                floor_image: `${PROJECT_URL}assets/images/Rectangle 42.webp`,
+                gallery: [
+                    { "gallery_Description": "Explore the stunning interiors and features of Prethviga Poongavanam" },
+                    { 
+                        title: "Living Room", 
+                        text: "Spacious living area with modern aesthetics",
+                        coverImage: `${PROJECT_URL}assets/images/interior 5.jpg`, 
+                    },
+                    {
+                        title: "Modern Kitchen",
+                        text: "Fully equipped modular kitchen",
+                        coverImage: `${PROJECT_URL}assets/images/interior7.jpg`,
+                    }
+                ]
+            },
+            "Prethviga Poongavanam 2025": {
+                features: [
+                    { feature: "Exclusive Address", description: "One of the upcoming under-construction housing societies in Chennai South." },
+                    { feature: "Ample Parking", description: "Dedicated car parking with EV Charging Stations for residents." },
+                    { feature: "Vaastu Compliant", description: "100% Vaastu compliant 3BHK homes designed for positive energy." }
+                ],
+                amenities: [
+                    { "features_Description": "This society will have all basic facilities and amenities to suit homebuyer's needs." },
+                    { "feature": "EV Charging Stations", "icon": "battery-charging" },
+                    { "feature": "Parking" }
+                ],
+                landmarks: [
+                    "Located in Chitlapakkam, Chennai",
+                    "Near B.S. Hospital",
+                    "Close to Tambaram sanatorium railway station & bus stand",
+                    "Close to Hasthinapuram MTC Terminus"
+                ],
+                floor_image: `${PROJECT_URL}assets/images/Rectangle 42.webp`,
+                gallery: [
+                    { "gallery_Description": "Explore the stunning interiors and features of Prethviga Poongavanam 2025" },
+                    { 
+                        title: "Living Room", 
+                        text: "Spacious living area with modern aesthetics",
+                        coverImage: `${PROJECT_URL}assets/images/interior 5.jpg`, 
+                    },
+                    {
+                        title: "Modern Kitchen",
+                        text: "Fully equipped modular kitchen",
+                        coverImage: `${PROJECT_URL}assets/images/interior7.jpg`,
+                    }
+                ]
+            },
+            "Madesh Real Estate": {
+                features: [
+                    { feature: "Project Highlights", description: "G + 3 Floors | Only 3 Flats (1 Flat per Floor). 1743 Sq.Ft. Built-Up Area." },
+                    { feature: "Construction & Legal", description: "100% Legal Clear Title, High-Quality Construction, Only Branded Materials Used." },
+                    { feature: "Ground Floor Parking", description: "Ground floor reserved for parking. Lift provided." }
+                ],
+                amenities: [
+                    { "features_Description": "Premium facilities for modern, secure, and sustainable living." },
+                    { "feature": "EV Charging Point", "icon": "battery-charging" },
+                    { "feature": "Solar Power (Common Areas)", "icon": "sun" },
+                    { "feature": "Parking" },
+                    { "feature": "Lift", "icon": "arrow-up-down" }
+                ],
+                landmarks: [
+                    "Near Siruseri & Tambaram IT Hubs",
+                    "Fully Residential Area",
+                    "Green, Clean & Peaceful Surroundings",
+                    "Easy Access to Main Road"
+                ],
+                floor_image: `${PROJECT_URL}assets/images/pps.jpg`,
+                gallery: [
+                    { "gallery_Description": "Explore the stunning interiors and features of Madesh Real Estate" },
+                    { 
+                        title: "Living Room", 
+                        text: "Spacious living area with modern aesthetics",
+                        coverImage: `${PROJECT_URL}assets/images/interior 5.jpg`, 
+                    },
+                    {
+                        title: "Modern Kitchen",
+                        text: "Fully equipped modular kitchen",
+                        coverImage: `${PROJECT_URL}assets/images/interior7.jpg`,
+                    }
+                ]
+            }
+        };
+
+        const createProjectDetails = (pid, name, location, date, cardImage) => {
+            const specific = projectSpecificData[name] || {};
+            
+            return {
+                "page_slug": "project_details",
+                "project_id": pid,
+                "sections": [
+                    {
+                        "page_section": "hero-section",
+                        "page_content": [
+                            {
+                                "pimage": cardImage,
+                                "title": name,
+                                "buiding_name": name,
+                                "date": date,
+                                "location": location
+                            }
+                        ]
+                    },
+                    {
+                        "page_section": "features-grid",
+                        "page_content": specific.features || [
+                            {
+                                feature: "Premium Quality",
+                                description: "High-quality materials and superior craftsmanship ensuring lasting value"
+                            },
+                            {
+                                feature: "Community Living",
+                                description: "Fostering a sense of belonging with well-planned common spaces."
+                            },
+                            {
+                                feature: "Spacious Design",
+                                description: "Maximizing natural light and ventilation for a healthy living environment."
+                            },
+                            {
+                                feature: "Modern Architecture",
+                                description: "A perfect blend of aesthetics and functional design."
+                            }
+                        ]
+                    },
+                    {
+                        "page_section": "amenities-list",
+                        "page_content": specific.amenities || [
+                            { "features_Description": `Discover the exceptional amenities and features that make ${name} stand out.` },
+                            { "feature": "Swimming Pool" },
+                            { "feature": "Theater" },
+                            { "feature": "Fitness Center" },
+                            { "feature": "Parking" },
+                            { "feature": "Playground" },
+                            { "feature": "24/7 Security" }
+                        ]
+                    },
+                    {
+                        "page_section": "location-container",
+                        "page_content": [
+                            { "location_Description": `Ideally located in ${location}, providing excellent connectivity.` },
+                            { "image": cardImage },
+                            {
+                                details: [
+                                    {
+                                        type: "address",
+                                        title: "Address",
+                                        text: `${location}`
+                                    },
+                                    {
+                                        type: "landmarks",
+                                        title: "Nearby Landmarks",
+                                        list: specific.landmarks || [
+                                            "2 km from major transport hubs",
+                                            "5 min to Schools & Hospitals",
+                                            "10 min to Shopping Malls",
+                                            "Easy access to IT Parks"
+                                        ]
+                                    },
+                                    {
+                                        type: "connectivity",
+                                        title: "Connectivity",
+                                        text: "Well-connected by major roads and public transport with easy access to highways",
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "page_section": "floor-image",
+                        "page_content": [
+                            {
+                                "title": "Floor Layout",
+                                "floor_image": specific.floor_image || `${PROJECT_URL}assets/images/Rectangle 42.webp`
+                            }
+                        ]
+                    },
+                    {
+                        "page_section": "gallery-wrapper",
+                        "page_content": specific.gallery || [
+                            { "gallery_Description": `Explore the stunning interiors and features of ${name}` },
+                            {
                             title: "Living Room - 3BHK",
                             text: "Spacious living area with modern amenities",
-                            coverImage: `${PROJECT_URL}assets/images/blog1.webp`,
-                        },
-                        {
-                            title: "Master Bedroom",
-                            text: "Elegant bedroom with premium finishes",
-                            coverImage: `${PROJECT_URL}assets/images/blog2.webp`,
-                        },
-                        {
-                            title: "Modern Kitchen",
-                            text: "Fully equipped modular kitchen",
-                            coverImage: `${PROJECT_URL}assets/images/card4.webp`,
-                        },
-                        {
-                            title: "Luxury Bathroom",
-                            text: "Designer bathroom with premium fixtures",
-                            coverImage: `${PROJECT_URL}assets/images/card1.webp`,
-                        },
-                        {
-                            title: "Private Balcony",
-                            text: "Spacious balcony with scenic views",
-                            coverImage: `${PROJECT_URL}assets/images/card5.webp`,
-                        },
-                        {
-                            title: "Dining Area",
-                            text: "Contemporary dining space",
-                            coverImage: `${PROJECT_URL}assets/images/card6.webp`,
-                        }
-                    ]
-                },
-                {
-                    "page_section": "faq-items-container",
-                    "page_content": [
-                        {
+                                coverImage: `${PROJECT_URL}assets/images/blog1.webp`,
+                            },
+                            {
+                                title: "Master Bedroom",
+                                text: "Elegant bedroom with premium finishes",
+                                coverImage: `${PROJECT_URL}assets/images/blog2.webp`,
+                            },
+                            {
+                                title: "Modern Kitchen",
+                                text: "Fully equipped modular kitchen",
+                                coverImage: `${PROJECT_URL}assets/images/card4.webp`,
+                            },
+                            {
+                                title: "Luxury Bathroom",
+                                text: "Designer bathroom with premium fixtures",
+                                coverImage: `${PROJECT_URL}assets/images/card1.webp`,
+                            },
+                            {
+                                title: "Private Balcony",
+                                text: "Spacious balcony with scenic views",
+                                coverImage: `${PROJECT_URL}assets/images/card5.webp`,
+                            },
+                            {
+                                title: "Dining Area",
+                                text: "Contemporary dining space",
+                                coverImage: `${PROJECT_URL}assets/images/card6.webp`,
+                            }
+                        ]
+                    },
+                    {
+                        "page_section": "faq-items-container",
+                        "page_content": [
+                            {
                             "question": "How long does a typical construction project take?",
                             "answer": "The duration varies based on project complexity and scale. Residential projects typically take 8-14 months, while commercial developments may require 12-24 months. We provide detailed timelines during project planning."
-                        },
-                        {
+                            },
+                            {
                             "question": "What types of projects do you specialize in?",
                             "answer": "We specialize in residential condominiums, luxury estates, commercial buildings, and mixed-use developments. Our portfolio includes projects ranging from boutique apartments to large-scale residential complexes."
-                        },
-                        {
+                            },
+                            {
                             "question": "Do you offer warranties on completed projects?",
                             "answer": "Yes, we provide comprehensive warranties on structural integrity and workmanship. We stand by our quality and ensure long-term satisfaction."
-                        }
-                    ],
-                }
-            ],
-            "createdAt": new Date()
-        });
+                            }
+                        ],
+                    }
+                ],
+                "createdAt": new Date()
+            };
+        };
 
-        const insertProjectDetailsData = [
-            ...upcomingProjectsList.map((project) => {
-                return createProjectDetails(project.project_id, project.project_name, project.project_location, project.project_date, project.card_image);
-            }),
-            ...completedProjectsList.map((project) => {
-                return createProjectDetails(project.project_id, project.project_name, project.project_location, project.project_date, project.card_image);
-            })
-        ];
+        const insertProjectDetailsData = insertProjectsData.map((project) => {
+            return createProjectDetails(project.project_id, project.project_name, project.project_location, project.project_date, project.card_image);
+        });
 
         const faqConn = mongoose.connection.db.collection("faq");
         const insertFaqData = [

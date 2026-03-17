@@ -10,6 +10,7 @@ router.get('/list', upcomingController.getupcomingGallery);
 router.get('/getupcoming', upcomingController.getUpcomingProjectsJSON);
 router.post('/addupcoming', upload.any(), upcomingController.addupcomingItem);
 router.put('/update/:id', upload.single('file'), upcomingController.updateupcomingItem);
+router.put('/move-to-completed/:id', upcomingController.moveToCompletedItem);
 router.delete('/delete/:id', upcomingController.deleteupcomingItem);
 
 module.exports = router;
