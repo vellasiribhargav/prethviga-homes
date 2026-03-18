@@ -171,7 +171,7 @@ include layout/header.pug
           | #{galleryDescription}
       .gallery-wrapper
         each item in galleryData
-          .gallery-card(data-images='["../../assets/images/card6.webp", "../../assets/images/card5.webp","../../assets/images/card4.webp", "../../assets/images/card3.webp", "../../assets/images/card2.webp","../../assets/images/blog2.webp", "../../assets/images/blog3.webp","../../assets/images/blog2.webp", "../../assets/images/blog3.webp"]')
+          .gallery-card(data-image=item.coverImage data-title=item.title)
             .gallery-image  
               img(
                 src=item.coverImage 
