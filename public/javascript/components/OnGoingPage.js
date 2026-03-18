@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Toggle current FAQ
             if (isExpanded) {
-                answerContent.classList.remove('visible');
+                answerContent.classList.remove('visible'); 
                 toggleIcon.classList.remove('expanded');
             } else {
                 answerContent.classList.add('visible');
@@ -39,35 +39,73 @@ document.addEventListener('DOMContentLoaded', () => {
     const galleryCards = document.querySelectorAll('.gallery-card');
 
     if (modalOverlay && galleryCards.length > 0) {
-        galleryCards.forEach(card => {
+        // Collect all gallery images
+        const allGalleryImages = Array.from(galleryCards).map(card => ({
+            src: card.getAttribute('data-image'),
+            title: card.getAttribute('data-title')
+        }));
+
+        let currentImageIndex = 0;
+
+        const updateMainImage = (index) => {
+            currentImageIndex = index;
+            const img = allGalleryImages[index];
+            mainImage.src = img.src;
+            mainImage.alt = img.title || 'Gallery Image';
+            
+            document.querySelectorAll('.galleryThumbs').forEach((t, i) => {
+                t.classList.toggle('active', i === index);
+            });
+        };
+
+        const navigateGallery = (direction) => {
+            let newIndex = currentImageIndex + direction;
+            if (newIndex < 0) newIndex = allGalleryImages.length - 1;
+            if (newIndex >= allGalleryImages.length) newIndex = 0;
+            updateMainImage(newIndex);
+        };
+
+        galleryCards.forEach((card, index) => {
             card.addEventListener('click', () => {
-                const images = JSON.parse(card.getAttribute('data-images') || '[]');
-                if (images.length === 0) return;
+                const clickedImage = card.getAttribute('data-image');
+                const clickedTitle = card.getAttribute('data-title');
+                
+                if (!clickedImage) return;
 
-                // Set initial image
-                const initialImg = card.querySelector('img')?.src;
-                mainImage.src = initialImg || images[0];
+                currentImageIndex = index;
+                mainImage.src = clickedImage;
+                mainImage.alt = clickedTitle || 'Gallery Image';
 
-                // Render thumbnails
+                // Render thumbnails from all gallery images
                 galleryThumbnails.innerHTML = '';
-                images.forEach(imgSrc => {
+                allGalleryImages.forEach((img, imgIndex) => {
                     const thumb = document.createElement('div');
                     thumb.className = 'galleryThumbs';
-                    if (imgSrc === (initialImg || images[0])) thumb.classList.add('active');
+                    if (imgIndex === index) thumb.classList.add('active');
 
-                    thumb.innerHTML = `<img src="${imgSrc}" alt="Thumbnail">`;
+                    thumb.innerHTML = `<img src="${img.src}" alt="${img.title || 'Thumbnail'}">`;
                     thumb.addEventListener('click', () => {
-                        mainImage.src = imgSrc;
-                        document.querySelectorAll('.galleryThumbs').forEach(t => t.classList.remove('active'));
-                        thumb.classList.add('active');
+                        updateMainImage(imgIndex);
                     });
                     galleryThumbnails.appendChild(thumb);
                 });
 
                 modalOverlay.classList.add('active');
-                document.body.style.overflow = 'hidden'; // Prevent scrolling
+                document.body.style.overflow = 'hidden';
             });
         });
+
+        const handleKeyPress = (e) => {
+            if (!modalOverlay.classList.contains('active')) return;
+            
+            if (e.key === 'ArrowLeft') {
+                navigateGallery(-1);
+            } else if (e.key === 'ArrowRight') {
+                navigateGallery(1);
+            } else if (e.key === 'Escape') {
+                closeGallery();
+            }
+        };
 
         const closeGallery = () => {
             modalOverlay.classList.remove('active');
@@ -78,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalOverlay.addEventListener('click', (e) => {
             if (e.target === modalOverlay) closeGallery();
         });
+        document.addEventListener('keydown', handleKeyPress);
     }
 
     // scroll option

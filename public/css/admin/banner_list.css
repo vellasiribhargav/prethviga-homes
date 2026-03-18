@@ -454,6 +454,7 @@ body {
 .data-table td:nth-child(4) {
     /* CREATED DATE */
     width: 150px;
+    text-align: center;
 }
 
 .data-table th:last-child,
